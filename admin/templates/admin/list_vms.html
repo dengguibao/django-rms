@@ -1,0 +1,179 @@
+{% extends "admin/basic.html" %}
+
+{% block mainbody %}
+<blockquote class="layui-elem-quote layui-text">
+    温馨提醒
+</blockquote>
+
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
+    <legend>虚拟机管理</legend>
+</fieldset>
+
+<div class="layui-tab layui-tab-brief" lay-filter="tab_cluster">
+    <ul class="layui-tab-title">
+        <li flag="cs" class="layui-this">长沙</li>
+        <li flag="xh">新化</li>
+        <li flag="test">开发</li>
+    </ul>
+    <div class="layui-row">
+        <div class="layui-col-md10">
+            <table class="layui-table">
+                <colgroup>
+                    <col width="60">
+                    <col width="250">
+                    <col width="130">
+                    <col width="90">
+                    <col width="60">
+                    <col width="50">
+                    <col width="60">
+                    <col width="250">
+                    <col width="90">
+                    <col width="100">
+                    <col>
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>主机名</th>
+                        <th>IP</th>
+                        <th>Vlan ID</th>
+                        <th>硬盘</th>
+                        <th>CPU</th>
+                        <th>内存</th>
+                        <th>宿主机</th>
+                        <th>操作系统</th>
+                        <th>加入时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="vm_tbody">
+                </tbody>
+            </table>
+            <div id="page"></div>
+        </div>
+        <div class="layui-col-md2" style="padding-left: 10px;">
+            <table class="layui-table">
+                <colgroup>
+                    <col>
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>主机名</th>
+                    </tr>
+                </thead>
+                <tbody id="esxi_tbody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    layui.use(['element', 'laypage', 'layer'], function () {
+        var $ = layui.jquery,
+            laypage = layui.laypage,
+            element = layui.element;
+
+        var flag = "cs";
+        var tab_act = '_all';
+
+        //初始化加载
+        refresh_esxi_table("/admin/get-hosts-list/type/host/flag/cs");
+        refresh_vms_table("/admin/get-hosts-list/type/vm/flag/cs_all");
+
+        // listen tab click event
+        element.on('tab(tab_cluster)', function (data) {
+            // dev_type = "vm"
+            tab_act = '_all'
+            flag = $(this).attr('flag');
+            refresh_esxi_table("/admin/get-hosts-list/type/host/flag/" + flag);
+            refresh_vms_table("/admin/get-hosts-list/type/vm/flag/" + flag + "_all");
+        })
+
+
+        //　ajax refresh vm table
+        function refresh_vms_table(url) {
+            var page_size, rs_count, curr_page;
+            $.getJSON(
+                url,
+                function (result) {
+                    var tbody = $('#vm_tbody');
+                    tbody.empty();
+                    page_size = result.page_data.page_size
+                    rs_count = result.page_data.rs_count
+                    curr_page = result.page_data.curr_page
+                    $.each(result.data, function (i, item) {
+                        var tbody_content = "<tr id='id_" + item.id + "'>" +
+                            "<td>" + (i + 1) + "</td>" +
+                            "<td>" + item.vm_hostname.substring(0, 30) + "</td>" +
+                            "<td>" + item.vm_ip + "</td>" +
+                            "<td>" + item.vlan_id + "</td>" +
+                            "<td>" + item.vm_disk + "</td>" +
+                            "<td>" + item.vm_cpu + "</td>" +
+                            "<td>" + item.vm_memory + "</td>" +
+                            "<td>" + item.esxi_host_name + "</td>" +
+                            "<td>" + item.vm_os + "</td>" +
+                            "<td>" + item.pub_date.substring(0, 10) + "</td>" +
+                            "<td>" +
+                            "<a href='/admin/edit/vm/" + item.id + "/' class='layui-btn layui-btn-primary layui-btn-xs'><i class='layui-icon'></i></a>" +
+                            "<a href='javascript:;' onclick='javascript:row_del(" + item.id + ")' class='layui-btn layui-btn-primary layui-btn-xs'><i class='layui-icon'></i></a>" +
+                            "</td></tr>";
+                        tbody.append(tbody_content);
+                    })
+
+                    $('#page').empty()
+                    // 渲染分页
+                    laypage.render({
+                        elem: 'page', // page container
+                        limit: page_size, // page size
+                        count: rs_count, // record total
+                        curr: curr_page, // current page
+                        jump: function (obj, first) {
+                            //首次不执行
+                            if (!first) {
+                                refresh_vms_table("/admin/get-hosts-list/type/vm/flag/" + flag + tab_act + "/?page=" + obj.curr)
+                            }
+                        }
+                    });
+                }
+            )
+
+        }
+        //refresh esxi host table
+        function refresh_esxi_table(url) {
+            $.getJSON(
+                url,
+                function (result) {
+                    var tbody = $('#esxi_tbody');
+                    tbody.empty();
+                    $.each(result.data, function (i, item) {
+                        var tbody_content = "<tr><td><a href='javascript:;' onclick='javascript:refresh_vms_of_esxi(\"" + item.hostname + "\");'>" + item.hostname + "</a></td></tr>";
+                        tbody.append(tbody_content);
+                    })
+                }
+            )
+        }
+
+        // ajax refresh vm by spcific esxi hosts
+        window.refresh_vms_of_esxi = function (s) {
+            flag = s
+            tab_act = ''
+            refresh_vms_table("/admin/get-hosts-list/type/vm/flag/" + flag + tab_act)
+        }
+
+        // ajax delete
+        window.row_del = function (id) {
+            var url = "/admin/delete/vm/" + id;
+            $.getJSON(
+                url,
+                function (d) {
+                    if (d.code == 0) {
+                        $('#id_' + id).empty();
+                    }
+                }
+            )
+        }
+    });
+</script>
+
+{% endblock %}
