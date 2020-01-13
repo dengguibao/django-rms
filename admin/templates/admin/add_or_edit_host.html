@@ -1,9 +1,6 @@
 {% extends "admin/basic.html" %}
 温馨提醒：
 {% block mainbody %}
-<blockquote class="layui-elem-quote layui-text">
-    温馨提醒
-</blockquote>
 
 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
     <legend>主机</legend>
@@ -34,7 +31,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">iDRC管理ip</label>
             <div class="layui-input-inline">
-                <input type="text" name="idrc_ip" maxlength="15" value="{{ host_obj.idrc_ip }}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" name="idrc_ip" maxlength="15" value="{{ host_obj.idrc_ip }}" lay-verify="required|ip" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -43,7 +40,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">主机ip</label>
             <div class="layui-input-inline">
-                <input type="text" name="host_ip" maxlength="15" value="{{ host_obj.host_ip }}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" name="host_ip" maxlength="15" value="{{ host_obj.host_ip }}" lay-verify="required|ip" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -142,7 +139,7 @@
             type:'post',
             data:data.field,
             success:function(d){
-                layer.msg(d.msg)
+                layer.msg(d.msg);
                 if (d.code == 0){
                     setTimeout(function(){
                         window.location.href=document.referrer;
@@ -152,9 +149,21 @@
             error:function(){
                 layer.msg(d.Status)
             }
-        })
+        });
         return false;
       });
+
+      form.verify({
+            ip: function (value, item) {
+                function isValidIP(ip) {
+                    var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
+                    return reg.test(ip);
+                }
+                if (isValidIP(value) == false) {
+                    return '请输入正确的IP地址';
+                }
+            }
+        });
     });
 </script>
 {% endblock %}

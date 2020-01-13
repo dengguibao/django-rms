@@ -10,4 +10,5 @@ urlpatterns = [
     path('delete/<str:form_name>/<str:nid>/', views.delete, name='delete'),
     path('create-or-update/<str:form_type>/', views.create_or_update, name='create-or-update'),
     path('get-hosts-list/type/<str:dev_type>/flag/<str:flag>/', views.get_hosts_list, name='get_hosts_list'),
+    path('get-user-list/', views.get_user_list, name="get_user_list"),
 ]

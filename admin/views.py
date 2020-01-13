@@ -1,10 +1,10 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from .models import VmInfo, HostInfo
 from django.core.paginator import Paginator
 from django.db.models import Q
-
-# Create your views here.
+from django.conf import settings
+from django.contrib.auth.models import User
 
 
 def index(request):
@@ -19,13 +19,13 @@ def render_temp(request, temp_name):
 
 
 def render_edit(request, form_name, nid):
-    if form_name not in ['vm', 'host']:
-        return
-    temp_name = 'admin/edit_%s.html' % (form_name)
+    if form_name not in ['vm', 'host', 'user']:
+        return HttpResponse('object not found')
+
+    temp_name = 'admin/add_or_edit_%s.html' % (form_name)
     if form_name == 'vm':
         vm_obj = VmInfo.objects.get(id=nid)
         host_obj = HostInfo.objects.get(id=vm_obj.host_id)
-        print(vm_obj.vm_disk)
         esxi_list = HostInfo.objects.filter(cluster_tag=host_obj.cluster_tag)
         return render(
             request,
@@ -36,13 +36,21 @@ def render_edit(request, form_name, nid):
                 'esxi_list': esxi_list
             }
         )
-    else:
+    elif form_name == 'host':
         host_obj = HostInfo.objects.get(id=nid)
         return render(
             request,
             temp_name,
             {
                 'host_obj': host_obj,
+            }
+        )
+    elif form_name == 'user':
+        return render(
+            request,
+            temp_name,
+            context={
+                'user': User.objects.get(id=nid)
             }
         )
 
@@ -53,12 +61,16 @@ def delete(request, form_name, nid):
         'code': 1,
         'msg': 'fail'
     }
-    if form_name not in ['vm', 'host']:
+    if form_name not in ['vm', 'host', 'user']:
         return JsonResponse(return_json)
+
     if form_name == 'vm':
         res = VmInfo.objects.get(id=nid).delete()
-    else:
+    elif form_name == 'host':
         res = HostInfo.objects.get(id=nid).delete()
+    elif form_name == 'user':
+        res = User.objects.get(id=nid).delete()
+
     if res[0] >= 0:
         return_json['msg'] = 'ok'
         return_json['code'] = 0
@@ -73,23 +85,27 @@ def create_or_update(request, form_type):
         'code': 1,
         'msg': 'fail'
     }
-    if form_type not in ['vm', 'host']:
+    if request.method != 'POST' or form_type not in ['vm', 'host', 'user']:
         return JsonResponse(return_json)
 
     post_data = request.POST.dict()
     del post_data['csrfmiddlewaretoken']
-    nid = request.POST.get('id', 0)
+    del post_data['id']
+
+    nid = int(request.POST.get('id', 0))
+
     if nid == 0:
         act = 'create'
     else:
-        del post_data['id']
         act = 'update'
 
     if form_type == 'host':
         model = HostInfo
-    else:
+    elif form_type == 'vm':
         model = VmInfo
         del post_data['cluster_tag']
+    elif form_type == 'user':
+        model = User
 
     if act == 'create':
         res = model.objects.create(**post_data)
@@ -106,13 +122,20 @@ def create_or_update(request, form_type):
     return JsonResponse(return_json)
 
 
+def get_user_list(request):
+    user_list = User.objects.all()
+    return render(request, 'admin/list_users.html', context={
+        "obj": user_list
+    })
+
+
 def get_hosts_list(request, dev_type, flag):
     '''
     ajax获得所有主机列表
     dev_type 设备类型，可以指定host或者vm（物理机和虚拟机）
     flag　标记，如果是物理机则指定cluster_tag，虚拟机则指明是format cluster_host
     '''
-    page_size = 15
+    page_size = settings.PAGE_SIZE
     return_json = {
         'code': 1,
         'msg': 'device type is none'
@@ -180,15 +203,11 @@ def search(request, dev_type, keyword):
 
     if dev_type == 'vm':
         res = model.objects.filter(
-            Q(vm_ip__contains=keyword) | 
+            Q(vm_ip__contains=keyword) |
             Q(vm_hostname__contains=keyword)
         )
         host_obj = HostInfo.objects.all()
         esxi_kvp = {i.id: i.hostname for i in host_obj}
-        # page_size = 15
-        # p = Paginator(res, page_size)
-        # page = int(request.GET.get('page', 1))
-        # data_obj = p.page(page)
         vm_data = []
         for i in res.values():
             i["esxi_host_name"] = esxi_kvp[i['host_id']]
@@ -197,13 +216,12 @@ def search(request, dev_type, keyword):
             'data': vm_data,
             'code': 0,
             'msg': 'ok',
-            'page_data':{
+            'page_data': {
                 'rs_count': 1,
                 'page_count': 1,
                 'page_size': 1,
                 'curr_page': 1,
             }
-            
         }
     else:
         res = model.objects.filter(

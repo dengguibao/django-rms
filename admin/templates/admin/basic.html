@@ -18,22 +18,26 @@
     <div id="leftContainer">
       <div id="nav">
         <!--news area-->
+
         <div class="nav_pri_menu">
           <a href="javascript:void(0);" title="menu" class="pri_menu">添加</a>
           <div class="sub_menu_item">
-            <li><a href="{% url 'admin:render_temp' 'add_host' %}" title="add new host">主机</a></li>
-            <li><a href="{% url 'admin:render_temp' 'add_vm' %}" title="add new virtual mechine">虚拟机</a></li>
+            <li><a href="{% url 'admin:render_temp' 'add_or_edit_host' %}" title="add new host">主机</a></li>
+            <li><a href="{% url 'admin:render_temp' 'add_or_edit_vm' %}" title="add new virtual mechine">虚拟机</a></li>
+            <li><a href="{% url 'admin:render_temp' 'add_or_edit_user' %}" title="user">用户</a></li>
           </div>
         </div>
+
         <!--new article area-->
         <div class="nav_pri_menu">
-          <a href="javascript:void(0);" title="menu" class="pri_menu">设备列表</a>
+          <a href="javascript:void(0);" title="menu" class="pri_menu">设备管理</a>
           <div class="sub_menu_item">
             <li><a href="{% url 'admin:render_temp' 'list_hosts' %}"  title="list hosts">主机</a></li>
             <li><a href="{% url 'admin:render_temp' 'list_vms' %}"  title="list vms">虚拟机</a></li>
             <li><a href="{% url 'admin:admin_index' %}"  title="list vms">搜索</a></li>
           </div>
         </div>
+
         <!--Message area-->
         <div class="nav_pri_menu">
           <a href="javascript:void(0);" title="message" class="pri_menu">配置管理</a>
@@ -41,29 +45,15 @@
             <li><a href="#" title="Add category">网络设备</a></li>
           </div>
         </div>
+
         <!--menu area-->
         <div class="nav_pri_menu">
-          <a href="javascript:void(0);" title="menu" class="pri_menu">设置</a>
+          <a href="javascript:void(0);" title="menu" class="pri_menu">系统管理</a>
           <div class="sub_menu_item" style="display: none">
             <li><a href="#" title="add primary menu">系统设置</a></li>
+            <li><a href="{%url 'admin:get_user_list'%}" title="add primary menu">用户管理</a></li>
           </div>
         </div>
-        <!--auto text reply-->
-        <!-- <div class="nav_pri_menu">
-          <a href="javascript:void(0);" title="menu" class="pri_menu">Auto Reply</a>
-          <div class="sub_menu_item" style="display: none">
-            <li><a href="#" title="AutoReply">Add auto reply</a></li>
-            <li><a href="#" title="manage auto reply">Manage auto reply</a></li>
-          </div>
-        </div>
-        <div class="nav_pri_menu">
-          <a href="javascript:void(0);" title="menu" class="pri_menu">Config</a>
-          <div class="sub_menu_item" style="display: none">
-            <li><a href="#" title="Basic config">App basic</a></li>
-            <li><a href="#" title="Wechat Api config">Wechat API</a></li>
-            <li><a href="#" title="Login config">Login</a></li>
-          </div>
-        </div> -->
 
         <div class="nav_pri_menu">
           <a href="javascript:void(0);" title="menu" class="pri_menu">状态</a>
@@ -84,6 +74,9 @@
     </script>
 
     <div id="rightContainer">
+      <blockquote class="layui-elem-quote layui-text">
+        温馨提醒：删除物理机，会同时删除该机器下的所有虚拟机哦^-^
+    </blockquote>
       {% block mainbody %}
       {% endblock %}
     </div>
