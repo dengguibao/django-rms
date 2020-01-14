@@ -49,13 +49,13 @@
         </div>
     </div>
 
-    <div class="layui-form-item">
+    <!-- <div class="layui-form-item">
         <label class="layui-form-label">类型</label>
         <div class="layui-input-block">
             <input type="radio" name="is_staff" value="1" {% ifequal user.is_staff True%}checked{%endifequal%} title="管理员">
             <input type="radio" name="is_staff" value="0" {% ifequal user.is_staff False%}checked{%endifequal%} title="用户">
         </div>
-    </div>
+    </div> -->
 
     <div class="layui-form-item">
         <label class="layui-form-label">状态</label>
@@ -72,6 +72,11 @@
         </div>
     </div>
 </form>
+<style>
+    .layui-form-checkbox span {
+    height: auto;
+    }
+</style>
 <script>
     layui.use(['form'], function () {
         var form = layui.form

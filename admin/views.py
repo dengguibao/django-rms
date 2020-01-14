@@ -4,21 +4,21 @@ from .models import VmInfo, HostInfo
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 
 
 def index(request):
     return render(request, 'admin/index.html')
 
 
-def render_temp(request, temp_name):
+def render_static_temp_view(request, temp_name):
     '''
     新增物理机和虚拟机对应的前端ＵＩ路由
     '''
     return render(request, 'admin/%s.html' % (temp_name))
 
 
-def render_edit(request, form_name, nid):
+def render_view(request, form_name, nid):
     if form_name not in ['vm', 'host', 'user']:
         return HttpResponse('object not found')
 
@@ -235,3 +235,73 @@ def search(request, dev_type, keyword):
             'msg': 'ok'
         }
     return JsonResponse(return_json)
+
+
+def permissin_admin_view(request, nid):
+    user = User.objects.get(id=nid)
+    user_permission_list = user.get_all_permissions()
+    data=[]
+    for i in user_permission_list:
+        data.append({
+            'permiss_explain' : permission_explain(i.split('.')[1]),
+            'codename' : i.split('.')[1]
+        })
+
+    all_permiss_list = Permission.objects.filter(
+        content_type_id__in=[1, 2, 5]
+    ).values()
+    for i in all_permiss_list:
+        i['permission_explain'] = permission_explain(i['codename'])
+    return render(
+        request,
+        'admin/permission_admin.html',
+        context={
+            'user': user,
+            'user_permiss_list': data,
+            'all_permiss_list': all_permiss_list
+        }
+    )
+
+
+def permission_control(request, method, permiss, nid):
+
+    return_data = {
+        'code': 1,
+        'msg': 'illegal request'
+    }
+    if method not in ['add', 'remove']:
+        return JsonResponse(return_data)
+    user = User.objects.get(id=nid)
+    if user:
+        user_permiss = Permission.objects.get(codename=permiss)
+        if method == 'add':
+            res = user.user_permissions.add(user_permiss)
+        elif method == 'remove':
+            res = user.user_permissions.remove(user_permiss)
+    print(res)
+    if not res:
+        return_data['code'] = 0
+        return_data['msg'] = 'ok'
+        return JsonResponse(return_data)
+    else:
+        return JsonResponse(return_data)
+
+
+
+def permission_explain(permiss):
+    if not permiss:
+        return None
+
+    x = permiss.split('_')
+    act_data = {
+        'add': '新增',
+        'change': '修改',
+        'view': '查看',
+        'delete': '删除'
+    }
+    res_data = {
+        'vminfo': '虚拟机',
+        'hostinfo': '主机',
+        'user': '用户'
+    }
+    return act_data[x[0]]+res_data[x[1]]
