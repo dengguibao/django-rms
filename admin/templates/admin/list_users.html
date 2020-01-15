@@ -32,10 +32,10 @@
         <td>{{i.date_joined}}</td>
         <td>
           <a href="{%url 'admin:edit' 'user' i.id %}" class="layui-btn layui-btn-primary layui-btn-xs">
-            <i class="layui-icon">&#xe640;</i>
+            <i class="layui-icon">&#xe642;</i>
           </a>
           <a href="javascript:row_del({{ i.id }});" class="layui-btn layui-btn-primary layui-btn-xs">
-            <i class="layui-icon">&#xe642;</i>
+            <i class="layui-icon">&#xe640;</i>
           </a>
           <a href="{%url 'admin:permission_admin' i.id %}" class="layui-btn layui-btn-primary layui-btn-xs">
             <i class="layui-icon">&#xe672;</i>
@@ -55,6 +55,8 @@
       function (d) {
         if (d.code == 0) {
           $('#id_' + id).empty();
+        }else{
+          alert(d.msg);
         }
       }
     )

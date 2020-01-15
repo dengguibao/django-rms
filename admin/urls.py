@@ -4,6 +4,12 @@ from . import views
 app_name = 'admin'
 urlpatterns = [
     path(
+        'index',
+        views.index,
+        name='admin_index'
+    ),
+
+    path(
         '',
         views.index,
         name='admin_index'
@@ -17,7 +23,7 @@ urlpatterns = [
 
     path(
         'edit/<str:form_name>/<int:nid>/',
-        views.render_view,
+        views.render_edit_view,
         name='edit'
     ),
 
@@ -46,7 +52,7 @@ urlpatterns = [
 
     path(
         'get-user-list/',
-        views.get_user_list,
+        views.get_user_list_view,
         name="get_user_list"
     ),
 
@@ -60,5 +66,17 @@ urlpatterns = [
         'permission-control/<str:method>/<str:permiss>/<int:nid>',
         views.permission_control,
         name="permission_control"
+    ),
+
+    path(
+        'user-logout',
+        views.user_logout,
+        name="user_logout"
+    ),
+
+    path(
+        'change-password',
+        views.user_change_password,
+        name="change_password"
     ),
 ]

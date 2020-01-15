@@ -20,7 +20,7 @@ a:hover{text-decoration: underline} */
 #leftContainer .sub_menu_item a:hover{color: red;}
 #rightContainer{
 	text-align: left;
-	overflow: hidden;
+	overflow: auto;
 	height: 90%;
 	margin: 0;
 	margin-left: 274px;

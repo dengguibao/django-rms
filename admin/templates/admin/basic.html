@@ -50,15 +50,16 @@
         <div class="nav_pri_menu">
           <a href="javascript:void(0);" title="menu" class="pri_menu">系统管理</a>
           <div class="sub_menu_item" style="display: none">
-            <li><a href="#" title="add primary menu">系统设置</a></li>
+            <!-- <li><a href="#" title="add primary menu">系统设置</a></li> -->
             <li><a href="{%url 'admin:get_user_list'%}" title="add primary menu">用户管理</a></li>
+            <li><a href="{%url 'admin:render_temp' 'user_change_password'%}" title="add primary menu">修改密码</a></li>
           </div>
         </div>
 
         <div class="nav_pri_menu">
           <a href="javascript:void(0);" title="menu" class="pri_menu">状态</a>
           <div class="sub_menu_item" style="display: none;">
-            <li><a href="#" title="logout">退出</a></li>
+            <li><a href="{% url 'admin:user_logout' %}" title="logout">退出</a></li>
           </div>
         </div>
 

@@ -1,0 +1,115 @@
+<html>
+
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <title>login</title>
+  {% load static %}
+  <script src="/static/admin/js/jquery-1.4.3.min.js"></script>
+
+  <!--load layui-->
+  <script src="/static/layui.js"></script>
+  <link href="/static/css/layui.css" rel="stylesheet" />
+  <style type="text/css">
+    #container {
+      width: 500px;
+      height: 250px;
+      border: 3px solid #ddd;
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      margin: auto;
+      padding: 10px;
+    }
+  </style>
+</head>
+
+<body>
+<div style="padding-top: 20%;">
+  <div id="container">
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+      <legend>登陆</legend>
+    </fieldset>
+
+    <form class="layui-form">
+    {% csrf_token %}
+      <div class="layui-form-item">
+        <label class="layui-form-label">用户名</label>
+        <div class="layui-input-block" style="padding-right: 60px;">
+          <input type="text" name="username" lay-verify="username" autocomplete="off" lay-reqtext="用户名是必填项，岂能为空？"
+            placeholder="请输入用户名" class="layui-input">
+        </div>
+      </div>
+
+      <div class="layui-form-item">
+        <label class="layui-form-label">密&emsp;码</label>
+        <div class="layui-input-block" style="padding-right: 60px;">
+          <input type="password" name="password" lay-verify="required" lay-reqtext="密码是必填项，岂能为空？" placeholder="请输入密码"
+            autocomplete="off" class="layui-input">
+        </div>
+      </div>
+
+      <div class="layui-form-item">
+        <div class="layui-input-block">
+          <button type="button" class="layui-btn" lay-submit="" lay-filter="login">立即提交</button>
+          <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+      </div>
+    </form>
+
+  </div>
+</div>
+  <script>
+    layui.use(['form'], function () {
+      var form = layui.form
+        , layer = layui.layer;
+
+      //监听提交
+      form.on('submit(login)', function (data) {
+        // layer.alert(JSON.stringify(data.field), {
+        //   title: '最终的提交信息'
+        // })
+        $.ajax({
+            url:"/login",
+            type:'post',
+            data:data.field,
+            success:function(d){
+                layer.msg(d.msg)
+                if (d.code == 0){
+                    setTimeout(function(){
+                        window.location.href = d.jump
+                    },1000);
+                }
+            },
+            error:function(){
+                layer.msg(d.Status);
+            }
+        });
+        return false;
+      });
+
+      form.verify({
+        username: function (value, item) {
+          //value：表单的值、item：表单的DOM对象
+          if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)) {
+            return '用户名不能有特殊字符';
+          }
+          if (/(^\_)|(\__)|(\_+$)/.test(value)) {
+            return '用户名首尾不能出现下划线\'_\'';
+          }
+          if (/^\d+\d+\d$/.test(value)) {
+            return '用户名不能全为数字';
+          }
+        }
+        , pass: [
+          /^[\S]{6,12}$/
+          , '密码必须6到12位，且不能出现空格'
+        ]
+      });
+
+    });
+  </script>
+</body>
+
+</html>

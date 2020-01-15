@@ -52,8 +52,9 @@
 </div>
 <script>
   layui.use('element', function () {
-    var $ = layui.jquery
-      , element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+    var $ = layui.jquery,
+      element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+
     refresh_table("/admin/get-hosts-list/type/host/flag/cs");
 
     element.on('tab(tab_cluster)', function (data) {
@@ -99,6 +100,8 @@
         function (d) {
           if (d.code == 0) {
             $('#id_' + id).empty();
+          }else{
+            alert(d.msg)
           }
         }
       )

@@ -1,4 +1,4 @@
-"""dms URL Configuration
+"""home URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.0/topics/http/urls/
@@ -15,9 +15,11 @@ Including another URLconf
 """
 # from django.contrib import admin
 from django.urls import path, include
+from . import views
 
 urlpatterns = [
-    # path('admin/', admin.site.urls),
+    path('', views.index),
+    path('index', views.index),
+    path('login', views.user_login),
     path('admin/', include('admin.urls')),
-    # path('login/',include('login.urls')),
 ]
