@@ -146,7 +146,7 @@
                         jump: function (obj, first) {
                             //首次不执行
                             if (!first) {
-                                refresh_vms_table("/admin/get-hosts-list/type/vm/flag/all/?page=" + obj.curr)
+                                select_refresh_vms_table("/admin/get-hosts-list/type/vm/flag/all/?page=" + obj.curr)
                             }
                         }
                     });
