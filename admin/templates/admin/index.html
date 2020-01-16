@@ -16,7 +16,7 @@
                 </select>
             </div>
             <div class="layui-inline">
-                <div class="layui-input-inline" style="width: 500;">
+                <div class="layui-input-inline" style="width: 300;">
                     <input type="text" name="keyword" placeholder="请输入主机名或者ip" lay-verify="required" class="layui-input">
                 </div>
                 <button type="button" class="layui-btn" lay-submit="" lay-filter="demo1">查找</button>
@@ -25,20 +25,7 @@
     </div>
 </form>
 <div class="layui-row">
-    <table class="layui-table" lay-size="sm" style="display: none;" id="vm_table">
-        <colgroup>
-            <col width="60">
-            <col width="250">
-            <col width="130">
-            <col width="90">
-            <col width="90">
-            <col width="60">
-            <col width="50">
-            <col width="60">
-            <col width="250">
-            <col width="90">
-            <col width="100">
-        </colgroup>
+    <table class="layui-table" style="display: none;" id="vm_table">
         <thead>
             <tr>
                 <th>序号</th>
@@ -59,20 +46,7 @@
     </table>
     <div id="page"></div>
 
-    <table class="layui-table" lay-size="sm" style="display: none;" id="host_table">
-        <colgroup>
-            <col width="60">
-            <col width="200">
-            <col width="180">
-            <col width="130">
-            <col width="130">
-            <col width="150">
-            <col width="150">
-            <col width="100">
-            <col width="100">
-            <col width="100">
-            <col>
-        </colgroup>
+    <table class="layui-table" style="display: none;" id="host_table">
         <thead>
             <tr>
                 <th>序号</th>
@@ -198,7 +172,7 @@
                             "<td>" + item.memory + "</td>" +
                             "<td>" + item.disk + "</td>" +
                             "<td>" + item.os + "</td>" +
-                            "<td>" + item.pub_date + "</td>" +
+                            "<td>" + item.pub_date.substring(0, 10) + "</td>" +
                             "</tr>";
                         tbody.append(tbody_content);
                     })

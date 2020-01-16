@@ -370,7 +370,7 @@ def permissin_admin_view(request, nid):
 
 
 @login_required(login_url='/index')
-def permission_control(request, method, permiss, nid):
+def permission_control_view(request, method, permiss, nid):
     '''
     user permissoin controller,add and remove user permisson for someone
     '''
@@ -382,25 +382,50 @@ def permission_control(request, method, permiss, nid):
         return JsonResponse(return_data)
 
     if request.user.has_perm('auth.add_user') and request.user.has_perm('auth.change_user'):
-        user = User.objects.get(id=nid)
-        if user:
-            user_permiss = Permission.objects.get(codename=permiss)
-            if method == 'add':
-                res = user.user_permissions.add(user_permiss)
-            elif method == 'remove':
-                res = user.user_permissions.remove(user_permiss)
+        # user = User.objects.get(id=nid)
+        # if user:
+        #     user_permiss = Permission.objects.get(codename=permiss)
+        #     if method == 'add':
+        #         res = user.user_permissions.add(user_permiss)
+        #     elif method == 'remove':
+        #         res = user.user_permissions.remove(user_permiss)
 
-        if not res:
-            return_data['code'] = 0
-            return_data['msg'] = 'ok'
-            return JsonResponse(return_data)
-        else:
-            return JsonResponse(return_data)
+        # if not res:
+        #     return_data['code'] = 0
+        #     return_data['msg'] = 'ok'
+        #     return JsonResponse(return_data)
+        # else:
+        #     return JsonResponse(return_data)
+        data = perms_controll(method, permiss, nid)
+        print(data)
+        return JsonResponse(data)
     else:
         return JsonResponse({
             'code':1,
             'msg':'permission error'
         })
+
+
+def perms_controll(method, perm, nid):
+    return_data = {}
+    user = User.objects.get(id=nid)
+    print(user)
+    if user:
+        user_permiss = Permission.objects.get(codename=perm)
+        if method == 'add':
+            res = user.user_permissions.add(user_permiss)
+        elif method == 'remove':
+            res = user.user_permissions.remove(user_permiss)
+        print(res)
+        if res is None:
+            return_data['code'] = 0
+            return_data['msg'] = 'ok'
+            return return_data
+    else:
+        return {
+            'code':1,
+            'msg': 'not found user'
+        }
 
 
 def permission_explain(permiss):

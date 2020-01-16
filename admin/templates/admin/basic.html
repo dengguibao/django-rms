@@ -41,17 +41,17 @@
         </div>
 
         <!--Message area-->
-        <div class="nav_pri_menu">
+        <!-- <div class="nav_pri_menu">
           <a href="javascript:void(0);" title="message" class="pri_menu">配置管理</a>
           <div class="sub_menu_item">
             <li><a href="#" title="Add category">网络设备</a></li>
           </div>
-        </div>
+        </div> -->
 
         <!--menu area-->
         <div class="nav_pri_menu">
           <a href="javascript:void(0);" title="menu" class="pri_menu">系统管理</a>
-          <div class="sub_menu_item" style="display: none">
+          <div class="sub_menu_item">
             <!-- <li><a href="#" title="add primary menu">系统设置</a></li> -->
             {% if perms.auth.view_user %}
             <li><a href="{%url 'admin:get_user_list'%}" title="add primary menu">用户管理</a></li>

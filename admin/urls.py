@@ -64,7 +64,7 @@ urlpatterns = [
 
     path(
         'permission-control/<str:method>/<str:permiss>/<int:nid>',
-        views.permission_control,
+        views.permission_control_view,
         name="permission_control"
     ),
 

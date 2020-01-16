@@ -19,14 +19,14 @@
         <col width="60">
         <col width="150">
         <col width="250">
-        <col width="130">
-        <col width="130">
-        <col width="150">
-        <col width="150">
-        <col width="60">
-        <col width="60">
+        <col width="110">
+        <col width="110">
+        <col width="90">
         <col width="100">
-        <col width="200">
+        <col width="60">
+        <col width="60">
+        <col width="90">
+        <col width="100">
         <col>
       </colgroup>
       <thead>
@@ -83,7 +83,7 @@
               "<td>" + item.memory + "</td>" +
               "<td>" + item.disk + "</td>" +
               "<td>" + item.os + "</td>" +
-              "<td>" + item.pub_date + "</td>" +
+              "<td>" + item.pub_date.substring(0, 10) + "</td>" +
               "<td><a href='/admin/edit/host/" + item.id + "/' class='layui-btn layui-btn-primary layui-btn-xs'><i class='layui-icon'></i></a>" +
               "<a href='javascript:;' onclick='javascript:row_del(" + item.id + ")' class='layui-btn layui-btn-primary layui-btn-xs'><i class='layui-icon'></i></a></td></tr>";
             tbody.append(tbody_content);
