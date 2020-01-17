@@ -1,0 +1,185 @@
+{% extends "basic.html" %}
+
+{% block mainbody %}
+
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+    <legend>设备搜索</legend>
+</fieldset>
+<form class="layui-form" action="">
+    <div class="layui-row">
+        <div class="layui-form-item" style="text-align: center;">
+            <div class="layui-inline" style="width: 100px;">
+                <select name="search_opt" lay-filter="search_opt" lay-verify="required">
+                    <option value="">请选择</option>
+                    <option value="vm">虚拟机</option>
+                    <option value="host">物理机</option>
+                </select>
+            </div>
+            <div class="layui-inline">
+                <div class="layui-input-inline" style="width: 300;">
+                    <input type="text" name="keyword" placeholder="请输入主机名或者ip" lay-verify="required" class="layui-input">
+                </div>
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="demo1">查找</button>
+            </div>
+        </div>
+    </div>
+</form>
+<div class="layui-row">
+    <table class="layui-table" style="display: none;" id="vm_table">
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>主机名</th>
+                <th>IP</th>
+                <th>Vlan tag</th>
+                <th>Vlan id</th>
+                <th>硬盘</th>
+                <th>CPU</th>
+                <th>内存</th>
+                <th>宿主机</th>
+                <th>操作系统</th>
+                <th>加入时间</th>
+            </tr>
+        </thead>
+        <tbody id="vm_tbody">
+        </tbody>
+    </table>
+    <div id="page"></div>
+
+    <table class="layui-table" style="display: none;" id="host_table">
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>型号</th>
+                <th>主机名</th>
+                <th>iDRC IP</th>
+                <th>主机 IP</th>
+                <th>SN</th>
+                <th>CPU</th>
+                <th>内存</th>
+                <th>硬盘</th>
+                <th>操作系统</th>
+                <th>加入时间</th>
+            </tr>
+        </thead>
+        <tbody id="host_tbody">
+        </tbody>
+    </table>
+</div>
+<script>
+    layui.use(['form','laypage'], function () {
+        var form = layui.form
+            , layer = layui.layer
+            , laypage = layui.laypage;
+
+        //监听提交
+        form.on('submit(demo1)', function (data) {
+            // layer.alert(JSON.stringify(data.field), {
+            //     title: '最终的提交信息'
+            // })
+            var keyword=data.field.keyword
+            var dev_type=data.field.search_opt
+            if (dev_type == 'vm') {
+                $('#' + dev_type + '_table').show()
+                $('#host_table').hide()
+                $('#page').hide()
+                select_refresh_vms_table('/admin/search/vm/'+keyword)
+            }
+            if (dev_type == 'host') {
+                $('#' + dev_type + '_table').show()
+                $('#vm_table').hide()
+                $('#page').hide()
+                select_refresh_host_table('/admin/search/host/'+keyword)
+            }
+        });
+
+        form.on('select(search_opt)', function (data) {
+            var dev_type = data.value;
+            if (dev_type == 'vm') {
+                $('#' + dev_type + '_table').show()
+                $('#host_table').hide()
+                $('#page').show()
+                select_refresh_vms_table('/admin/get-hosts-list/type/vm/flag/all')
+            }
+            if (dev_type == 'host') {
+                $('#' + dev_type + '_table').show()
+                $('#vm_table').hide()
+                $('#page').hide()
+                select_refresh_host_table('/admin/get-hosts-list/type/host/flag/all')
+            }
+        })
+
+        function select_refresh_vms_table(url) {
+            var page_size, rs_count, curr_page;
+            $.getJSON(
+                url,
+                function (result) {
+                    var tbody = $('#vm_tbody');
+                    tbody.empty();
+                    page_size = result.page_data.page_size
+                    rs_count = result.page_data.rs_count
+                    curr_page = result.page_data.curr_page
+                    $.each(result.data, function (i, item) {
+                        var tbody_content = "<tr id='id_" + item.id + "'>" +
+                            "<td>" + (i + 1) + "</td>" +
+                            "<td>" + item.vm_hostname.substring(0, 30) + "</td>" +
+                            "<td>" + item.vm_ip + "</td>" +
+                            "<td>" + item.vlan_tag + "</td>" +
+                            "<td>" + item.vlan_id + "</td>" +
+                            "<td>" + item.vm_disk + "</td>" +
+                            "<td>" + item.vm_cpu + "</td>" +
+                            "<td>" + item.vm_memory + "</td>" +
+                            "<td>" + item.esxi_host_name + "</td>" +
+                            "<td>" + item.vm_os + "</td>" +
+                            "<td>" + item.pub_date.substring(0, 10) + "</td>" +
+                            "</tr>";
+                        tbody.append(tbody_content);
+                    })
+
+                    $('#page').empty()
+                    // 渲染分页
+                    laypage.render({
+                        elem: 'page', // page container
+                        limit: page_size, // page size
+                        count: rs_count, // record total
+                        curr: curr_page, // current page
+                        jump: function (obj, first) {
+                            //首次不执行
+                            if (!first) {
+                                select_refresh_vms_table("/admin/get-hosts-list/type/vm/flag/all/?page=" + obj.curr)
+                            }
+                        }
+                    });
+                }
+            )
+        }
+
+        function select_refresh_host_table(url) {
+            $.getJSON(
+                url,
+                function (result) {
+                    var tbody = $('#host_tbody');
+                    tbody.empty();
+                    $.each(result.data, function (i, item) {
+                        var tbody_content = "<tr id='id_" + item.id + "'>" +
+                            "<td>" + (i + 1) + "</td>" + 
+                            "<td>" + item.dev_model + "</td>" +
+                            "<td>" + item.hostname + "</td>" +
+                            "<td>" + item.idrc_ip + "</td>" +
+                            "<td>" + item.host_ip + "</td>" +
+                            "<td>" + item.sn + "</td>" +
+                            "<td>" + item.cpu + "</td>" +
+                            "<td>" + item.memory + "</td>" +
+                            "<td>" + item.disk + "</td>" +
+                            "<td>" + item.os + "</td>" +
+                            "<td>" + item.pub_date.substring(0, 10) + "</td>" +
+                            "</tr>";
+                        tbody.append(tbody_content);
+                    })
+                }
+            )
+        }
+
+    });
+</script>
+{% endblock %}

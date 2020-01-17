@@ -1,0 +1,169 @@
+{% extends "basic.html" %}
+温馨提醒：
+{% block mainbody %}
+
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+    <legend>服务器</legend>
+</fieldset>
+
+<form class="layui-form" action="">
+    {% csrf_token %}
+    <input type="hidden" name="id" value="{%if host_obj.id %}{{ host_obj.id }}{% else %}0{% endif %}"/>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">主机名</label>
+            <div class="layui-input-inline" style="width: 400px;">
+                <input type="text" maxlength="80" name="hostname" value="{{ host_obj.hostname }}" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">序列号</label>
+            <div class="layui-input-inline" style="width: 300px;">
+                <input type="text" maxlength="50" name="sn" value="{{ host_obj.sn }}" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">iDRC管理ip</label>
+            <div class="layui-input-inline">
+                <input type="text" name="idrc_ip" maxlength="15" value="{{ host_obj.idrc_ip }}" lay-verify="required|ip" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">主机ip</label>
+            <div class="layui-input-inline">
+                <input type="text" name="host_ip" maxlength="15" value="{{ host_obj.host_ip }}" lay-verify="required|ip" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">所属集群</label>
+            <div class="layui-input-inline" style="width: 100px;">
+                <select name="cluster_tag" lay-verify="required">
+                    <option value="">请选择</option>
+                    <option {% ifequal host_obj.cluster_tag 'cs' %}selected=""{% endifequal %} value="cs">长沙</option>
+                    <option {% ifequal host_obj.cluster_tag 'xh' %}selected=""{% endifequal %} value="xh">新化</option>
+                    <option {% ifequal host_obj.cluster_tag 'test' %}selected=""{% endifequal %} value="test">开发测试</option>
+                    <option {% ifequal host_obj.cluster_tag 'none' %}selected=""{% endifequal %} value="none">祼机</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+          <label class="layui-form-label">CPU</label>
+          <div class="layui-input-inline" style="width: 150px;">
+            <input type="text" name="cpu" value="{{ host_obj.cpu }}" maxlength="30" lay-verify="required" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+          <label class="layui-form-label">内存</label>
+          <div class="layui-input-inline" style="width: 150px;">
+            <input type="text" name="memory" maxlength="30" value="{{ host_obj.memory }}" lay-verify="required" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+          <label class="layui-form-label">硬盘</label>
+          <div class="layui-input-inline" style="width: 150px;">
+            <input type="text" name="disk" maxlength="30" value="{{ host_obj.disk }}" lay-verify="required" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+          <label class="layui-form-label">设备型号</label>
+          <div class="layui-input-inline" style="width: 300px;">
+            <input type="text" name="dev_model" maxlength="50" value="{{ host_obj.dev_model }}" lay-verify="required" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+          <label class="layui-form-label">操作系统</label>
+          <div class="layui-input-inline" style="width: 100px;">
+            <select name="os" lay-verify="required">
+                <option {% ifequal host_obj.os 'CentOS' %}selected=""{% endifequal %} value="CentOS">CentOS</option{% ifequal vm_obj.vm_os 'CentOS' %}selected=""{% endifequal %}>
+                <option {% ifequal host_obj.os 'Ubuntu' %}selected=""{% endifequal %} value="Ubuntu">Ubuntu</option>
+                <option {% ifequal host_obj.os 'Windows' %}selected=""{% endifequal %} value="Windows">Windows</option>
+                <option {% ifequal host_obj.os 'ESXi' %}selected=""{% endifequal %} value="ESXi">ESXi</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-block">
+          <textarea placeholder="请输入内容" class="layui-textarea" name="desc">{{ host_obj.desc }}</textarea>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+<script>
+    layui.use(['form', 'layedit', 'laydate'], function(){
+      var form = layui.form
+      ,layer = layui.layer;
+
+      //监听提交
+      form.on('submit(demo1)', function(data){
+        // layer.alert(JSON.stringify(data.field), {
+        //   title: '最终的提交信息'
+        // })
+        $.ajax({
+            url:"{% url 'admin:create-or-update' 'host' %}",
+            type:'post',
+            data:data.field,
+            success:function(d){
+                layer.msg(d.msg);
+                if (d.code == 0){
+                    setTimeout(function(){
+                        window.location.href=document.referrer;
+                    },1000);
+                }
+            },
+            error:function(){
+                layer.msg(d.Status)
+            }
+        });
+        return false;
+      });
+
+      form.verify({
+            ip: function (value, item) {
+                function isValidIP(ip) {
+                    var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
+                    return reg.test(ip);
+                }
+                if (isValidIP(value) == false) {
+                    return '请输入正确的IP地址';
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,130 @@
+{% extends "basic.html" %}
+
+{% block mainbody %}
+
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+    <legend>用户</legend>
+</fieldset>
+
+<form class="layui-form" action="">
+    {% csrf_token %}
+    <input type="hidden" name="id" value="{% if data.id%}{{data.id}}{%else%}0{% endif %}" />
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">用户名</label>
+            <div class="layui-input-inline">
+                <input type="text" maxlength="20" value="{{data.username}}" name="username" lay-verify="required|username" autocomplete="off"
+                    class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">密码</label>
+            <div class="layui-input-inline">
+                <input type="password" maxlength="50" name="password" lay-verify="required|pwd" autocomplete="off"
+                    class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">姓名</label>
+            <div class="layui-input-inline">
+                <input type="text" name="first_name" value="{{data.first_name}}" maxlength="15" lay-verify="required|username" autocomplete="off"
+                    class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">邮箱</label>
+            <div class="layui-input-inline" style="width: 300px;">
+                <input type="text" maxlength="80" value="{{data.email}}" name="email" lay-verify="required|email" autocomplete="off"
+                    class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <!-- <div class="layui-form-item">
+        <label class="layui-form-label">类型</label>
+        <div class="layui-input-block">
+            <input type="radio" name="is_staff" value="1" {% ifequal data.is_staff True%}checked{%endifequal%} title="管理员">
+            <input type="radio" name="is_staff" value="0" {% ifequal data.is_staff False%}checked{%endifequal%} title="用户">
+        </div>
+    </div> -->
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="is_active" value="1" {% ifequal data.is_active True %}checked{%endifequal%} lay-skin="switch" lay-text="ON|OFF">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+<style>
+    .layui-form-checkbox span {
+    height: auto;
+    }
+</style>
+<script>
+    layui.use(['form'], function () {
+        var form = layui.form
+            , layer = layui.layer;
+
+        //监听提交
+        form.on('submit(demo1)', function (data) {
+            // layer.alert(JSON.stringify(data.field), {
+            //     title: '最终的提交信息'
+            // })
+            $.ajax({
+                url:"{% url 'admin:create-or-update' 'user' %}",
+                type:'post',
+                data:data.field,
+                success:function(d){
+                    layer.msg(d.msg)
+                    if (d.code == 0){
+                        setTimeout(function(){
+                            window.location.href = document.referrer
+                        },1000);
+                    }
+                },
+                error:function(){
+                    layer.msg(d.Status);
+                }
+            });
+            return false;
+        });
+
+        form.verify({
+            username: function (value, item) { 
+                //value：表单的值、item：表单的DOM对象
+                if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)) {
+                    return '用户名不能有特殊字符';
+                }
+                if (/(^\_)|(\__)|(\_+$)/.test(value)) {
+                    return '用户名首尾不能出现下划线\'_\'';
+                }
+                if (/^\d+\d+\d$/.test(value)) {
+                    return '用户名不能全为数字';
+                }
+            }
+            , pwd: [
+                /^[\S]{6,12}$/
+                , '密码必须6到12位，且不能出现空格'
+            ]
+        });
+
+    });
+</script>
+{% endblock %}

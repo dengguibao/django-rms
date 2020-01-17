@@ -1,0 +1,114 @@
+{%extends 'basic.html'%}
+{%block mainbody%}
+<style>
+    .lb {
+        padding-right: 10px;
+        color: #666;
+    }
+
+    .ol li {
+        height: 35px;
+    }
+
+    .ul li{
+        color: #333;
+        cursor: pointer;
+        height: 30px;
+        line-height: 30px;
+        border-bottom:1px dashed #ddd
+    }
+    
+</style>
+<div style="padding: 20px; background-color: #F2F2F2;">
+    <input type="hidden" id="user_id" value="{{user.id}}" />
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">用户信息</div>
+                <div class="layui-card-body">
+                    <ol class="ol">
+                        <li><label class="lb">用户名：</label>{{user.username}}</li>
+                        <li><label class="lb">姓名：</label>{{user.first_name}}</li>
+                        <li><label class="lb">邮箱：</label>{{user.email}}</li>
+                        <li><label class="lb">状态：</label>{%ifequal user.is_active True%}启用{%else%}禁用{%endifequal%}</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-col-md6">
+            <div class="layui-card">
+                <div class="layui-card-header">用户已有权限</div>
+                <div class="layui-card-body">
+                    <ul id="user_permiss_list" class="ul">
+                        {%for i in user_permiss_list%}
+                        <li tag="{{i.codename}}">{{i.permiss_explain}}</li>
+                        {%endfor%}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md6">
+            <div class="layui-card">
+                <div class="layui-card-header">权限列表</div>
+                <div class="layui-card-body">
+                    <ul id="all_permiss_list" class="ul">
+                        {%for i in all_permiss_list%}
+                        <li tag="{{i.codename}}">{{i.permission_explain}}</li>
+                        {%endfor%}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function init() {
+        $("#all_permiss_list li").bind('click', function () {
+            var tag = $(this).attr('tag');
+            var permiss_explain = $(this).text();
+            var id = $('#user_id').val()
+
+            user_permiss_tag_array = new Array();
+            $("#user_permiss_list li").each(function (i, e) {
+                user_permiss_tag_array.push($(this).attr('tag'))
+            })
+
+            if (user_permiss_tag_array.indexOf(tag) < 0) {
+                $.getJSON(
+                    '/admin/permission-control/add/' + tag + '/' + id,
+                    function (d) {
+                        if (d.code == 0) {
+                            $("#user_permiss_list").append(
+                                "<li tag='" + tag + "'>" + permiss_explain + "</li>"
+                            );
+                            refresh_user_peromiss_list_event();
+                        }
+                    }
+                )
+            }
+        });
+    }
+
+    function refresh_user_peromiss_list_event() {
+        var id = $('#user_id').val()
+
+        $("#user_permiss_list li").bind('click', function () {
+            var tag = $(this).attr('tag');
+            var x=$(this);
+            $.getJSON(
+                '/admin/permission-control/remove/' + tag + '/' + id,
+                function (d) {
+                    if (d.code == 0) {
+                        x.remove();
+                    }
+                }
+            )
+        })
+    }
+
+    init()
+    refresh_user_peromiss_list_event()
+
+</script>
+{%endblock%}
