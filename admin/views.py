@@ -232,9 +232,9 @@ def get_hosts_list(request, dev_type, flag):
         if flag not in ['cs', 'xh', 'test', 'none', 'all']:
             return JsonResponse(return_data)
         if flag == 'all':
-            rs = HostInfo.objects.all()
+            rs = HostInfo.objects.order_by('hostname').all()
         else:
-            rs = HostInfo.objects.filter(cluster_tag=flag)
+            rs = HostInfo.objects.filter(cluster_tag=flag).order_by('hostname')
         return_data['data'] = [i for i in rs.values()]
         return_data['code'] = 0
         return_data['msg'] = 'ok'
