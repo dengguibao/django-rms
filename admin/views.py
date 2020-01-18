@@ -16,7 +16,7 @@ def index(request):
     '''
     admin module default page
     '''
-    return render(request, 'index.html')
+    return render(request, 'admin/index.html')
 
 
 @login_required(login_url='/index')
@@ -24,7 +24,7 @@ def render_static_temp_view(request, temp_name):
     '''
     render static template
     '''
-    return render(request, '%s.html' % (temp_name))
+    return render(request, 'admin/%s.html' % (temp_name))
 
 
 @login_required(login_url='/index')
@@ -35,7 +35,7 @@ def render_edit_view(request, form_name, nid):
     if form_name not in ['vm', 'host', 'user']:
         return HttpResponse('object not found')
 
-    temp_name = 'add_or_edit_%s.html' % (form_name)
+    temp_name = 'admin/add_or_edit_%s.html' % (form_name)
     if form_name == 'vm' and request.user.has_perm('admin.change_vminfo'):
         vm_obj = VmInfo.objects.get(id=nid)
         host_obj = HostInfo.objects.get(id=vm_obj.host_id)
@@ -55,7 +55,7 @@ def render_edit_view(request, form_name, nid):
             'data': User.objects.get(id=nid)
         }
     else:
-        temp_name = 'error.html'
+        temp_name = 'admin/error.html'
         context = {}
 
     return render(
@@ -199,12 +199,12 @@ def get_user_list_view(request):
     '''
     if request.user.has_perm('auth.view_user'):
         user_list = User.objects.all()
-        temp_name = 'list_users.html'
+        temp_name = 'admin/list_users.html'
         context = {
             'obj': user_list
         }
     else:
-        temp_name = 'error.html'
+        temp_name = 'admin/error.html'
         context = {}
 
     return render(
@@ -358,10 +358,10 @@ def permissin_admin_view(request, nid):
             'user_permiss_list': data,
             'all_permiss_list': all_permiss_list
         }
-        temp_name = 'permission_admin.html'
+        temp_name = 'admin/permission_admin.html'
     else:
         context = {}
-        temp_name = 'error.html'
+        temp_name = 'admin/error.html'
     return render(
         request,
         temp_name,

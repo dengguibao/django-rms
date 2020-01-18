@@ -10,7 +10,6 @@ def index(request):
     '''
     return render(request, 'home/index.html')
 
-
 def user_login(request):
     '''
     user login
