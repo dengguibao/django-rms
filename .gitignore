@@ -1,0 +1,4 @@
+/admin/__pycache__/
+/home/__pycache__/
+/admin/migrations/
+*.pid

@@ -11,7 +11,7 @@ from django.contrib.auth.hashers import make_password
 from .models import VmInfo, HostInfo
 
 
-@login_required(login_url='/index')
+@login_required()
 def index(request):
     '''
     admin module default page
@@ -19,7 +19,7 @@ def index(request):
     return render(request, 'admin/index.html')
 
 
-@login_required(login_url='/index')
+@login_required()
 def render_static_temp_view(request, temp_name):
     '''
     render static template
@@ -27,7 +27,7 @@ def render_static_temp_view(request, temp_name):
     return render(request, 'admin/%s.html' % (temp_name))
 
 
-@login_required(login_url='/index')
+@login_required()
 def render_edit_view(request, form_name, nid):
     '''
     render edit view by form name and primary key
@@ -65,7 +65,7 @@ def render_edit_view(request, form_name, nid):
     )
 
 
-@login_required(login_url='/index')
+@login_required()
 def delete(request, form_name, nid):
     '''
     delete some resource by form namd and primary key
@@ -91,7 +91,7 @@ def delete(request, form_name, nid):
     return JsonResponse(return_data)
 
 
-@login_required(login_url='/index')
+@login_required()
 def create_or_update(request, form_type):
     '''
     add and update form post event
@@ -151,7 +151,7 @@ def create_or_update(request, form_type):
 
     return JsonResponse(return_data)
 
-@login_required(login_url='/index')
+@login_required()
 def user_logout(request):
     '''
     user logout
@@ -160,7 +160,7 @@ def user_logout(request):
     return HttpResponseRedirect('/index')
 
 
-@login_required(login_url='/index')
+@login_required()
 def user_change_password(request):
     '''
     change user login password
@@ -192,7 +192,7 @@ def user_change_password(request):
         })
 
 
-@login_required(login_url='/index')
+@login_required()
 def get_user_list_view(request):
     '''
     user account admin view
@@ -214,7 +214,6 @@ def get_user_list_view(request):
     )
 
 
-@login_required(login_url='/index')
 def get_hosts_list(request, dev_type, flag):
     '''
     get all host and virtual machine resource
@@ -228,7 +227,7 @@ def get_hosts_list(request, dev_type, flag):
     if dev_type not in ['host', 'vm'] or len(flag) <= 0:
         return JsonResponse(return_data)
 
-    if dev_type == 'host' and request.user.has_perm('admin.view_hostinfo'):
+    if dev_type == 'host':
         if flag not in ['cs', 'xh', 'test', 'none', 'all']:
             return JsonResponse(return_data)
         if flag == 'all':
@@ -239,7 +238,7 @@ def get_hosts_list(request, dev_type, flag):
         return_data['code'] = 0
         return_data['msg'] = 'ok'
     # get virtual machine info
-    elif dev_type == 'vm' and request.user.has_perm('admin.view_vminfo'):
+    elif dev_type == 'vm':
         if '_all' in flag:
             x = flag.split('_')
             if x[0] not in ['cs', 'xh', 'test']:
@@ -278,7 +277,7 @@ def get_hosts_list(request, dev_type, flag):
     return JsonResponse(return_data)
 
 
-@login_required(login_url='/index')
+@login_required()
 def search(request, dev_type, keyword):
     '''
     accroding keyword search host or virtual machine
@@ -334,7 +333,7 @@ def search(request, dev_type, keyword):
     return JsonResponse(return_data)
 
 
-@login_required(login_url='/index')
+@login_required()
 def permissin_admin_view(request, nid):
     '''
     user permissoin admin for someone user
@@ -369,7 +368,7 @@ def permissin_admin_view(request, nid):
     )
 
 
-@login_required(login_url='/index')
+@login_required()
 def permission_control_view(request, method, permiss, nid):
     '''
     user permissoin controller,add and remove user permisson for someone

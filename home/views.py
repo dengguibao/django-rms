@@ -4,11 +4,16 @@ from django.http import JsonResponse
 
 
 
-def index(request):
+def index_view(request):
     '''
     default index page
     '''
     return render(request, 'home/index.html')
+
+
+def login_view(request):
+    return render(request, 'home/login.html')
+
 
 def user_login(request):
     '''
