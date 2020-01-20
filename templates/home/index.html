@@ -13,6 +13,7 @@
 <body>
     <p id="login_bar" style="text-align: right;height: 300px;padding: 10px;"><a href="{% url 'login'%}" title="login">登陆</a></p>
     <form class="layui-form" action="">
+        <p style="text-align: center;height:80px;"><img src="/static/public/images/logo.png"/></p>
         <div class="layui-row">
             <div class="layui-form-item" style="text-align: center;">
                 <div class="layui-inline" style="width: 100px;">
@@ -27,13 +28,15 @@
                         <input type="text" name="keyword" placeholder="请输入主机名或者ip" lay-verify="required"
                             class="layui-input">
                     </div>
-                    <button type="button" class="layui-btn" lay-submit="" lay-filter="demo1">查找</button>
+                    <button type="button" class="layui-btn" lay-submit="" lay-filter="demo1">
+                        <i class="layui-icon layui-icon-search" style="font-size: 14px; color: #fff;"></i>查找
+                    </button>
                 </div>
             </div>
         </div>
     </form>
     <div class="layui-row">
-        <table class="layui-table" style="display: none;" id="vm_table">
+        <table class="layui-table" style="display: none;" id="vm_table" lay-size="sm">
             <thead>
                 <tr>
                     <th>序号</th>
@@ -54,7 +57,7 @@
         </table>
         <div id="page"></div>
 
-        <table class="layui-table" style="display: none;" id="host_table">
+        <table class="layui-table" style="display: none;" id="host_table" lay-size="sm">
             <thead>
                 <tr>
                     <th>序号</th>
