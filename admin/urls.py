@@ -5,13 +5,13 @@ app_name = 'admin'
 urlpatterns = [
     path(
         'index',
-        views.index,
+        views.index_view,
         name='admin_index'
     ),
 
     path(
         '',
-        views.index,
+        views.index_view,
         name='admin_index'
     ),
 

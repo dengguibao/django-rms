@@ -12,26 +12,44 @@ from .models import VmInfo, HostInfo
 
 
 @login_required()
-def index(request):
-    '''
-    admin module default page
-    '''
+def index_view(request):
+    """admin module default page,and this is search page too
+    
+    Arguments:
+        request {object} -- wsgi http request object
+    
+    Returns:
+        html -- html template
+    """
     return render(request, 'admin/index.html')
 
 
 @login_required()
 def render_static_temp_view(request, temp_name):
-    '''
-    render static template
-    '''
+    """accroding parameter render static html template
+    
+    Arguments:
+        request {object} -- wsgi http request object
+        temp_name {str} -- template name
+    
+    Returns:
+        html -- html template
+    """
     return render(request, 'admin/%s.html' % (temp_name))
 
 
 @login_required()
 def render_edit_view(request, form_name, nid):
-    '''
-    render edit view by form name and primary key
-    '''
+    """accrodding resource primary key,render edit view
+    
+    Arguments:
+        request {object} -- wsgi http request object
+        form_name {str} -- resources type name
+        nid {int} -- resources id
+    
+    Returns:
+        html -- html template
+    """
     if form_name not in ['vm', 'host', 'user']:
         return HttpResponse('object not found')
 
@@ -67,9 +85,16 @@ def render_edit_view(request, form_name, nid):
 
 @login_required()
 def delete(request, form_name, nid):
-    '''
-    delete some resource by form namd and primary key
-    '''
+    """delete some resources by form name and primary key
+    
+    Arguments:
+        request {object} -- wsgi http request object
+        form_name {str} -- according this judge resource type,just contains vm host user
+        nid {int} -- resource model id
+    
+    Returns:
+        json -- json object
+    """
     return_data = {
         'code': 1,
         'msg': 'illegal request'
@@ -93,9 +118,15 @@ def delete(request, form_name, nid):
 
 @login_required()
 def create_or_update(request, form_type):
-    '''
-    add and update form post event
-    '''
+    """user post form event
+    
+    Arguments:
+        request {object} -- wsgi http request object
+        form_type {str} -- form type,just contains vm host user
+    
+    Returns:
+        json -- json object
+    """
     return_data = {
         'code': 1,
         'msg': 'fail'
@@ -115,7 +146,7 @@ def create_or_update(request, form_type):
     else:
         act = 'update'
         perm_act = 'change_'
-    # define model and permisson object
+    # define model and permission object
     if form_type == 'host':
         model = HostInfo
         perm_app = 'admin.'
@@ -151,20 +182,31 @@ def create_or_update(request, form_type):
 
     return JsonResponse(return_data)
 
+
 @login_required()
 def user_logout(request):
-    '''
-    user logout
-    '''
+    """user logout and remove session
+    
+    Arguments:
+        request {object} -- wsgi http request object
+    
+    Returns:
+        none -- django remove all session
+    """
     logout(request)
     return HttpResponseRedirect('/index')
 
 
 @login_required()
 def user_change_password(request):
-    '''
-    change user login password
-    '''
+    """current user change login password
+    
+    Arguments:
+        request {object} -- wsgi http request object
+    
+    Returns:
+        json -- json object
+    """
     user = request.user
     if request.method != 'POST':
         return JsonResponse({
@@ -194,9 +236,14 @@ def user_change_password(request):
 
 @login_required()
 def get_user_list_view(request):
-    '''
-    user account admin view
-    '''
+    """render user admin view
+    
+    Arguments:
+        request {object} -- wsgi http request object
+    
+    Returns:
+        html -- render html template
+    """
     if request.user.has_perm('auth.view_user'):
         user_list = User.objects.all()
         temp_name = 'admin/list_users.html'
@@ -215,9 +262,16 @@ def get_user_list_view(request):
 
 
 def get_hosts_list(request, dev_type, flag):
-    '''
-    get all host and virtual machine resource
-    '''
+    """get all host and virtual machine resource
+    
+    Arguments:
+        request {object} -- wsgi http request object
+        dev_type {str} -- device type
+        flag {str} -- param
+    
+    Returns:
+        json -- specific type json object
+    """
     page_size = settings.PAGE_SIZE
     return_data = {
         'code': 1,
@@ -234,7 +288,8 @@ def get_hosts_list(request, dev_type, flag):
             rs = HostInfo.objects.order_by('hostname').all()
         else:
             rs = HostInfo.objects.filter(cluster_tag=flag).order_by('hostname')
-        return_data['data'] = [i for i in rs.values()]
+        rs_data_set=[i for i in rs.values()]
+        return_data['data'] = rs_data_set
         return_data['code'] = 0
         return_data['msg'] = 'ok'
     # get virtual machine info
@@ -279,9 +334,16 @@ def get_hosts_list(request, dev_type, flag):
 
 @login_required()
 def search(request, dev_type, keyword):
-    '''
-    accroding keyword search host or virtual machine
-    '''
+    """ accroding keyword search host or virtual machine
+    
+    Arguments:
+        request {object} -- wsgi http request object
+        dev_type {str} -- deivce type just contain vm or hosts
+        keyword {str} -- search keyword
+    
+    Returns:
+        json -- json object
+    """
     if dev_type not in ['vm', 'host'] or len(keyword) == 0:
         return JsonResponse({
             'code': 1,
@@ -335,9 +397,15 @@ def search(request, dev_type, keyword):
 
 @login_required()
 def permissin_admin_view(request, nid):
-    '''
-    user permissoin admin for someone user
-    '''
+    """user permissoin admin for someone user
+    
+    Arguments:
+        request {object} -- wsgi http request object
+        nid {int} -- user model id field
+    
+    Returns:
+        html -- html template
+    """
     if request.user.has_perm('auth.add_user') and request.user.has_perm('auth.change_user'):
         user = User.objects.get(id=nid)
         user_permission_list = user.get_all_permissions()
@@ -370,9 +438,17 @@ def permissin_admin_view(request, nid):
 
 @login_required()
 def permission_control_view(request, method, permiss, nid):
-    '''
-    user permissoin controller,add and remove user permisson for someone
-    '''
+    """ user permissoin controller,add and remove user permisson for someone
+    
+    Arguments:
+        request {object} -- wsgi http request object
+        method {str} -- permission action description just add or remove
+        permiss {str} -- permission
+        nid {int} -- user id
+    
+    Returns:
+        [type] -- [description]
+    """
     return_data = {
         'code': 1,
         'msg': 'illegal request'
@@ -381,56 +457,55 @@ def permission_control_view(request, method, permiss, nid):
         return JsonResponse(return_data)
 
     if request.user.has_perm('auth.add_user') and request.user.has_perm('auth.change_user'):
-        # user = User.objects.get(id=nid)
-        # if user:
-        #     user_permiss = Permission.objects.get(codename=permiss)
-        #     if method == 'add':
-        #         res = user.user_permissions.add(user_permiss)
-        #     elif method == 'remove':
-        #         res = user.user_permissions.remove(user_permiss)
-
-        # if not res:
-        #     return_data['code'] = 0
-        #     return_data['msg'] = 'ok'
-        #     return JsonResponse(return_data)
-        # else:
-        #     return JsonResponse(return_data)
         data = perms_controll(method, permiss, nid)
-        print(data)
         return JsonResponse(data)
-    else:
-        return JsonResponse({
-            'code':1,
-            'msg':'permission error'
-        })
+
+    return JsonResponse({
+        'code': 1,
+        'msg': 'permission error'
+    })
 
 
 def perms_controll(method, perm, nid):
-    return_data = {}
+    """permission controller
+    
+    Arguments:
+        method {str} -- permission action descripton just add or remove
+        perm {str} -- permission
+        nid {id} -- user id
+    
+    Returns:
+        json -- json object
+    """
+    return_data = {
+        'code': 1,
+        'msg': 'not found user'
+    }
     user = User.objects.get(id=nid)
-    print(user)
     if user:
         user_permiss = Permission.objects.get(codename=perm)
         if method == 'add':
             res = user.user_permissions.add(user_permiss)
         elif method == 'remove':
             res = user.user_permissions.remove(user_permiss)
-        print(res)
+
         if res is None:
             return_data['code'] = 0
-            return_data['msg'] = 'ok'
-            return return_data
-    else:
-        return {
-            'code':1,
-            'msg': 'not found user'
-        }
+            return_data['msg'] = 'ok'          
+    return return_data
+
+
 
 
 def permission_explain(permiss):
-    '''
-    permission chinese explain
-    '''
+    """permission chinese explain
+    
+    Arguments:
+        permiss {str} -- permission description
+    
+    Returns:
+        str -- permission chinese explain
+    """
     if not permiss:
         return None
 

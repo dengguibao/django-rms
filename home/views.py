@@ -5,20 +5,35 @@ from django.http import JsonResponse
 
 
 def index_view(request):
-    '''
-    default index page
-    '''
+    """default page
+    
+    Returns:
+        html -- html template
+    """
     return render(request, 'home/index.html')
 
 
 def login_view(request):
+    """user login view
+    
+    Arguments:
+        request {object} -- wsgi http request object
+    
+    Returns:
+        html -- html template
+    """
     return render(request, 'home/login.html')
 
 
 def user_login(request):
-    '''
-    user login
-    '''
+    """login form post event
+    
+    Arguments:
+        request {object} -- wsgi http request object
+    
+    Returns:
+        json -- json object
+    """
     if request.method != 'POST':
         return JsonResponse(
             {
