@@ -12,9 +12,9 @@
     <div class="layui-form-item">
         <div class="layui-inline">
             <label class="layui-form-label">主机名</label>
-            <div class="layui-input-inline">
-                <input type="text" size="50" name="vm_hostname" value="{{ vm_obj.vm_hostname}}" lay-verify="required"
-                    autocomplete="off" 　class="layui-input" />
+            <div class="layui-input-inline" style="width: 300px;">
+                <input type="text" maxlength="50" name="vm_hostname" value="{{ vm_obj.vm_hostname}}" lay-verify="required"
+                    autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -22,9 +22,9 @@
     <div class="layui-form-item">
         <div class="layui-inline">
             <label class="layui-form-label">管理ip</label>
-            <div class="layui-input-inline">
-                <input type="text" name="vm_ip" value="{{ vm_obj.vm_ip}}" maxlength="15" lay-verify="required|ip"
-                    autocomplete="off" 　class="layui-input" />
+            <div class="layui-input-inline" style="width: 150px;">
+                <input type="text" maxlength="15" name="vm_ip" value="{{ vm_obj.vm_ip}}" lay-verify="required|ip"
+                    autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
