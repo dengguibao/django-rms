@@ -21,33 +21,43 @@
 
     <div class="layui-form-item">
         <div class="layui-inline">
-            <label class="layui-form-label">管理ip</label>
-            <div class="layui-input-inline" style="width: 150px;">
-                <input type="text" maxlength="15" name="vm_ip" value="{{ vm_obj.vm_ip}}" lay-verify="required|ip"
+            <label class="layui-form-label">申请人</label>
+            <div class="layui-input-inline">
+                <input type="text" maxlength="10" name="vm_register" value="{{ vm_obj.vm_register}}" lay-verify="required"
                     autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
 
-
     <div class="layui-form-item">
         <div class="layui-inline">
-            <label class="layui-form-label">vlan tag</label>
+            <label class="layui-form-label">用途</label>
+            <div class="layui-input-inline" style="width:500px">
+                <input type="text" maxlength="100" name="vm_intention" value="{{ vm_obj.vm_intention}}" lay-verify="required"
+                    autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+<fieldset class="layui-elem-field layui-field-title">
+    <legend>硬件配置</legend>
+</fieldset>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">vlan标签</label>
             <div class="layui-input-inline" style="width: 100px;">
                 <input type="text" name="vlan_tag" maxlength="50" value="{{ vm_obj.vlan_tag}}" lay-verify="required"
                     autocomplete="off" class="layui-input">
             </div>
         </div>
-    </div>
-    <div class="layui-form-item">
         <div class="layui-inline">
-            <label class="layui-form-label">vlan id</label>
-            <div class="layui-input-inline" style="width: 50px;">
+            <label class="layui-form-label">vlan ID</label>
+            <div class="layui-input-inline" style="width: 100px;">
                 <input type="text" name="vlan_id" maxlength="4" value="{{ vm_obj.vlan_id}}" lay-verify="required|number"
                     autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
+
     <div class="layui-form-item">
         <div class="layui-inline">
             <label class="layui-form-label">所属集群</label>
@@ -61,11 +71,10 @@
                 </select>
             </div>
         </div>
-    </div>
-    <div class="layui-form-item">
+
         <div class="layui-inline">
             <label class="layui-form-label">所属主机</label>
-            <div class="layui-input-inline" style="width: 260px;">
+            <div class="layui-input-inline" style="width: 200px;">
                 <select id="host_id" name="host_id" lay-verify="required">
                     {% for i in esxi_list %}
                     <option {% ifequal vm_obj.host_id i.id %}selected="" {% endifequal %} value="{{ i.id }}">{{ i.hostname }}</option>
@@ -83,8 +92,6 @@
                     autocomplete="off" class="layui-input">
             </div>
         </div>
-    </div>
-    <div class="layui-form-item">
         <div class="layui-inline">
             <label class="layui-form-label">内存</label>
             <div class="layui-input-inline" style="width: 100px;">
@@ -92,9 +99,6 @@
                     autocomplete="off" class="layui-input">
             </div>
         </div>
-    </div>
-
-    <div class="layui-form-item">
         <div class="layui-inline">
             <label class="layui-form-label">硬盘</label>
             <div class="layui-input-inline" style="width: 100px;">
@@ -103,7 +107,9 @@
             </div>
         </div>
     </div>
-
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+    <legend>系统配置</legend>
+</fieldset>
     <div class="layui-form-item">
         <div class="layui-inline">
             <label class="layui-form-label">操作系统</label>
@@ -117,6 +123,21 @@
                     </option>
                 </select>
             </div>
+        </div>
+
+        <div class="layui-inline">
+            <label class="layui-form-label">管理IP</label>
+            <div class="layui-input-inline" style="width: 334px;">
+                <input type="text" maxlength="15" name="vm_ip" value="{{ vm_obj.vm_ip}}" lay-verify="required|ip"
+                    autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">Zabbix监控</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="vm_monitor" {% ifequal vm_obj.vm_monitor 'on' %} checked="" {% endifequal %} lay-skin="switch" lay-filter="vm_monitor" lay-text="ON|OFF">
         </div>
     </div>
 

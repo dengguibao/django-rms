@@ -288,7 +288,7 @@ def get_hosts_list(request, dev_type, flag):
             rs = HostInfo.objects.order_by('hostname').all()
         else:
             rs = HostInfo.objects.filter(cluster_tag=flag).order_by('hostname')
-        rs_data_set=[i for i in rs.values()]
+        rs_data_set = [i for i in rs.values()]
         return_data['data'] = rs_data_set
         return_data['code'] = 0
         return_data['msg'] = 'ok'
@@ -332,7 +332,7 @@ def get_hosts_list(request, dev_type, flag):
     return JsonResponse(return_data)
 
 
-@login_required()
+# @login_required()
 def search(request, dev_type, keyword):
     """ accroding keyword search host or virtual machine
     
@@ -491,7 +491,7 @@ def perms_controll(method, perm, nid):
 
         if res is None:
             return_data['code'] = 0
-            return_data['msg'] = 'ok'          
+            return_data['msg'] = 'ok'
     return return_data
 
 
