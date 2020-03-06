@@ -1,5 +1,7 @@
 {% extends "admin/basic.html" %}
-
+{% block notice%}
+虚拟机管理
+{% endblock %}
 {% block mainbody %}
 <style type="text/css">
 .layui-btn-xs{
@@ -8,7 +10,7 @@
     padding:0 2px;
 }
 </style>
-<fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
+<fieldset class="layui-elem-field layui-field-title">
     <legend>虚拟机管理</legend>
 </fieldset>
 
@@ -115,14 +117,20 @@
                         return index;
                     }}
                     ,{field: 'id', title: 'id', width:250, hide:true}
-                    ,{field: 'vm_hostname',fixed: 'left', title: '主机名', width:250}
+                    ,{field: 'vm_hostname',fixed: 'left', title: '主机名', width:220}
                     ,{field: 'vm_ip', fixed: 'left', title: 'IP', width:120}
                     ,{field: 'vlan_id', title: 'VLAN ID', width:100}
                     ,{field: 'vm_cpu', title: 'CPU', width: 80, sort: true}
                     ,{field: 'vm_memory', title: '内存', width: 80}
                     ,{field: 'vm_disk', title: '硬盘', width: 80}
                     ,{field: 'vm_register', title: '申请人', width: 90}
-                    ,{field: 'vm_monitor', title: '监控', width: 60}
+                    ,{field: 'vm_monitor', title: '监控', width: 60, templet:function(d){
+                        if (d.vm_monitor == 'on'){
+                            return '<i class="layui-icon" style="color:green">&#xe665;</i>'
+                        }else{
+                            return ''
+                        }
+                    }}
                     ,{field: 'esxi_host_name', title: '宿主机', width: 200}
                     ,{field: 'vm_os', title: '操作系统', width: 80}
                     ,{field: 'pub_date', title: '添加时间', width: 100, templet: function(item){return item.pub_date.substring(0, 10)}}
@@ -169,21 +177,6 @@
             flag = s
             tab_act = ''
             refresh_vms_table("/admin/get-hosts-list/type/vm/flag/" + flag + tab_act)
-        }
-
-        // ajax delete
-        window.row_del = function (id) {
-            var url = "/admin/delete/vm/" + id;
-            $.getJSON(
-                url,
-                function (d) {
-                    if (d.code == 0) {
-                        $('#id_' + id).empty();
-                    }else{
-                        alert(msg.id);
-                    }
-                }
-            )
         }
     });
 </script>

@@ -21,7 +21,7 @@ def index_view(request):
     Returns:
         html -- html template
     """
-    return render(request, 'admin/index.html')
+    return render(request, 'admin/index.html', {'user_url_path': '管理'})
 
 
 @login_required()
@@ -35,7 +35,13 @@ def render_static_temp_view(request, temp_name):
     Returns:
         html -- html template
     """
-    return render(request, 'admin/%s.html' % (temp_name))
+    if 'list_' in temp_name:
+        context = {'user_url_path': '管理'}
+    elif 'change_password' in temp_name:
+        context = {'user_url_path': '用户'}
+    else:
+        context = {'user_url_path': '添加'}
+    return render(request, 'admin/%s.html' % (temp_name), context)
 
 
 @login_required()
@@ -59,6 +65,7 @@ def render_edit_view(request, form_name, nid):
         host_obj = HostInfo.objects.get(id=vm_obj.host_id)
         esxi_list = HostInfo.objects.filter(cluster_tag=host_obj.cluster_tag)
         context = {
+            'user_url_path': '编辑',
             'vm_obj': vm_obj,
             'cluster_tag': host_obj.cluster_tag,
             'esxi_list': esxi_list
@@ -66,10 +73,12 @@ def render_edit_view(request, form_name, nid):
     elif form_name == 'host' and request.user.has_perm('admin.change_hostinfo'):
         host_obj = HostInfo.objects.get(id=nid)
         context = {
+            'user_url_path': '编辑',
             'host_obj': host_obj,
         }
     elif form_name == 'user' and request.user.has_perm('auth.change_user'):
         context = {
+            'user_url_path': '编辑',
             'data': User.objects.get(id=nid)
         }
     else:
@@ -79,7 +88,7 @@ def render_edit_view(request, form_name, nid):
     return render(
         request,
         temp_name,
-        context=context
+        context=context,
     )
 
 
@@ -248,6 +257,7 @@ def get_user_list_view(request):
         user_list = User.objects.all()
         temp_name = 'admin/list_users.html'
         context = {
+            'user_url_path': '用户',
             'obj': user_list
         }
     else:
@@ -421,6 +431,7 @@ def permissin_admin_view(request, nid):
         for i in all_permiss_list:
             i['permission_explain'] = permission_explain(i['codename'])
         context = {
+            'user_url_path': '用户',
             'user': user,
             'user_permiss_list': data,
             'all_permiss_list': all_permiss_list

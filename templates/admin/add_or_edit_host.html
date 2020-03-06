@@ -1,9 +1,11 @@
 {% extends "admin/basic.html" %}
-温馨提醒：
+{% block notice%}
+服务器
+{% endblock %}
 {% block mainbody %}
 
-<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-    <legend>服务器</legend>
+<fieldset class="layui-elem-field layui-field-title">
+    <legend>系统信息</legend>
 </fieldset>
 
 <form class="layui-form" action="">
@@ -20,10 +22,15 @@
 
     <div class="layui-form-item">
         <div class="layui-inline">
-            <label class="layui-form-label">序列号</label>
-            <div class="layui-input-inline" style="width: 300px;">
-                <input type="text" maxlength="50" name="sn" value="{{ host_obj.sn }}" lay-verify="required" autocomplete="off" class="layui-input">
-            </div>
+          <label class="layui-form-label">操作系统</label>
+          <div class="layui-input-inline" style="width: 100px;">
+            <select name="os" lay-verify="required">
+                <option {% ifequal host_obj.os 'CentOS' %}selected=""{% endifequal %} value="CentOS">CentOS</option{% ifequal vm_obj.vm_os 'CentOS' %}selected=""{% endifequal %}>
+                <option {% ifequal host_obj.os 'Ubuntu' %}selected=""{% endifequal %} value="Ubuntu">Ubuntu</option>
+                <option {% ifequal host_obj.os 'Windows' %}selected=""{% endifequal %} value="Windows">Windows</option>
+                <option {% ifequal host_obj.os 'ESXi' %}selected=""{% endifequal %} value="ESXi">ESXi</option>
+            </select>
+          </div>
         </div>
     </div>
 
@@ -60,27 +67,27 @@
         </div>
     </div>
 
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>硬件配置</legend>
+    </fieldset>
     <div class="layui-form-item">
         <div class="layui-inline">
           <label class="layui-form-label">CPU</label>
-          <div class="layui-input-inline" style="width: 150px;">
+          <div class="layui-input-inline" style="width: 100px;">
             <input type="text" name="cpu" value="{{ host_obj.cpu }}" maxlength="30" lay-verify="required" autocomplete="off" class="layui-input">
           </div>
         </div>
-    </div>
-    <div class="layui-form-item">
+
         <div class="layui-inline">
           <label class="layui-form-label">内存</label>
-          <div class="layui-input-inline" style="width: 150px;">
+          <div class="layui-input-inline" style="width: 100px;">
             <input type="text" name="memory" maxlength="30" value="{{ host_obj.memory }}" lay-verify="required" autocomplete="off" class="layui-input">
           </div>
         </div>
-    </div>
 
-    <div class="layui-form-item">
         <div class="layui-inline">
           <label class="layui-form-label">硬盘</label>
-          <div class="layui-input-inline" style="width: 150px;">
+          <div class="layui-input-inline" style="width: 100px;">
             <input type="text" name="disk" maxlength="30" value="{{ host_obj.disk }}" lay-verify="required" autocomplete="off" class="layui-input">
           </div>
         </div>
@@ -89,25 +96,18 @@
     <div class="layui-form-item">
         <div class="layui-inline">
           <label class="layui-form-label">设备型号</label>
-          <div class="layui-input-inline" style="width: 300px;">
+          <div class="layui-input-inline">
             <input type="text" name="dev_model" maxlength="50" value="{{ host_obj.dev_model }}" lay-verify="required" autocomplete="off" class="layui-input">
           </div>
         </div>
-    </div>
 
-    <div class="layui-form-item">
         <div class="layui-inline">
-          <label class="layui-form-label">操作系统</label>
-          <div class="layui-input-inline" style="width: 100px;">
-            <select name="os" lay-verify="required">
-                <option {% ifequal host_obj.os 'CentOS' %}selected=""{% endifequal %} value="CentOS">CentOS</option{% ifequal vm_obj.vm_os 'CentOS' %}selected=""{% endifequal %}>
-                <option {% ifequal host_obj.os 'Ubuntu' %}selected=""{% endifequal %} value="Ubuntu">Ubuntu</option>
-                <option {% ifequal host_obj.os 'Windows' %}selected=""{% endifequal %} value="Windows">Windows</option>
-                <option {% ifequal host_obj.os 'ESXi' %}selected=""{% endifequal %} value="ESXi">ESXi</option>
-            </select>
-          </div>
+            <label class="layui-form-label">序列号</label>
+            <div class="layui-input-inline" style="width: 250px;">
+                <input type="text" maxlength="50" name="sn" value="{{ host_obj.sn }}" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
         </div>
-      </div>
+    </div>
 
     <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">备注</label>
