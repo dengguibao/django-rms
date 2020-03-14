@@ -115,7 +115,7 @@ def create_folder(request):
     res=FileInfo.objects.create(**{
         'name':folder_name,
         'type':0,
-        'owner':request.user.id,
+        'owner':User.objects.get(id=request.user.id),
         'path':p_path
     })
     if res:
