@@ -8,6 +8,19 @@
   <!--load layui-->
   <script src="/static/public/layui.js"></script>
   <link href="/static/public/css/layui.css" rel="stylesheet" />
+  <style type="text/css">
+  #resize{
+    position: absolute;
+    left: 200;
+    top: 0;
+    bottom: 0;
+    width:10px;
+    height:10px;
+    margin:auto;
+    color:#ccc;
+    z-index:9999
+  }
+  </style>
 
 </head>
 
@@ -31,11 +44,13 @@
 
         <!--new article area-->
         <div class="nav_pri_menu">
-          <a href="javascript:void(0);" title="menu" class="pri_menu">设备管理</a>
+          <a href="javascript:void(0);" title="menu" class="pri_menu">管理</a>
           <div class="sub_menu_item">
+
             <li><a href="{% url 'admin:render_temp' 'list_hosts' %}"  title="list hosts">服务器</a></li>
             <li><a href="{% url 'admin:render_temp' 'list_vms' %}"  title="list vms">虚拟机</a></li>
-            <li><a href="{% url 'admin:admin_index' %}"  title="list vms">搜索</a></li>
+            <li><a href="{% url 'admin:admin_index' %}"  title="list vms">查找</a></li>
+            <li><a href="{%url 'admin:render_temp' 'list_doc'%}" title="document manage">文档</a></li>
           </div>
         </div>
 
@@ -49,7 +64,7 @@
 
         <!--menu area-->
         <div class="nav_pri_menu">
-          <a href="javascript:void(0);" title="menu" class="pri_menu">系统管理</a>
+          <a href="javascript:void(0);" title="menu" class="pri_menu">用户</a>
           <div class="sub_menu_item">
             <!-- <li><a href="#" title="add primary menu">系统设置</a></li> -->
             {% if perms.auth.view_user %}
@@ -68,6 +83,9 @@
 
       </div>
     </div>
+    <div id="resize">
+      <i id="btn_resize" class="layui-icon layui-icon-left"></i>
+    </div>
     <script type="application/x-javascript">
       pri_menu=$('.pri_menu').each(function(){
         $(this).click(function(){
@@ -75,11 +93,31 @@
           $(this).next().slideToggle('fast');	
         });
       });
+      $('#resize').click(function(){
+        resize_box=$('#resize');
+        leftBar=$('#leftContainer');
+        right_content=$('#rightContainer');
+        btn_resize=$('#btn_resize');
+        leftBar.toggle()
+        if (leftBar.is(':visible')){
+          btn_resize.addClass("layui-icon-left")
+          btn_resize.removeClass("layui-icon-right")
+          right_content.css("margin-left","214px");
+          resize_box.css("left","200px")
+        }else{
+          btn_resize.addClass("layui-icon-right")
+          btn_resize.removeClass("layui-icon-left")
+          right_content.css("margin-left","14px");
+          resize_box.css("left","0px")
+        }
+      })
     </script>
 
     <div id="rightContainer">
-      <blockquote class="layui-elem-quote layui-text">
-        温馨提醒：删除物理机，会同时删除该机器下的所有虚拟机哦^-^
+      <blockquote class="layui-elem-quote layui-text" style＝"font-weight:bold">
+      管理首页 > {{user_url_path}} >
+        {% block notice %}
+        {% endblock %}
     </blockquote>
       {% block mainbody %}
       {% endblock %}

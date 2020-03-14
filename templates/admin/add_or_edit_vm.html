@@ -1,9 +1,11 @@
 {% extends "admin/basic.html" %}
-
+{% block notice%}
+虚拟机
+{% endblock %}
 {% block mainbody %}
 
-<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-    <legend>虚拟主机</legend>
+<fieldset class="layui-elem-field layui-field-title">
+    <legend>基本信息</legend>
 </fieldset>
 
 <form class="layui-form" action="">
@@ -107,7 +109,7 @@
             </div>
         </div>
     </div>
-<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+<fieldset class="layui-elem-field layui-field-title">
     <legend>系统配置</legend>
 </fieldset>
     <div class="layui-form-item">
@@ -137,7 +139,8 @@
     <div class="layui-form-item">
         <label class="layui-form-label">Zabbix监控</label>
         <div class="layui-input-block">
-            <input type="checkbox" name="vm_monitor" {% ifequal vm_obj.vm_monitor 'on' %} checked="" {% endifequal %} lay-skin="switch" lay-filter="vm_monitor" lay-text="ON|OFF">
+            <input type="checkbox" {% ifequal vm_obj.vm_monitor 'on' %} checked="" {% endifequal %} lay-skin="switch" lay-filter="vm_monitor" lay-text="ON|OFF">
+            <input type="hidden" id="vm_monitor" name="vm_monitor">
         </div>
     </div>
 
@@ -196,6 +199,14 @@
                     form.render('select');
                 })
         });
+
+        form.on('switch(vm_monitor)',function(d){
+            if(d.elem.checked){
+                $('#vm_monitor').val('on')
+            }else{
+                $('#vm_monitor').val('off')
+            }            
+        })
 
         form.verify({
             ip: function (value, item) {

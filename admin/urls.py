@@ -1,82 +1,90 @@
 from django.urls import path
-from . import views
+from . import global_views, user_views, server_views, perm_views, file_view
 
 app_name = 'admin'
 urlpatterns = [
     path(
         'index',
-        views.index_view,
+        global_views.index_view,
         name='admin_index'
     ),
 
     path(
         '',
-        views.index_view,
+        global_views.index_view,
         name='admin_index'
     ),
 
     path(
         'render/<str:temp_name>/',
-        views.render_static_temp_view,
+        global_views.render_static_temp_view,
         name='render_temp'
     ),
 
     path(
         'edit/<str:form_name>/<int:nid>/',
-        views.render_edit_view,
+        global_views.render_edit_view,
         name='edit'
     ),
 
     path(
         'search/<str:dev_type>/<str:keyword>/',
-        views.search,
+        server_views.search,
         name='search'
     ),
 
     path(
         'delete/<str:form_name>/<int:nid>/',
-        views.delete,
+        global_views.delete,
         name='delete'
     ),
 
     path('create-or-update/<str:form_type>/',
-         views.create_or_update,
+         global_views.create_or_update,
          name='create-or-update'
          ),
 
     path(
         'get-hosts-list/type/<str:dev_type>/flag/<str:flag>/',
-        views.get_hosts_list,
+        server_views.get_hosts_list,
         name='get_hosts_list'
     ),
 
     path(
         'get-user-list/',
-        views.get_user_list_view,
+        user_views.get_user_list_view,
         name="get_user_list"
     ),
 
     path(
         'permission-admin/<int:nid>',
-        views.permissin_admin_view,
+        perm_views.permissin_admin_view,
         name="permission_admin"
     ),
 
     path(
         'permission-control/<str:method>/<str:permiss>/<int:nid>',
-        views.permission_control_view,
+        perm_views.permission_control_view,
         name="permission_control"
     ),
 
     path(
         'user-logout',
-        views.user_logout,
+        user_views.user_logout,
         name="user_logout"
     ),
 
     path(
         'change-password',
-        views.user_change_password,
+        user_views.user_change_password,
         name="change_password"
     ),
+
+    path('upload-file', file_view.upload_file, name='upload_file'),
+    path('get-filelist/<str:t>', file_view.get_user_filelist),
+    path('file-delete/<int:i>', file_view.file_delete),
+    path('create-folder', file_view.create_folder),
+    path('file-download/<int:id>', file_view.file_download)
+    
+
 ]
