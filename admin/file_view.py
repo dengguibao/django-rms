@@ -173,7 +173,7 @@ def file_download(request, id):
         return render(request, 'admin/error.html')
     else:
         try:
-            file = open('/'.join([res.real_path,res.real_name]), 'rb')
+            file = open('/'.join([res.real_path, res.real_name]), 'rb')
             response = FileResponse(file)
             response['Content-Type'] = 'application/octet-stream'
             response['Content-Disposition'] = 'attachment;filename="{}"'.format(res.name.encode('utf-8').decode('ISO-8859-1'))

@@ -84,7 +84,7 @@ urlpatterns = [
     path('get-filelist/<str:t>', file_view.get_user_filelist),
     path('file-delete/<int:i>', file_view.file_delete),
     path('create-folder', file_view.create_folder),
-    path('file-download/<int:id>', file_view.file_download)
+    path('media/<int:id>', file_view.file_download)
     
 
 ]

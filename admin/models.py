@@ -5,6 +5,7 @@ class FileInfo(models.Model):
     path = models.CharField(max_length=200, null=False) #路径
     type = models.IntegerField(null=False) #类型 0文件夹 1文件
     name = models.CharField(max_length=100, null=False) #名称
+    #file_size =  models.IntegerField(null=True, default=0) #文件大小
     real_path = models.CharField(max_length=200, null=True) #真实路径
     real_name = models.CharField(max_length=100, null=True) #真实文件名
     file_type = models.CharField(max_length=5, null=True) #文件类型
