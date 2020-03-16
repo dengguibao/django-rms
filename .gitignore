@@ -1,4 +1,8 @@
-/admin/__pycache__/
-/home/__pycache__/
-/admin/migrations/
+admin/__pycache__/
+home/__pycache__/
+admin/migrations/__pycache__/
+uploads/
+.venv/
+.vscode/
+*.pyc
 *.pid
