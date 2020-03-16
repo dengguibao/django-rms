@@ -20,19 +20,20 @@
     <thead>
       <colgroup>
         <col>
+        <col width="150">
         <col width="250">
-        <col width="200">
-        <col>
       </colgroup>
       <tr style="background:#eee">
         <th>名称</th>
+        <th>文件大小</th>
         <th>上传时间</th>
       </tr>
     </thead>
       <tbody id="default">
       <tr>
-      <td><a class="folder">..</a></td>
-      <td></td>
+        <td><a class="folder">..</a></td>
+        <td></td>
+        <td></td>
       </tr>
       </tbody>
       <tbody id="folder_list"></tbody>
@@ -49,6 +50,7 @@
   .layui-icon-file{margin:0 5px}
   .folder{margin-left:10px;font-weight:bolder;cursor:pointer}
   .upload_progress_box{margin:20px 10px}
+  td{border-bottom:1px solid #ddd}
 </style>
 <!-- upload progress bar -->
 <div style="display:none" id="upload_percent_box">
@@ -89,7 +91,13 @@ layui.use(['upload', 'element', 'layer', 'mouseRightMenu'], function(){
         element.progress('upload_percent', '0%');
         layer.msg('上传成功');
         container=$('#file_list')
-        append_str = '<tr id="tr'+res.data.id+'"><td><a class="mr" tag="'+res.data.id+'" target="_blank" href="/admin/media/'+res.data.id+'"><i class="layui-icon layui-icon-file"></i>'+res.data.name+'</a></td><td>'+res.data.pub_date+'</td></tr>'
+        append_str = '<tr id="tr'+res.data.id+'">'+
+        '<td>'+
+          '<a class="mr" tag="'+res.data.id+'" target="_blank" href="/admin/media/'+res.data.id+'">'+
+          '<i class="layui-icon layui-icon-file"></i>'+res.data.name+'</a>'+
+        '</td>'+
+        '<td>'+res.data.file_size+'</td>'+
+        '<td>'+res.data.pub_date+'</td></tr>'
         container.append(append_str)
         refresh_right_click_menu()
       }
@@ -128,7 +136,7 @@ layui.use(['upload', 'element', 'layer', 'mouseRightMenu'], function(){
           },
           success:function(d){
             if(d.code==0){
-              $('#folder_list').append('<tr id="tr'+d.data.id+'"><td><a tag="'+d.data.id+'" class="folder mr">'+d.data.name+'</a></td><td></tr>')
+              $('#folder_list').append('<tr id="tr'+d.data.id+'"><td><a tag="'+d.data.id+'" class="folder mr">'+d.data.name+'</a></td><td></td><td></tr>')
               refresh_folder_click_event();
               refresh_right_click_menu();
             }else{
@@ -184,9 +192,9 @@ layui.use(['upload', 'element', 'layer', 'mouseRightMenu'], function(){
   function refresh_right_click_menu(){
     //右键监听
  		$('.mr').bind("contextmenu",function(e){
-			var data = {id:$(this).attr('tag')}
+			var data = {id:$(this).attr('tag'),class:$(this).attr('class')}
  			var menu_data=[
-				//{'data':data,'type':1,'title':'重命名'},
+				{'data':data,'type':1,'title':'下载'},
 				{'data':data,'type':2,'title':'删除'}			
 			]
  			mouseRightMenu.open(menu_data,false,function(d){
@@ -204,6 +212,14 @@ layui.use(['upload', 'element', 'layer', 'mouseRightMenu'], function(){
            )
           //关闭菜单
          }
+        //下载操作
+        if (d.type == 1){
+          if(d.data.class.indexOf('folder') != -1){
+            return
+          }else{
+            window.open('/admin/media/'+d.data.id+'?d=1')
+          }          
+        }
  			})
 			return false;
 		});
@@ -226,7 +242,12 @@ layui.use(['upload', 'element', 'layer', 'mouseRightMenu'], function(){
         $('#file_list').empty();
         if (d.code == 0){
           $.each(d.data,function(i,field){
-            append_str = '<tr id="tr'+field.id+'"><td><a tag="'+field.id+'" class="mr" target="_blank" href="/admin/media/'+field.id+'"><i class="layui-icon layui-icon-file"></i>'+field.name+'</a></td><td>'+field.pub_date+'</td></tr>'
+            append_str = '<tr id="tr'+field.id+'">'+
+            '<td>'+
+            '<a tag="'+field.id+'" class="mr" target="_blank" href="/admin/media/'+field.id+'"><i class="layui-icon layui-icon-file"></i>'+field.name+'</a>'+
+            '</td>'+
+            '<td>'+field.file_size+'</td>'+
+            '<td>'+field.pub_date+'</td></tr>'
             $('#file_list').append(append_str)
           })
         }
@@ -248,7 +269,7 @@ layui.use(['upload', 'element', 'layer', 'mouseRightMenu'], function(){
         $('#folder_list').empty();
         if (d.code == 0){
           $.each(d.data,function(i,field){
-            append_str = '<tr id="tr'+field.id+'"><td><a tag="'+field.id+'" class="mr folder">'+field.name+'</a></td><td></td></tr>'
+            append_str = '<tr id="tr'+field.id+'"><td><a tag="'+field.id+'" class="mr folder">'+field.name+'</a></td><td></td><td></td></tr>'
             $('#folder_list').append(append_str);
           })
         }

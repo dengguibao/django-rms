@@ -1,0 +1,24 @@
+<html>
+<head>
+<title>{{filename}}</title>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="/static/public/css/layui.css" />
+<style type="text/css">
+a{display:none}
+</style>
+</head>
+<body>
+<div>
+    <pre class="layui-code">{{content}}</pre>
+</div>
+<script src="/static/public/layui.js" charset="utf-8"></script>
+<script type="text/javascript">
+    layui.use('code', function(){
+        layui.code({
+            title:'{{filename}}'
+            ,encode: true
+        });
+    });
+</script>
+</body>
+</html>

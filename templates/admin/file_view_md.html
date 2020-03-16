@@ -1,0 +1,26 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<title>{{filename}}</title>
+<link rel="stylesheet" href="/static/public/md-editor/editormd.preview.css" />
+</head>
+<body>
+<div id="markdown-view">
+    <!-- Server-side output Markdown text -->
+    <textarea style="display:none;">{{content}}</textarea>             
+</div>
+<script src="/static/public/md-editor/jquery.min.js"></script>
+<script src="/static/public/md-editor/editormd.js"></script>
+<script src="/static/public/md-editor/marked.min.js"></script>
+<script src="/static/public/md-editor/prettify.min.js"></script>
+<script type="text/javascript">
+    $(function() {
+	    var testView = editormd.markdownToHTML("markdown-view", {
+            // markdown : "[TOC]\n### Hello world!\n## Heading 2", // Also, you can dynamic set Markdown text
+            // htmlDecode : true,  // Enable / disable HTML tag encode.
+            // htmlDecode : "style,script,iframe",  // Note: If enabled, you should filter some dangerous HTML tags for website security.
+        });
+    });
+</script> 
+</body>
+</html>

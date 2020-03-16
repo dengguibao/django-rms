@@ -2,13 +2,7 @@ admin/__pycache__/
 home/__pycache__/
 admin/migrations/__pycache__/
 uploads/
-<<<<<<< HEAD
 .venv/
 .vscode/
 *.pyc
 *.pid
-=======
-*.pid
-*.pyc
-
->>>>>>> e60dbc69482dbaf89af6faf8c5dcc83c5e0b7acf
