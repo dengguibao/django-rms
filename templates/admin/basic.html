@@ -11,14 +11,16 @@
   <style type="text/css">
   #resize{
     position: absolute;
-    left: 200;
+    left: 202;
     top: 0;
     bottom: 0;
-    width:10px;
-    height:10px;
+    width:16px;
+    height:50px;
     margin:auto;
-    color:#ccc;
-    z-index:9999
+    color:#333;
+    z-index:9999;
+    background:#ccc;
+    line-height:50px;
   }
   </style>
 
@@ -103,7 +105,7 @@
           btn_resize.addClass("layui-icon-left")
           btn_resize.removeClass("layui-icon-right")
           right_content.css("margin-left","214px");
-          resize_box.css("left","200px")
+          resize_box.css("left","202px")
         }else{
           btn_resize.addClass("layui-icon-right")
           btn_resize.removeClass("layui-icon-left")
@@ -111,6 +113,13 @@
           resize_box.css("left","0px")
         }
       })
+      $('#resize').mouseover(function(){
+        $(this).css('background','#ddd')
+      })
+      $('#resize').mouseout(function(){
+        $(this).css('background','#ccc')
+      })
+
     </script>
 
     <div id="rightContainer">

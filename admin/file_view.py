@@ -27,6 +27,11 @@ def upload_file(request):
         real_path = os.path.join(upload_path, today)
         name = origin_file_obj.name
         file_size = origin_file_obj.size
+        if file_size >= 102400:
+            return JsonResponse({
+                'code': 1,
+                'msg': 'file to large'
+            })
         file_ext = name.split('.')[-1]
         # new file name
         real_name = time.strftime(
@@ -101,38 +106,37 @@ def get_user_filelist(request, t):
 
 @login_required
 def create_folder(request):
-    folder_name = request.POST.get('name','')
-    p_path = request.POST.get('path','/')
+    folder_name = request.POST.get('name', '')
+    p_path = request.POST.get('path', '/')
 
     folder = FileInfo.objects.filter(name=folder_name, path=p_path)
     if folder:
         return JsonResponse({
-            'code':1,
-            'msg':'文件夹已经存在'
+            'code': 1,
+            'msg': '文件夹已经存在'
         })
 
-
-    res=FileInfo.objects.create(**{
-        'name':folder_name,
-        'type':0,
-        'owner':User.objects.get(id=request.user.id),
-        'path':p_path
+    res = FileInfo.objects.create(**{
+        'name': folder_name,
+        'type': 0,
+        'owner': User.objects.get(id=request.user.id),
+        'path': p_path
     })
     if res:
         return JsonResponse({
-            'code':0,
-            'msg':'success',
-            'data':{
-                'id':res.id,
-                'path':res.path,
-                'name':res.name,
-                'pub_date':res.pub_date
+            'code': 0,
+            'msg': 'success',
+            'data': {
+                'id': res.id,
+                'path': res.path,
+                'name': res.name,
+                'pub_date': res.pub_date
             }
         })
     else:
         return JsonResponse({
-            'code':1,
-            'msg':'fail'
+            'code': 1,
+            'msg': 'fail'
         })
 
 
@@ -147,7 +151,8 @@ def file_delete(request, i):
     # delete folder and file
     if res and res.type == 0:
         p_path = res.path + res.name
-        sub_res = FileInfo.objects.filter(path__startswith=p_path, owner=request.user.id)
+        sub_res = FileInfo.objects.filter(
+            path__startswith=p_path, owner=request.user.id)
 
         for i in sub_res:
             if i.type == 1:
@@ -156,15 +161,15 @@ def file_delete(request, i):
         res.delete()
     if affect:
         return JsonResponse({
-                'code': 0,
-                'msg': 'ok'
-            })
+            'code': 0,
+            'msg': 'ok'
+        })
     else:
         return JsonResponse({
             'code': 1,
             'msg': 'fail'
         })
-    
+
 
 @login_required
 def file_download(request, id):
@@ -182,14 +187,15 @@ def file_download(request, id):
         with open('/'.join([res.real_path, res.real_name]), 'r', encoding='utf-8', errors="ignore") as f:
             content = f.read()
         return render(request, 'admin/%s' % (temp_name), {
-            'filename':res.name,
-            'content':content
+            'filename': res.name,
+            'content': content
         })
     try:
         file = open('/'.join([res.real_path, res.real_name]), 'rb')
         response = FileResponse(file)
         response['Content-Type'] = 'application/octet-stream'
-        response['Content-Disposition'] = 'attachment;filename="{}"'.format(res.name.encode('utf-8').decode('ISO-8859-1'))
+        response['Content-Disposition'] = 'attachment;filename="{}"'.format(
+            res.name.encode('utf-8').decode('ISO-8859-1'))
         return response
     except Exception:
         raise Http404

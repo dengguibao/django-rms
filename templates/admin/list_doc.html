@@ -12,7 +12,7 @@
 <input type="hidden" id="path" value="/">
 <input type="hidden" id="owner" value="{{ user.id }}">
 {% csrf_token %}
-  <button type="button" class="layui-btn" id="btn_upload"><i class="layui-icon"></i>上传文件</button>
+  <button type="button" class="layui-btn" id="btn_upload"><i class="layui-icon layui-icon-upload"></i>上传文件</button>
   <button type="button" class="layui-btn" id="btn_create_folder">新建文件夹</button>
   <button type="button" class="layui-btn" id="btn_view_upload_progress">上传进度</button>
   <div class="layui-upload-list">
@@ -29,13 +29,7 @@
         <th>上传时间</th>
       </tr>
     </thead>
-      <tbody id="default">
-      <tr>
-        <td><a class="folder">..</a></td>
-        <td></td>
-        <td></td>
-      </tr>
-      </tbody>
+      <tbody id="default"></tbody>
       <tbody id="folder_list"></tbody>
       <tbody id="file_list"></tbody>
     </table>
@@ -50,7 +44,6 @@
   .layui-icon-file{margin:0 5px}
   .folder{margin-left:10px;font-weight:bolder;cursor:pointer}
   .upload_progress_box{margin:20px 10px}
-  td{border-bottom:1px solid #ddd}
 </style>
 <!-- upload progress bar -->
 <div style="display:none" id="upload_percent_box">
@@ -72,7 +65,7 @@ layui.use(['upload', 'element', 'layer', 'mouseRightMenu'], function(){
     //,url: 'https://httpbin.org/post' //改成您自己的上传接口
     ,url:'/admin/upload-file'
     ,accept: 'file' //普通文件
-    ,size: 1024000
+    ,size: 102400
     ,data:{
       'csrfmiddlewaretoken': function(){
         return $('[name="csrfmiddlewaretoken"]').val()
@@ -136,7 +129,7 @@ layui.use(['upload', 'element', 'layer', 'mouseRightMenu'], function(){
           },
           success:function(d){
             if(d.code==0){
-              $('#folder_list').append('<tr id="tr'+d.data.id+'"><td><a tag="'+d.data.id+'" class="folder mr">'+d.data.name+'</a></td><td></td><td></tr>')
+              $('#folder_list').append('<tr id="tr'+d.data.id+'"><td colspan="3"><a tag="'+d.data.id+'" class="folder mr">'+d.data.name+'</a></td></tr>')
               refresh_folder_click_event();
               refresh_right_click_menu();
             }else{
@@ -227,6 +220,13 @@ layui.use(['upload', 'element', 'layer', 'mouseRightMenu'], function(){
 
   function refresh_file_list(){
     
+    if ($('#path').val() == '/'){
+      $('#default').empty();
+    }else{
+      //alert($('#folder_list'))
+      $('#default').append('<tr><td colspan="3"><a class="folder">..</a></td></tr>');
+    }
+    
     file=$.ajax({
       url:'/admin/get-filelist/file',
       type:'post',
@@ -269,7 +269,7 @@ layui.use(['upload', 'element', 'layer', 'mouseRightMenu'], function(){
         $('#folder_list').empty();
         if (d.code == 0){
           $.each(d.data,function(i,field){
-            append_str = '<tr id="tr'+field.id+'"><td><a tag="'+field.id+'" class="mr folder">'+field.name+'</a></td><td></td><td></td></tr>'
+            append_str = '<tr id="tr'+field.id+'"><td colspan="3"><a tag="'+field.id+'" class="mr folder">'+field.name+'</a></td></tr>'
             $('#folder_list').append(append_str);
           })
         }
@@ -277,6 +277,7 @@ layui.use(['upload', 'element', 'layer', 'mouseRightMenu'], function(){
     })
 
     $.when(file,folder).done(function(){
+      
       refresh_folder_click_event();
       refresh_right_click_menu();
     })

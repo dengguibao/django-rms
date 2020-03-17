@@ -45,6 +45,13 @@
         </thead>
         <tbody id="vm_tbody">
         </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="11">
+                <a target="_blank" href="/admin/export-server/vm" class="layui-btn layui-btn-xs layui-btn-normal"><i class="layui-icon layui-icon-download-circle"></i>全部导出</a>
+            </td>
+        </tr>
+        </tfoot>
     </table>
     <div id="page"></div>
 
@@ -66,7 +73,15 @@
         </thead>
         <tbody id="host_tbody">
         </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="11">
+                <a target="_blank" href="/admin/export-server/host" class="layui-btn layui-btn-xs layui-btn-normal"><i class="layui-icon layui-icon-download-circle"></i>全部导出</a>
+            </td>
+        </tr>
+        </tfoot>
     </table>
+    
 </div>
 <script>
     layui.use(['form','laypage'], function () {
