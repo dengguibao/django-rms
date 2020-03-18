@@ -29,17 +29,13 @@
         <th>上传时间</th>
       </tr>
     </thead>
-      <tbody id="default"></tbody>
       <tbody id="folder_list"></tbody>
-      <tbody id="file_list"></tbody>
+      <tfoot id="file_list"></tfoot>
     </table>
   </div>
 </div>
 <link rel="stylesheet" href="/static/public/css/mouseRightMenu.css" />
 <style type="text/css">
-  .x{padding:5px;margin:5px 20px}
-  .left{float:left}
-  .right{float:right}
   .mr{cursor:pointer}
   .layui-icon-file{margin:0 5px}
   .folder{margin-left:10px;font-weight:bolder;cursor:pointer}
@@ -219,12 +215,14 @@ layui.use(['upload', 'element', 'layer', 'mouseRightMenu'], function(){
   }
 
   function refresh_file_list(){
-    
+    $('#file_list').empty();
+    $('#folder_list').empty();
+
     if ($('#path').val() == '/'){
-      $('#default').empty();
+      $('#folder_list').empty();
     }else{
       //alert($('#folder_list'))
-      $('#default').append('<tr><td colspan="3"><a class="folder">..</a></td></tr>');
+      $('#folder_list').append('<tr><td colspan="3"><a class="folder">..</a></td></tr>');
     }
     
     file=$.ajax({
@@ -239,7 +237,6 @@ layui.use(['upload', 'element', 'layer', 'mouseRightMenu'], function(){
         }        
       },
       success:function(d){
-        $('#file_list').empty();
         if (d.code == 0){
           $.each(d.data,function(i,field){
             append_str = '<tr id="tr'+field.id+'">'+
@@ -266,7 +263,6 @@ layui.use(['upload', 'element', 'layer', 'mouseRightMenu'], function(){
         }        
       },
       success:function(d){
-        $('#folder_list').empty();
         if (d.code == 0){
           $.each(d.data,function(i,field){
             append_str = '<tr id="tr'+field.id+'"><td colspan="3"><a tag="'+field.id+'" class="mr folder">'+field.name+'</a></td></tr>'

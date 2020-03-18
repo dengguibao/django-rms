@@ -1,5 +1,6 @@
 from django.urls import path
-from . import global_views, user_views, server_views, perm_views, file_view
+from . import global_views, user_views, server_views, perm_views, file_view, script_views
+
 
 app_name = 'admin'
 urlpatterns = [
@@ -25,7 +26,9 @@ urlpatterns = [
     path('get-filelist/<str:t>', file_view.get_user_filelist),
     path('file-delete/<int:i>', file_view.file_delete),
     path('create-folder', file_view.create_folder),
-    path('media/<int:id>', file_view.file_download)
+    path('media/<int:id>', file_view.file_download),
 
-
+    path('list-scripts/<str:path>', script_views.get_file_list),
+    path('view-script/<str:path>', script_views.view_file),
+    
 ]

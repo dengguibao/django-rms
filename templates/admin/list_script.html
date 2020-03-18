@@ -1,0 +1,113 @@
+{% extends "admin/basic.html" %}
+{% block notice%}
+配置脚本
+{% endblock %}
+{% block mainbody %}
+
+<fieldset class="layui-elem-field layui-field-title">
+  <legend>配置脚本</legend>
+</fieldset>
+
+<div class="layui-upload">
+<input type="hidden" id="path" value="">
+  <div class="layui-upload-list">
+    <table class="layui-table" lay-skin="line">
+    <thead>
+      <colgroup>
+        <col>
+        <col width="150">
+        <col width="250">
+      </colgroup>
+      <tr style="background:#eee">
+        <th>名称</th>
+        <th>文件大小</th>
+        <th>创建时间</th>
+      </tr>
+    </thead>
+      <tbody id="folder_list"></tbody>
+      <tfoot id="file_list"></tfoot>
+    </table>
+  </div>
+</div>
+<link rel="stylesheet" href="/static/public/css/mouseRightMenu.css" />
+<style type="text/css">
+  .mr{cursor:pointer}
+  .folder{margin-left:10px;font-weight:bolder;cursor:pointer}
+  .file{cursor:pointer}
+</style>
+<script type="text/javascript">
+layui.config({base: '/static/public/layui-extends/'})
+layui.use('layer', function(){
+  var $ = layui.jquery
+  ,layer = layui.layer;
+
+  default_path = 'static'
+  if($('#path').val() == "" ){
+    $('#path').val(default_path)
+  }
+
+  refresh_file_list()  
+
+  function refresh_click_event(){
+      $('.folder').on('click',function(){
+        folder_name=$(this).text()
+        path=$('#path').val()
+
+        if (folder_name == '..' && path != default_path){
+          a=path.split(',')
+          b=a.slice(0,a.length-1)
+          c=b.join(',')
+          if (c == ''){
+            $('#path').val(default_path)
+          }else{
+            $('#path').val(c)
+          }
+        }else{
+          $('#path').val(path+','+folder_name)
+        }        
+        refresh_file_list()
+      })
+      $('.file').on('click',function(){
+        window.open('/admin/view-script/'+$('#path').val()+','+$(this).text())
+      })
+  }
+
+  function refresh_file_list(){
+    $('#file_list').empty();
+    $('#folder_list').empty();
+    if($('#path').val()!=default_path){
+      $('#folder_list').append('<tr><td colspan="3"><a class="folder">..</a></td></tr>');
+    }
+    file=$.getJSON(
+      '/admin/list-scripts/'+$('#path').val(),
+      function(d){
+        if (d.code == 0){
+          $.each(d.data,function(i,field){
+            if (field.type == 'file'){
+              append_str = '<tr>'+
+              '<td>'+
+              '<a class="file"><i class="layui-icon layui-icon-file"></i>'+field.name+'</a>'+
+              '</td>'+
+              '<td>'+field.size+'</td>'+
+              '<td>'+field.create_date+'</td></tr>'
+              $('#file_list').append(append_str)
+            }
+            if (field.type == 'dir'){
+              append_str='<tr><td colspan="3"><a class="folder">'+field.name+'</a></td></tr>'
+              $('#folder_list').append(append_str)
+            }
+            
+          })
+        }
+      }
+
+    )
+
+    $.when(file).done(function(){
+      refresh_click_event();
+    })
+
+  }
+});
+</script>
+{% endblock %}
