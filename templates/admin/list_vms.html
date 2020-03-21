@@ -129,9 +129,9 @@
                     ,{field: 'vm_register', title: '申请人', width: 90}
                     ,{field: 'vm_monitor', title: '监控', width: 60, templet:function(d){
                         if (d.vm_monitor == 'on'){
-                            return '<i class="layui-icon" style="color:green">&#xe665;</i>'
+                            return '<i tag="'+d.id+'" class="layui-icon zbx_st" style="color:green">&#xe665;</i>'
                         }else{
-                            return ''
+                            return '<i class="layui-icon">&#xe665;</i>'
                         }
                     }}
                     ,{field: 'esxi_host_name', title: '宿主机', width: 200}
@@ -140,6 +140,7 @@
                     ,{title: '操作', width: 90, fixed: 'right', toolbar: '#toolbar'}
                 ]]
                 ,done: function(res,cur,count){
+                    refresh_zabbix_info_event();
                     page_size=res.page_data.page_size;
                     rs_count = res.page_data.rs_count;
                     curr_page = res.page_data.curr_page;
@@ -174,6 +175,14 @@
                     })
                 }
             )
+        }
+
+        function refresh_zabbix_info_event(){
+            $('.zbx_st').on('click',function(){
+                id=$(this).attr('tag')
+                window.open('/admin/view-server-info/'+id)
+                //alert(id)
+            })
         }
 
         // ajax refresh vm by spcific esxi hosts

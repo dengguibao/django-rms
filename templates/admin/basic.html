@@ -36,6 +36,7 @@
         <div class="nav_pri_menu">
           <a href="javascript:void(0);" title="menu" class="pri_menu">添加</a>
           <div class="sub_menu_item">
+            <!--<li><a href="{% url 'admin:render_temp' 'shell' %}" title="shell">shell</a></li>-->
             <li><a href="{% url 'admin:render_temp' 'add_or_edit_host' %}" title="add new host">服务器</a></li>
             <li><a href="{% url 'admin:render_temp' 'add_or_edit_vm' %}" title="add new virtual mechine">虚拟机</a></li>
             {% if perms.auth.add_user %}
@@ -48,7 +49,6 @@
         <div class="nav_pri_menu">
           <a href="javascript:void(0);" title="menu" class="pri_menu">管理</a>
           <div class="sub_menu_item">
-
             <li><a href="{% url 'admin:render_temp' 'list_hosts' %}"  title="list hosts">服务器</a></li>
             <li><a href="{% url 'admin:render_temp' 'list_vms' %}"  title="list vms">虚拟机</a></li>
             <li><a href="{% url 'admin:render_temp' 'list_script' %}"  title="list script">配置脚本</a></li>

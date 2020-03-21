@@ -1,0 +1,139 @@
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <title>host detail infomations</title>
+  <script src="/static/admin/js/jquery-1.4.3.min.js"></script>
+  <!--load layui-->
+  <script src="/static/public/layui.js"></script>
+  <link href="/static/public/css/layui.css" rel="stylesheet" />
+
+</head>
+
+<body>
+<input type="hidden" id="ip" value="{{ip}}">
+<input type="hidden" id="url" value="{{url}}">
+<table class="layui-table" lay-skin="line">
+    <thead>
+      <colgroup>
+        <col width="80">
+        <col width="350">
+        <col>
+        <col width="200">
+      </colgroup>
+      <tr style="background:#eee">
+        <th>序号</th>
+        <th>名称</th>
+        <th>值</th>
+        <th>更新时间</th>
+      </tr>
+    </thead>
+      <tbody id="list"></tbody>
+    </table>
+</body>
+<script type="text/javascript">
+$().ready(function(){
+  get_serverinfo();
+})
+/**
+ * [DateToTime 时间戳转换为日期]
+ * @param {[type]} unixTime [时间戳]
+ * @param {String} type     [Y-m-d,Y-m-d H:i:s,Y/m/d,Y/m/d H:i:s,Y年m月d日,Y年m月d日 H:i:s]
+ */
+function DateToTime(unixTime,type="Y-M-D H:i:s"){
+    var date = new Date(unixTime * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+    var datetime = "";
+    datetime += date.getFullYear() + type.substring(1,2);
+    datetime += (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + type.substring(3,4);
+    datetime += (date.getDate() < 10 ? '0'+(date.getDate()) : date.getDate());
+    if (type.substring(5,6)) {
+        if (type.substring(5,6).charCodeAt() > 255) {
+            datetime += type.substring(5,6);
+            if (type.substring(7,8)) {
+                datetime += " " + (date.getHours() < 10 ? '0'+(date.getHours()) : date.getHours());
+                if (type.substring(9,10)) {
+                    datetime += type.substring(8,9) + (date.getMinutes() < 10 ? '0'+(date.getMinutes()) : date.getMinutes());
+                    if (type.substring(11,12)) {
+                        datetime += type.substring(10,11) + (date.getSeconds() < 10 ? '0'+(date.getSeconds()) : date.getSeconds());
+                    };
+                };
+            };
+        }else{
+            datetime += " " + (date.getHours() < 10 ? '0'+(date.getHours()) : date.getHours());
+            if (type.substring(8,9)) {
+                datetime += type.substring(7,8) + (date.getMinutes() < 10 ? '0'+(date.getMinutes()) : date.getMinutes());
+                if (type.substring(10,11)) {
+                    datetime += type.substring(9,10) + (date.getSeconds() < 10 ? '0'+(date.getSeconds()) : date.getSeconds());
+                };
+            };
+        };
+    };
+    return datetime; 
+}
+
+function get_serverinfo(){
+  data={
+    "jsonrpc": "2.0",
+    "method": "host.get",
+    "params": {
+    	"output":[
+    		"hostid","host"
+    		]
+        ,"selectInterfaces": [
+            "interfaceid",
+            "ip"
+        ],
+        "selectItems":[
+        	"name","lastvalue","key_", "lastclock"
+        	],
+        "filter":{
+        	"ip":$('#ip').val()
+        }
+    },
+    "auth": "568ae11445639aff57116092bf151d18",
+    "id": 1
+  }
+  key_array=[
+    'vm.memory.size[total]',
+    'vm.memory.size[available]',
+    'vfs.fs.size[/home,used]',
+    'vfs.fs.size[/home,total]',
+    //'vfs.fs.size[/home,pused]',
+    'vfs.fs.size[/boot,used]',
+    'vfs.fs.size[/boot,total]',
+    //'vfs.fs.size[/boot,pused]',
+    'vfs.fs.size[/,used]',
+    'vfs.fs.size[/,total]',
+    //'vfs.fs.size[/,pused]',
+    'system.swap.size[,total]',
+    'system.swap.size[,free]',
+    ]
+  $.ajax({
+    type: "POST",
+    url: $('#url').val(),
+    contentType: "application/json", //必须有
+    dataType: "json", //表示返回值类型，不必须
+    data: JSON.stringify(data),
+    success: function (res) {
+      $.each(res.result[0].items,function(i,item){
+        if (item.key_ == 'system.boottime'){
+          value=DateToTime(item.lastvalue)
+        }else if($.inArray(item.key_,key_array) != -1){
+          value=Math.round(item.lastvalue/1024/1024)+' M'
+        }else{
+          value=item.lastvalue
+        }
+        tbody_str="<tr>"+
+        "<td>"+(i+1)+"</td>"+
+        "<td>"+item.name+"</td>"+
+        "<td>"+value+"</td>"+
+        "<td>"+DateToTime(item.lastclock)+"</td>"+
+        "</tr>"
+        $('#list').append(tbody_str)
+      })
+    }
+  });
+}
+
+
+</script>
+</html>

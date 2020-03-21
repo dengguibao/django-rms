@@ -93,7 +93,7 @@ layui.use('layer', function(){
               $('#file_list').append(append_str)
             }
             if (field.type == 'dir'){
-              append_str='<tr><td colspan="3"><a class="folder">'+field.name+'</a></td></tr>'
+              append_str='<tr><td><a class="folder">'+field.name+'</a></td><td>'+field.size+'</td><td>'+field.create_date+'</td></tr>'
               $('#folder_list').append(append_str)
             }
             

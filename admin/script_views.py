@@ -27,7 +27,9 @@ def get_file_list(request, path):
         if os.path.isdir(file):
             data['data'].append({
                 'type': 'dir',
-                'name': i
+                'name': i,
+                'size': format_file_size(os.path.getsize(file)),
+                'create_date': time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getctime(file)))
             })
         if os.path.isfile(file):
             data['data'].append({

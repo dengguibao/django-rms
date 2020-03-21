@@ -1,5 +1,5 @@
 from django.urls import path
-from . import global_views, user_views, server_views, perm_views, file_view, script_views
+from . import global_views, user_views, server_views, perm_views, file_view, script_views, zabbix_info_view
 
 
 app_name = 'admin'
@@ -30,5 +30,7 @@ urlpatterns = [
 
     path('list-scripts/<str:path>', script_views.get_file_list),
     path('view-script/<str:path>', script_views.view_file),
+
+    path('view-server-info/<int:id>', zabbix_info_view.zabbix_server_info_view)
     
 ]

@@ -11,13 +11,42 @@ a:hover{text-decoration: underline} */
 	top: 50px;
 	bottom: 0;
 }
-.nav_pri_menu{margin-bottom: 10px;border: 1px solid #363636;border-bottom: none;}
-.pri_menu{display: block;background: #aaa;padding: 6px 0 6px 6px;}
-.nav_pri_menu a{color: #fff;text-decoration: none;}
-.sub_menu_item{border: 1px solid #bbb;border-top: none;background: #eee}
-.sub_menu_item li{list-style-type: none;padding: 2px 0 2px 12px}
-#leftContainer .sub_menu_item  a{color: #03c;font-size: 12px;text-decoration: none}
-#leftContainer .sub_menu_item a:hover{color: red;}
+.nav_pri_menu{
+	margin-bottom: 10px;
+	border: 1px solid #363636;
+	border-bottom: none;
+}
+.pri_menu{
+	display: block;
+	background: #969696;
+	padding: 6px 0 6px 6px;
+}
+.nav_pri_menu a{
+	font-weight: bold;
+	color: #fff;
+	text-decoration: none;
+}
+.nav_pri_menu a:hover{
+	color: #eee;
+}
+.sub_menu_item{
+	border: 1px solid #bbb;
+	border-top: none;
+	background: #eee
+}
+.sub_menu_item li{
+	list-style-type: none;
+	padding: 2px 0 2px 12px
+}
+#leftContainer .sub_menu_item  a{
+	font-weight: normal;
+	color: #03c;
+	font-size: 12px;
+	text-decoration: none
+}
+#leftContainer .sub_menu_item a:hover{
+	color: red;
+}
 #rightContainer{
 	text-align: left;
 	overflow: auto;
