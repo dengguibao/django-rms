@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.conf import settings
 from .models import VmInfo
 
 
@@ -12,6 +13,6 @@ def zabbix_server_info_view(request, id):
     else:
         return render(request, 'admin/server_info.html', {
             'ip':res.vm_ip,
-            'url':'http://172.31.19.254/zabbix/api_jsonrpc.php'
+            'zabbix_api':settings.ZABBIX_API
         })
         

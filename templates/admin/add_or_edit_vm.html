@@ -8,6 +8,12 @@
     <legend>基本信息</legend>
 </fieldset>
 
+<input type="hidden" id="auth" value="{{zabbix_api.AUTH}}" />
+<input type="hidden" id="url" value="{{zabbix_api.URL}}" />
+<input type="hidden" id="temp_id" value="{{zabbix_api.TEMPLATE_ID}}" />
+<input type="hidden" id="group_id" value="{{zabbix_api.GROUP_ID}}" />
+<input type="hidden" id="vm_hostid" value="" />
+
 <form class="layui-form" action="">
     {% csrf_token %}
     <input type="hidden" name="id" value="{%if vm_obj.id %}{{ vm_obj.id }}{% else %}0{% endif %}" />
@@ -15,7 +21,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">主机名</label>
             <div class="layui-input-inline" style="width: 300px;">
-                <input type="text" maxlength="50" name="vm_hostname" value="{{ vm_obj.vm_hostname}}" lay-verify="required"
+                <input type="text" maxlength="50" name="vm_hostname" id="vm_hostname" value="{{ vm_obj.vm_hostname}}" lay-verify="required"
                     autocomplete="off" class="layui-input">
             </div>
         </div>
@@ -130,7 +136,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">管理IP</label>
             <div class="layui-input-inline" style="width: 334px;">
-                <input type="text" maxlength="15" name="vm_ip" value="{{ vm_obj.vm_ip}}" lay-verify="required|ip"
+                <input type="text" maxlength="15" name="vm_ip" id="vm_ip" value="{{ vm_obj.vm_ip}}" lay-verify="required|ip"
                     autocomplete="off" class="layui-input">
             </div>
         </div>
@@ -139,8 +145,8 @@
     <div class="layui-form-item">
         <label class="layui-form-label">Zabbix监控</label>
         <div class="layui-input-block">
-            <input type="checkbox" {% ifequal vm_obj.vm_monitor 'on' %} checked="" {% endifequal %} lay-skin="switch" lay-filter="vm_monitor" lay-text="ON|OFF">
-            <input type="hidden" id="vm_monitor" name="vm_monitor">
+            <input type="checkbox" id="vm_monitor_switch" {% ifequal vm_obj.vm_monitor 'on' %} checked="" {% endifequal %} lay-skin="switch" lay-filter="vm_monitor" lay-text="ON|OFF">
+            <input type="hidden" id="vm_monitor" value="null" name="vm_monitor">
         </div>
     </div>
 
@@ -187,7 +193,7 @@
             var cluster_tag = data.value;
             var url = "/admin/get-hosts-list/type/host/flag/" + cluster_tag;
             var device_list_control = $("#host_id");
-            device_list_control.empty()
+            device_list_control.empty();
             $.getJSON(
                 url,
                 function (result) {
@@ -201,10 +207,14 @@
         });
 
         form.on('switch(vm_monitor)',function(d){
+            if($('#vm_ip').val().trim().length == 0 || $('#vm_hostname').val().trim().length == 0 ){
+                    layer.msg('请先填写管理IP和主机名');
+                    return false;
+            }
             if(d.elem.checked){
-                $('#vm_monitor').val('on')
+                add_host_to_zabbix();
             }else{
-                $('#vm_monitor').val('off')
+               delete_host_from_zabbix();
             }            
         })
 
@@ -219,6 +229,131 @@
                 }
             }
         });
+
+        function get_post_data(type){
+            if (type == 'join_zabbix'){
+                return {
+                    "jsonrpc": "2.0",
+                    "method": "host.create",
+                    "params": {
+                        "host": $('#vm_hostname').val(),
+                        "interfaces": [
+                            {
+                                "type": 1,
+                                "main": 1,
+                                "useip": 1,
+                                "ip": $('#vm_ip').val(),
+                                "dns": "",
+                                "port": "10050"
+                            }
+                        ],
+                        "groups": [
+                            {
+                                "groupid": $('#group_id').val()
+                            }
+                        ],
+                        "templates": [
+                            {
+                                "templateid": $('#temp_id').val()
+                            }
+                        ],
+                    },
+                    "auth": $('#auth').val(),
+                    "id": 1
+                }
+            }
+            if (type == 'query_hostid'){
+                return {
+                    "jsonrpc": "2.0",
+                    "method": "host.get",
+                    "params": {
+                        "output": [
+                            "hostid",
+                            "host"
+                        ],
+                        "selectInterfaces": [
+                            "interfaceid",
+                            "ip"
+                        ],
+                        "filter": {
+                                "ip": $('#vm_ip').val()
+                        }
+                    },
+                    "auth": $('#auth').val(),
+                    "id": 1
+                }
+            }
+            if (type == 'delete'){
+                return {
+                    "jsonrpc": "2.0",
+                    "method": "host.delete",
+                    "params": [$('#vm_hostid').val()],
+                    "auth": $('#auth').val(),
+                    "id": 1
+                }
+            }
+
+        }
+
+        function add_host_to_zabbix(){
+            $.ajax({
+                url:$('#url').val(),
+                type:'POST',
+                dataType:'json', //返回类型
+                contentType: "application/json", //必须有
+                data:JSON.stringify(get_post_data('join_zabbix')),
+                success:function(d){
+                    if(d.result.hostids[0]>0){
+                        $('#vm_monitor').val('on');
+                        layer.msg('加入成功');
+                    }
+                },
+                error:function(e){
+                    alert(JSON.stringify(e));
+                }
+            })
+        }
+
+        function delete_host_from_zabbix(){
+            query_hostid=$.ajax({
+                url:$('#url').val(),
+                type:'POST',
+                dataType:'json', //返回类型
+                contentType: "application/json", //必须有
+                data:JSON.stringify(get_post_data('query_hostid')),
+                success:function(d){
+                    if(d.result[0].hostid>0){
+                        $('#vm_hostid').val(d.result[0].hostid);
+                    }
+                },
+                error:function(e){
+                    alert(JSON.stringify(e));
+                }
+            })
+            
+            $.when(query_hostid).done(function(){
+                $.ajax({
+                    url:$('#url').val(),
+                    type:'POST',
+                    dataType:'json', //返回类型
+                    contentType: "application/json", //必须有
+                    data:JSON.stringify(get_post_data('delete')),
+                    success:function(d){
+                        if(d.result.hostids[0]>0){
+                            $('#vm_monitor').val('off');
+                            layer.msg('关闭成功');
+                        }
+                    },
+                    error:function(e){
+                        alert(JSON.stringify(e));
+                    }
+                })
+            })
+        }
+        
+
+         
+
     });
 </script>
 {% endblock %}

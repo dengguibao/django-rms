@@ -25,6 +25,14 @@ SECRET_KEY = 's66q_)g&7x74d_*51kv=ioxff11=u#c#vjl-q-_$x3*1_(f_2k'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+#ZABBIX API CONFIG
+ZABBIX_API = {
+    'URL': "http://172.31.19.254/zabbix/api_jsonrpc.php",
+    'AUTH': "568ae11445639aff57116092bf151d18",
+    'TEMPLATE_ID':10316,
+    'GROUP_ID':16
+}
+
 ALLOWED_HOSTS = ['*']
 
 PAGE_SIZE = 15

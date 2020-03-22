@@ -9,6 +9,13 @@
     height:20px;
     padding:0 2px;
 }
+.zbx_st,.vm_host_tips{
+    cursor:pointer
+}
+
+#vm_host_tips_content{
+    display:None
+}
 </style>
 <fieldset class="layui-elem-field layui-field-title">
     <legend>虚拟机管理</legend>
@@ -22,6 +29,8 @@
     </ul>
     <div class="layui-row">
         <!--left content-->
+        <input type="hidden" id="auth" value="{{zabbix_api.AUTH}}" />
+        <input type="hidden" id="url" value="{{zabbix_api.URL}}" />
         <div class="layui-col-md10">
             <table id="dt" lay-filter="dt"></table>
             <div id="page"></div>
@@ -44,6 +53,10 @@
     </div>
 </div>
 
+<div id="vm_host_tips_content">
+aaa
+</div>
+
 <script type="text/html" id="toolbar">
   <div class="layui-btn-container">
     <a lay-event='edit' class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon'></i></a>
@@ -54,6 +67,7 @@
 <script type="text/javascript">
     layui.use(['element', 'laypage', 'layer', 'table'], function () {
         var $ = layui.jquery,
+            layer = layui.layer,
             laypage = layui.laypage,
             table = layui.table,
             element = layui.element;
@@ -119,7 +133,13 @@
                         return index;
                     }}
                     ,{field: 'id', title: 'id', width:250, hide:true}
-                    ,{field: 'vm_hostname',fixed: 'left', title: '主机名', width:220}
+                    ,{field: 'vm_hostname',fixed: 'left', title: '主机名', width:220, templet:function(d){
+                        if(d.vm_monitor == 'on'){
+                            return '<span class="vm_host_tips" tag="'+d.vm_ip+'">'+d.vm_hostname+'</span>'                            
+                        }else{
+                            return d.vm_hostname
+                        }
+                    }}
                     ,{field: 'vm_ip', fixed: 'left', title: 'IP', width:120}
                     ,{field: 'vlan_tag', title: 'VLAN标签', width:100}
                     ,{field: 'vlan_id', title: 'VLAN ID', width:100}
@@ -178,10 +198,75 @@
         }
 
         function refresh_zabbix_info_event(){
+            var server_info = null
+
             $('.zbx_st').on('click',function(){
                 id=$(this).attr('tag')
                 window.open('/admin/view-server-info/'+id)
                 //alert(id)
+            })
+
+            $('.vm_host_tips').on('click',function(){
+                var obj=$(this)
+                var ip=$(this).attr('tag');
+                post_data={
+                    "jsonrpc": "2.0",
+                    "method": "host.get",
+                    "params": {
+                        "output": [
+                            "hostid",
+                            "host"
+                        ],
+                        "selectInterfaces": [
+                            "interfaceid",
+                            "ip"
+                        ],
+                        "selectItems": [
+                            "name","lastvalue","key_","itemid"
+                        ],
+                        "filter": {
+                                "ip": ip
+                        }
+                    },
+                    "auth": $('#auth').val(),
+                    "id": 1
+                }
+                info=$.ajax({
+                    url:$('#url').val(),
+                    type:'POST',
+                    dataType:'json', //返回类型
+                    contentType: "application/json", //必须有
+                    data:JSON.stringify(post_data),
+                    success:function(d){
+                        server_info = d
+                    },
+                    error:function(e){
+                        alert(JSON.stringify(e))
+                    }
+                })
+                $.when(info).done(function(){
+                    key_array=[
+                        'system.cpu.util',
+                        'vm.memory.size[available]',
+                        'vfs.fs.size[/,pused]',
+                        'vfs.fs.size[/home,pused]'
+                    ];
+                    tips_str="";
+                    $.each(server_info.result[0].items, function(i,item){
+                        if($.inArray(item.key_,key_array) != -1){
+                            if (item.lastvalue>100){
+                                value=Math.round(item.lastvalue/1024/1024/1024)+' G'
+                            }else{
+                                value=Math.round(item.lastvalue)+' %'
+                            }
+                            tips_str+=item.name+': '+value+'</br>';
+                        }
+                    })
+                    layer.tips(tips_str, obj, {
+                        tips: [3, '#3595CC'],
+                        time: 3000
+                    });
+                })
             })
         }
 

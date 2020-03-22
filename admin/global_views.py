@@ -3,6 +3,7 @@ from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
+from django.conf import settings
 
 from .models import VmInfo, HostInfo
 
@@ -36,6 +37,7 @@ def render_static_temp_view(request, temp_name):
         context = {'user_url_path': '用户'}
     else:
         context = {'user_url_path': '添加'}
+    context['zabbix_api'] = settings.ZABBIX_API
     return render(request, 'admin/%s.html' % (temp_name), context)
 
 
@@ -63,7 +65,8 @@ def render_edit_view(request, form_name, nid):
             'user_url_path': '编辑',
             'vm_obj': vm_obj,
             'cluster_tag': host_obj.cluster_tag,
-            'esxi_list': esxi_list
+            'esxi_list': esxi_list,
+            'zabbix_api': settings.ZABBIX_API
         }
     elif form_name == 'host' and request.user.has_perm('admin.change_hostinfo'):
         host_obj = HostInfo.objects.get(id=nid)

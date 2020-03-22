@@ -148,8 +148,14 @@ def file_delete(request, i):
     # delete file
     if res and res.type == 1:
         file = res.real_path+'/'+res.real_name
-        os.remove(file)
         affect = res.delete()
+        try:
+            os.remove(file)
+        except Exception:
+            return JsonResponse({
+                'code':'0',
+                'msg':'文件不存在'
+            })
     # delete folder and file
     if res and res.type == 0:
         p_path = res.path + res.name
