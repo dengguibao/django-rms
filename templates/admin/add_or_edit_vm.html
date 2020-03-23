@@ -21,8 +21,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">主机名</label>
             <div class="layui-input-inline" style="width: 300px;">
-                <input type="text" maxlength="50" name="vm_hostname" id="vm_hostname" value="{{ vm_obj.vm_hostname}}" lay-verify="required"
-                    autocomplete="off" class="layui-input">
+                <input type="text" maxlength="50" name="vm_hostname" id="vm_hostname" value="{{ vm_obj.vm_hostname}}" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -31,8 +30,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">申请人</label>
             <div class="layui-input-inline">
-                <input type="text" maxlength="10" name="vm_register" value="{{ vm_obj.vm_register}}" lay-verify="required"
-                    autocomplete="off" class="layui-input">
+                <input type="text" maxlength="10" name="vm_register" value="{{ vm_obj.vm_register}}" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -41,8 +39,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">用途</label>
             <div class="layui-input-inline" style="width:500px">
-                <input type="text" maxlength="100" name="vm_intention" value="{{ vm_obj.vm_intention}}" lay-verify="required"
-                    autocomplete="off" class="layui-input">
+                <input type="text" maxlength="100" name="vm_intention" value="{{ vm_obj.vm_intention}}" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -53,15 +50,13 @@
         <div class="layui-inline">
             <label class="layui-form-label">vlan标签</label>
             <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" name="vlan_tag" maxlength="50" value="{{ vm_obj.vlan_tag}}" lay-verify="required"
-                    autocomplete="off" class="layui-input">
+                <input type="text" name="vlan_tag" maxlength="50" value="{{ vm_obj.vlan_tag}}" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-inline">
             <label class="layui-form-label">vlan ID</label>
             <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" name="vlan_id" maxlength="4" value="{{ vm_obj.vlan_id}}" lay-verify="required|number"
-                    autocomplete="off" class="layui-input">
+                <input type="text" name="vlan_id" maxlength="4" value="{{ vm_obj.vlan_id}}" lay-verify="required|number" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -96,22 +91,19 @@
         <div class="layui-inline">
             <label class="layui-form-label">CPU</label>
             <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" name="vm_cpu" value="{{ vm_obj.vm_cpu}}" maxlength="4" lay-verify="required"
-                    autocomplete="off" class="layui-input">
+                <input type="text" name="vm_cpu" value="{{ vm_obj.vm_cpu}}" maxlength="4" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-inline">
             <label class="layui-form-label">内存</label>
             <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" name="vm_memory" maxlength="4" value="{{ vm_obj.vm_memory}}" lay-verify="required"
-                    autocomplete="off" class="layui-input">
+                <input type="text" name="vm_memory" maxlength="4" value="{{ vm_obj.vm_memory}}" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-inline">
             <label class="layui-form-label">硬盘</label>
             <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" name="vm_disk" maxlength="4" value="{{ vm_obj.vm_disk}}" lay-verify="required"
-                    autocomplete="off" class="layui-input">
+                <input type="text" name="vm_disk" maxlength="4" value="{{ vm_obj.vm_disk}}" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -123,12 +115,9 @@
             <label class="layui-form-label">操作系统</label>
             <div class="layui-input-inline" style="width: 100px;">
                 <select name="vm_os" lay-verify="required">
-                    <option {% ifequal vm_obj.vm_os 'CentOS' %}selected="" {% endifequal %} value="CentOS">CentOS
-                    </option>
-                    <option {% ifequal vm_obj.vm_os 'Ubuntu' %}selected="" {% endifequal %} value="Ubuntu">Ubuntu
-                    </option>
-                    <option {% ifequal vm_obj.vm_os 'Windows' %}selected="" {% endifequal %} value="Windows">Windows
-                    </option>
+                    <option {% ifequal vm_obj.vm_os 'CentOS' %}selected="" {% endifequal %} value="CentOS">CentOS</option>
+                    <option {% ifequal vm_obj.vm_os 'Ubuntu' %}selected="" {% endifequal %} value="Ubuntu">Ubuntu</option>
+                    <option {% ifequal vm_obj.vm_os 'Windows' %}selected="" {% endifequal %} value="Windows">Windows</option>
                 </select>
             </div>
         </div>
@@ -136,8 +125,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">管理IP</label>
             <div class="layui-input-inline" style="width: 334px;">
-                <input type="text" maxlength="15" name="vm_ip" id="vm_ip" value="{{ vm_obj.vm_ip}}" lay-verify="required|ip"
-                    autocomplete="off" class="layui-input">
+                <input type="text" maxlength="15" name="vm_ip" id="vm_ip" value="{{ vm_obj.vm_ip}}" lay-verify="required|ip" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -146,7 +134,7 @@
         <label class="layui-form-label">Zabbix监控</label>
         <div class="layui-input-block">
             <input type="checkbox" id="vm_monitor_switch" {% ifequal vm_obj.vm_monitor 'on' %} checked="" {% endifequal %} lay-skin="switch" lay-filter="vm_monitor" lay-text="ON|OFF">
-            <input type="hidden" id="vm_monitor" value="null" name="vm_monitor">
+            <input type="hidden" id="vm_monitor" value="{% ifequal vm_obj.vm_monitor 'on' %}on{%else%}off{% endifequal %}" name="vm_monitor">
         </div>
     </div>
 
@@ -237,6 +225,10 @@
                     "method": "host.create",
                     "params": {
                         "host": $('#vm_hostname').val(),
+                        "tags": [{
+                            "tag":"宿主机",
+                            "value": $('#host_id').find("option:selected").text()
+                        }],
                         "interfaces": [
                             {
                                 "type": 1,
@@ -303,9 +295,11 @@
                 contentType: "application/json", //必须有
                 data:JSON.stringify(get_post_data('join_zabbix')),
                 success:function(d){
-                    if(d.result.hostids[0]>0){
+                    if(d.result && d.result.hostids[0]>0){
                         $('#vm_monitor').val('on');
                         layer.msg('加入成功');
+                    }else{
+                        layer.msg(d.error.message)
                     }
                 },
                 error:function(e){
@@ -322,8 +316,10 @@
                 contentType: "application/json", //必须有
                 data:JSON.stringify(get_post_data('query_hostid')),
                 success:function(d){
-                    if(d.result[0].hostid>0){
+                    if(d.result && d.result[0].hostid>0){
                         $('#vm_hostid').val(d.result[0].hostid);
+                    }else{
+                        layer.msg(d.error.message)
                     }
                 },
                 error:function(e){
@@ -332,6 +328,10 @@
             })
             
             $.when(query_hostid).done(function(){
+                if($('#vm_hostid').val().trim().length == 0){
+                    layer.msg('未查询到该zabbix主机')
+                    return false
+                }
                 $.ajax({
                     url:$('#url').val(),
                     type:'POST',
@@ -339,9 +339,11 @@
                     contentType: "application/json", //必须有
                     data:JSON.stringify(get_post_data('delete')),
                     success:function(d){
-                        if(d.result.hostids[0]>0){
+                        if(d.result && d.result.hostids[0]>0){
                             $('#vm_monitor').val('off');
                             layer.msg('关闭成功');
+                        }else{
+                            layer.msg(d.error.message)
                         }
                     },
                     error:function(e){
@@ -350,10 +352,6 @@
                 })
             })
         }
-        
-
-         
-
     });
 </script>
 {% endblock %}

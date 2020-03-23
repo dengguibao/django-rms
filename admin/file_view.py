@@ -29,7 +29,7 @@ def upload_file(request):
         real_path = os.path.join(upload_path, today)
         name = origin_file_obj.name
         file_size = origin_file_obj.size
-        if file_size >= 102400:
+        if file_size >= 1024*1024*1024*100:
             return JsonResponse({
                 'code': 1,
                 'msg': 'file to large'
@@ -179,11 +179,12 @@ def file_delete(request, i):
         })
 
 
-@login_required
+#@login_required
 def file_download(request, id):
     res = FileInfo.objects.get(id=id)
     down = request.GET.get('d', 0)
-    if res and res.owner != request.user:
+    # if res and res.owner != request.user:
+    if not res:
         return render(request, 'admin/error.html')
 
     if res.file_type == 'md':

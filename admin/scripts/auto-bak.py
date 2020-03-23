@@ -31,7 +31,7 @@ class ConfigBackup:
         try:
             tn = telnetlib.Telnet(ipaddr, 23, 10)
         except Exception as e:
-            raise Exception('host:'+str(ipaddr)+', errorcode:'+str(e.args[0]))
+            raise Exception('host:'+str(ipaddr)+', errorcode: '+str(e.args[0]))
         if debug:
             tn.set_debuglevel(2)
         self.__tn = tn
@@ -56,7 +56,7 @@ class ConfigBackup:
         try:
             self.exec_cmd(b'display current-configuration')
         except Exception as e:
-            print self._ip
+            print(self._ip)
 
         time.sleep(.8)
         data = []
@@ -70,7 +70,7 @@ class ConfigBackup:
             try:
                 cache = format_data(tn.read_very_eager())
             except Exception as e:
-                print self._ip
+                print(self._ip)
             
         else:
            data.append(cache)
@@ -180,11 +180,14 @@ if __name__ == '__main__':
             threading.Thread(target=AutoBackup, args=(ip, user, pwd,)).start()
         # th.start()
         
-
+    xx=0
     while True:
         if threading.activeCount() > 1:
             # print('current running thread total is:'+str(threading.activeCount))
             time.sleep(.5)
+            xx =+ 1
+            if xx > 600:
+                break
         else:
             break
 
@@ -192,3 +195,4 @@ if __name__ == '__main__':
         for h in i['hosts']:
             if h not in success_list:
                 print('%15s backup failed' % h)
+                
