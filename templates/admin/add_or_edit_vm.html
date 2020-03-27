@@ -21,7 +21,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">主机名</label>
             <div class="layui-input-inline" style="width: 300px;">
-                <input type="text" maxlength="50" name="vm_hostname" id="vm_hostname" value="{{ vm_obj.vm_hostname}}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" placeholder="project-name" maxlength="50" name="vm_hostname" id="vm_hostname" value="{{ vm_obj.vm_hostname}}" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -30,7 +30,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">申请人</label>
             <div class="layui-input-inline">
-                <input type="text" maxlength="10" name="vm_register" value="{{ vm_obj.vm_register}}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" maxlength="10" placeholder="张三" name="vm_register" value="{{ vm_obj.vm_register}}" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -39,7 +39,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">用途</label>
             <div class="layui-input-inline" style="width:500px">
-                <input type="text" maxlength="100" name="vm_intention" value="{{ vm_obj.vm_intention}}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" maxlength="100" placeholder="视频转码服务器" name="vm_intention" value="{{ vm_obj.vm_intention}}" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -50,13 +50,13 @@
         <div class="layui-inline">
             <label class="layui-form-label">vlan标签</label>
             <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" name="vlan_tag" maxlength="50" value="{{ vm_obj.vlan_tag}}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" name="vlan_tag" placeholder="capture" maxlength="50" value="{{ vm_obj.vlan_tag}}" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-inline">
             <label class="layui-form-label">vlan ID</label>
             <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" name="vlan_id" maxlength="4" value="{{ vm_obj.vlan_id}}" lay-verify="required|number" autocomplete="off" class="layui-input">
+                <input type="text" name="vlan_id" maxlength="4" placeholder="1000" value="{{ vm_obj.vlan_id}}" lay-verify="required|number" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -91,19 +91,19 @@
         <div class="layui-inline">
             <label class="layui-form-label">CPU</label>
             <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" name="vm_cpu" value="{{ vm_obj.vm_cpu}}" maxlength="4" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" name="vm_cpu" placeholder="个" value="{{ vm_obj.vm_cpu}}" maxlength="4" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-inline">
             <label class="layui-form-label">内存</label>
             <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" name="vm_memory" maxlength="4" value="{{ vm_obj.vm_memory}}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" name="vm_memory" maxlength="4" placeholder="G" value="{{ vm_obj.vm_memory}}" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-inline">
             <label class="layui-form-label">硬盘</label>
             <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" name="vm_disk" maxlength="4" value="{{ vm_obj.vm_disk}}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" name="vm_disk" maxlength="4" placeholder="G" value="{{ vm_obj.vm_disk}}" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -125,7 +125,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">管理IP</label>
             <div class="layui-input-inline" style="width: 334px;">
-                <input type="text" maxlength="15" name="vm_ip" id="vm_ip" value="{{ vm_obj.vm_ip}}" lay-verify="required|ip" autocomplete="off" class="layui-input">
+                <input type="text" maxlength="15" name="vm_ip" placeholder="1.2.3.4" id="vm_ip" value="{{ vm_obj.vm_ip}}" lay-verify="required|ip" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>

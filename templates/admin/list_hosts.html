@@ -3,11 +3,36 @@
 服务器管理
 {% endblock %}
 {% block mainbody %}
-
+<style type="text/css">
+.layui-btn-xs{
+    line-height:20px;
+    height:20px;
+    padding:0 2px;
+}
+.layui-table-cell {
+    height: auto;
+    padding: unset;
+    text-align: center;
+}
+</style>
 <fieldset class="layui-elem-field layui-field-title">
   <legend>服务器管理</legend>
 </fieldset>
-
+<div class="layui-row">
+    <div class="layui-form-item" style="text-align: center;">
+        <div class="layui-inline">
+            <div class="layui-input-inline" style="width: 300;">
+                <input type="text" id="keyword" name="keyword" placeholder="请输入主机名或者ip" class="layui-input">
+            </div>
+            <button type="button" class="layui-btn" id="search">
+              <i class="layui-icon layui-icon-search"></i>查找
+            </button>
+            <a target="_blank" href="/admin/export-server/host" class="layui-btn">
+                <i class="layui-icon layui-icon-download-circle"></i>全部导出
+            </a>
+        </div>
+    </div>
+</div>
 <div class="layui-tab layui-tab-brief" lay-filter="tab_cluster">
   <ul class="layui-tab-title">
     <li flag="cs" class="layui-this">长沙</li>
@@ -16,102 +41,157 @@
     <li flag="none">裸机</li>
   </ul>
   <div class="layui-form">
-    <table class="layui-table" lay-size="sm">
-      <colgroup>
-        <col width="45">
-        <col width="100">
-        <col width="220">
-        <col width="90">
-        <col width="90">
-        <col width="100">
-        <col width="60">
-        <col width="60">
-        <col width="60">
-        <col width="70">
-        <col width="85">
-        <col>
-      </colgroup>
-      <thead>
-        <tr>
-          <th>序号</th>
-          <th>型号</th>
-          <th>主机名</th>
-          <th>iDRC IP</th>
-          <th>主机 IP</th>
-          <th>SN</th>
-          <th>CPU</th>
-          <th>内存</th>
-          <th>硬盘</th>
-          <th>操作系统</th>
-          <th>加入时间</th>
-          <th>操作</th>
-        </tr>
-      </thead>
-      <tbody id="tbody">
-      </tbody>
-    </table>
+    <table id="dt" lay-filter="dt"></table>
   </div>
+  <div id="page"></div>
 </div>
+<script type="text/html" id="toolbar">
+  <div class="layui-btn-container">
+    <a lay-event='edit' class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon'></i></a>
+    <a lay-event='del' class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon'></i></a>
+  </div>
+</script>
 <script>
-  layui.use(['element', 'layer'], function () {
+  layui.use(['form', 'element', 'layer', 'laypage', 'table'], function () {
     var $ = layui.jquery,
+      form = layui.form,
+      table = layui.table,
+      laypage = layui.laypage,
       element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
 
-    refresh_table("/admin/get-hosts-list/type/host/flag/cs");
+    refresh_table("/admin/get-hosts-list/type/host/flag/cs",'cs');
 
     element.on('tab(tab_cluster)', function (data) {
+      $('#page').show()
       var flag = $(this).attr('flag');
       var url = "/admin/get-hosts-list/type/host/flag/" + flag;
-      refresh_table(url);
+      refresh_table(url,flag);
     })
 
-    function refresh_table(url) {
-      $.getJSON(
-        url,
-        function (result) {
-          var tbody = $('#tbody');
-          tbody.empty();
-          $.each(result.data, function (i, item) {
-            // var opt_value = "<option value='" + item.id + "'>" + item.hostname + "</option>";
-            // device_list_control.append(opt_value);
-            var tbody_content = "<tr id='id_" + item.id + "'>" +
-              "<td>" + (i + 1) + "</td>" +
-              "<td>" + item.dev_model + "</td>" +
-              "<td>" + item.hostname + "</td>" +
-              "<td>" + item.idrc_ip + "</td>" +
-              "<td>" + item.host_ip + "</td>" +
-              "<td>" + item.sn + "</td>" +
-              "<td>" + item.cpu + "</td>" +
-              "<td>" + item.memory + "</td>" +
-              "<td>" + item.disk + "</td>" +
-              "<td>" + item.os + "</td>" +
-              "<td>" + item.pub_date.substring(0, 10) + "</td>" +
-              "<td><a href='/admin/edit/host/" + item.id + "/' class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon'></i></a>" +
-              "<a href='javascript:;' onclick='javascript:row_del(" + item.id + ")' class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon'></i></a></td></tr>";
-            tbody.append(tbody_content);
-          })
-        }
-      )
-    }
 
-    window.row_del = function (id) {
-      //alert(s)
-      layer.confirm('真的删除行么', function(index){
-        var url = "/admin/delete/host/" + id;
-        $.getJSON(
-          url,
-          function (d) {
-            if (d.code == 0) {
-              $('#id_' + id).empty();
-              layer.close(index);
-            }else{
-              alert(d.msg)
-            }
+    $('#search').on('click',function () {
+        var keyword=$('#keyword').val()
+        if (keyword.trim().length == 0){
+          layer.msg('关键字不能为空');
+          return;
+        }
+        $('#page').hide()
+        refresh_table('/admin/search/host/'+keyword,'null')
+    })
+
+    function refresh_table(url,flag) {
+      index=0
+      table.render({
+        size: 'sm'
+        ,elem: '#dt'
+        ,request:{
+            pageName: 'curr'
+            ,limitName: 'nums'
+        }
+        ,url: url //数据接口
+        ,cols: [
+          [
+            {rowspan:2, title: '序号', width:50,fixed: 'left', templet: function(){
+                if(index<15){
+                    index +=1;
+                }else{
+                    index = 1
+                }
+                return index;
+              }}
+            ,{rowspan:2, field: 'id', title: 'id', width:250, hide:true}
+            ,{rowspan:2, field: 'hostname',fixed: 'left', title: '主机名', width:220, }
+            ,{rowspan:2, field: 'host_ip', fixed: 'left', title: 'IP', width:120}
+            ,{rowspan:2, field: 'idrac_ip', title: 'iDRAC', width:100}
+            ,{rowspan:2, field: 'sn', title: '序列号', width:100}
+            ,{colspan:4, title: 'CPU'}
+            ,{colspan:3, title: '内存'}
+            ,{colspan:3, title: 'SATA硬盘'}
+            ,{colspan:3, title: 'SSD硬盘'} 
+            ,{rowspan:2, field: 'raid', title: 'RAID模式'}
+            ,{rowspan:2, field: 'buy_date', title: '购买时间', width: 100}
+            ,{rowspan:2, field: 'end_svc_date', title: '过保日期', width: 100}
+            ,{colspan:3, title: '供应商'}
+            ,{colspan:3, title: '位置'}            
+            ,{rowspan:2, field: 'dev_status', title: '设备状态', width: 80, templet:function(d){
+                if (d.dev_status == '1'){
+                    return '关机'
+                }else{
+                    return '开机'
+                }
+            }}
+            ,{rowspan:2, field: 'os', title: '操作系统', width: 80}
+            ,{rowspan:2, field: 'pub_date', title: '添加时间', width: 100, templet: function(item){return item.pub_date.substring(0, 10)}}
+            ,{rowspan:2, title: '操作', width: 110, fixed: 'right', toolbar: '#toolbar'}
+          ],
+          // 二级菜单
+          [
+            {title:'数量', field:'cpu_nums'},
+            {title:'核心数', field:'cpu_core'},
+            {title:'频率', field:'cpu_rate'},
+            {title:'总频率', field:'cpu_total_rate'},
+            {field: 'memory_nums', title: '数量(条)'},
+            {field: 'memory_size', title: '容量(G)'},
+            {field: 'memory_total_size', title: '总容量(G)'},
+            {field: 'sd_nums', title: '数量(块)'},
+            {field: 'sd_size', title: '容量(T)'},
+            {field: 'sd_total_size', title: '总容量(T)'},
+            {field: 'ssd_nums', title: '数量(块)'},
+            {field: 'ssd_size', title: '容量(G)'},
+            {field: 'ssd_total_size', title: '总容量(T)'},
+            {field: 'supply_name', title: '名称', width: 150},
+            {field: 'supply_contact_name', title: '联系人', width: 80},
+            {field: 'supply_phone', title: '联系号码', width: 120},
+            {field: 'dc_name', title: '机房'},
+            {field: 'rack_num', title: '机柜'},
+            {field: 'slot_num', title: '槽位'},
+          ]
+        ],done: function(res,cur,count){
+          //refresh_zabbix_info_event();
+          if (res.page_data == undefined){
+            return;
+          }
+          page_size=res.page_data.page_size;
+          rs_count = res.page_data.rs_count;
+          curr_page = res.page_data.curr_page;
+          // 渲染分页
+          laypage.render({
+              elem: 'page', // page container
+              limit: page_size, // page size
+              count: rs_count, // record total
+              curr: curr_page, // current page
+              layout: ['count','prev', 'page', 'next'],
+              jump: function (obj, first) {
+                  //首次不执行
+                  if (!first) {
+                      refresh_table("/admin/get-hosts-list/type/host/flag/" + flag + "/?page=" + obj.curr,flag)
+                  } 
+              }
           });
+        }
       });
     }
 
-
+    table.on('tool(dt)',function(obj){
+      var event=obj.event
+      if (event == 'edit'){
+          window.location.href='/admin/edit/host/'+obj.data.id
+      }else if (event == 'del'){
+        layer.confirm('真的删除行么', function(index){
+          var url = "/admin/delete/host/" + obj.data.id;
+          $.getJSON(
+            url,
+            function (d) {
+              if (d.code == 0) {
+                obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                layer.close(index);
+            }else{
+                alert(msg.id);
+            }
+          })
+        });
+      }
+    })
   });
 </script>
 {% endblock %}

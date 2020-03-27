@@ -14,22 +14,46 @@ class FileInfo(models.Model):
 
 
 class HostInfo(models.Model):
-    '''hostinfo db table model'''
     hostname = models.CharField(max_length=100, unique=True) # 主机名
     sn = models.CharField(max_length=80) # SN序列号
-    idrc_ip = models.GenericIPAddressField(max_length=15) # 远程管理卡IP
+    idrac_ip = models.GenericIPAddressField(max_length=15) # 远程管理卡IP
     host_ip = models.GenericIPAddressField(max_length=15) # 主机IP
     cluster_tag = models.CharField(max_length=20) # 所属集群标签
-    cpu = models.CharField(max_length=50, null=True) # 主机CPU
-    disk = models.CharField(max_length=50, null=True) # 主机硬盘
+    
+    cpu_nums = models.IntegerField(default=1) # cpu总数
+    cpu_core = models.IntegerField(default=1) # cpu总数
+    cpu_rate = models.FloatField(default=1) #单颗频率
+    cpu_total_rate = models.CharField(max_length=50, null=True) # 主机CPU
+
+    sd_nums = models.IntegerField(default=1) # 机槿硬盘数量
+    sd_size = models.CharField(max_length=10, null=True) #机槿硬盘大小
+    sd_total_size = models.CharField(max_length=10, null=True) #机槿硬盘总量
+    
+    ssd_nums = models.IntegerField(default=1) # 固态硬盘数量
+    ssd_size = models.CharField(max_length=10, null=True) #固态硬盘大小
+    ssd_total_size = models.CharField(max_length=50, null=True) # 固态硬盘总量
+
     dev_model = models.CharField(max_length=50, null=True) # 设备型号
-    memory = models.CharField(max_length=50) # 主机内存
+    memory_nums = models.IntegerField(default=1)
+    memory_size = models.IntegerField(default=1)
+    memory_total_size = models.CharField(max_length=50) # 主机内存
     os = models.CharField(max_length=20) # 操作系统
     desc = models.TextField(null=True) # 备注
-    pub_date = models.DateTimeField(auto_now_add=True) # 添加时间
+    buy_date = models.CharField("购买日期", max_length=50, null=True)
+    end_svc_date = models.CharField("过保时间", max_length=50, null=True)
+    svc_net_in = models.CharField("业务网络", max_length=50, null=True)
+    idrac_net_in = models.CharField("远程管理卡网络", max_length=50, null=True)
+    supply_name = models.CharField("供应商名称", max_length=50, null=True)
+    supply_contact_name = models.CharField("供应商联系人", max_length=50, null=True)
+    supply_phone = models.IntegerField("供应商联系号码", default=0)
+    rack_num = models.CharField("机柜号", max_length=10, null=True)
+    slot_num = models.CharField("槽位号", max_length=50, null=True)
+    dc_name = models.CharField("机房名称", max_length=50, null=True)
+    intention = models.CharField("用途", max_length=100, null=True)
+    raid = models.CharField("raid", max_length=50, null=True)
+    dev_status = models.IntegerField("设备状态", default=0) # 0开机 1关机   
 
-    def __str__(self):
-        return self.hostname
+    pub_date = models.DateTimeField(auto_now_add=True) # 添加时间
 
 
 class VmInfo(models.Model):

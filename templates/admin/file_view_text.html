@@ -2,23 +2,37 @@
 <head>
 <title>{{filename}}</title>
 <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-<link rel="stylesheet" href="/static/public/css/layui.css" />
-<style type="text/css">
-a{display:none}
-</style>
+<link rel="stylesheet" href="/static/public/hightlight/vs.css" />
+
+<script src="/static/admin/js/jquery-1.4.3.min.js" charset="utf-8"></script>
+<script src="/static/public/hightlight/highlight.min.js" charset="utf-8"></script>
 </head>
 <body>
 <div>
-    <pre class="layui-code">{{content}}</pre>
+    <input type="hidden" value="{{filename}}" id="filename" />
+    <pre>
+        <code id="code">{{content}}</code>
+    </pre>
 </div>
-<script src="/static/public/layui.js" charset="utf-8"></script>
 <script type="text/javascript">
-    layui.use('code', function(){
-        layui.code({
-            title:'{{filename}}'
-            ,encode: true
-        });
-    });
+    file_type={
+        'sh': 'bash',
+        'php': 'php',
+        'py': 'python',
+        'js': 'javascript',
+        'html': 'html',
+        'htm': 'html',
+        'conf': 'config',
+        'log': 'accesslog',
+        'txt': 'plaintext',
+        'sql': 'sql',
+        'go': 'go',
+        'json': 'json',
+        'xml': 'xml'
+    }
+    a=$('#filename').val().split('.');
+    $('#code').addClass(file_type[a[a.length-1]]);
+    hljs.initHighlightingOnLoad();
 </script>
 </body>
 </html>

@@ -16,11 +16,32 @@
 #vm_host_tips_content{
     display:None
 }
+.layui-form-switch {
+    height: 18px;
+    line-height:18px;
+}
+.layui-form-switch i {
+    top:1;
+}
 </style>
 <fieldset class="layui-elem-field layui-field-title">
     <legend>虚拟机管理</legend>
 </fieldset>
-
+<div class="layui-row">
+    <div class="layui-form-item" style="text-align: center;">
+        <div class="layui-inline">
+            <div class="layui-input-inline" style="width: 300;">
+                <input type="text" id="keyword" name="keyword" placeholder="请输入主机名或者ip" class="layui-input">
+            </div>
+            <button type="button" class="layui-btn" id="search" >
+                <i class="layui-icon layui-icon-search"></i>查找
+            </button>
+            <a target="_blank" href="/admin/export-server/vm" class="layui-btn">
+                <i class="layui-icon layui-icon-download-circle"></i>全部导出
+            </a>
+        </div>
+    </div>
+</div>
 <div class="layui-tab layui-tab-brief" lay-filter="tab_cluster">
     <ul class="layui-tab-title">
         <li flag="cs" class="layui-this">长沙</li>
@@ -31,12 +52,12 @@
         <!--left content-->
         <input type="hidden" id="auth" value="{{zabbix_api.AUTH}}" />
         <input type="hidden" id="url" value="{{zabbix_api.URL}}" />
-        <div class="layui-col-md10">
+        <div class="layui-col-md10" id="vms_list">
             <table id="dt" lay-filter="dt"></table>
             <div id="page"></div>
         </div>
         <!--right content-->
-        <div class="layui-col-md2" style="padding-left: 10px;" >
+        <div class="layui-col-md2" id="host_list" style="padding-left: 10px;" >
             <table class="layui-table" lay-size="sm">
                 <colgroup>
                     <col>
@@ -53,10 +74,10 @@
     </div>
 </div>
 
-<div id="vm_host_tips_content">
-aaa
-</div>
-
+<div id="vm_host_tips_content"></div>
+<script type="text/html" id="zbx_checkbox">
+  <input type="checkbox" name="zbx_status" value="{% verbatim %}{{d.vm_monitor}}{% endverbatim %}" lay-skin="switch" lay-text="on|off" lay-filter="zbx_status"{% verbatim %}{{ d.vm_monitor == 'on' ? 'checked' : '' }}{% endverbatim %}>
+</script>
 <script type="text/html" id="toolbar">
   <div class="layui-btn-container">
     <a lay-event='edit' class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon'></i></a>
@@ -65,15 +86,34 @@ aaa
 </script>
 
 <script type="text/javascript">
-    layui.use(['element', 'laypage', 'layer', 'table'], function () {
+    layui.use(['element', 'form', 'laypage', 'layer', 'table'], function () {
         var $ = layui.jquery,
             layer = layui.layer,
             laypage = layui.laypage,
             table = layui.table,
+            form = layui.form,
             element = layui.element;
 
         var flag = "cs";
         var tab_act = '_all';
+
+        $('#search').on('click',function () {
+            var keyword=$('#keyword').val()
+            if (keyword.trim().length == 0){
+                layer.msg('关键字不能为空');
+                return;
+            }
+            $('#page').hide()
+            $('#host_list').hide()
+            $('#vms_list').css('width','100%')
+            refresh_vms_table('/admin/search/vm/'+keyword)
+        })
+
+        form.on('switch(zbx_status)', function(obj){
+            //obj.elem.checked
+            layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
+        });
+
 
         //初始化加载
         refresh_esxi_table("/admin/get-hosts-list/type/host/flag/cs");
@@ -84,6 +124,8 @@ aaa
             // dev_type = "vm"
             tab_act = '_all'
             flag = $(this).attr('flag');
+            $('#host_list').show()
+            $('#vms_list').removeAttr('style')
             refresh_esxi_table("/admin/get-hosts-list/type/host/flag/" + flag);
             refresh_vms_table("/admin/get-hosts-list/type/vm/flag/" + flag + "_all");
         })
@@ -147,6 +189,7 @@ aaa
                     ,{field: 'vm_memory', title: '内存', width: 80}
                     ,{field: 'vm_disk', title: '硬盘', width: 80}
                     ,{field: 'vm_register', title: '申请人', width: 90}
+                    //,{title:'Zabbix', width:90, toolbar:'#zbx_checkbox', unresize:true}
                     ,{field: 'vm_monitor', title: '监控', width: 60, templet:function(d){
                         if (d.vm_monitor == 'on'){
                             return '<i tag="'+d.id+'" class="layui-icon zbx_st" style="color:green">&#xe665;</i>'
@@ -161,6 +204,9 @@ aaa
                 ]]
                 ,done: function(res,cur,count){
                     refresh_zabbix_info_event();
+                    if (res.page_data == undefined){
+                        return;
+                    }
                     page_size=res.page_data.page_size;
                     rs_count = res.page_data.rs_count;
                     curr_page = res.page_data.curr_page;
@@ -215,7 +261,8 @@ aaa
                     "params": {
                         "output": [
                             "hostid",
-                            "host"
+                            "host",
+                            "status"
                         ],
                         "selectInterfaces": [
                             "interfaceid",
@@ -249,19 +296,25 @@ aaa
                         'system.cpu.util',
                         'vm.memory.size[available]',
                         'vfs.fs.size[/,pused]',
-                        'vfs.fs.size[/home,pused]'
+                        'vfs.fs.size[/home,pused]',
                     ];
                     tips_str="";
-                    $.each(server_info.result[0].items, function(i,item){
-                        if($.inArray(item.key_,key_array) != -1){
-                            if (item.lastvalue>100){
-                                value=Math.round(item.lastvalue/1024/1024/1024)+' G'
-                            }else{
-                                value=Math.round(item.lastvalue)+' %'
+
+                    if(server_info.result[0].status == 1){
+                        tips_str+="状态: 停用</br>"
+                    }else{
+                        $.each(server_info.result[0].items, function(i,item){
+                            if($.inArray(item.key_,key_array) != -1){
+                                if (item.lastvalue>100){
+                                    value=Math.round(item.lastvalue/1024/1024/1024)+' G'
+                                }else{
+                                    value=Math.round(item.lastvalue)+' %'
+                                }
+                                tips_str+=item.name+': '+value+'</br>';
                             }
-                            tips_str+=item.name+': '+value+'</br>';
-                        }
-                    })
+                        })
+                    }
+                   
                     layer.tips(tips_str, obj, {
                         tips: [3, '#3595CC'],
                         time: 3000

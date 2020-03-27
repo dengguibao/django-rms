@@ -1,5 +1,6 @@
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.conf import settings
@@ -9,7 +10,7 @@ from .models import VmInfo, HostInfo
 from io import BytesIO
 import xlwt
 
-
+@login_required()
 def get_hosts_list(request, dev_type, flag):
     """get all host and virtual machine resource
     
@@ -37,8 +38,16 @@ def get_hosts_list(request, dev_type, flag):
             rs = HostInfo.objects.order_by('hostname').all()
         else:
             rs = HostInfo.objects.filter(cluster_tag=flag).order_by('hostname')
-        rs_data_set = [i for i in rs.values()]
-        return_data['data'] = rs_data_set
+        p = Paginator(rs.values(), page_size)
+        page = int(request.GET.get('page', 1))
+        data_obj = p.page(page)
+        return_data['page_data'] = {
+            'rs_count': p.count,
+            'page_count': p.num_pages,
+            'page_size': page_size,
+            'curr_page': page,
+        }
+        return_data['data'] = list(data_obj)
         return_data['code'] = 0
         return_data['msg'] = 'ok'
     # get virtual machine info
@@ -48,13 +57,13 @@ def get_hosts_list(request, dev_type, flag):
             if x[0] not in ['cs', 'xh', 'test']:
                 return JsonResponse(return_data)
             else:
-                vm_obj = VmInfo.objects.filter(host__cluster_tag=x[0])
+                vm_obj = VmInfo.objects.filter(host__cluster_tag=x[0]).order_by('-pub_date')
                 host_obj = HostInfo.objects.filter(cluster_tag=x[0])
         elif flag == 'all':
-            vm_obj = VmInfo.objects.exclude(host__cluster_tag='none')
-            host_obj = HostInfo.objects.all()
+            vm_obj = VmInfo.objects.exclude(host__cluster_tag='none').order_by('-pub_date')
+            host_obj = HostInfo.objects.all().order_by('pub_date')
         else:
-            vm_obj = VmInfo.objects.filter(host__hostname=flag)
+            vm_obj = VmInfo.objects.filter(host__hostname=flag).order_by('-pub_date')
             host_obj = HostInfo.objects.filter(hostname=flag)
 
         p = Paginator(vm_obj.values(), page_size)
@@ -80,7 +89,7 @@ def get_hosts_list(request, dev_type, flag):
 
     return JsonResponse(return_data)
 
-
+@login_required()
 def export(request, dev_type):
     if dev_type not in ['vm', 'host']:
         return render(request, 'admin/error.html')
@@ -89,83 +98,95 @@ def export(request, dev_type):
     sheet = wb.add_sheet('sheet1', cell_overwrite_ok=True)
 
     if dev_type == 'host':
-        res = HostInfo.objects.all()
+        res = HostInfo.objects.all().values()
         export_file_name = 'host_info.xls'
     if dev_type == 'vm':
         export_file_name = 'vms_info.xls'
-        res = VmInfo.objects.all()
+        res = VmInfo.objects.all().values()
 
-    # 导出虚拟机
-    if res and dev_type == 'vm':
         host_obj = HostInfo.objects.all()
         esxi_kvp = {i.id: i.hostname for i in host_obj}
-        sheet.write(0, 0, '主机名')
-        sheet.write(0, 1, 'IP')
-        sheet.write(0, 2, 'vlan tag')
-        sheet.write(0, 3, 'vlan id')
-        sheet.write(0, 4, '宿主机')
-        sheet.write(0, 5, 'cpu')
-        sheet.write(0, 6, '硬盘')
-        sheet.write(0, 7, '内存')
-        sheet.write(0, 8, '操作系统')
-        sheet.write(0, 9, 'zabbix agent')
-        sheet.write(0, 10, '建立时间')
-        sheet.write(0, 11, '申请人')
-        sheet.write(0, 12, '用途')
-        sheet.write(0, 13, '备注')
-        data_row = 1
-        for i in res:
-            sheet.write(data_row, 0, i.vm_hostname)
-            sheet.write(data_row, 1, i.vm_ip)
-            sheet.write(data_row, 2, i.vlan_tag)
-            sheet.write(data_row, 3, i.vlan_id)
-            sheet.write(data_row, 4, esxi_kvp[i.host_id])
-            sheet.write(data_row, 5, i.vm_cpu)
-            sheet.write(data_row, 6, i.vm_disk)
-            sheet.write(data_row, 7, i.vm_memory)
-            sheet.write(data_row, 8, i.vm_os)
-            sheet.write(data_row, 9, i.vm_monitor)
-            sheet.write(data_row, 10, i.pub_date)
-            sheet.write(data_row, 11, i.vm_register)
-            sheet.write(data_row, 12, i.vm_intention)
-            sheet.write(data_row, 13, i.vm_desc)
-            data_row += 1
-    # 导出宿主机（祼机）
-    if res and dev_type == 'host':
-        sheet.write(0, 0, '主机名')
-        sheet.write(0, 1, 'sn')
-        sheet.write(0, 2, 'idrc ip')
-        sheet.write(0, 3, 'host ip')
-        sheet.write(0, 4, '所属集群')
-        sheet.write(0, 5, 'cpu')
-        sheet.write(0, 6, '硬盘')
-        sheet.write(0, 7, '内存')
-        sheet.write(0, 8, '操作系统')
-        sheet.write(0, 9, '设备型号')
-        sheet.write(0, 10, '建立时间')
-        sheet.write(0, 11, '备注')
-        cluster_tag = {
-            'cs':'长沙',
-            'xh':'新化',
-            'test':'开发测试',
-            'none':'裸机'
-        }
-        data_row = 1
-        for i in res:
-            sheet.write(data_row, 0, i.hostname)
-            sheet.write(data_row, 1, i.sn)
-            sheet.write(data_row, 2, i.idrc_ip)
-            sheet.write(data_row, 3, i.host_ip)
-            sheet.write(data_row, 4, cluster_tag[i.cluster_tag])
-            sheet.write(data_row, 5, i.cpu)
-            sheet.write(data_row, 6, i.disk)
-            sheet.write(data_row, 7, i.memory)
-            sheet.write(data_row, 8, i.os)
-            sheet.write(data_row, 9, i.dev_model)
-            sheet.write(data_row, 10, i.pub_date)
-            sheet.write(data_row, 11, i.desc)
-            data_row += 1
 
+    backup_data_struct = {
+        'vm':{
+            'vm_hostname': '主机名',
+            'vm_ip': 'IP',
+            'vlan_tag': 'VLAN标签',
+            'vlan_id': 'VLAN ID',
+            'host_id': '宿主机',
+            'vm_cpu': 'CPU',
+            'vm_disk': '硬盘',
+            'vm_memory': '内存',
+            'vm_os': '操作系统',
+            'vm_monitor': 'zabbix监控',
+            'pub_date': '加入时间',
+            'vm_register': '申请人',
+            'vm_intention': '用途',
+            'vm_desc': '备注',
+        },
+        'host':{
+            'hostname': '主机名',
+            'sn': '序列号',
+            'idrac_ip': 'iDRAC ip',
+            'host_ip': '主机IP',
+            'cluster_tag': '集群信息',
+            'cpu_nums': 'CPU数量',
+            'cpu_core': 'CPU核心数',
+            'cpu_rate': 'CPU频率',
+            'cpu_total_rate': 'CPU总频率',
+            'sd_nums': 'sata数量',
+            'sd_size': 'sata容量',
+            'sd_total_size': 'sata总容量',
+            'ssd_nums': 'ssd数量',
+            'ssd_size': 'ssd容量',
+            'ssd_total_size': 'ssd总容量',
+            'memory_nums': '内存数量',
+            'memory_size': '内存容量',
+            'memory_total_size': '内存总容量',
+            'supply_name': '供应商名称',
+            'supply_contact_name': '供应商联系人',
+            'supply_phone': '供应商联系号码',
+            'dc_name': '数据中心',
+            'rack_num': '机柜号',
+            'slot_num': '槽位号',
+            'buy_date': '购买日期',
+            'end_svc_date': '过保日期',
+            'idrac_net_in': '业务网络接入',
+            'svc_net_in': 'iDRAC网络接入',
+            'raid': 'RAID模式',
+            'intention': '用途',
+            'os': '操作系统',
+            'dev_model': '设备型号',
+            'pub_date': '加入时间',
+            'desc': '备注',
+        }
+    }
+    cluster_tag = {
+        'cs':'长沙',
+        'xh':'新化',
+        'test':'开发测试',
+        'none':'裸机'
+    }
+
+    if res:  
+        column = 0
+        for title in backup_data_struct[dev_type]:
+            sheet.write(0, column, backup_data_struct[dev_type][title])
+            column += 1
+
+        column = 0
+        data_row_num = 1
+        for res_row in res:
+            for key in backup_data_struct[dev_type]:
+                if key == 'cluster_tag':
+                    sheet.write(data_row_num, column, cluster_tag[res_row[key]])
+                elif key == 'host_id':
+                    sheet.write(data_row_num, column, esxi_kvp[res_row[key]])
+                else:
+                    sheet.write(data_row_num, column, res_row[key])
+                column += 1
+            column = 0
+            data_row_num += 1
     response = HttpResponse(content_type='application/vnd.ms-excel')
     response['Content-Disposition'] = 'attachment;filename=%s' % (export_file_name)
     output = BytesIO()
@@ -177,7 +198,7 @@ def export(request, dev_type):
     return response
 
 
-# @login_required()
+@login_required()
 def search(request, dev_type, keyword):
     """ accroding keyword search host or virtual machine
     
@@ -230,7 +251,7 @@ def search(request, dev_type, keyword):
         res = model.objects.filter(
             Q(host_ip__contains=keyword) |
             Q(hostname__contains=keyword) |
-            Q(idrc_ip__contains=keyword)
+            Q(idrac_ip__contains=keyword)
         )
         return_data = {
             'data': [i for i in res.values()],

@@ -153,8 +153,8 @@ def file_delete(request, i):
             os.remove(file)
         except Exception:
             return JsonResponse({
-                'code':'0',
-                'msg':'文件不存在'
+                'code': '0',
+                'msg': '文件不存在'
             })
     # delete folder and file
     if res and res.type == 0:
@@ -192,7 +192,25 @@ def file_download(request, id):
     else:
         temp_name = 'file_view_text.html'
 
-    if res.file_type in ['md', 'conf', 'log', 'txt', 'desktop', 'sh', 'py', 'php', 'js', 'css'] and down == 0:
+    txt_file_type = [
+        'md',
+        'conf',
+        'log',
+        'txt',
+        'desktop',
+        'sh',
+        'py',
+        'php',
+        'js',
+        'css',
+        'html',
+        'htm',
+        'go',
+        'json',
+        'xml'
+    ]
+
+    if res.file_type in txt_file_type and down == 0:
         with open('/'.join([res.real_path, res.real_name]), 'r', encoding='utf-8', errors="ignore") as f:
             content = f.read()
         return render(request, 'admin/%s' % (temp_name), {
