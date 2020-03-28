@@ -4,8 +4,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
 from django.conf import settings
+from django.db.models import Count
 
-from .models import VmInfo, HostInfo
+from .models import VmInfo, HostInfo, FileInfo
+from django.contrib.auth.models import User
 
 @login_required()
 def index_view(request):
@@ -17,7 +19,45 @@ def index_view(request):
     Returns:
         html -- html template
     """
-    return render(request, 'admin/index.html', {'user_url_path': '管理'})
+    vms_count = VmInfo.objects.all().count()
+    hosts_count = HostInfo.objects.all().count()
+
+    vms_cs_count = VmInfo.objects.filter(host__cluster_tag='cs').count()
+    vms_xh_count = VmInfo.objects.filter(host__cluster_tag='xh').count()
+    vms_dev_count = VmInfo.objects.filter(host__cluster_tag='test').count()
+
+    esxi_cs_count = HostInfo.objects.filter(cluster_tag='cs').count()
+    esxi_xh_count = HostInfo.objects.filter(cluster_tag='xh').count()
+    esxi_dev_count = HostInfo.objects.filter(cluster_tag='test').count()
+    esxi_none_count = HostInfo.objects.filter(cluster_tag='none').count()
+
+    user_count = User.objects.all().count()
+    file_count = FileInfo.objects.all().count()
+
+
+    cs_vms_group = HostInfo.objects.filter(cluster_tag='cs').annotate(count=Count("vminfo__vm_hostname")).values("hostname","count")
+    xh_vms_group = HostInfo.objects.filter(cluster_tag='xh').annotate(count=Count("vminfo__vm_hostname")).values("hostname","count")
+    dev_vms_group = HostInfo.objects.filter(cluster_tag='test').annotate(count=Count("vminfo__vm_hostname")).values("hostname","count")
+
+    return render(request, 'admin/index.html', {
+        'user_url_path': '管理',
+        'data':{
+            'vms_count':vms_count,
+            'hosts_count':hosts_count,
+            'vms_cs_count':vms_cs_count,
+            'vms_xh_count':vms_xh_count,
+            'vms_dev_count':vms_dev_count,
+            'esxi_cs_count':esxi_cs_count,
+            'esxi_xh_count':esxi_xh_count,
+            'esxi_dev_count':esxi_dev_count,
+            'esxi_none_count':esxi_none_count,
+            'user_count': user_count,
+            'file_count': file_count,
+            'cs_vms_group':cs_vms_group,
+            'xh_vms_group':xh_vms_group,
+            'dev_vms_group':dev_vms_group
+        }
+    })
 
 
 @login_required()

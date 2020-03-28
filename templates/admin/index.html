@@ -1,202 +1,209 @@
 {% extends "admin/basic.html" %}
 {% block notice%}
-设备查找
+系统摘要
 {% endblock %}
 {% block mainbody %}
-
+<style type="text/css">
+.layui-table th,.layui-table td {
+    text-align: center;
+ }
+caption{
+    text-align:left;
+    padding:20px 0;
+}
+.layui-col-md4{
+    padding:0 5px
+}
+</style>
+<script src="/static/public/highcharts/highcharts.js"></script>
 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-    <legend>设备查找</legend>
+    <legend>系统摘要</legend>
 </fieldset>
-<form class="layui-form" action="">
-    <div class="layui-row">
-        <div class="layui-form-item" style="text-align: center;">
-            <div class="layui-inline" style="width: 100px;">
-                <select name="search_opt" lay-filter="search_opt" lay-verify="required">
-                    <option value="">请选择</option>
-                    <option value="vm">虚拟机</option>
-                    <option value="host">物理机</option>
-                </select>
-            </div>
-            <div class="layui-inline">
-                <div class="layui-input-inline" style="width: 300;">
-                    <input type="text" name="keyword" placeholder="请输入主机名或者ip" lay-verify="required" class="layui-input">
-                </div>
-                <button type="button" class="layui-btn" lay-submit="" lay-filter="demo1">查找</button>
-            </div>
-        </div>
-    </div>
-</form>
+
 <div class="layui-row">
-    <table class="layui-table" style="display: none;" id="vm_table" lay-size="sm">
+    <table class="layui-table">
         <thead>
             <tr>
-                <th>序号</th>
-                <th>主机名</th>
-                <th>IP</th>
-                <th>Vlan tag</th>
-                <th>Vlan id</th>
-                <th>硬盘</th>
-                <th>CPU</th>
-                <th>内存</th>
-                <th>宿主机</th>
-                <th>操作系统</th>
-                <th>加入时间</th>
-            </tr>
-        </thead>
-        <tbody id="vm_tbody">
-        </tbody>
-        <tfoot>
-        <tr>
-            <td colspan="11">
-                <a target="_blank" href="/admin/export-server/vm" class="layui-btn layui-btn-xs layui-btn-normal"><i class="layui-icon layui-icon-download-circle"></i>全部导出</a>
-            </td>
-        </tr>
-        </tfoot>
-    </table>
-    <div id="page"></div>
+                <th colspan="2">服务器</th>
+                <th rowspan="2">用户</th>
+                <th rowspan="2">文件</th>
+                <th rowspan="2">祼机</th>
+                <th colspan="3">ESXi服务器</th>
+                <th colspan="3">ESXi虚拟机</th>
 
-    <table class="layui-table" style="display: none;" id="host_table" lay-size="sm">
-        <thead>
+            </tr>
             <tr>
-                <th>序号</th>
-                <th>型号</th>
-                <th>主机名</th>
-                <th>iDRC IP</th>
-                <th>主机 IP</th>
-                <th>SN</th>
-                <th>CPU</th>
-                <th>内存</th>
-                <th>硬盘</th>
-                <th>操作系统</th>
-                <th>加入时间</th>
+                <th>物理机</th>
+                <th>虚拟机</th>
+                <th>长沙</th>
+                <th>新化</th>
+                <th>开发测试</th>
+                <th>长沙</th>
+                <th>新化</th>
+                <th>开发测试</th>
             </tr>
         </thead>
-        <tbody id="host_tbody">
+        <tbody>
+            <tr>
+                <td>{{data.hosts_count}}</td>
+                <td>{{data.vms_count}}</td>
+                <td>{{data.user_count}}</td>
+                <td>{{data.file_count}}</td>
+                <td>{{data.esxi_none_count}}</td>
+                <td>{{data.esxi_cs_count}}</td>
+                <td>{{data.esxi_xh_count}}</td>
+                <td>{{data.esxi_dev_count}}</td>
+                <td>{{data.vms_cs_count}}</td>
+                <td>{{data.vms_xh_count}}</td>
+                <td>{{data.vms_dev_count}}</td>
+            </tr>
         </tbody>
-        <tfoot>
-        <tr>
-            <td colspan="11">
-                <a target="_blank" href="/admin/export-server/host" class="layui-btn layui-btn-xs layui-btn-normal"><i class="layui-icon layui-icon-download-circle"></i>全部导出</a>
-            </td>
-        </tr>
-        </tfoot>
     </table>
-    
 </div>
-<script>
-    layui.use(['form','laypage'], function () {
-        var form = layui.form
-            , layer = layui.layer
-            , laypage = layui.laypage;
+<div class="layui-tab layui-tab-card">
+  <ul class="layui-tab-title">
+    <li class="layui-this">长沙</li>
+    <li>新化</li>
+    <li>开发测试</li>
 
-        //监听提交
-        form.on('submit(demo1)', function (data) {
-            // layer.alert(JSON.stringify(data.field), {
-            //     title: '最终的提交信息'
-            // })
-            var keyword=data.field.keyword
-            var dev_type=data.field.search_opt
-            if (dev_type == 'vm') {
-                $('#' + dev_type + '_table').show()
-                $('#host_table').hide()
-                $('#page').hide()
-                select_refresh_vms_table('/admin/search/vm/'+keyword)
-            }
-            if (dev_type == 'host') {
-                $('#' + dev_type + '_table').show()
-                $('#vm_table').hide()
-                $('#page').hide()
-                select_refresh_host_table('/admin/search/host/'+keyword)
-            }
-        });
+  </ul>
+  <div class="layui-tab-content" style="height: 400px;">
+    <div class="layui-tab-item layui-show"><div id="img_cs"></div></div>
+    <div class="layui-tab-item"><div id="img_xh"></div></div>
+    <div class="layui-tab-item"><div id="img_dev"></div></div>
+  </div>
+</div>
 
-        form.on('select(search_opt)', function (data) {
-            var dev_type = data.value;
-            if (dev_type == 'vm') {
-                $('#' + dev_type + '_table').show()
-                $('#host_table').hide()
-                $('#page').show()
-                select_refresh_vms_table('/admin/get-hosts-list/type/vm/flag/all')
-            }
-            if (dev_type == 'host') {
-                $('#' + dev_type + '_table').show()
-                $('#vm_table').hide()
-                $('#page').hide()
-                select_refresh_host_table('/admin/get-hosts-list/type/host/flag/all')
-            }
-        })
 
-        function select_refresh_vms_table(url) {
-            var page_size, rs_count, curr_page;
-            $.getJSON(
-                url,
-                function (result) {
-                    var tbody = $('#vm_tbody');
-                    tbody.empty();
-                    page_size = result.page_data.page_size
-                    rs_count = result.page_data.rs_count
-                    curr_page = result.page_data.curr_page
-                    $.each(result.data, function (i, item) {
-                        var tbody_content = "<tr id='id_" + item.id + "'>" +
-                            "<td>" + (i + 1) + "</td>" +
-                            "<td>" + item.vm_hostname.substring(0, 30) + "</td>" +
-                            "<td>" + item.vm_ip + "</td>" +
-                            "<td>" + item.vlan_tag + "</td>" +
-                            "<td>" + item.vlan_id + "</td>" +
-                            "<td>" + item.vm_disk + "</td>" +
-                            "<td>" + item.vm_cpu + "</td>" +
-                            "<td>" + item.vm_memory + "</td>" +
-                            "<td>" + item.esxi_host_name + "</td>" +
-                            "<td>" + item.vm_os + "</td>" +
-                            "<td>" + item.pub_date.substring(0, 10) + "</td>" +
-                            "</tr>";
-                        tbody.append(tbody_content);
-                    })
+<script type="text/javascript">
+layui.use('element', function(){
+  var $ = layui.jquery
+  ,element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块  
+});
 
-                    $('#page').empty()
-                    // 渲染分页
-                    laypage.render({
-                        elem: 'page', // page container
-                        limit: page_size, // page size
-                        count: rs_count, // record total
-                        curr: curr_page, // current page
-                        jump: function (obj, first) {
-                            //首次不执行
-                            if (!first) {
-                                select_refresh_vms_table("/admin/get-hosts-list/type/vm/flag/all/?page=" + obj.curr)
-                            }
-                        }
-                    });
-                }
-            )
+var chart = Highcharts.chart('img_cs', {
+    chart: {
+        type: 'column',
+        marginLeft:200,
+        marginRight:200,
+    },
+    title: {
+        text: '长沙ESXi虚拟机分布'
+    },
+    xAxis: {
+        type: 'category',
+        labels: {
+            rotation: -45  // 设置轴标签旋转角度
         }
-
-        function select_refresh_host_table(url) {
-            $.getJSON(
-                url,
-                function (result) {
-                    var tbody = $('#host_tbody');
-                    tbody.empty();
-                    $.each(result.data, function (i, item) {
-                        var tbody_content = "<tr id='id_" + item.id + "'>" +
-                            "<td>" + (i + 1) + "</td>" + 
-                            "<td>" + item.dev_model + "</td>" +
-                            "<td>" + item.hostname + "</td>" +
-                            "<td>" + item.idrac_ip + "</td>" +
-                            "<td>" + item.host_ip + "</td>" +
-                            "<td>" + item.sn + "</td>" +
-                            "<td>" + item.cpu_total_rate + "</td>" +
-                            "<td>" + item.memory_total_size + "</td>" +
-                            "<td>" + item.sd_total_size + "</td>" +
-                            "<td>" + item.os + "</td>" +
-                            "<td>" + item.pub_date.substring(0, 10) + "</td>" +
-                            "</tr>";
-                        tbody.append(tbody_content);
-                    })
-                }
-            )
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: '数量（台）'
         }
-
-    });
+    },
+    legend: {
+        enabled: false
+    },
+    series: [{
+        name: '总数量（台）',
+        data: [
+            {% for i in data.cs_vms_group %}
+            ['{{i.hostname}}',{{i.count}}],
+            {%endfor%}
+        ],
+        dataLabels: {
+            enabled: true,
+            //rotation: -90,
+            color: '#FFFFFF',
+            align: 'center',
+            format: '{point.y:.f}', // :.1f 为保留 1 位小数
+            y: 10
+        }
+    }]
+});
+var chart = Highcharts.chart('img_xh', {
+    chart: {
+        type: 'column',
+        marginLeft:200,
+        marginRight:200,
+    },
+    title: {
+        text: '新化ESXi虚拟机分布'
+    },
+    xAxis: {
+        type: 'category',
+        labels: {
+            rotation: -45  // 设置轴标签旋转角度
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: '数量（台）'
+        }
+    },
+    legend: {
+        enabled: false
+    },
+    series: [{
+        name: '总数量（台）',
+        data: [
+            {% for i in data.xh_vms_group %}
+            ['{{i.hostname}}',{{i.count}}],
+            {%endfor%}
+        ],
+        dataLabels: {
+            enabled: true,
+            //rotation: -90,
+            color: '#FFFFFF',
+            align: 'center',
+            format: '{point.y:.f}', // :.1f 为保留 1 位小数
+            y: 10
+        }
+    }]
+});
+var chart = Highcharts.chart('img_dev', {
+    chart: {
+        type: 'column',
+        marginLeft:200,
+        marginRight:200,
+    },
+    title: {
+        text: '开发测试ESXi虚拟机分布'
+    },
+    xAxis: {
+        type: 'category',
+        labels: {
+            rotation: -45  // 设置轴标签旋转角度
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: '数量（台）'
+        }
+    },
+    legend: {
+        enabled: false
+    },
+    series: [{
+        name: '总数量（台）',
+        data: [
+            {% for i in data.dev_vms_group %}
+            ['{{i.hostname}}',{{i.count}}],
+            {%endfor%}
+        ],
+        dataLabels: {
+            enabled: true,
+            //rotation: -90,
+            color: '#FFFFFF',
+            align: 'center',
+            format: '{point.y:.f}', // :.1f 为保留 1 位小数
+            y: 10
+        }
+    }]
+});
 </script>
+
 {% endblock %}
