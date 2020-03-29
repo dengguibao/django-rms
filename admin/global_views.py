@@ -25,7 +25,6 @@ def index_view(request):
     cluster_array = {i['tag']:i['name'] for i in res_cluster}
 
     cluster_count = ClusterInfo.objects.all().count()
-    print(cluster_count)
     vms_count_data = []
     for i in cluster_array:
         d = VmInfo.objects.filter(host__cluster_tag=i).count()
