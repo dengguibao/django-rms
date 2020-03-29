@@ -9,13 +9,13 @@
 
 ##截图
 虚拟机管理  
-![vm manage](./screenshot/Screenshot from 2020-03-29 13-53-05.png)
+![vm manage](https://raw.githubusercontent.com/dengguibao/django-rms/master/screenshot/Screenshot from 2020-03-29 13-53-05.png)
 
 添加服务器  
-![vm manage](./screenshot/Screenshot from 2020-03-29 13-53-11.png)
+![vm manage](https://raw.githubusercontent.com/dengguibao/django-rms/master/screenshot/Screenshot from 2020-03-29 13-53-11.png)
 
 文件管理  
-![vm manage](./screenshot/Screenshot from 2020-03-29 13-53-18.png)
+![vm manage](https://raw.githubusercontent.com/dengguibao/django-rms/master/screenshot/Screenshot from 2020-03-29 13-53-18.png)
 
 系统摘要  
-![vm manage](./screenshot/Screenshot from 2020-03-29 13-53-41.png)
+![vm manage](https://raw.githubusercontent.com/dengguibao/django-rms/master/screenshot/Screenshot from 2020-03-29 13-53-41.png)
