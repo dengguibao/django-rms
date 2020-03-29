@@ -7,7 +7,7 @@
 6.支持为系统创建不同的用户及不同的及别管理  
 7.服务器资源的导出  
 
-##截图  
+## 截图  
 虚拟机管理  
 ![vm manage](https://raw.githubusercontent.com/dengguibao/django-rms/master/screenshot/Screenshot%20from%202020-03-29%2013-53-05.png)
 
