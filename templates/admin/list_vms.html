@@ -44,9 +44,9 @@
 </div>
 <div class="layui-tab layui-tab-brief" lay-filter="tab_cluster">
     <ul class="layui-tab-title">
-        <li flag="cs" class="layui-this">长沙</li>
-        <li flag="xh">新化</li>
-        <li flag="test">开发</li>
+        {% for i in cluster_data %}
+        <li flag="{{i.tag}}">{{i.name}}</li>
+        {% endfor %}
     </ul>
     <div class="layui-row">
         <!--left content-->
@@ -124,6 +124,7 @@
             // dev_type = "vm"
             tab_act = '_all'
             flag = $(this).attr('flag');
+            $('#page').empty()
             $('#host_list').show()
             $('#vms_list').removeAttr('style')
             refresh_esxi_table("/admin/get-hosts-list/type/host/flag/" + flag);

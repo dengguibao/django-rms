@@ -1,6 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class ClusterInfo(models.Model):
+    name = models.CharField('集群名称', unique=True, max_length=50)
+    tag = models.CharField('集群标记', unique=True, max_length=50)
+    is_active = models.IntegerField('是否激活',default=0)
+    pub_date = models.DateTimeField(auto_now_add=True) # 添加时间
+
 class FileInfo(models.Model):
     path = models.CharField(max_length=200, null=False) #路径
     type = models.IntegerField(null=False) #类型 0文件夹 1文件

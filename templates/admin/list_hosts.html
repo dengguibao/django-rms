@@ -35,10 +35,10 @@
 </div>
 <div class="layui-tab layui-tab-brief" lay-filter="tab_cluster">
   <ul class="layui-tab-title">
-    <li flag="cs" class="layui-this">长沙</li>
-    <li flag="xh">新化</li>
-    <li flag="test">开发</li>
-    <li flag="none">裸机</li>
+    {% for i in cluster_data %}
+    <li flag="{{i.tag}}">{{i.name}}</li>
+    {% endfor %}
+    <li flag="none">独立服务器</li>
   </ul>
   <div class="layui-form">
     <table id="dt" lay-filter="dt"></table>
@@ -62,7 +62,7 @@
     refresh_table("/admin/get-hosts-list/type/host/flag/cs",'cs');
 
     element.on('tab(tab_cluster)', function (data) {
-      $('#page').show()
+      $('#page').empty()
       var flag = $(this).attr('flag');
       var url = "/admin/get-hosts-list/type/host/flag/" + flag;
       refresh_table(url,flag);

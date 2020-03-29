@@ -15,7 +15,7 @@ def user_logout(request):
         none -- django remove all session
     """
     logout(request)
-    return HttpResponseRedirect('/index')
+    return HttpResponseRedirect('/login')
 
 
 @login_required()

@@ -5,7 +5,7 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.conf import settings
 
-from .models import VmInfo, HostInfo
+from .models import VmInfo, HostInfo, ClusterInfo
 
 from io import BytesIO
 import xlwt
@@ -27,12 +27,15 @@ def get_hosts_list(request, dev_type, flag):
         'code': 1,
         'msg': 'illegal request'
     }
+    
+    res_cluster = ClusterInfo.objects.filter(is_active=0).values('name','tag')
+    cluster_array = {i['tag']:i['name'] for i in res_cluster}
 
     if dev_type not in ['host', 'vm'] or len(flag) <= 0:
         return JsonResponse(return_data)
 
     if dev_type == 'host':
-        if flag not in ['cs', 'xh', 'test', 'none', 'all']:
+        if flag not in cluster_array and flag not in ['all', 'none']:
             return JsonResponse(return_data)
         if flag == 'all':
             rs = HostInfo.objects.order_by('hostname').all()
@@ -54,7 +57,7 @@ def get_hosts_list(request, dev_type, flag):
     elif dev_type == 'vm':
         if '_all' in flag:
             x = flag.split('_')
-            if x[0] not in ['cs', 'xh', 'test']:
+            if x[0] not in cluster_array:
                 return JsonResponse(return_data)
             else:
                 vm_obj = VmInfo.objects.filter(host__cluster_tag=x[0]).order_by('-pub_date')
@@ -161,12 +164,10 @@ def export(request, dev_type):
             'desc': '备注',
         }
     }
-    cluster_tag = {
-        'cs':'长沙',
-        'xh':'新化',
-        'test':'开发测试',
-        'none':'裸机'
-    }
+
+    res_cluster = ClusterInfo.objects.filter(is_active=0).values('name','tag')
+    cluster_tag = {i['tag']:i['name'] for i in res_cluster}
+    cluster_tag['none'] = '独立服务器'
 
     if res:  
         column = 0

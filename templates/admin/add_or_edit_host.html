@@ -74,14 +74,14 @@
 </fieldset>
     <div class="layui-form-item">
         <div class="layui-inline">
-            <label class="layui-form-label">所属集群</label>
+            <label class="layui-form-label">集群</label>
             <div class="layui-input-inline" style="width: 100px;">
                 <select name="cluster_tag" lay-verify="required">
                     <option value="">请选择</option>
-                    <option {% ifequal host_obj.cluster_tag 'cs' %}selected=""{% endifequal %} value="cs">长沙</option>
-                    <option {% ifequal host_obj.cluster_tag 'xh' %}selected=""{% endifequal %} value="xh">新化</option>
-                    <option {% ifequal host_obj.cluster_tag 'test' %}selected=""{% endifequal %} value="test">开发测试</option>
-                    <option {% ifequal host_obj.cluster_tag 'none' %}selected=""{% endifequal %} value="none">祼机</option>
+                    {% for i in cluster_data %}
+                    <option {% ifequal host_obj.cluster_tag i.tag %}selected="" {% endifequal %} value="{{i.tag}}">{{i.name}}</option>
+                    {% endfor %}
+                    <option {% ifequal host_obj.cluster_tag 'none' %}selected=""{% endifequal %} value="none">独立服务器</option>
                 </select>
             </div>
         </div>
@@ -97,8 +97,8 @@
                     <option{% ifequal host_obj.dc_name '总部7F' %} selected=""{% endifequal %} value="总部7F">总部7F</option>
                     <option{% ifequal host_obj.dc_name '新化机房' %} selected=""{% endifequal %} value="新化机房">新化机房</option>
                     <option{% ifequal host_obj.dc_name '日业机房' %} selected=""{% endifequal %} value="日业机房">日业机房</option>
-                    <option{% ifequal host_obj.dc_name '日业机房' %} selected=""{% endifequal %} value="鑫远机房">鑫远机房</option>
-                    <option{% ifequal host_obj.dc_name '日业机房' %} selected=""{% endifequal %} value="公园道机房">公园道机房</option>
+                    <option{% ifequal host_obj.dc_name '鑫远机房' %} selected=""{% endifequal %} value="鑫远机房">鑫远机房</option>
+                    <option{% ifequal host_obj.dc_name '公园道机房' %} selected=""{% endifequal %} value="公园道机房">公园道机房</option>
                 </select>
             </div>
         </div>

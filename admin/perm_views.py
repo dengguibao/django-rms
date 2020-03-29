@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Permission
+from django.db.models import Q
 
 
 @login_required()
@@ -25,7 +26,11 @@ def permissin_admin_view(request, nid):
                 'codename': i.split('.')[1]
             })
         all_permiss_list = Permission.objects.filter(
-            content_type_id__in=[1, 2, 5]
+            Q(codename__contains='vminfo') |
+            # Q(codename__contains='fileinfo') |
+            Q(codename__contains='clusterinfo') |
+            Q(codename__contains='hostinfo') |
+            Q(codename__contains='user') 
         ).values()
         for i in all_permiss_list:
             i['permission_explain'] = permission_explain(i['codename'])
@@ -105,8 +110,6 @@ def perms_controll(method, perm, nid):
     return return_data
 
 
-
-
 def permission_explain(permiss):
     """permission chinese explain
     
@@ -129,6 +132,8 @@ def permission_explain(permiss):
     res_data = {
         'vminfo': '虚拟机',
         'hostinfo': '主机',
-        'user': '用户'
+        'user': '用户',
+        'fileinfo': '文件',
+        'clusterinfo': '集群'
     }
     return act_data[x[0]]+res_data[x[1]]

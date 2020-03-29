@@ -63,20 +63,22 @@
 
     <div class="layui-form-item">
         <div class="layui-inline">
-            <label class="layui-form-label">所属集群</label>
+            <label class="layui-form-label">集群</label>
             <div class="layui-input-inline" style="width: 100px;">
                 <select lay-filter="cluster_tag" name="cluster_tag" lay-verify="required">
                     <option value="">请选择</option>
-                    <option {% ifequal cluster_tag 'cs' %}selected="" {% endifequal %} value="cs">长沙</option>
+                    {% for i in cluster_data %}
+                    <option {% ifequal cluster_tag i.tag %}selected="" {% endifequal %} value="{{i.tag}}">{{i.name}}</option>
+                    {% endfor %}
+                    {% comment %} <option {% ifequal cluster_tag 'cs' %}selected="" {% endifequal %} value="cs">长沙</option>
                     <option {% ifequal cluster_tag 'xh' %}selected="" {% endifequal %} value="xh">新化</option>
-                    <option {% ifequal cluster_tag 'test' %}selected="" {% endifequal %} value="test">开发测试</option>
-                    <!-- <option {% ifequal cluster_tag 'none' %}selected=""{% endifequal %} value="none">祼机</option> -->
+                    <option {% ifequal cluster_tag 'test' %}selected="" {% endifequal %} value="test">开发测试</option> {% endcomment %}
                 </select>
             </div>
         </div>
 
         <div class="layui-inline">
-            <label class="layui-form-label">所属主机</label>
+            <label class="layui-form-label">服务器</label>
             <div class="layui-input-inline" style="width: 200px;">
                 <select id="host_id" name="host_id" lay-verify="required">
                     {% for i in esxi_list %}

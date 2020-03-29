@@ -10,7 +10,7 @@ def index_view(request):
     Returns:
         html -- html template
     """
-    return render(request, 'home/index.html')
+    return render(request, 'home/login.html')
 
 
 def login_view(request):

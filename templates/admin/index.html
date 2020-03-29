@@ -27,20 +27,20 @@ caption{
                 <th colspan="2">服务器</th>
                 <th rowspan="2">用户</th>
                 <th rowspan="2">文件</th>
-                <th rowspan="2">祼机</th>
-                <th colspan="3">ESXi服务器</th>
-                <th colspan="3">ESXi虚拟机</th>
+                <th rowspan="2">独立服务器</th>
+                <th colspan="{{data.cluster_count}}">ESXi虚拟机</th>
+                <th colspan="{{data.cluster_count}}">ESXi服务器</th>
 
             </tr>
             <tr>
                 <th>物理机</th>
                 <th>虚拟机</th>
-                <th>长沙</th>
-                <th>新化</th>
-                <th>开发测试</th>
-                <th>长沙</th>
-                <th>新化</th>
-                <th>开发测试</th>
+                {% for i in data.cluster_data %}
+                <th>{{i.name}}</th>
+                {% endfor %}
+                {% for i in data.cluster_data %}
+                <th>{{i.name}}</th>
+                {% endfor %}
             </tr>
         </thead>
         <tbody>
@@ -50,159 +50,100 @@ caption{
                 <td>{{data.user_count}}</td>
                 <td>{{data.file_count}}</td>
                 <td>{{data.esxi_none_count}}</td>
-                <td>{{data.esxi_cs_count}}</td>
-                <td>{{data.esxi_xh_count}}</td>
-                <td>{{data.esxi_dev_count}}</td>
-                <td>{{data.vms_cs_count}}</td>
-                <td>{{data.vms_xh_count}}</td>
-                <td>{{data.vms_dev_count}}</td>
+                {% for i in data.vms_count_data %}
+                <td>{{i}}</td>
+                {% endfor %}
+
+                {% for i in data.esxi_count_data %}
+                <td>{{i}}</td>
+                {% endfor %}
             </tr>
         </tbody>
     </table>
 </div>
-<div class="layui-tab layui-tab-card">
+<div class="layui-tab layui-tab-card" lay-filter="tab_cluster">
   <ul class="layui-tab-title">
-    <li class="layui-this">长沙</li>
-    <li>新化</li>
-    <li>开发测试</li>
-
+    {% for i in data.cluster_data %}
+    <li tag="{{i.tag}}">{{i.name}}</li>
+    {% endfor %}
   </ul>
   <div class="layui-tab-content" style="height: 400px;">
-    <div class="layui-tab-item layui-show"><div id="img_cs"></div></div>
-    <div class="layui-tab-item"><div id="img_xh"></div></div>
-    <div class="layui-tab-item"><div id="img_dev"></div></div>
+    <div id="chart"></div>
   </div>
 </div>
 
 
 <script type="text/javascript">
-layui.use('element', function(){
+layui.use(['element', 'layer'], function(){
   var $ = layui.jquery
-  ,element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块  
-});
+  ,layer = layui.layer
+  ,element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+  
+  var chart = null;
 
-var chart = Highcharts.chart('img_cs', {
-    chart: {
-        type: 'column',
-        marginLeft:200,
-        marginRight:200,
-    },
-    title: {
-        text: '长沙ESXi虚拟机分布'
-    },
-    xAxis: {
-        type: 'category',
-        labels: {
-            rotation: -45  // 设置轴标签旋转角度
-        }
-    },
-    yAxis: {
-        min: 0,
-        title: {
-            text: '数量（台）'
-        }
-    },
-    legend: {
-        enabled: false
-    },
-    series: [{
-        name: '总数量（台）',
-        data: [
-            {% for i in data.cs_vms_group %}
-            ['{{i.hostname}}',{{i.count}}],
-            {%endfor%}
-        ],
-        dataLabels: {
-            enabled: true,
-            //rotation: -90,
-            color: '#FFFFFF',
-            align: 'center',
-            format: '{point.y:.f}', // :.1f 为保留 1 位小数
-            y: 10
-        }
-    }]
-});
-var chart = Highcharts.chart('img_xh', {
-    chart: {
-        type: 'column',
-        marginLeft:200,
-        marginRight:200,
-    },
-    title: {
-        text: '新化ESXi虚拟机分布'
-    },
-    xAxis: {
-        type: 'category',
-        labels: {
-            rotation: -45  // 设置轴标签旋转角度
-        }
-    },
-    yAxis: {
-        min: 0,
-        title: {
-            text: '数量（台）'
-        }
-    },
-    legend: {
-        enabled: false
-    },
-    series: [{
-        name: '总数量（台）',
-        data: [
-            {% for i in data.xh_vms_group %}
-            ['{{i.hostname}}',{{i.count}}],
-            {%endfor%}
-        ],
-        dataLabels: {
-            enabled: true,
-            //rotation: -90,
-            color: '#FFFFFF',
-            align: 'center',
-            format: '{point.y:.f}', // :.1f 为保留 1 位小数
-            y: 10
-        }
-    }]
-});
-var chart = Highcharts.chart('img_dev', {
-    chart: {
-        type: 'column',
-        marginLeft:200,
-        marginRight:200,
-    },
-    title: {
-        text: '开发测试ESXi虚拟机分布'
-    },
-    xAxis: {
-        type: 'category',
-        labels: {
-            rotation: -45  // 设置轴标签旋转角度
-        }
-    },
-    yAxis: {
-        min: 0,
-        title: {
-            text: '数量（台）'
-        }
-    },
-    legend: {
-        enabled: false
-    },
-    series: [{
-        name: '总数量（台）',
-        data: [
-            {% for i in data.dev_vms_group %}
-            ['{{i.hostname}}',{{i.count}}],
-            {%endfor%}
-        ],
-        dataLabels: {
-            enabled: true,
-            //rotation: -90,
-            color: '#FFFFFF',
-            align: 'center',
-            format: '{point.y:.f}', // :.1f 为保留 1 位小数
-            y: 10
-        }
-    }]
+    request_data_and_rend('cs');
+
+    element.on('tab(tab_cluster)', function (data) {
+        tag = $(this).attr('tag');
+        request_data_and_rend(tag);
+    })
+
+    function request_data_and_rend(cluster_name) {
+        $.getJSON(
+           '/admin/get-cluster-count-info/'+cluster_name,
+           function(d){
+               if (d.code==0){
+                   if (d.data.length == 0){
+                       layer.msg('no data')
+                   }else{
+                       render_chart(d)
+                    }
+               }else{
+                   alert(d.msg)
+               }
+           } 
+        )
+    }
+
+    function render_chart(data){
+        chart = Highcharts.chart('chart', {
+            chart: {
+                type: 'column',
+                marginLeft:200,
+                marginRight:200,
+            },
+            title: {
+                text: data.name+'ESXi虚拟机分布'
+            },
+            xAxis: {
+                type: 'category',
+                labels: {
+                    rotation: -45  // 设置轴标签旋转角度
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: '数量（台）'
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            series: [{
+                name: '总数量（台）',
+                data: data.data,
+                dataLabels: {
+                    enabled: true,
+                    //rotation: -90,
+                    color: '#FFFFFF',
+                    align: 'center',
+                    format: '{point.y:.f}', // :.1f 为保留 1 位小数
+                    y: 10
+                }
+            }]
+        });
+    }
 });
 </script>
 
