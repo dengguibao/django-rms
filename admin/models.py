@@ -11,7 +11,7 @@ class FileInfo(models.Model):
     path = models.CharField(max_length=200, null=False) #路径
     type = models.IntegerField(null=False) #类型 0文件夹 1文件
     name = models.CharField(max_length=100, null=False) #名称
-    file_size =  models.CharField(max_length=10, null=True, default=0) #文件大小
+    file_size = models.CharField(max_length=10, null=True, default=0) #文件大小
     real_path = models.CharField(max_length=200, null=True) #真实路径
     real_name = models.CharField(max_length=100, null=True) #真实文件名
     file_type = models.CharField(max_length=5, null=True) #文件类型
@@ -26,23 +26,24 @@ class HostInfo(models.Model):
     host_ip = models.GenericIPAddressField(max_length=15) # 主机IP
     cluster_tag = models.CharField(max_length=20) # 所属集群标签
     
-    cpu_nums = models.IntegerField(default=1) # cpu总数
-    cpu_core = models.IntegerField(default=1) # cpu总数
-    cpu_rate = models.FloatField(default=1) #单颗频率
-    cpu_total_rate = models.CharField(max_length=50, null=True) # 主机CPU
+    cpu_nums = models.IntegerField(default=0) # cpu总数
+    cpu_core = models.IntegerField(default=0) # cpu总数
+    cpu_rate = models.FloatField(default=0) #单颗频率
+    cpu_total_rate = models.FloatField(default=0) # 主机CPU
 
-    sd_nums = models.IntegerField(default=1) # 机槿硬盘数量
-    sd_size = models.CharField(max_length=10, null=True) #机槿硬盘大小
-    sd_total_size = models.CharField(max_length=10, null=True) #机槿硬盘总量
+    sd_nums = models.IntegerField(default=0) # 机槿硬盘数量
+    sd_size = models.FloatField(default=0) #机槿硬盘大小
+    sd_total_size = models.FloatField(default=0) #机槿硬盘总量
     
-    ssd_nums = models.IntegerField(default=1) # 固态硬盘数量
-    ssd_size = models.CharField(max_length=10, null=True) #固态硬盘大小
-    ssd_total_size = models.CharField(max_length=50, null=True) # 固态硬盘总量
+    ssd_nums = models.IntegerField(default=0) # 固态硬盘数量
+    ssd_size = models.FloatField(default=0) #固态硬盘大小
+    ssd_total_size = models.FloatField(default=0) # 固态硬盘总量
 
     dev_model = models.CharField(max_length=50, null=True) # 设备型号
-    memory_nums = models.IntegerField(default=1)
-    memory_size = models.IntegerField(default=1)
-    memory_total_size = models.CharField(max_length=50) # 主机内存
+    memory_nums = models.IntegerField(default=0)
+    memory_size = models.IntegerField(default=0)
+    memory_total_size = models.IntegerField(default=0) # 主机内存
+
     os = models.CharField(max_length=20) # 操作系统
     desc = models.TextField(null=True) # 备注
     buy_date = models.CharField("购买日期", max_length=50, null=True)
@@ -72,11 +73,12 @@ class VmInfo(models.Model):
     vlan_tag = models.CharField(max_length=30) # vlan标签
     vlan_id = models.IntegerField() # vlan id
     host = models.ForeignKey(HostInfo, on_delete=models.CASCADE) # 宿主机外键
-    vm_cpu = models.CharField(max_length=10) # cpu
-    vm_disk = models.CharField(max_length=10, null=True) # 硬盘
-    vm_memory = models.CharField(max_length=10) # 内存
+    vm_cpu = models.IntegerField(default=0) # cpu
+    vm_disk = models.IntegerField(default=0) # 硬盘
+    vm_memory = models.IntegerField(default=0) # 内存
     vm_os = models.CharField(max_length=20) # 操作系统
     vm_desc = models.TextField(null=True) # 备注
+    vm_status = models.IntegerField('虚拟机状态', default=0) # 虚拟机状态 0开机 1关机
     pub_date = models.DateTimeField(auto_now_add=True) # 添加时间
 
     def __str__(self):

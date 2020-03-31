@@ -43,6 +43,16 @@
             </div>
         </div>
     </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-block">
+                <input type="radio" name="vm_status" value="0" title="开机"{%ifequal vm_obj.vm_status 0%} checked=""{%endifequal%}>
+                <input type="radio" name="vm_status" value="1" title="关机"{%ifequal vm_obj.vm_status 1%} checked=""{%endifequal%}>
+            </div>
+        </div>
+    </div>
 <fieldset class="layui-elem-field layui-field-title">
     <legend>硬件配置</legend>
 </fieldset>

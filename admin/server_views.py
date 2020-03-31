@@ -117,9 +117,10 @@ def export(request, dev_type):
             'vlan_tag': 'VLAN标签',
             'vlan_id': 'VLAN ID',
             'host_id': '宿主机',
+            'vm_status': '状态',
             'vm_cpu': 'CPU',
-            'vm_disk': '硬盘',
-            'vm_memory': '内存',
+            'vm_disk': '硬盘(G)',
+            'vm_memory': '内存(G)',
             'vm_os': '操作系统',
             'vm_monitor': 'zabbix监控',
             'pub_date': '加入时间',
@@ -132,20 +133,21 @@ def export(request, dev_type):
             'sn': '序列号',
             'idrac_ip': 'iDRAC ip',
             'host_ip': '主机IP',
+            'dev_status': '状态',
             'cluster_tag': '集群信息',
             'cpu_nums': 'CPU数量',
             'cpu_core': 'CPU核心数',
             'cpu_rate': 'CPU频率',
             'cpu_total_rate': 'CPU总频率',
             'sd_nums': 'sata数量',
-            'sd_size': 'sata容量',
-            'sd_total_size': 'sata总容量',
+            'sd_size': 'sata容量(T)',
+            'sd_total_size': 'sata总容量(T)',
             'ssd_nums': 'ssd数量',
-            'ssd_size': 'ssd容量',
-            'ssd_total_size': 'ssd总容量',
+            'ssd_size': 'ssd容量(T)',
+            'ssd_total_size': 'ssd总容量(T)',
             'memory_nums': '内存数量',
-            'memory_size': '内存容量',
-            'memory_total_size': '内存总容量',
+            'memory_size': '内存容量(G)',
+            'memory_total_size': '内存总容量(G)',
             'supply_name': '供应商名称',
             'supply_contact_name': '供应商联系人',
             'supply_phone': '供应商联系号码',
@@ -168,7 +170,7 @@ def export(request, dev_type):
     res_cluster = ClusterInfo.objects.filter(is_active=0).values('name','tag')
     cluster_tag = {i['tag']:i['name'] for i in res_cluster}
     cluster_tag['none'] = '独立服务器'
-
+    status = ['开机','关机']
     if res:  
         column = 0
         for title in backup_data_struct[dev_type]:
@@ -183,6 +185,8 @@ def export(request, dev_type):
                     sheet.write(data_row_num, column, cluster_tag[res_row[key]])
                 elif key == 'host_id':
                     sheet.write(data_row_num, column, esxi_kvp[res_row[key]])
+                elif key == 'vm_status' or key == 'dev_status':
+                    sheet.write(data_row_num, column, status[res_row[key]])
                 else:
                     sheet.write(data_row_num, column, res_row[key])
                 column += 1

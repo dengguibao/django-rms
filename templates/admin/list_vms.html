@@ -184,11 +184,18 @@
                         }
                     }}
                     ,{field: 'vm_ip', fixed: 'left', title: 'IP', width:120}
+                    ,{field: 'vm_status', title: '状态', templet:function(d){
+                        if (d.vm_status == 0){
+                            return '开机'
+                        }else{
+                            return '<span style="color:red">关机</span>'
+                        }
+                    }}
                     ,{field: 'vlan_tag', title: 'VLAN标签', width:100}
                     ,{field: 'vlan_id', title: 'VLAN ID', width:100}
                     ,{field: 'vm_cpu', title: 'CPU', width: 80, sort: true}
-                    ,{field: 'vm_memory', title: '内存', width: 80}
-                    ,{field: 'vm_disk', title: '硬盘', width: 80}
+                    ,{field: 'vm_memory', title: '内存(G)', width: 80,templet:function(d){return d.vm_memory+'G'}}
+                    ,{field: 'vm_disk', title: '硬盘(G)', width: 80,templet:function(d){return d.vm_disk+'G'}}
                     ,{field: 'vm_register', title: '申请人', width: 90}
                     //,{title:'Zabbix', width:90, toolbar:'#zbx_checkbox', unresize:true}
                     ,{field: 'vm_monitor', title: '监控', width: 60, templet:function(d){

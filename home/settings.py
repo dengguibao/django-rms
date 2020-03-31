@@ -25,13 +25,23 @@ SECRET_KEY = 's66q_)g&7x74d_*51kv=ioxff11=u#c#vjl-q-_$x3*1_(f_2k'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-#ZABBIX API CONFIG
+# ZABBIX API CONFIG
 ZABBIX_API = {
     'URL': "http://172.31.19.254/zabbix/api_jsonrpc.php",
     'AUTH': "568ae11445639aff57116092bf151d18",
     'TEMPLATE_ID':10316,
     'GROUP_ID':16
 }
+# session config
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_NAME = "sessionid"
+SESSION_COOKIE_PATH = "/"
+SESSION_COOKIE_DOMAIN = None
+SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_AGE = 1209600
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_SAVE_EVERY_REQUEST = False
 
 ALLOWED_HOSTS = ['*']
 

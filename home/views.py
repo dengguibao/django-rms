@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.http import JsonResponse
 
@@ -10,7 +10,7 @@ def index_view(request):
     Returns:
         html -- html template
     """
-    return render(request, 'home/login.html')
+    return redirect('/login')
 
 
 def login_view(request):
@@ -22,7 +22,10 @@ def login_view(request):
     Returns:
         html -- html template
     """
-    return render(request, 'home/login.html')
+    if request.session.get('is_login') is True:
+        return redirect('/admin')
+    else:
+        return render(request, 'home/login.html')
 
 
 def user_login(request):
@@ -50,6 +53,8 @@ def user_login(request):
 
         if user and user.is_active:
             login(request, user)
+            request.session['username']=username
+            request.session['is_login']=True
             return JsonResponse({
                 'code': 0,
                 'msg': 'login success',
