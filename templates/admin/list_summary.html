@@ -82,7 +82,8 @@ layui.use(['element', 'layer'], function(){
   ,layer = layui.layer
   ,element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
   
-  var chart = null;
+    $('.layui-tab-title li').first().addClass('layui-this')
+    var chart = null;
 
     request_data_and_rend('cs');
 

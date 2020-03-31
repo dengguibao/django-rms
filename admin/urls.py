@@ -4,8 +4,8 @@ from . import global_views, user_views, server_views, perm_views, file_view, scr
 
 app_name = 'admin'
 urlpatterns = [
-    path('index', global_views.index_view, name='admin_index'),
-    path('', global_views.index_view, name='admin_index'),
+    path('index', global_views.list_summary_view, name='list_summary'),
+    path('', global_views.list_summary_view, name='list_summary'),
     path('render/<str:temp_name>/', global_views.render_static_temp_view, name='render_temp'),
     path('edit/<str:form_name>/<int:nid>/', global_views.render_edit_view, name='edit'),
     path('delete/<str:form_name>/<int:nid>/', global_views.delete, name='delete'),

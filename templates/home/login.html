@@ -69,7 +69,8 @@
     layui.use(['form'], function () {
       var form = layui.form
         , layer = layui.layer;
-
+        
+      $('.layui-tab-title li').first().addClass('layui-this')
       //监听提交
       form.on('submit(login)', function (data) {
         // layer.alert(JSON.stringify(data.field), {

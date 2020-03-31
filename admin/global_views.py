@@ -10,7 +10,7 @@ from django.conf import settings
 from .models import VmInfo, HostInfo, FileInfo, ClusterInfo
 
 @login_required()
-def index_view(request):
+def list_summary_view(request):
     """admin module default page,and this is search page too
     
     Arguments:
@@ -41,7 +41,7 @@ def index_view(request):
     user_count = User.objects.all().count()
     file_count = FileInfo.objects.all().count()
 
-    return render(request, 'admin/index.html', {
+    return render(request, 'admin/list_summary.html', {
         'user_url_path': '管理',
         'data':{
             'vms_count':vms_count,

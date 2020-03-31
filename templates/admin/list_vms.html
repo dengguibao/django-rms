@@ -97,7 +97,8 @@
 
         var flag = "cs";
         var tab_act = '_all';
-
+        
+        $('.layui-tab-title li').first().addClass('layui-this')
         $('#search').on('click',function () {
             var keyword=$('#keyword').val()
             if (keyword.trim().length == 0){

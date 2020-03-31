@@ -58,7 +58,8 @@
       table = layui.table,
       laypage = layui.laypage,
       element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
-
+      
+    $('.layui-tab-title li').first().addClass('layui-this')
     refresh_table("/admin/get-hosts-list/type/host/flag/cs",'cs');
 
     element.on('tab(tab_cluster)', function (data) {
