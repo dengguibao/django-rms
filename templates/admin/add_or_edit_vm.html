@@ -12,6 +12,7 @@
 <input type="hidden" id="url" value="{{zabbix_api.URL}}" />
 <input type="hidden" id="temp_id" value="{{zabbix_api.TEMPLATE_ID}}" />
 <input type="hidden" id="group_id" value="{{zabbix_api.GROUP_ID}}" />
+<input type="hidden" id="zabbix_status" value="{{zabbix_api.STATUS}}" />
 <input type="hidden" id="vm_hostid" value="" />
 
 <form class="layui-form" action="">
@@ -207,6 +208,10 @@
         });
 
         form.on('switch(vm_monitor)',function(d){
+            if($('#zabbix_status').val() != 'enable'){
+                layer.msg('zabbix功能未启用')
+                return
+            }
             if($('#vm_ip').val().trim().length == 0 || $('#vm_hostname').val().trim().length == 0 ){
                     layer.msg('请先填写管理IP和主机名');
                     return false;

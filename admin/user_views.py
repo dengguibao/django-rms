@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.shortcuts import render, HttpResponseRedirect
 
-@login_required()
+
 def user_logout(request):
     """user logout and remove session
     
@@ -14,6 +14,7 @@ def user_logout(request):
     Returns:
         none -- django remove all session
     """
+    request.session.clear()
     logout(request)
     return HttpResponseRedirect('/login')
 

@@ -27,6 +27,7 @@ DEBUG = True
 
 # ZABBIX API CONFIG
 ZABBIX_API = {
+    'STATUS': 'enable',
     'URL': "http://172.31.19.254/zabbix/api_jsonrpc.php",
     'AUTH': "568ae11445639aff57116092bf151d18",
     'TEMPLATE_ID':10316,

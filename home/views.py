@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, HttpResponseRedirect, redirect
 from django.contrib.auth import authenticate, login
 from django.http import JsonResponse
 
@@ -22,7 +22,7 @@ def login_view(request):
     Returns:
         html -- html template
     """
-    if request.session.get('is_login') is True:
+    if request.session.get('is_login') and request.user.is_authenticated:
         return redirect('/admin')
     else:
         return render(request, 'home/login.html')
@@ -44,7 +44,7 @@ def user_login(request):
                 'msg': 'illegal request'
             }
         )
-    url_next = request.GET.get('next', '/admin/index')
+    url_next = request.GET.get('next', '/admin')
     username = request.POST.get('username', None)
     password = request.POST.get('password', None)
 

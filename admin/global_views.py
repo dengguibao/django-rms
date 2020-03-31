@@ -3,8 +3,9 @@ from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
-from django.conf import settings
+from django.contrib.auth import update_session_auth_hash
 from django.db.models import Count
+from django.conf import settings
 
 from .models import VmInfo, HostInfo, FileInfo, ClusterInfo
 
@@ -250,7 +251,10 @@ def create_or_update(request, form_type):
         if post_data['tag'] == 'none':
             post_data['tag'] = '__none__'
     elif form_type == 'user':
-        post_data['password'] = make_password(post_data['password'])
+        if post_data['password'].strip() == '':
+            del post_data['password']
+        else:
+            post_data['password'] = make_password(post_data['password'])
         model = User
         perm_app = 'auth.'
         perm_model = 'user'
@@ -265,6 +269,7 @@ def create_or_update(request, form_type):
         res = model.objects.create(**post_data)
     elif act == 'update':
         res = model.objects.filter(id=nid).update(**post_data)
+        update_session_auth_hash(request, request.user)
     else:
         return_data['msg'] = act + ' fail'
         return_data['code'] = 1

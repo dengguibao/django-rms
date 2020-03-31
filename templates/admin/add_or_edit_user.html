@@ -10,23 +10,22 @@
 
 <form class="layui-form" action="">
     {% csrf_token %}
-    <input type="hidden" name="id" value="{% if data.id%}{{data.id}}{%else%}0{% endif %}" />
+    <input type="hidden" name="id" id="user_id" value="{% if data.id%}{{data.id}}{%else%}0{% endif %}" />
     <div class="layui-form-item">
         <div class="layui-inline">
             <label class="layui-form-label">用户名</label>
             <div class="layui-input-inline">
-                <input type="text" maxlength="20" value="{{data.username}}" name="username" lay-verify="required|username" autocomplete="off"
-                    class="layui-input">
+                <input type="text" maxlength="20" {%if data.id %}disabled readonly{%endif%} value="{{data.username}}" name="username" lay-verify="required|username" autocomplete="off"
+                    class="layui-input{%if data.id %} layui-disabled{%endif%}">
             </div>
         </div>
     </div>
 
-    <div class="layui-form-item">
+    <div class="layui-form-item" id="pwd_area" style="display:{%if data.id%}none;{%else%}block{%endif%}">
         <div class="layui-inline">
             <label class="layui-form-label">密码</label>
             <div class="layui-input-inline">
-                <input type="password" maxlength="50" name="password" lay-verify="required|pwd" autocomplete="off"
-                    class="layui-input">
+                <input type="password" id="password" maxlength="50" name="password" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -51,22 +50,20 @@
         </div>
     </div>
 
-    <!-- <div class="layui-form-item">
-        <label class="layui-form-label">类型</label>
-        <div class="layui-input-block">
-            <input type="radio" name="is_staff" value="1" {% ifequal data.is_staff True%}checked{%endifequal%} title="管理员">
-            <input type="radio" name="is_staff" value="0" {% ifequal data.is_staff False%}checked{%endifequal%} title="用户">
-        </div>
-    </div> -->
-
     <div class="layui-form-item">
         <label class="layui-form-label">状态</label>
         <div class="layui-input-block">
-            <input type="checkbox" {% ifequal data.is_active True %}checked{%endifequal%} lay-skin="switch" lay-filter="is_active" lay-text="ON|OFF">
-            <input type="hidden" id="is_active" name="is_active" value="0">
+            <input type="radio" name="is_active" value="1" {% ifequal data.is_active 1%}checked{%endifequal%} title="启用">
+            <input type="radio" name="is_active" value="0" {% ifequal data.is_active 0%}checked{%endifequal%} title="禁用">
         </div>
     </div>
 
+    <div class="layui-form-item" style="display:{%if data.id%}block;{%else%}none{%endif%}">
+        <label class="layui-form-label">设置密码</label>
+        <div class="layui-input-block">
+            <input type="checkbox" lay-skin="switch" lay-filter="set_password" lay-text="ON|OFF">
+        </div>
+    </div>
 
     <div class="layui-form-item">
         <div class="layui-input-block">
@@ -109,11 +106,13 @@
             return false;
         });
 
-        form.on('switch(is_active)',function(d){
+        form.on('switch(set_password)',function(d){
             if(d.elem.checked){
-                $('#is_active').val('1')
+                $('#pwd_area').css('display','block')
+                $('#password').attr('lay-verify',"required|pwd")
             }else{
-                $('#is_active').val('0')
+                $('#pwd_area').css('display','none')
+                $('#password').attr('lay-verify','')
             }            
         })
 

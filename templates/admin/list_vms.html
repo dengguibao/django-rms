@@ -52,6 +52,7 @@
         <!--left content-->
         <input type="hidden" id="auth" value="{{zabbix_api.AUTH}}" />
         <input type="hidden" id="url" value="{{zabbix_api.URL}}" />
+        <input type="hidden" id="zabbix_status" value="{{zabbix_api.STATUS}}" />
         <div class="layui-col-md10" id="vms_list">
             <table id="dt" lay-filter="dt"></table>
             <div id="page"></div>
@@ -64,7 +65,7 @@
                 </colgroup>
                 <thead>
                     <tr>
-                        <th>主机名</th>
+                        <th>宿主机</th>
                     </tr>
                 </thead>
                 <tbody id="esxi_tbody">
@@ -211,7 +212,9 @@
                     ,{title: '操作', width: 90, fixed: 'right', toolbar: '#toolbar'}
                 ]]
                 ,done: function(res,cur,count){
-                    refresh_zabbix_info_event();
+                    if ($('#zabbix_status').val() == 'enable'){
+                        refresh_zabbix_info_event();
+                    }                    
                     if (res.page_data == undefined){
                         return;
                     }
