@@ -21,11 +21,11 @@
         </div>
     </div>
 
-    <div class="layui-form-item" id="pwd_area" style="display:{%if data.id%}none;{%else%}block{%endif%}">
+    <div class="layui-form-item" id="pwd_area">
         <div class="layui-inline">
             <label class="layui-form-label">密码</label>
             <div class="layui-input-inline">
-                <input type="password" id="password" maxlength="50" name="password" autocomplete="off" class="layui-input">
+                <input type="password" id="password" {%if data.id%}disabled=""{%endif%} maxlength="50" name="password" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -108,11 +108,13 @@
 
         form.on('switch(set_password)',function(d){
             if(d.elem.checked){
-                $('#pwd_area').css('display','block')
-                $('#password').attr('lay-verify',"required|pwd")
+                $('#password').val('');
+                $('#password').removeAttr('disabled');
+                $('#password').attr('lay-verify',"required|pwd");
             }else{
-                $('#pwd_area').css('display','none')
-                $('#password').attr('lay-verify','')
+                $('#password').val('');
+                $('#password').attr('disabled','');
+                $('#password').attr('lay-verify','');
             }            
         })
 
