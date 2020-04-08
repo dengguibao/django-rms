@@ -96,40 +96,6 @@
     <div id="resize">
       <i id="btn_resize" class="layui-icon layui-icon-left"></i>
     </div>
-    <script type="application/x-javascript">
-      pri_menu=$('.pri_menu').each(function(){
-        $(this).click(function(){
-          //alert($(this).text());
-          $(this).next().slideToggle('fast');	
-        });
-      });
-      $('#resize').click(function(){
-        resize_box=$('#resize');
-        leftBar=$('#leftContainer');
-        right_content=$('#rightContainer');
-        btn_resize=$('#btn_resize');
-        leftBar.toggle()
-        if (leftBar.is(':visible')){
-          btn_resize.addClass("layui-icon-left")
-          btn_resize.removeClass("layui-icon-right")
-          right_content.css("margin-left","214px");
-          resize_box.css("left","202px")
-        }else{
-          btn_resize.addClass("layui-icon-right")
-          btn_resize.removeClass("layui-icon-left")
-          right_content.css("margin-left","14px");
-          resize_box.css("left","0px")
-        }
-      })
-      $('#resize').mouseover(function(){
-        $(this).css('background','#ddd')
-      })
-      $('#resize').mouseout(function(){
-        $(this).css('background','#ccc')
-      })
-
-    </script>
-
     <div id="rightContainer">
       <blockquote class="layui-elem-quote layui-text" style="font-weight:bold">
       管理首页 > {{user_url_path}} >
@@ -140,5 +106,40 @@
       {% endblock %}
     </div>
   </div>
+  <script type="application/x-javascript">
+    pri_menu=$('.pri_menu').each(function(){
+      $(this).click(function(){
+        //alert($(this).text());
+        $(this).next().slideToggle('fast');	
+      });
+    });
+    $('#resize').click(function(){
+      resize_box=$('#resize');
+      leftBar=$('#leftContainer');
+      right_content=$('#rightContainer');
+      btn_resize=$('#btn_resize');
+      leftBar.toggle()
+      if (leftBar.is(':visible')){
+        btn_resize.addClass("layui-icon-left")
+        btn_resize.removeClass("layui-icon-right")
+        right_content.css("margin-left","214px");
+        resize_box.css("left","202px")
+      }else{
+        btn_resize.addClass("layui-icon-right")
+        btn_resize.removeClass("layui-icon-left")
+        right_content.css("margin-left","14px");
+        resize_box.css("left","0px")
+      }
+    })
+    $('#resize').mouseover(function(){
+      $(this).css('background','#ddd')
+    })
+    $('#resize').mouseout(function(){
+      $(this).css('background','#ccc')
+    })
+    topBarHeight = $('#topContainer').height()+20 //20px scroll bar
+    bodyHeight = $('body').height()
+    $('#rightContainer').height(bodyHeight-topBarHeight)
+    </script>
 </body>
 </html>

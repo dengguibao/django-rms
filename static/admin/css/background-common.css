@@ -49,16 +49,15 @@ a:hover{text-decoration: underline} */
 }
 #rightContainer{
 	text-align: left;
-	overflow: auto;
-	height: 90%;
-	margin: 0;
+	overflow-y: auto;
+	overflow-x: hidden;
 	margin-left: 214px;
 	padding: 10px;
 }
 #topContainer{
 	background: #393939;
 	height: 50px;
-	overflow: hidden;
+	overflow: auto;
 	line-height: 50px;
 	font-size: 24px;
 	color: #fff;
