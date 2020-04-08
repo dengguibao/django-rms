@@ -169,13 +169,8 @@
                 }
                 ,url: _url //数据接口
                 ,cols: [[ 
-                    {title: '序号', width:60,fixed: 'left',templet: function(){
-                        if(index<15){
-                            index +=1;
-                        }else{
-                            index = 1
-                        }
-                        return index;
+                    {title: '序号', width:60,fixed: 'left',templet: function(d){
+                        return d.LAY_TABLE_INDEX+1
                     }}
                     ,{field: 'id', title: 'id', width:250, hide:true}
                     ,{field: 'vm_hostname',fixed: 'left', title: '主机名', width:220, templet:function(d){

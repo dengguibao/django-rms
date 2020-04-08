@@ -92,13 +92,8 @@
         ,url: url //数据接口
         ,cols: [
           [
-            {rowspan:2, title: '序号', width:50,fixed: 'left', templet: function(){
-                if(index<15){
-                    index +=1;
-                }else{
-                    index = 1
-                }
-                return index;
+            {rowspan:2, title: '序号', width:50,fixed: 'left', templet: function(d){
+                return d.LAY_TABLE_INDEX+1
               }}
             ,{rowspan:2, field: 'id', title: 'id', width:250, hide:true}
             ,{rowspan:2, field: 'hostname',fixed: 'left', title: '主机名', width:220, }

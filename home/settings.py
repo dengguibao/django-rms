@@ -46,7 +46,7 @@ SESSION_SAVE_EVERY_REQUEST = False
 
 ALLOWED_HOSTS = ['*']
 
-PAGE_SIZE = 15
+PAGE_SIZE = 20
 
 # Application definition
 

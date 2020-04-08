@@ -194,6 +194,8 @@ def file_download(request, id):
 
     txt_file_type = [
         'md',
+        'yaml',
+        'yam',
         'conf',
         'log',
         'txt',
