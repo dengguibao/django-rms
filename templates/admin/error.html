@@ -5,25 +5,42 @@
   <title>error</title>
   <style type="text/css">
     #container {
-      width: 500px;
-      height: 250px;
+      width: 450px;
+      height: 150px;
+      color: red;
+      border:3px solid #666;
       position: absolute;
       left: 0;
       top: 0;
       bottom: 0;
       right: 0;
       margin: auto;
-      padding: 10px;
-      text-align:center;
       vertical-align: middle;
-      font-size: 24px;
+    }
+    #title{
+      height:30px;
+      line-height:30px;
+      font-size:16px;
+      background:#666;
+      color:#fff;
+      padding:0 10px
+    }
+    #content{
+      line-height:120px;
+      font-size:24px;
+      color:#f00;
+      text-align:center;
+      padding:0 10px
     }
   </style>
 </head>
 
 <body>
 <div id="container">
-    非法请求
+  <div id="title">Error</div>
+  <div id="content">
+  Promission Denied!!!
+  </div>    
 </div>
 
 </body>

@@ -98,44 +98,35 @@ layui.use(['upload', 'element', 'layer', 'mouseRightMenu'], function(){
   refresh_file_list()  
 
   $('#btn_create_folder').on('click',function(){
-    layer.open({
-      type:1
-      ,title: '新建文件夹'
-      ,content: '<input type="text" name="folder_name" id="folder_name" style="width:200px;margin:10px 10px 0px 10px;padding:5px" />'
-      ,btn: ['确定']
-      ,btnAlign: 'c'
-      ,yes: function(index, layero){
-        //ajax post ...
-        fn=$('#folder_name').val().trim()
-        if (fn.length <=0){
-          alert('目录名不能为空');
-          return false;
-        }else if(!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(fn)){
-          alert('目录名不能有特殊字符')
-          return false;
-        }
-
-        $.ajax({
-          url:'/admin/create-folder',
-          type:'post',
-          data:{
-            'name':fn,
-            'path':$('#path').val(),
-            'csrfmiddlewaretoken': $('[name="csrfmiddlewaretoken"]').val()
-          },
-          success:function(d){
-            if(d.code==0){
-              $('#folder_list').append('<tr id="tr'+d.data.id+'"><td colspan="3"><a tag="'+d.data.id+'" class="folder mr">'+d.data.name+'</a></td></tr>')
-              refresh_folder_click_event();
-              refresh_right_click_menu();
-            }else{
-              layer.msg(d.msg);
-            }
-          }
-        })
-        layer.close(layer.index)
+    layer.prompt({title: '新建文件夹'}, function(val, index){
+      if (val.length <=0){
+        alert('目录名不能为空');
+        return false;
+      }else if(!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(val)){
+        alert('目录名不能有特殊字符')
+        return false;
       }
-    }); 
+
+      $.ajax({
+        url:'/admin/create-folder',
+        type:'post',
+        data:{
+          'name':val,
+          'path':$('#path').val(),
+          'csrfmiddlewaretoken': $('[name="csrfmiddlewaretoken"]').val()
+        },
+        success:function(d){
+          if(d.code==0){
+            $('#folder_list').append('<tr id="tr'+d.data.id+'"><td colspan="3"><a tag="'+d.data.id+'" class="folder mr">'+d.data.name+'</a></td></tr>')
+            refresh_folder_click_event();
+            refresh_right_click_menu();
+          }else{
+            layer.msg(d.msg);
+          }
+        }
+      });
+      layer.close(index);
+    });
   })
 
   // view upload progress
@@ -175,7 +166,7 @@ layui.use(['upload', 'element', 'layer', 'mouseRightMenu'], function(){
           $('#path').val(path+folder_name+'/')
         }
         refresh_file_list()
-      })
+      });
   }
 
   function refresh_right_click_menu(){
