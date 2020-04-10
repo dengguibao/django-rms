@@ -1,16 +1,28 @@
 from django.urls import path
-from . import global_views, user_views, server_views, perm_views, file_view, script_views, zabbix_info_view, cluster_view
+from . import (
+    global_views, 
+    user_views, 
+    server_views, 
+    perm_views, 
+    file_view, 
+    script_views, 
+    zabbix_info_view, 
+    cluster_view,
+    summary_view,
+)
 
 
 app_name = 'admin'
 urlpatterns = [
-    path('index', global_views.list_summary_view, name='list_summary'),
-    path('', global_views.list_summary_view, name='list_summary'),
+    path('index', summary_view.list_summary_view, name='list_summary'),
+    path('', summary_view.list_summary_view, name='list_summary'),
+    path('get-cluster-count-info/<str:cluster_name>', summary_view.get_cluster_count_info),
+    path('get-guarantee-info/<str:cluster_name>',summary_view.get_guarantee_info),
+
     path('render/<str:temp_name>/', global_views.render_static_temp_view, name='render_temp'),
     path('edit/<str:form_name>/<int:nid>/', global_views.render_edit_view, name='edit'),
     path('delete/<str:form_name>/<int:nid>/', global_views.delete, name='delete'),
     path('create-or-update/<str:form_type>/', global_views.create_or_update, name='create-or-update'),
-    path('get-cluster-count-info/<str:cluster_name>', global_views.get_cluster_count_info),
 
     path('get-hosts-list/type/<str:dev_type>/flag/<str:flag>/', server_views.get_hosts_list, name='get_hosts_list'),
     path('search/<str:dev_type>/<str:keyword>/', server_views.search, name='search'),

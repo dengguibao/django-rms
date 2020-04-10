@@ -31,9 +31,9 @@ caption{
                 <th rowspan="2">用户</th>
                 <th rowspan="2">文件</th>
                 <th rowspan="2">独立服务器</th>
-                <th colspan="{{data.cluster_count}}">ESXi虚拟机</th>
+                <th colspan="{{data.cluster_count}}">虚拟机</th>
                 <th colspan="{{data.cluster_count}}">ESXi服务器</th>
-
+                <th colspan="2">服务器保修信息</th>
             </tr>
             <tr>
                 <th>物理机</th>
@@ -44,6 +44,8 @@ caption{
                 {% for i in data.cluster_data %}
                 <th>{{i.name}}</th>
                 {% endfor %}
+                <th>在保</th>
+                <th>过保</th>
             </tr>
         </thead>
         <tbody>
@@ -60,6 +62,8 @@ caption{
                 {% for i in data.esxi_count_data %}
                 <td>{{i}}</td>
                 {% endfor %}
+                <td>{{data.in_guarantee_count}}</td>
+                <td>{{data.out_guarantee_count }}</td>
             </tr>
         </tbody>
     </table>
@@ -69,9 +73,11 @@ caption{
     {% for i in data.cluster_data %}
     <li tag="{{i.tag}}">{{i.name}}</li>
     {% endfor %}
+    <li tag="none">独立服务器</li>
   </ul>
-  <div class="layui-tab-content" style="height: 400px;">
-    <div id="chart"></div>
+  <div class="layui-tab-content" style="height: 400px;text-align:center">
+    <div id="chart_pie" style="width:49.5%;float:left;border-right:1px solid #f9f9f9"></div>
+    <div id="chart_bar" style="width:50%;float:left"></div>
   </div>
 </div>
 
@@ -85,22 +91,51 @@ layui.use(['element', 'layer'], function(){
     $('.layui-tab-title li').first().addClass('layui-this')
     var chart = null;
 
-    request_data_and_rend('cs');
+    ajax_rend_chart('bar', 'cs');
+    ajax_rend_chart('pie', 'cs');
 
     element.on('tab(tab_cluster)', function (data) {
         tag = $(this).attr('tag');
-        request_data_and_rend(tag);
+        if (tag == 'none'){
+            $('#chart_bar').css('display','none')
+            ajax_rend_chart('pie', tag);
+        }else{
+            $('#chart_bar').css('display','block')
+            ajax_rend_chart('bar', tag);
+            ajax_rend_chart('pie', tag);
+        }
+        
     })
 
-    function request_data_and_rend(cluster_name) {
+    char=[$('#chart_pie'),$('#chart_bar')]
+    $.each(char,function(i,d){
+        d.mouseover(function(){
+            $(this).css('background','#f9f9f9');
+        });
+        d.mouseout(function(){
+            $(this).css('background','#fff');
+        })
+    })
+
+    function ajax_rend_chart(t, cluster_name) {
+        var url = '/admin/'
+        if (t == 'bar'){
+            url += 'get-cluster-count-info/'+cluster_name
+        }else{
+            url += 'get-guarantee-info/'+cluster_name
+        }
         $.getJSON(
-           '/admin/get-cluster-count-info/'+cluster_name,
+           url,
            function(d){
                if (d.code==0){
                    if (d.data.length == 0){
                        layer.msg('no data')
                    }else{
-                       render_chart(d)
+                       if (t == 'bar'){
+                           render_bar_chart(d)
+                       }else{
+                           render_pie_chart(d)
+                       }                       
                     }
                }else{
                    alert(d.msg)
@@ -109,15 +144,59 @@ layui.use(['element', 'layer'], function(){
         )
     }
 
-    function render_chart(data){
-        chart = Highcharts.chart('chart', {
+    function render_pie_chart(data){
+        Highcharts.chart('chart_pie', {
+                chart: {
+                        plotBackgroundColor: null,
+                        plotBorderWidth: null,
+                        plotShadow: false,
+                        type: 'pie',
+                        margin: 50,
+                        backgroundColor: 'rgba(0,0,0,0)'
+                },
+                title: {
+                        text: data.name+' - 保修信息'
+                },
+                tooltip: {
+                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                credits: {
+                    enabled: false//不显示LOGO
+                },
+                plotOptions: {
+                        pie: {
+                                allowPointSelect: true,
+                                cursor: 'pointer',
+                                dataLabels: {
+                                        enabled: true,
+                                        format: '<b>{point.name}</b>: {point.y}',
+                                        style: {
+                                                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                                        }
+                                }
+                        }
+                },
+                series: [{
+                        name: 'Brands',
+                        colorByPoint: true,
+                        data: data.data,
+                }]
+        });
+    }
+
+    function render_bar_chart(data){
+        chart = Highcharts.chart('chart_bar', {
             chart: {
                 type: 'column',
-                marginLeft:200,
-                marginRight:200,
+                marginLeft: 150,
+                marginRight: 100,
+                backgroundColor: 'rgba(0,0,0,0)',
             },
             title: {
-                text: data.name+'ESXi虚拟机分布'
+                text: data.name+' - ESXi虚拟机分布'
+            },
+            credits: {
+                enabled: false//不显示LOGO
             },
             xAxis: {
                 type: 'category',
@@ -134,18 +213,20 @@ layui.use(['element', 'layer'], function(){
             legend: {
                 enabled: false
             },
-            series: [{
-                name: '总数量（台）',
-                data: data.data,
-                dataLabels: {
-                    enabled: true,
-                    //rotation: -90,
-                    color: '#FFFFFF',
-                    align: 'center',
-                    format: '{point.y:.f}', // :.1f 为保留 1 位小数
-                    y: 10
+            series: [
+                {
+                    name: '总数量（台）',
+                    data: data.data,
+                    dataLabels: {
+                        enabled: true,
+                        rotation: -360,
+                        color: '#FFFFFF',
+                        align: 'center',
+                        format: '{point.y:.f}', // :.1f 为保留 1 位小数
+                        y: 10
+                    }
                 }
-            }]
+            ]
         });
     }
 });

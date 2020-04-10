@@ -56,12 +56,12 @@ class ConfigBackup:
         try:
             self.exec_cmd(b'display current-configuration')
         except Exception as e:
-            print(self._ip)
+            print self._ip
 
         time.sleep(.8)
         data = []
-        def format_data(
-            s): return s if sys.version[0] == '2' else s.decode('ascii')
+        def format_data(s):
+            return s if sys.version[0] == '2' else s.decode('ascii')
         cache = format_data(tn.read_very_eager())
         while 'return' not in cache:
             tn.write(b' ')
@@ -70,7 +70,7 @@ class ConfigBackup:
             try:
                 cache = format_data(tn.read_very_eager())
             except Exception as e:
-                print(self._ip)
+                print self._ip
             
         else:
            data.append(cache)
@@ -98,19 +98,28 @@ class ConfigBackup:
         if data is None:
             return False
         else:
-            # today = time.strftime(
-            #     '%Y-%m-%d',
-            #     time.localtime(time.time())
-            # )
-            # filename = today+'_'+self._ip+'.txt'
+            ignore_str = [
+                '---- More ----',
+                '\x1b[42D',
+                '\x1b[16D#',
+                '\x1b[16D',
+                '  '
+            ]
+            for s in ignore_str:
+                data = data.replace(s,'')
 
-            x = data.replace('---- More ----\x1b[42D                                          \x1b[42D', '')\
-                .replace('\r\n', '\n').split('\n')
-            filename = self._ip+'-'+x[-1][1:x[-1].find('>')]+'.txt'
+            lines =  data.replace('\r\n','\n').split('\n')
+              
+            for line in lines:
+                if 'sysname' in line:
+                    sysname = line.strip().split(' ')[1]
+                    break
+
+            filename = '{ip}-{sysname}.txt'.format(ip=self._ip, sysname=sysname)
 
             with open(filename, 'w') as fp:
                 fp.write(
-                    '\n'.join(x[1:-1])
+                    '\n'.join(lines[1:-1])
                 )
             return True
 
@@ -195,4 +204,3 @@ if __name__ == '__main__':
         for h in i['hosts']:
             if h not in success_list:
                 print('%15s backup failed' % h)
-                
