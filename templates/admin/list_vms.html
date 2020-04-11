@@ -158,6 +158,10 @@
             if (event == 'link'){
                 var pwd = ''
                 // 弹出密码框输入密码
+		if (obj.data.vm_os == 'Windows'){
+		    layer.msg('windows操作系统不支持');
+		    return false;
+		}
                 layer.prompt({title: '输入密码', formType: 1}, function(val, index){
                     if (val.trim().length == 0){
                         layer.msg('密码不能为空');
