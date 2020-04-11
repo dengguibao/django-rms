@@ -30,7 +30,7 @@ def unique():
 
     
 class SSH:
-
+    channel = None
     def __init__(self, websocker, message):
         self.websocker = websocker
         self.message = message
@@ -38,7 +38,7 @@ class SSH:
     def connect(self, host, user, password=None, ssh_key=None, port=22, timeout=30,
                 term='xterm', pty_width=80, pty_height=24):
         try:
-            trans = paramiko.Transport(host, port)
+            trans = paramiko.Transport((host, port))
             trans.start_client()
             trans.auth_password(username=user, password=password)
             self.channel = trans.open_session()
@@ -51,8 +51,9 @@ class SSH:
                 message = json.dumps(self.message)
                 self.websocker.send(message)
         except Exception as e:
-            self.message['status'] = 1
-            self.message['message'] = e
+            # print(str(e))
+            self.message['status'] = 0
+            self.message['message'] = str(e)+'\r\n'
             message = json.dumps(self.message)
             self.websocker.send(message)
             self.close()
@@ -83,11 +84,8 @@ class SSH:
             self.close()
 
     def close(self):
-        self.message['status'] = 1
-        self.message['message'] = '关闭连接'
-        message = json.dumps(self.message)
-        self.websocker.send(message)
-        # self.channel.close()
+        if self.channel:
+            self.channel.close()
         self.websocker.close()
 
     def shell(self, data):
