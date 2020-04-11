@@ -1,14 +1,15 @@
 from django.urls import path
 from . import (
-    global_views, 
-    user_views, 
-    server_views, 
-    perm_views, 
-    file_view, 
-    script_views, 
-    zabbix_info_view, 
+    global_views,
+    user_views,
+    server_views,
+    perm_views,
+    file_view,
+    script_views,
+    zabbix_info_view,
     cluster_view,
     summary_view,
+    webssh_views,
 )
 
 
@@ -48,4 +49,5 @@ urlpatterns = [
 
     path('get-cluster-list/', cluster_view.get_cluster_list_view, name="get_cluster_list"),
     
+    path('webssh/', webssh_views.webssh),
 ]

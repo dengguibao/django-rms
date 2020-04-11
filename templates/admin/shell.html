@@ -4,18 +4,118 @@
 <title>shell</title>
 <link rel="stylesheet" href="/static/public/xterm/xterm.css" />
 <script src="/static/public/xterm/xterm.js"></script>
-<script src="/static/public/lay/modules/jquery.js"></script>
+<script src="/static/admin/js/jquery-1.4.3.min.js"></script>
+<style type="text/css">
+html,body{
+    margin:0;padding:0
+}
+</style>
 </head>
 <body>
-    <div id="terminal" style="height:100%"></div>
-    <script>
-        var term = new Terminal();
-        term.open(document.getElementById('terminal'));
-        term.write('Hello from \x1B[1;3;31mxterm.js\x1B[0m $ ')
+    <input type="hidden" id="host" value="{{host}}"/>
+    <input type="hidden" id="port" value="{{port}}"/>
+    <input type="hidden" id="user" value="{{user}}"/>
+    <input type="hidden" id="password" value="{{password}}"/>
 
-        term.open(document.getElementById('terminal')){
-            
+    <div id="terminal" style="height:100%;overflow-x:hidden;margin-right:10px"></div>
+    <script type="text/javascript">
+        function get_connect_info() {
+            var host = $.trim($('#host').val());
+            var port = $.trim($('#port').val());
+            var user = $.trim($('#user').val());
+            var pwd = $('#password').val();
+            //var password = window.btoa(pwd);
+            var ssh_key = null;
+
+            var connect_info = 'host=' + host + '&port=' + port + '&user=' + user + '&password=' + pwd;
+            return connect_info
         }
+
+
+        function get_term_size() {
+            var init_width = 9;
+            var init_height = 17;
+
+            var windows_width = $(window).width();
+            var windows_height = $(window).height();
+
+            return {
+                cols: Math.floor(windows_width / init_width),
+                rows: Math.floor(windows_height / init_height),
+            }
+        }
+
+
+        function websocket() {
+            var cols = get_term_size().cols;
+            var rows = get_term_size().rows;
+            var connect_info = get_connect_info();
+
+            var term = new Terminal({
+                cols: cols,
+                rows: rows,
+                useStyle: true,
+                cursorBlink: true
+            });
+            protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://',
+            socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + '/webssh/?' + connect_info + '&width=' + cols + '&height=' + rows;
+
+            var sock;
+            sock = new WebSocket(socketURL);
+
+            sock.onclose = function(){
+                term.write('\r\nconnect close,bye.');
+            }
+            sock.onerror =  function(){
+                term.write('connect timeout!');
+            }
+            // 打开 websocket 连接, 打开 web 终端
+            sock.onopen = function(){
+                term.open(document.getElementById('terminal'),true);
+            }
+            // websocket接收到消息
+            sock.onmessage = function(recv){
+                var data = JSON.parse(recv.data);
+                var message = data.message;
+                console.log(message)
+                var status = data.status;
+                if (status === 0) {
+                    term.write(message)
+                } else {
+                    //window.location.reload()
+                }
+            }
+
+            /*
+            * status 为 0 时, 将用户输入的数据通过 websocket 传递给后台, data 为传递的数据, 忽略 cols 和 rows 参数
+            * status 为 1 时, resize pty ssh 终端大小, cols 为每行显示的最大字数, rows 为每列显示的最大字数, 忽略 data 参数
+            */
+            var message = {'status': 0, 'data': null, 'cols': null, 'rows': null};
+
+            // 向服务器端发送数据
+            term.onData( data => {
+                console.log('data xterm=>',data)
+                message['status'] = 0;
+                message['data'] = data;
+                //term.write(data);
+                var send_data = JSON.stringify(message);
+                sock.send(send_data)
+            });
+
+            // 监听浏览器窗口, 根据浏览器窗口大小修改终端大小
+            $(window).resize(function () {
+                var cols = get_term_size().cols;
+                var rows = get_term_size().rows;
+                message['status'] = 1;
+                message['cols'] = cols;
+                message['rows'] = rows;
+                var send_data = JSON.stringify(message);
+                sock.send(send_data);
+                term.resize(cols, rows)
+            })
+
+        }
+        websocket();
     </script>
 </body>
 </html>

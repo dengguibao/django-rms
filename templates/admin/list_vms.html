@@ -81,8 +81,9 @@
 </script>
 <script type="text/html" id="toolbar">
   <div class="layui-btn-container">
-    <a lay-event='edit' class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon'></i></a>
-    <a lay-event='del' class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon'></i></a>
+    <a lay-event='edit' class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon layui-icon-edit'></i></a>
+    <a lay-event='del' class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon layui-icon-delete'></i></a>
+   <a lay-event='link' class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon layui-icon-link'></i></a>
   </div>
 </script>
 
@@ -137,7 +138,8 @@
             var event=obj.event
             if (event == 'edit'){
                 window.location.href='/admin/edit/vm/'+obj.data.id
-            }else if (event == 'del'){
+            }
+            if (event == 'del'){
                 layer.confirm('真的删除行么', function(index){
                     var url = "/admin/delete/vm/" + obj.data.id;
                     $.getJSON(
@@ -151,6 +153,30 @@
                             }
                         }
                     )
+                });
+            }
+            if (event == 'link'){
+                var pwd = ''
+                // 弹出密码框输入密码
+                layer.prompt({title: '输入密码', formType: 1}, function(val, index){
+                    if (val.trim().length == 0){
+                        layer.msg('密码不能为空');
+                        return false;
+                    }
+                    pwd = window.btoa(val);
+                    layer.close(index);
+
+                    // 弹出webshell iframe
+                    layer.open({
+                        type: 2,
+                        title: obj.data.vm_ip,
+                        area: ['800px', '600px'],
+                        shade: false,
+                        closeBtn: 1,
+                        shadeClose: true,
+                        maxmin: true,
+                        content: ['/admin/webssh/?host='+obj.data.vm_ip+'&port=22&user=root&password='+pwd, 'no']
+                    });
                 });
             }
         })
@@ -205,7 +231,7 @@
                     ,{field: 'esxi_host_name', title: '宿主机', width: 200}
                     ,{field: 'vm_os', title: '操作系统', width: 80}
                     ,{field: 'pub_date', title: '添加时间', width: 100, templet: function(item){return item.pub_date.substring(0, 10)}}
-                    ,{title: '操作', width: 90, fixed: 'right', toolbar: '#toolbar'}
+                    ,{title: '操作', width: 130, fixed: 'right', toolbar: '#toolbar'}
                 ]]
                 ,done: function(res,cur,count){
                     if ($('#zabbix_status').val() == 'enable'){

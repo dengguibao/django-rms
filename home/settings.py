@@ -49,10 +49,11 @@ ALLOWED_HOSTS = ['*']
 PAGE_SIZE = 20
 
 # Application definition
-
+ASGI_APPLICATION = 'home.routing.application'
 INSTALLED_APPS = [
     'admin',
     'home',
+    'channels',
     # 'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -68,7 +69,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'home.urls'

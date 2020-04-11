@@ -147,39 +147,41 @@ layui.use(['element', 'layer'], function(){
     function render_pie_chart(data){
         Highcharts.chart('chart_pie', {
                 chart: {
-                        plotBackgroundColor: null,
-                        plotBorderWidth: null,
-                        plotShadow: false,
-                        type: 'pie',
-                        margin: 50,
-                        backgroundColor: 'rgba(0,0,0,0)'
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    type: 'pie',
+                    margin: 50,
+                    backgroundColor: 'rgba(0,0,0,0)'
                 },
                 title: {
-                        text: data.name+' - 保修信息'
+                    text: data.name+' - 保修信息'
                 },
                 tooltip: {
-                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                    //pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                    pointFormat: '{series.name}: <b>{point.y}</b>'
                 },
                 credits: {
                     enabled: false//不显示LOGO
                 },
                 plotOptions: {
                         pie: {
-                                allowPointSelect: true,
-                                cursor: 'pointer',
-                                dataLabels: {
-                                        enabled: true,
-                                        format: '<b>{point.name}</b>: {point.y}',
-                                        style: {
-                                                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                                        }
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            showInLegend: true, // 显示图例
+                            dataLabels: {
+                                enabled: false, // 图表标签
+                                format: '<b>{point.name}</b>: {point.y}',
+                                style: {
+                                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
                                 }
+                            }
                         }
                 },
                 series: [{
-                        name: 'Brands',
-                        colorByPoint: true,
-                        data: data.data,
+                    name: 'Brands',
+                    colorByPoint: true,
+                    data: data.data,
                 }]
         });
     }
@@ -219,11 +221,11 @@ layui.use(['element', 'layer'], function(){
                     data: data.data,
                     dataLabels: {
                         enabled: true,
-                        rotation: -360,
+                        rotation: -360, //数字旋转
                         color: '#FFFFFF',
                         align: 'center',
                         format: '{point.y:.f}', // :.1f 为保留 1 位小数
-                        y: 10
+                        y: 20 // 柱状数字距离
                     }
                 }
             ]
