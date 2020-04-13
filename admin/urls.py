@@ -9,7 +9,7 @@ from . import (
     zabbix_info_view,
     cluster_view,
     summary_view,
-    webssh_views,
+    webshell_views,
 )
 
 
@@ -49,5 +49,5 @@ urlpatterns = [
 
     path('get-cluster-list/', cluster_view.get_cluster_list_view, name="get_cluster_list"),
     
-    path('webssh/', webssh_views.webssh),
+    path('webshell/', webshell_views.webssh),
 ]

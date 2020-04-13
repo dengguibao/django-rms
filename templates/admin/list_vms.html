@@ -158,29 +158,45 @@
             if (event == 'link'){
                 var pwd = ''
                 // 弹出密码框输入密码
-		if (obj.data.vm_os == 'Windows'){
-		    layer.msg('windows操作系统不支持');
-		    return false;
-		}
-                layer.prompt({title: '输入密码', formType: 1}, function(val, index){
-                    if (val.trim().length == 0){
-                        layer.msg('密码不能为空');
-                        return false;
+                if (obj.data.vm_os == 'Windows'){
+                    layer.msg('windows操作系统不支持');
+                    return false;
+                }
+                layer.prompt({
+                    title: '输入用户名密码', 
+                    formType: 1,
+                    success:function(){
+                        //alert('1')
+                        $(".layui-layer-content").empty();
+                        $(".layui-layer-content").append('<input type="text" class="layui-layer-input" value="root" id="username" placeholder="用户名"/><br/>\
+                                                        <input type="password" id="password" class="layui-layer-input" placeholder="密码">')
+                        $('.layui-layer-btn0').on('click',function(){
+                            if ($('#password').val().trim().length == 0){
+                                layer.msg('密码不能为空');
+                                return false;
+                            }
+                            if ($('#username').val().trim().length == 0){
+                                layer.msg('用户名不能为空');
+                                return false;
+                            }
+                            pwd = window.btoa($('#password').val());
+                            layer.closeAll();
+                            // 弹出webshell iframe
+                            layer.open({
+                                type: 2,
+                                title: obj.data.vm_ip,
+                                area: ['800px', '600px'],
+                                shade: false,
+                                closeBtn: 1,
+                                shadeClose: true,
+                                maxmin: true,
+                                content: ['/admin/webshell/?type=ssh&host='+obj.data.vm_ip+'&port=22&user='+ $('#username').val() +'&password='+pwd, 'no'],
+                                success: function(layero, index) {
+                                    layer.iframeAuto(index);
+                                }
+                            });
+                        })
                     }
-                    pwd = window.btoa(val);
-                    layer.close(index);
-
-                    // 弹出webshell iframe
-                    layer.open({
-                        type: 2,
-                        title: obj.data.vm_ip,
-                        area: ['800px', '600px'],
-                        shade: false,
-                        closeBtn: 1,
-                        shadeClose: true,
-                        maxmin: true,
-                        content: ['/admin/webssh/?host='+obj.data.vm_ip+'&port=22&user=root&password='+pwd, 'no']
-                    });
                 });
             }
         })

@@ -5,6 +5,7 @@ import json
 import time
 import random
 import hashlib
+import time
 
 def get_key_obj(pkeyobj, pkey_file=None, pkey_obj=None, password=None):
     if pkey_file:
@@ -35,8 +36,7 @@ class SSH:
         self.websocker = websocker
         self.message = message
 
-    def connect(self, host, user, password=None, ssh_key=None, port=22, timeout=30,
-                term='xterm', pty_width=80, pty_height=24):
+    def connect(self, host, user, password=None, port=22, term='xterm', pty_width=80, pty_height=24, timeout=10):
         try:
             trans = paramiko.Transport((host, port))
             trans.start_client()
@@ -44,12 +44,7 @@ class SSH:
             self.channel = trans.open_session()
             self.channel.get_pty(term=term, width=pty_width, height=pty_height)
             self.channel.invoke_shell()
-            for i in range(2):
-                recv = self.channel.recv(1024).decode('utf-8')
-                self.message['status'] = 0
-                self.message['message'] = recv
-                message = json.dumps(self.message)
-                self.websocker.send(message)
+            Thread(target=self.websocket_to_django).start()
         except Exception as e:
             # print(str(e))
             self.message['status'] = 0
@@ -62,6 +57,7 @@ class SSH:
 
     def resize_pty(self, cols, rows):
         self.channel.resize_pty(width=cols, height=rows)
+        pass
 
     def django_to_ssh(self, data):
         try:
@@ -75,22 +71,24 @@ class SSH:
             while True:
                 data = self.channel.recv(65535).decode('utf-8')
                 if not len(data):
-                    return
-                self.message['status'] = 0
-                self.message['message'] = data
-                message = json.dumps(self.message)
-                self.websocker.send(message)
+                    time.sleep(.1)
+                    # return
+                else:
+                    self.message['status'] = 0
+                    self.message['message'] = data
+                    message = json.dumps(self.message)
+                    self.websocker.send(message)
         except:
             self.close()
 
     def close(self):
         if self.channel:
+            self.django_to_ssh('exit') # send quit command
             self.channel.close()
         self.websocker.close()
 
     def shell(self, data):
         Thread(target=self.django_to_ssh, args=(data,)).start()
-        Thread(target=self.websocket_to_django).start()
 
 
 

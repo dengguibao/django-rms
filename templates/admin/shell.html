@@ -7,7 +7,7 @@
 <script src="/static/admin/js/jquery-1.4.3.min.js"></script>
 <style type="text/css">
 html,body{
-    margin:0;padding:5px;background:#000
+    margin:0;padding:0px;background:#000
 }
 </style>
 </head>
@@ -16,8 +16,9 @@ html,body{
     <input type="hidden" id="port" value="{{port}}"/>
     <input type="hidden" id="user" value="{{user}}"/>
     <input type="hidden" id="password" value="{{password}}"/>
+    <input type="hidden" id="type" value="{{type}}"/>
 
-    <div id="terminal" style="height:100%;overflow-x:hidden;margin-right:10px"></div>
+    <div id="terminal" style="height:100%;overflow-x:hidden;"></div>
     <script type="text/javascript">
         function get_connect_info() {
             var host = $.trim($('#host').val());
@@ -26,8 +27,13 @@ html,body{
             var pwd = $('#password').val();
             //var password = window.btoa(pwd);
             var ssh_key = null;
+            if ($('#type').val() == 'ssh'){
+                t = '/webssh/?'
+            }else{
+                t = '/webtelnet/?'
+            }
 
-            var connect_info = 'host=' + host + '&port=' + port + '&user=' + user + '&password=' + pwd;
+            var connect_info = t + 'host=' + host + '&port=' + port + '&user=' + user + '&password=' + pwd;
             return connect_info
         }
 
@@ -58,7 +64,7 @@ html,body{
                 cursorBlink: true
             });
             protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://',
-            socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + '/webssh/?' + connect_info + '&width=' + cols + '&height=' + rows;
+            socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + connect_info + '&width=' + cols + '&height=' + rows;
 
             var sock;
             sock = new WebSocket(socketURL);
@@ -81,7 +87,7 @@ html,body{
                 var status = data.status;
                 if (status === 0) {
                     term.write(message)
-		    //$('#terminal').scrollTop($('#terminal')[0].scrollHeight)
+		            $('#terminal').scrollTop($('#terminal')[0].scrollHeight)
                 } else {
                     //window.location.reload()
                 }
@@ -95,10 +101,10 @@ html,body{
 
             // 向服务器端发送数据
             term.onData( data => {
-                console.log('data xterm=>',data)
+                //console.log('data xterm=>',data)
                 message['status'] = 0;
                 message['data'] = data;
-                //term.write(data);
+                // term.write(data);
                 var send_data = JSON.stringify(message);
                 sock.send(send_data)
             });
