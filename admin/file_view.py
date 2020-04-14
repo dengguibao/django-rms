@@ -212,22 +212,24 @@ def file_download(request, id):
         'xml'
     ]
 
+    file_path = '/'.join([settings.BASE_DIR, res.real_path, res.real_name])
+    if os.path.exists(file_path) == False:
+        raise Http404()
+
     if res.file_type in txt_file_type and down == 0:
-        with open('/'.join([res.real_path, res.real_name]), 'r', encoding='utf-8', errors="ignore") as f:
+        with open(file_path, 'r', encoding='utf-8', errors="ignore") as f:
             content = f.read()
         return render(request, 'admin/%s' % (temp_name), {
             'filename': res.name,
             'content': content
         })
-    try:
+    else:
         file = open('/'.join([res.real_path, res.real_name]), 'rb')
         response = FileResponse(file)
         response['Content-Type'] = 'application/octet-stream'
         response['Content-Disposition'] = 'attachment;filename="{}"'.format(
             res.name.encode('utf-8').decode('ISO-8859-1'))
         return response
-    except Exception:
-        raise Http404
 
 
 def format_file_size(size):

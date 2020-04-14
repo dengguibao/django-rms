@@ -25,7 +25,6 @@ class Telnet:
     
     def close(self):
         if self.channel:
-            self.django_to_telnet('quit') # huawei device send quit command
             self.channel.close()
         self.websocker.close()
 

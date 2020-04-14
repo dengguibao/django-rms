@@ -1,4 +1,4 @@
-<html>
+<html lang="zh-cn">
 <head>
 <meta http-equiv="Content-type" content="text/html; charset=utf-8">
 <title>shell</title>
@@ -18,7 +18,7 @@ html,body{
     <input type="hidden" id="password" value="{{password}}"/>
     <input type="hidden" id="type" value="{{type}}"/>
 
-    <div id="terminal" style="height:100%;overflow-x:hidden;"></div>
+    <div id="terminal" style="height:100%;overflow-x:hidden;overflow-y:hidden"></div>
     <script type="text/javascript">
         function get_connect_info() {
             var host = $.trim($('#host').val());
@@ -87,7 +87,7 @@ html,body{
                 var status = data.status;
                 if (status === 0) {
                     term.write(message)
-		            $('#terminal').scrollTop($('#terminal')[0].scrollHeight)
+		            //$('#terminal').scrollTop($('#terminal')[0].scrollHeight)
                 } else {
                     //window.location.reload()
                 }
@@ -122,6 +122,9 @@ html,body{
             })
 
         }
+
+    
+
         websocket();
     </script>
 </body>

@@ -60,18 +60,18 @@ def view_file(request, path):
         'json',
         'xml'
     ]
+    file_path = path.replace(',', '/')
+    if os.path.exists(file_path) == False:
+        raise Http404
+
     if path.split(',')[-1].split('.')[-1] in txt_file_type:
-        try:
-            with open(path.replace(',', '/'), 'r', encoding='utf-8', errors='ignore') as f:
-                content = f.read()
-            return render(request, 'admin/file_view_text.html', {
-                'filename': path.split(',')[-1],
-                'content': content
-            })
-        except:
-            raise Http404
+        with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+            content = f.read()
+        return render(request, 'admin/file_view_text.html', {
+            'filename': path.split(',')[-1],
+            'content': content
+        })
     else:
-        try:
             file = open(path.replace(',', '/'), 'rb')
             response = FileResponse(file)
             response['Content-Type'] = 'application/octet-stream'
@@ -79,5 +79,3 @@ def view_file(request, path):
                 path.split(',')[-1].encode('utf-8').decode('ISO-8859-1')
             )
             return response
-        except:
-            raise Http404

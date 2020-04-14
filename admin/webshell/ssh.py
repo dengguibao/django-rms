@@ -83,7 +83,6 @@ class SSH:
 
     def close(self):
         if self.channel:
-            self.django_to_ssh('exit') # send quit command
             self.channel.close()
         self.websocker.close()
 
