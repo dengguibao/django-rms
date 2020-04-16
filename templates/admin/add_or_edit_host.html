@@ -25,10 +25,13 @@
           <label class="layui-form-label">操作系统</label>
           <div class="layui-input-inline" style="width: 100px;">
             <select name="os" lay-verify="required">
+                <option value="">请选择</option>
                 <option {% ifequal host_obj.os 'CentOS' %}selected=""{% endifequal %} value="CentOS">CentOS</option{% ifequal vm_obj.vm_os 'CentOS' %}selected=""{% endifequal %}>
                 <option {% ifequal host_obj.os 'Ubuntu' %}selected=""{% endifequal %} value="Ubuntu">Ubuntu</option>
                 <option {% ifequal host_obj.os 'Windows' %}selected=""{% endifequal %} value="Windows">Windows</option>
                 <option {% ifequal host_obj.os 'ESXi' %}selected=""{% endifequal %} value="ESXi">ESXi</option>
+                <option {% ifequal host_obj.os 'general linux' %}selected=""{% endifequal %} value="general linux">General Linux</option>
+                
             </select>
           </div>
         </div>

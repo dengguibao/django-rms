@@ -41,6 +41,8 @@ urlpatterns = [
     path('file-delete/<int:i>', file_view.file_delete),
     path('create-folder', file_view.create_folder),
     path('media/<int:id>', file_view.file_download),
+    path('edit/<int:id>', file_view.file_edit),
+    path('save/', file_view.file_save),
 
     path('list-scripts/<str:path>', script_views.get_file_list),
     path('view-script/<str:path>', script_views.view_file),

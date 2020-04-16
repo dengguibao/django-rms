@@ -7,7 +7,7 @@
 <script src="/static/admin/js/jquery-1.4.3.min.js"></script>
 <style type="text/css">
 html,body{
-    margin:0;padding:0px;background:#000
+    margin:0;padding:0px;background:#000;
 }
 </style>
 </head>
@@ -18,7 +18,7 @@ html,body{
     <input type="hidden" id="password" value="{{password}}"/>
     <input type="hidden" id="type" value="{{type}}"/>
 
-    <div id="terminal" style="height:100%;overflow-x:hidden;overflow-y:hidden"></div>
+    <div id="terminal" style="height:100%;overflow-x:hidden;"></div>
     <script type="text/javascript">
         function get_connect_info() {
             var host = $.trim($('#host').val());

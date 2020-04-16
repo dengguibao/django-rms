@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<title>{{filename}}</title>
+<link rel="stylesheet" href="/static/public/md-editor/editormd.css" />
+
+<script src="/static/public/md-editor/jquery.min.js"></script>
+<script src="/static/public/md-editor/editormd.min.js"></script>
+</head>
+<body>
+<div id="markdown-view">
+    <!-- Server-side output Markdown text -->
+    <textarea style="display:none;" id="content">{{content}}</textarea>
+    <input type="hidden" id="id" value="{%if id%}{{id}}{%else%}0{%endif%}"/>
+    {% csrf_token %}
+</div>
+<script type="text/javascript">
+    var Editor;
+
+    $(function() {
+        Editor = editormd("markdown-view", {
+            width   : "96%",
+            height  : $(window).height()-25,
+            syncScrolling : "single",
+            path    : "/static/public/md-editor/lib/",
+        });
+    });
+
+    $(window).bind('keydown', function(event) {
+    if (event.ctrlKey || event.metaKey) {
+        if(String.fromCharCode(event.which).toLowerCase() == 's'){
+            event.preventDefault();
+            save()
+        }
+    }
+    
+    function save(){
+        id=$('#id').val()
+        csrf=$('input[name="csrfmiddlewaretoken"').val()
+        content=$('#content').val()
+
+        if (id<=0){
+            return false;
+        }
+
+        $.ajax({
+            url:'/admin/save/',
+            type:'post',
+            data:{
+                'id':id,
+                'csrfmiddlewaretoken':csrf,
+                'content':content
+            },
+            success:function(d){
+                alert(d.msg)
+            },
+            error:function(e){
+                alert(JSON.stringify(e))
+            }
+        })
+    }
+});
+
+</script> 
+</body>
+</html>

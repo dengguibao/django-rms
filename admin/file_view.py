@@ -143,6 +143,96 @@ def create_folder(request):
 
 
 @login_required
+def file_edit(request, id):
+    res = FileInfo.objects.get(id=id)
+    if res and res.owner != request.user:
+        return render(request, 'admin/error.html')
+    file_path = '/'.join([settings.BASE_DIR, res.real_path, res.real_name])
+    txt_file_type = [
+        'yaml',
+        'yam',
+        'conf',
+        'log',
+        'txt',
+        'desktop',
+        'sh',
+        'py',
+        'php',
+        'js',
+        'css',
+        'html',
+        'htm',
+        'go',
+        'json',
+        'xml'
+    ]
+    file_ext = res.real_name.split('.')[-1]
+    if file_ext == 'md':
+        temp_name = 'file_edit_md.html'
+    elif file_ext in txt_file_type:
+        temp_name = 'file_edit_text.html'
+    else:
+        return render(request, 'admin/error.html',{
+            'error_msg': '文件格式不支持在线编辑'
+        })
+    
+    if os.path.exists(file_path):
+        with open(file_path, 'r', encoding='utf-8', errors="ignore") as f:
+            content = f.read()
+        return render(request, 'admin/%s' % (temp_name), {
+            'filename': res.name,
+            'content': content,
+            'id': res.id
+        })
+    
+
+
+@login_required
+def file_save(request):
+    id = request.POST.get('id', 0)
+    content = request.POST.get('content', None)
+    res = FileInfo.objects.get(id=id)
+
+    if res and res.owner != request.user:
+        return render(request, 'admin/error.html')
+
+    file_path = '/'.join([settings.BASE_DIR, res.real_path, res.real_name])
+    txt_file_type = [
+        'md',
+        'yaml',
+        'yam',
+        'conf',
+        'log',
+        'txt',
+        'desktop',
+        'sh',
+        'py',
+        'php',
+        'js',
+        'css',
+        'html',
+        'htm',
+        'go',
+        'json',
+        'xml'
+    ]
+    file_ext = res.real_name.split('.')[-1]
+    print(file_path)
+    if file_ext in txt_file_type and os.path.exists(file_path):
+        with open(file_path, 'w+', encoding='utf-8', errors="ignore") as f:
+            f.write(content)
+        return JsonResponse({
+            'code':0,
+            'msg':'写入成功'
+        })
+    else:
+        return JsonResponse({
+            'code':1,
+            'msg':'写入失败'
+        })
+
+
+@login_required
 def file_delete(request, i):
     res = FileInfo.objects.get(id=i)
     # delete file

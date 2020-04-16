@@ -1,4 +1,4 @@
-<html lang="zh-cn">
+<!DOCTYPE HTML>
 <head>
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
   <title>运维信息管理平台</title>
@@ -12,7 +12,7 @@
   <style type="text/css">
   #resize{
     position: absolute;
-    left: 212;
+    left: 212px;
     top: 0;
     bottom: 0;
     width:11px;
@@ -113,8 +113,8 @@
   <script type="application/x-javascript">
     pri_menu=$('.pri_menu').each(function(){
       $(this).click(function(){
-        //alert($(this).text());
-        $(this).next().slideToggle('fast');	
+        child=$(this).next();
+        child.slideToggle('fast');
       });
     });
     $('#resize').click(function(){
@@ -144,7 +144,7 @@
 
     function resize_right_container(){
       topBarHeight = $('#topContainer').height()+20 //20px scroll bar
-      bodyHeight = $('body').height()
+      bodyHeight = $(window).height()
       $('#rightContainer').height(bodyHeight-topBarHeight)
     }
     resize_right_container();

@@ -128,10 +128,11 @@
             <label class="layui-form-label">操作系统</label>
             <div class="layui-input-inline" style="width: 100px;">
                 <select name="vm_os" lay-verify="required">
+                    <option value="">请选择</option>
                     <option {% ifequal vm_obj.vm_os 'CentOS' %}selected="" {% endifequal %} value="CentOS">CentOS</option>
                     <option {% ifequal vm_obj.vm_os 'Ubuntu' %}selected="" {% endifequal %} value="Ubuntu">Ubuntu</option>
                     <option {% ifequal vm_obj.vm_os 'Slackware' %}selected="" {% endifequal %} value="Slackware">Slackware</option>
-                    <option {% ifequal vm_obj.vm_os 'Linux' %}selected="" {% endifequal %} value="Linux">Linux</option>
+                    <option {% ifequal vm_obj.vm_os 'General Linux' %}selected="" {% endifequal %} value="General Linux">General Linux</option>
                     <option {% ifequal vm_obj.vm_os 'Windows' %}selected="" {% endifequal %} value="Windows">Windows</option>
                 </select>
             </div>

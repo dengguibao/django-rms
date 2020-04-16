@@ -173,10 +173,16 @@ layui.use(['upload', 'element', 'layer', 'mouseRightMenu'], function(){
     //右键监听
  		$('.mr').bind("contextmenu",function(e){
 			var data = {id:$(this).attr('tag'),class:$(this).attr('class')}
- 			var menu_data=[
-				{'data':data,'type':1,'title':'下载'},
-				{'data':data,'type':2,'title':'删除'}			
-			]
+
+      var menu_data=[
+        {'data':data,'type':2,'title':'删除'}			
+      ]
+
+      if(data.class.indexOf('folder') == -1){
+        menu_data.unshift({'data':data,'type':3,'title':'编辑'})
+        menu_data.unshift({'data':data,'type':1,'title':'下载'})
+      }
+      
  			mouseRightMenu.open(menu_data,false,function(d){
  				 //layer.alert(JSON.stringify(d));
          //删除操作
@@ -194,11 +200,11 @@ layui.use(['upload', 'element', 'layer', 'mouseRightMenu'], function(){
          }
         //下载操作
         if (d.type == 1){
-          if(d.data.class.indexOf('folder') != -1){
-            return
-          }else{
-            window.open('/admin/media/'+d.data.id+'?d=1')
-          }          
+            window.open('/admin/media/'+d.data.id+'?d=1');
+        }
+        // 删除操作
+        if (d.type == 3){
+          window.open('/admin/edit/'+d.data.id);
         }
  			})
 			return false;
