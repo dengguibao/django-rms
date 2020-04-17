@@ -217,7 +217,6 @@ def file_save(request):
         'xml'
     ]
     file_ext = res.real_name.split('.')[-1]
-    print(file_path)
     if file_ext in txt_file_type and os.path.exists(file_path):
         with open(file_path, 'w+', encoding='utf-8', errors="ignore") as f:
             f.write(content)
@@ -314,7 +313,7 @@ def file_download(request, id):
             'content': content
         })
     else:
-        file = open('/'.join([res.real_path, res.real_name]), 'rb')
+        file = open(file_path, 'rb')
         response = FileResponse(file)
         response['Content-Type'] = 'application/octet-stream'
         response['Content-Disposition'] = 'attachment;filename="{}"'.format(

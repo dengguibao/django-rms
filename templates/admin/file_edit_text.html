@@ -27,7 +27,7 @@ html,body{
 <script src="/static/public/md-editor/jquery.min.js"></script>
 
 </head>
-<body>
+<body onresize="resize_container()">
 <div id="text-view" style="width:100%;height:100%">
     <!-- Server-side output Markdown text -->
     <textarea name="content" style="width:100%;height:100%" id="content">{{content}}</textarea>
@@ -60,6 +60,13 @@ html,body{
     jQuery.getScript(modeUrl.replace(/\%N/g,ext),function(){
         load_vim();
     })
+    
+    function resize_container(){
+      bodyHeight = $(window).height()
+      bodyWidth = $(window).width()
+      $('.CodeMirror').height(bodyHeight)
+      $('.CodeMirror').width(bodyWidth)
+    }
 
     function load_vim(){
         //console.log(ext)        

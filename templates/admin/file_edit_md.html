@@ -7,8 +7,13 @@
 
 <script src="/static/public/md-editor/jquery.min.js"></script>
 <script src="/static/public/md-editor/editormd.min.js"></script>
+<style type="text/css">
+html,body{
+    margin:0;padding:0
+}
+</style>
 </head>
-<body>
+<body onresize="resize_container();">
 <div id="markdown-view">
     <!-- Server-side output Markdown text -->
     <textarea style="display:none;" id="content">{{content}}</textarea>
@@ -20,21 +25,22 @@
 
     $(function() {
         Editor = editormd("markdown-view", {
-            width   : "96%",
-            height  : $(window).height()-25,
+            width   : "100%",
+            height  : $(window).height(),
             syncScrolling : "single",
             path    : "/static/public/md-editor/lib/",
         });
     });
 
     $(window).bind('keydown', function(event) {
-    if (event.ctrlKey || event.metaKey) {
-        if(String.fromCharCode(event.which).toLowerCase() == 's'){
-            event.preventDefault();
-            save()
+        if (event.ctrlKey || event.metaKey) {
+            if(String.fromCharCode(event.which).toLowerCase() == 's'){
+                event.preventDefault();
+                save()
+            }
         }
-    }
-    
+    });
+
     function save(){
         id=$('#id').val()
         csrf=$('input[name="csrfmiddlewaretoken"').val()
@@ -60,8 +66,10 @@
             }
         })
     }
-});
-
+    function resize_container(){
+      bodyHeight = $(window).height()
+      $('#markdown-view').height(bodyHeight)
+    }
 </script> 
 </body>
 </html>

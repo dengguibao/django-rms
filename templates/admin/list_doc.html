@@ -172,8 +172,8 @@ layui.use(['upload', 'element', 'layer', 'mouseRightMenu'], function(){
   function refresh_right_click_menu(){
     //右键监听
  		$('.mr').bind("contextmenu",function(e){
-			var data = {id:$(this).attr('tag'),class:$(this).attr('class')}
-
+			var data = {id:$(this).attr('tag'),class:$(this).attr('class'),text:$(this).text()}
+      //console.log(data)
       var menu_data=[
         {'data':data,'type':2,'title':'删除'}			
       ]
@@ -202,9 +202,19 @@ layui.use(['upload', 'element', 'layer', 'mouseRightMenu'], function(){
         if (d.type == 1){
             window.open('/admin/media/'+d.data.id+'?d=1');
         }
-        // 删除操作
+        // 编辑操作
         if (d.type == 3){
-          window.open('/admin/edit/'+d.data.id);
+          layer.open({
+            type: 2,
+            title: d.data.text,
+            area: ['900px', '600px'],
+            shade: false,
+            closeBtn: 1,
+            shadeClose: true,
+            maxmin: true,
+            content: ['/admin/edit/'+d.data.id, 'no'],
+          });
+          //window.open('/admin/edit/'+d.data.id);
         }
  			})
 			return false;
