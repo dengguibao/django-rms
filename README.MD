@@ -6,16 +6,18 @@
 5.浏览服务器指定目录的文件  
 6.支持为系统创建不同的用户及不同的及别管理  
 7.服务器资源的导出  
+8.支持虚拟机web ssh和telnet方式远程登陆  
+9.支持上传文件在线编辑，类似于web vim  
 
 ## 截图  
 虚拟机管理  
-![vm manage](https://raw.githubusercontent.com/dengguibao/django-rms/master/screenshot/Screenshot%20from%202020-03-29%2013-53-05.png)
+![vm manage](https://raw.githubusercontent.com/dengguibao/django-rms/master/screenshot/01.png)
 
 添加服务器  
-![vm manage](https://raw.githubusercontent.com/dengguibao/django-rms/master/screenshot/Screenshot%20from%202020-03-29%2013-53-11.png)
+![vm manage](https://raw.githubusercontent.com/dengguibao/django-rms/master/screenshot/02.png)
 
 文件管理  
-![vm manage](https://raw.githubusercontent.com/dengguibao/django-rms/master/screenshot/Screenshot%20from%202020-03-29%2013-53-18.png)
+![vm manage](https://raw.githubusercontent.com/dengguibao/django-rms/master/screenshot/03.png)
 
 系统摘要  
-![vm manage](https://raw.githubusercontent.com/dengguibao/django-rms/master/screenshot/Screenshot%20from%202020-03-29%2013-53-41.png)
+![vm manage](https://raw.githubusercontent.com/dengguibao/django-rms/master/screenshot/04.png)

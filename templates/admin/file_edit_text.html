@@ -18,12 +18,10 @@ html,body{
 
 <script src="/static/public/md-editor/lib/codemirror/lib/codemirror.js"></script>
 <script src="/static/public/md-editor/lib/codemirror/addon/dialog/dialog.js"></script>
-<script src="/static/public/md-editor/lib/codemirror/addon/mode/loadmode.js"></script>
-<script src="/static/public/md-editor/lib/codemirror/mode/meta.js"></script>
 
 <script src="/static/public/md-editor/lib/codemirror/addon/search/searchcursor.js"></script>
 <script src="/static/public/md-editor/lib/codemirror/addon/edit/matchbrackets.js"></script>
-{% comment %} <script src="/static/public/md-editor/lib/codemirror/keymap/vim.js"></script> {% endcomment %}
+<script src="/static/public/md-editor/lib/codemirror/keymap/vim.js"></script>
 <script src="/static/public/md-editor/jquery.min.js"></script>
 
 </head>
@@ -44,9 +42,6 @@ html,body{
         'js': 'javascript',
         'html': 'htmlmixed',
         'htm': 'htmlmixed',
-        'conf': 'textile',
-        'log': 'textile',
-        'txt': 'textile',
         'sql': 'sql',
         'go': 'go',
         'json': 'javascript',
@@ -55,23 +50,26 @@ html,body{
         'yam': 'yaml',
     }
     a=$('#filename').val().split('.');
-    jQuery.getScript("/static/public/md-editor/lib/codemirror/mode/"+file_type[a[a.length-1]]+'/'+file_type[a[a.length-1]]+'.js',function(){
+    var ext = file_type[a[a.length-1]];
+    if (ext == undefined){
+        ext = 'textile'
+    }
+    modeUrl = "/static/public/md-editor/lib/codemirror/mode/%N/%N.js"
+    jQuery.getScript(modeUrl.replace(/\%N/g,ext),function(){
         load_vim();
     })
 
     function load_vim(){
-        var ext = file_type[a[a.length-1]];
         //console.log(ext)        
         var editor = CodeMirror.fromTextArea(document.getElementById("content"), {
             lineNumbers: true,
             mode: ext,
-            keyMap: "default",
+            keyMap: "vim",
             matchBrackets: true,
-            //theme:'solarized',
-            //showCursorWhenSelecting: true,
             inputStyle: "contenteditable"
         });
         editor.setSize($(window).width(), $(window).height());
+
         // save
         CodeMirror.commands.save = function(){
             id=$('#id').val()
@@ -98,7 +96,6 @@ html,body{
                 }
             });            
         };
-        
     }
     
 </script> 
