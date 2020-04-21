@@ -1,13 +1,13 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Permission
 from django.db.models import Q
 
 
 @login_required()
-def permissin_admin_view(request, nid):
-    """user permissoin admin for someone user
+def permission_admin_view(request, nid):
+    """user permission admin for someone user
     
     Arguments:
         request {object} -- wsgi http request object
@@ -22,23 +22,23 @@ def permissin_admin_view(request, nid):
         data = []
         for i in user_permission_list:
             data.append({
-                'permiss_explain': permission_explain(i.split('.')[1]),
+                'perms_explain': permission_explain(i.split('.')[1]),
                 'codename': i.split('.')[1]
             })
-        all_permiss_list = Permission.objects.filter(
+        all_perms_list = Permission.objects.filter(
             Q(codename__contains='vminfo') |
             # Q(codename__contains='fileinfo') |
             Q(codename__contains='clusterinfo') |
             Q(codename__contains='hostinfo') |
             Q(codename__contains='user') 
         ).values()
-        for i in all_permiss_list:
+        for i in all_perms_list:
             i['permission_explain'] = permission_explain(i['codename'])
         context = {
             'user_url_path': '用户',
             'user': user,
-            'user_permiss_list': data,
-            'all_permiss_list': all_permiss_list
+            'user_perms_list': data,
+            'all_perm_list': all_perms_list
         }
         temp_name = 'admin/permission_admin.html'
     else:
@@ -52,13 +52,13 @@ def permissin_admin_view(request, nid):
 
 
 @login_required()
-def permission_control_view(request, method, permiss, nid):
-    """ user permissoin controller,add and remove user permisson for someone
+def permission_control_view(request, method, perms, nid):
+    """ user permission controller,add and remove user permission for someone
     
     Arguments:
         request {object} -- wsgi http request object
-        method {str} -- permission action description just add or remove
-        permiss {str} -- permission
+        method {str} -- permission action flag description just add or remove
+        perms {str} -- permission
         nid {int} -- user id
     
     Returns:
@@ -72,7 +72,7 @@ def permission_control_view(request, method, permiss, nid):
         return JsonResponse(return_data)
 
     if request.user.has_perm('auth.add_user') and request.user.has_perm('auth.change_user'):
-        data = perms_controll(method, permiss, nid)
+        data = perms_controller(method, perms, nid)
         return JsonResponse(data)
 
     return JsonResponse({
@@ -81,11 +81,11 @@ def permission_control_view(request, method, permiss, nid):
     })
 
 
-def perms_controll(method, perm, nid):
+def perms_controller(method, perm, nid):
     """permission controller
     
     Arguments:
-        method {str} -- permission action descripton just add or remove
+        method {str} -- permission action description just add or remove
         perm {str} -- permission
         nid {id} -- user id
     
@@ -98,11 +98,11 @@ def perms_controll(method, perm, nid):
     }
     user = User.objects.get(id=nid)
     if user:
-        user_permiss = Permission.objects.get(codename=perm)
+        user_perm = Permission.objects.get(codename=perm)
         if method == 'add':
-            res = user.user_permissions.add(user_permiss)
+            res = user.user_permissions.add(user_perm)
         elif method == 'remove':
-            res = user.user_permissions.remove(user_permiss)
+            res = user.user_permissions.remove(user_perm)
 
         if res is None:
             return_data['code'] = 0
@@ -110,19 +110,19 @@ def perms_controll(method, perm, nid):
     return return_data
 
 
-def permission_explain(permiss):
+def permission_explain(perm):
     """permission chinese explain
     
     Arguments:
-        permiss {str} -- permission description
+        perm {str} -- permission description
     
     Returns:
         str -- permission chinese explain
     """
-    if not permiss:
+    if not perm:
         return None
 
-    x = permiss.split('_')
+    x = perm.split('_')
     act_data = {
         'add': '新增',
         'change': '修改',
@@ -137,3 +137,30 @@ def permission_explain(permiss):
         'clusterinfo': '集群'
     }
     return act_data[x[0]]+res_data[x[1]]
+
+
+@login_required()
+def init_admin_permission(request):
+    user = request.user
+    model_array = [
+        'clusterinfo',
+        # 'fileinfo',
+        'hostinfo',
+        'vminfo',
+        'user'
+    ]
+    action_flag_array = [
+        'add_',
+        'change_',
+        'delete_',
+        'view_'
+    ]
+    for m in model_array:
+        for a in action_flag_array:
+            if user.has_perm(a+m):
+                continue
+            else:
+                perm = Permission.objects.get(codename=a+m)
+                user.user_permissions.add(perm)
+    
+    return HttpResponse('success,please comment this entry on urls.py file')

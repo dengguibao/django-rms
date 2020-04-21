@@ -10,6 +10,7 @@ from .models import VmInfo, HostInfo, ClusterInfo
 from io import BytesIO
 import xlwt
 
+
 @login_required()
 def get_hosts_list(request, dev_type, flag):
     """get all host and virtual machine resource
@@ -27,9 +28,9 @@ def get_hosts_list(request, dev_type, flag):
         'code': 1,
         'msg': 'illegal request'
     }
-    
-    res_cluster = ClusterInfo.objects.filter(is_active=0).values('name','tag')
-    cluster_array = {i['tag']:i['name'] for i in res_cluster}
+
+    res_cluster = ClusterInfo.objects.filter(is_active=0).values('name', 'tag')
+    cluster_array = {i['tag']: i['name'] for i in res_cluster}
 
     if dev_type not in ['host', 'vm'] or len(flag) <= 0:
         return JsonResponse(return_data)
@@ -92,8 +93,10 @@ def get_hosts_list(request, dev_type, flag):
 
     return JsonResponse(return_data)
 
+
 @login_required()
 def export(request, dev_type):
+    export_file_name = None
     if dev_type not in ['vm', 'host']:
         return render(request, 'admin/error.html')
 
@@ -111,7 +114,7 @@ def export(request, dev_type):
         esxi_kvp = {i.id: i.hostname for i in host_obj}
 
     backup_data_struct = {
-        'vm':{
+        'vm': {
             'vm_hostname': '主机名',
             'vm_ip': 'IP',
             'vlan_tag': 'VLAN标签',
@@ -128,7 +131,7 @@ def export(request, dev_type):
             'vm_intention': '用途',
             'vm_desc': '备注',
         },
-        'host':{
+        'host': {
             'hostname': '主机名',
             'sn': '序列号',
             'idrac_ip': 'iDRAC ip',
@@ -167,11 +170,11 @@ def export(request, dev_type):
         }
     }
 
-    res_cluster = ClusterInfo.objects.filter(is_active=0).values('name','tag')
-    cluster_tag = {i['tag']:i['name'] for i in res_cluster}
+    res_cluster = ClusterInfo.objects.filter(is_active=0).values('name', 'tag')
+    cluster_tag = {i['tag']: i['name'] for i in res_cluster}
     cluster_tag['none'] = '独立服务器'
-    status = ['开机','关机']
-    if res:  
+    status = ['开机', '关机']
+    if res:
         column = 0
         for title in backup_data_struct[dev_type]:
             sheet.write(0, column, backup_data_struct[dev_type][title])
@@ -193,7 +196,7 @@ def export(request, dev_type):
             column = 0
             data_row_num += 1
     response = HttpResponse(content_type='application/vnd.ms-excel')
-    response['Content-Disposition'] = 'attachment;filename=%s' % (export_file_name)
+    response['Content-Disposition'] = 'attachment;filename=%s' % export_file_name
     output = BytesIO()
     wb.save(output)
 
@@ -205,7 +208,8 @@ def export(request, dev_type):
 
 @login_required()
 def search(request, dev_type, keyword):
-    """ accroding keyword search host or virtual machine
+    """
+    according keyword search host or virtual machine
     
     Arguments:
         request {object} -- wsgi http request object
@@ -220,9 +224,9 @@ def search(request, dev_type, keyword):
             'code': 1,
             'msg': 'illegal request'
         })
-    if dev_type == 'vm' and request.user.has_perm('admin.view_vminfo'):
+    if dev_type == 'vm' and request.user.has_perm('app.view_vminfo'):
         model = VmInfo
-    elif dev_type == 'host' and request.user.has_perm('admin.view_hostinfo'):
+    elif dev_type == 'host' and request.user.has_perm('app.view_hostinfo'):
         model = HostInfo
     else:
         return JsonResponse({

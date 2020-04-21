@@ -1,6 +1,6 @@
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
-from admin.webshell import routing
+from app.webshell import routing
 
 application = ProtocolTypeRouter({
     'websocket': AuthMiddlewareStack(

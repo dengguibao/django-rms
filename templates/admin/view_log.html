@@ -1,0 +1,51 @@
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <title>logs</title>
+  <script src="/static/admin/js/jquery-1.4.3.min.js"></script>
+  <!--load layui-->
+  <script src="/static/public/layui.js"></script>
+  <link href="/static/public/css/layui.css" rel="stylesheet" />
+
+</head>
+
+<body>
+<table class="layui-table" lay-skin="line">
+    <thead>
+      <colgroup>
+        <col width="80">
+        <col width="200">
+        <col width="100">
+        <col width="100">
+        <col>
+      </colgroup>
+      <tr style="background:#eee">
+        <th>序号</th>
+        <th>日期</th>
+        <th>操作</th>
+        <th>用户</th>
+        <th>日志</th>
+      </tr>
+    </thead>
+      <tbody id="list">
+      {% for i in log_data %}
+      <tr>
+        <td>{{forloop.counter}}</td>
+        <td>{{i.action_time}}</td>
+        <td>
+        {% for a in action_flag %}
+        {% if a.id == i.action_flag %}{{a.value}}{% endif %}
+        {% endfor %}
+        </td>
+        <td>
+        {% for u in all_user %}
+        {% if u.id == i.user_id %}{{u.first_name}}{% endif %}
+        {% endfor %}
+        </td>
+        <td>{{i.change_message}}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+</body>
+</html>

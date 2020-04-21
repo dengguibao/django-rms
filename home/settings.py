@@ -51,10 +51,10 @@ PAGE_SIZE = 20
 # Application definition
 ASGI_APPLICATION = 'home.routing.application'
 INSTALLED_APPS = [
-    'admin',
+    'app',
     'home',
     'channels',
-    # 'django.contrib.admin',
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',

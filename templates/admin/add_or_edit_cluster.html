@@ -45,14 +45,23 @@
     </div>
     </div>
 </form>
-<script>
+<script type="text/javascript">
     layui.use(['form', 'layedit', 'laydate'], function () {
         var form = layui.form
             , layer = layui.layer;
 
+        var cluster_id = $('#cluster_id').val()
+        if (cluster_id != 0){
+            var init_form_data = JSON.stringify($("form").serializeArray());
+        } 
         form.on('submit(demo1)', function (data) {
+            var submit_form_data = JSON.stringify($("form").serializeArray());
+            if (init_form_data != undefined && init_form_data == submit_form_data){
+                layer.msg('表单无修改，无须提交')
+                return false;
+            }
             $.ajax({
-                url: "{% url 'admin:create-or-update' 'cluster' %}",
+                url: "/admin/create-or-update/cluster/",
                 type: 'post',
                 data: data.field,
                 success: function (d) {

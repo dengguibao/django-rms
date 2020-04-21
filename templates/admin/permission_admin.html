@@ -43,9 +43,9 @@
             <div class="layui-card">
                 <div class="layui-card-header">用户已有权限</div>
                 <div class="layui-card-body">
-                    <ul id="user_permiss_list" class="ul">
-                        {%for i in user_permiss_list%}
-                        <li tag="{{i.codename}}">{{i.permiss_explain}}</li>
+                    <ul id="user_perms_list" class="ul">
+                        {%for i in user_perms_list %}
+                        <li tag="{{i.codename}}">{{ i.perms_explain }}</li>
                         {%endfor%}
                     </ul>
                 </div>
@@ -55,9 +55,9 @@
             <div class="layui-card">
                 <div class="layui-card-header">权限列表</div>
                 <div class="layui-card-body">
-                    <ul id="all_permiss_list" class="ul">
-                        {%for i in all_permiss_list%}
-                        <li tag="{{i.codename}}">{{i.permission_explain}}</li>
+                    <ul id="all_perms_list" class="ul">
+                        {%for i in all_perm_list %}
+                        <li tag="{{i.codename}}">{{ i.permission_explain }}</li>
                         {%endfor%}
                     </ul>
                 </div>
@@ -65,27 +65,27 @@
         </div>
     </div>
 </div>
-<script>
+<script type="text/javascript">
     function init() {
-        $("#all_permiss_list li").bind('click', function () {
+        $("#all_perms_list li").bind('click', function () {
             var tag = $(this).attr('tag');
-            var permiss_explain = $(this).text();
+            var perms_explain = $(this).text();
             var id = $('#user_id').val()
 
-            user_permiss_tag_array = new Array();
-            $("#user_permiss_list li").each(function (i, e) {
-                user_permiss_tag_array.push($(this).attr('tag'))
+            user_perms_tag_array = new Array();
+            $("#user_perms_list li").each(function (i, e) {
+                user_perms_tag_array.push($(this).attr('tag'))
             })
 
-            if (user_permiss_tag_array.indexOf(tag) < 0) {
+            if (user_perms_tag_array.indexOf(tag) < 0) {
                 $.getJSON(
                     '/admin/permission-control/add/' + tag + '/' + id,
                     function (d) {
                         if (d.code == 0) {
-                            $("#user_permiss_list").append(
-                                "<li tag='" + tag + "'>" + permiss_explain + "</li>"
+                            $("#user_perms_list").append(
+                                "<li tag='" + tag + "'>" + perms_explain + "</li>"
                             );
-                            refresh_user_peromiss_list_event();
+                            refresh_user_perms_list_event();
                         }
                     }
                 )
@@ -93,10 +93,10 @@
         });
     }
 
-    function refresh_user_peromiss_list_event() {
+    function refresh_user_perms_list_event() {
         var id = $('#user_id').val()
 
-        $("#user_permiss_list li").bind('click', function () {
+        $("#user_perms_list li").bind('click', function () {
             var tag = $(this).attr('tag');
             var x=$(this);
             $.getJSON(
@@ -111,7 +111,7 @@
     }
 
     init()
-    refresh_user_peromiss_list_event()
+    refresh_user_perms_list_event()
 
 </script>
 {%endblock%}

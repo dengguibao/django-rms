@@ -33,14 +33,17 @@
         <td>{%ifequal i.is_active True%}启用{%else%}禁用{%endifequal%}</td>
         <td>{{i.date_joined}}</td>
         <td>
-          <a href="{%url 'admin:edit' 'user' i.id %}" class="layui-btn layui-btn-primary layui-btn-xs">
-            &nbsp;<i class="layui-icon">&#xe642;</i>
+          <a href="/admin/edit/user/{{i.id}}" class="layui-btn layui-btn-primary layui-btn-xs">
+            &nbsp;<i class="layui-icon layui-icon-edit"></i>
           </a>
           <a href="javascript:row_del({{ i.id }});" class="layui-btn layui-btn-primary layui-btn-xs">
-            &nbsp;<i class="layui-icon">&#xe640;</i>
+            &nbsp;<i class="layui-icon layui-icon-delete"></i>
           </a>
-          <a href="{%url 'admin:permission_admin' i.id %}" class="layui-btn layui-btn-primary layui-btn-xs">
-            &nbsp;<i class="layui-icon">&#xe672;</i>
+          <a href="/admin/permission-admin/{{i.id}}" class="layui-btn layui-btn-primary layui-btn-xs">
+            &nbsp;<i class="layui-icon layui-icon-auz"></i>
+          </a>
+          <a href="/admin/view-logs/user/{{ i.id }}" class="layui-btn layui-btn-primary layui-btn-xs">
+            &nbsp;<i class="layui-icon layui-icon-log"></i>
           </a>
         </td>
       </tr>
@@ -48,7 +51,7 @@
     </tbody>
   </table>
 </div>
-<script>
+<script type="text/javascript">
   function row_del(id) {
     //alert(s)
     var url = "/admin/delete/user/" + id

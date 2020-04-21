@@ -77,18 +77,25 @@
     height: auto;
     }
 </style>
-<script>
+<script type="text/javascript">
     layui.use(['form'], function () {
         var form = layui.form
             , layer = layui.layer;
 
-        //监听提交
+        var user_id = $('#user_id').val()
+        if (user_id != 0){
+            var init_form_data = JSON.stringify($("form").serializeArray());
+        }  
+
+        //监听提交        
         form.on('submit(demo1)', function (data) {
-            // layer.alert(JSON.stringify(data.field), {
-            //     title: '最终的提交信息'
-            // })
+            var submit_form_data = JSON.stringify($("form").serializeArray());
+            if (init_form_data != undefined && init_form_data == submit_form_data){
+                layer.msg('表单无修改，无须提交')
+                return false;
+            }
             $.ajax({
-                url:"{% url 'admin:create-or-update' 'user' %}",
+                url:"/admin/create-or-update/user/",
                 type:'post',
                 data:data.field,
                 success:function(d){
@@ -111,6 +118,7 @@
                 $('#password').val('');
                 $('#password').removeAttr('disabled');
                 $('#password').attr('lay-verify',"required|pwd");
+                $('#password').focus()
             }else{
                 $('#password').val('');
                 $('#password').attr('disabled','');

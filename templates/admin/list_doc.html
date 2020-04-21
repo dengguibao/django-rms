@@ -233,7 +233,7 @@ layui.use(['upload', 'element', 'layer', 'mouseRightMenu'], function(){
     }
     
     file=$.ajax({
-      url:'/admin/get-filelist/file',
+      url:'/admin/get-file-list/file',
       type:'post',
       data:{
         'csrfmiddlewaretoken': function(){
@@ -259,7 +259,7 @@ layui.use(['upload', 'element', 'layer', 'mouseRightMenu'], function(){
     });
 
     folder=$.ajax({
-      url:'/admin/get-filelist/folder',
+      url:'/admin/get-file-list/folder',
       type:'post',
       data:{
         'csrfmiddlewaretoken': function(){

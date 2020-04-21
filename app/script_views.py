@@ -2,17 +2,18 @@ from django.http import JsonResponse, Http404, FileResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
-from admin.file_view import format_file_size
+from .file_view import format_file_size
 import time
 import os
 
+
 @login_required
 def get_file_list(request, path):
-    path=path.replace(',', '/')
+    path = path.replace(',', '/')
     if os.path.isdir(path) is False:
         return JsonResponse({
-            'code':1,
-            'msg':'path is not directory'
+            'code': 1,
+            'msg': 'path is not directory'
         })
 
     file_list = os.listdir(path)
@@ -61,7 +62,7 @@ def view_file(request, path):
         'xml'
     ]
     file_path = path.replace(',', '/')
-    if os.path.exists(file_path) == False:
+    if not os.path.exists(file_path):
         raise Http404
 
     if path.split(',')[-1].split('.')[-1] in txt_file_type:
@@ -72,10 +73,10 @@ def view_file(request, path):
             'content': content
         })
     else:
-            file = open(path.replace(',', '/'), 'rb')
-            response = FileResponse(file)
-            response['Content-Type'] = 'application/octet-stream'
-            response['Content-Disposition'] = 'attachment;filename="{}"'.format(
-                path.split(',')[-1].encode('utf-8').decode('ISO-8859-1')
-            )
-            return response
+        file = open(path.replace(',', '/'), 'rb')
+        response = FileResponse(file)
+        response['Content-Type'] = 'application/octet-stream'
+        response['Content-Disposition'] = 'attachment;filename="{}"'.format(
+            path.split(',')[-1].encode('utf-8').decode('ISO-8859-1')
+        )
+        return response

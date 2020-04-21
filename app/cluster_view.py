@@ -13,7 +13,7 @@ def get_cluster_list_view(request):
     Returns:
         html -- render html template
     """
-    if request.user.has_perm('admin.view_clusterinfo'):
+    if request.user.has_perm('app.view_clusterinfo'):
         res_list = ClusterInfo.objects.all()
         temp_name = 'admin/list_cluster.html'
         context = {

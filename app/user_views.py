@@ -6,7 +6,8 @@ from django.shortcuts import render, HttpResponseRedirect
 
 
 def user_logout(request):
-    """user logout and remove session
+    """
+    user logout and remove session
     
     Arguments:
         request {object} -- wsgi http request object
@@ -21,7 +22,8 @@ def user_logout(request):
 
 @login_required()
 def user_change_password(request):
-    """current user change login password
+    """
+    current user change login password
     
     Arguments:
         request {object} -- wsgi http request object
@@ -58,7 +60,8 @@ def user_change_password(request):
 
 @login_required()
 def get_user_list_view(request):
-    """render user admin view
+    """
+    render user admin view
     
     Arguments:
         request {object} -- wsgi http request object

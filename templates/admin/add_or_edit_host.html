@@ -10,7 +10,7 @@
 
 <form class="layui-form" action="">
     {% csrf_token %}
-    <input type="hidden" name="id" value="{%if host_obj.id %}{{ host_obj.id }}{% else %}0{% endif %}"/>
+    <input type="hidden" name="id" id="host_id" value="{%if host_obj.id %}{{ host_obj.id }}{% else %}0{% endif %}"/>
     <div class="layui-form-item">
         <div class="layui-inline">
             <label class="layui-form-label">主机名</label>
@@ -333,7 +333,7 @@
         </div>
     </div>
 </form>
-<script>
+<script type="javascript">
     layui.use(['form', 'layedit', 'laydate'], function(){
       var form = layui.form
       ,laydate = layui.laydate
@@ -346,13 +346,21 @@
       laydate.render({
         elem: '#end_svc_date'
       });
+
+      var host_id = $('#host_id').val()
+      if (host_id != 0){
+          var init_form_data = JSON.stringify($("form").serializeArray());
+      }  
       //监听提交
       form.on('submit(demo1)', function(data){
-        // layer.alert(JSON.stringify(data.field), {
-        //   title: '最终的提交信息'
-        // })
+        var submit_form_data = JSON.stringify($("form").serializeArray());
+        if (init_form_data != undefined && init_form_data == submit_form_data){
+            layer.msg('表单无修改，无须提交')
+            return false;
+        }
+
         $.ajax({
-            url:"{% url 'admin:create-or-update' 'host' %}",
+            url:"/admin/create-or-update/host/",
             type:'post',
             data:data.field,
             success:function(d){

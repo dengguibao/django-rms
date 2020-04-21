@@ -83,7 +83,8 @@
   <div class="layui-btn-container">
     <a lay-event='edit' class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon layui-icon-edit'></i></a>
     <a lay-event='del' class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon layui-icon-delete'></i></a>
-   <a lay-event='link' class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon layui-icon-link'></i></a>
+    <a lay-event='link' class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon layui-icon-link'></i></a>
+    <a lay-event='logs' class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon layui-icon-log'></i></a>
   </div>
 </script>
 
@@ -155,12 +156,18 @@
                     )
                 });
             }
+            if (event == 'logs'){
+                window.open('/admin/view-logs/vminfo/'+obj.data.id)
+            }
             if (event == 'link'){
+                // clear all prompt layer
+                layer.closeAll();
                 var pwd = ''
                 // 弹出密码框输入密码
                 if (obj.data.vm_os == 'Windows'){
                     layer.msg('windows操作系统不支持');
-                    return false;
+                    
+                    return;
                 }
                 layer.prompt({
                     title: '输入用户名密码', 
@@ -168,18 +175,21 @@
                     success:function(){
                         //alert('1')
                         $(".layui-layer-content").empty();
-                        $(".layui-layer-content").append('<input type="text" class="layui-layer-input" value="root" id="username" placeholder="用户名"/><br/>\
-                                                        <input type="password" id="password" class="layui-layer-input" placeholder="密码">')
+                        $(".layui-layer-content").append('<input type="text" class="layui-layer-input" value="root" id="shell_username" placeholder="用户名"/><br/>\
+                                                        <input type="password" id="shell_password" class="layui-layer-input" placeholder="密码">')
                         $('.layui-layer-btn0').on('click',function(){
-                            if ($('#password').val().trim().length == 0){
+                            var username = $('#shell_username').val().trim();
+                            var password = $('#shell_password').val().trim();
+                            if (username.length == 0){
                                 layer.msg('密码不能为空');
                                 return false;
                             }
-                            if ($('#username').val().trim().length == 0){
+                            if (password.length == 0){
                                 layer.msg('用户名不能为空');
                                 return false;
                             }
-                            pwd = window.btoa($('#password').val());
+
+                            pwd = window.btoa(password);
                             layer.closeAll();
                             // 弹出webshell iframe
                             layer.open({
@@ -190,7 +200,7 @@
                                 closeBtn: 1,
                                 shadeClose: true,
                                 maxmin: true,
-                                content: ['/admin/webshell/?type=ssh&host='+obj.data.vm_ip+'&port=22&user='+ $('#username').val() +'&password='+pwd, 'no'],
+                                content: ['/admin/web-shell/?type=ssh&host='+obj.data.vm_ip+'&port=22&user='+ username +'&password='+pwd, 'no'],
                                 //success: function(layero, index) {
                                 //    layer.iframeAuto(index);
                                 //}
@@ -251,7 +261,7 @@
                     ,{field: 'esxi_host_name', title: '宿主机', width: 200}
                     ,{field: 'vm_os', title: '操作系统', width: 80}
                     ,{field: 'pub_date', title: '添加时间', width: 100, templet: function(item){return item.pub_date.substring(0, 10)}}
-                    ,{title: '操作', width: 130, fixed: 'right', toolbar: '#toolbar'}
+                    ,{title: '操作', width: 170, fixed: 'right', toolbar: '#toolbar'}
                 ]]
                 ,done: function(res,cur,count){
                     if ($('#zabbix_status').val() == 'enable'){

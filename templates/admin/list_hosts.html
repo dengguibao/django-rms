@@ -47,8 +47,10 @@
 </div>
 <script type="text/html" id="toolbar">
   <div class="layui-btn-container">
-    <a lay-event='edit' class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon'></i></a>
-    <a lay-event='del' class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon'></i></a>
+    <a lay-event='edit' class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon layui-icon-edit'></i></a>
+    <a lay-event='del' class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon layui-icon-delete'></i></a>
+    <a lay-event='logs' class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon layui-icon-log'></i></a>
+
   </div>
 </script>
 <script>
@@ -118,7 +120,7 @@
             }}
             ,{rowspan:2, field: 'os', title: '操作系统', width: 80}
             ,{rowspan:2, field: 'pub_date', title: '添加时间', width: 100, templet: function(item){return item.pub_date.substring(0, 10)}}
-            ,{rowspan:2, title: '操作', width: 110, fixed: 'right', toolbar: '#toolbar'}
+            ,{rowspan:2, title: '操作', width: 150, fixed: 'right', toolbar: '#toolbar'}
           ],
           // 二级菜单
           [
@@ -172,7 +174,8 @@
       var event=obj.event
       if (event == 'edit'){
           window.location.href='/admin/edit/host/'+obj.data.id
-      }else if (event == 'del'){
+      }
+      if (event == 'del'){
         layer.confirm('真的删除行么', function(index){
           var url = "/admin/delete/host/" + obj.data.id;
           $.getJSON(
@@ -186,6 +189,9 @@
             }
           })
         });
+      }
+      if (event == 'logs'){
+        window.open('/admin/view-logs/hostinfo/'+obj.data.id)
       }
     })
   });

@@ -41,12 +41,12 @@
         <div class="nav_pri_menu">
           <a href="javascript:void(0);" title="menu" class="pri_menu">添加</a>
           <div class="sub_menu_item">
-            {% if perms.admin.add_clusterinfo %}
-            <li><a href="{% url 'admin:render_temp' 'add_or_edit_cluster' %}" title="cluster">集群</a></li>
+            {% if perms.app.add_clusterinfo %}
+            <li><a href="/admin/render/add_or_edit_cluster" title="cluster">集群</a></li>
             {% endif %}
-            <!--<li><a href="{% url 'admin:render_temp' 'shell' %}" title="shell">shell</a></li>-->
-            <li><a href="{% url 'admin:render_temp' 'add_or_edit_host' %}" title="add new host">服务器</a></li>
-            <li><a href="{% url 'admin:render_temp' 'add_or_edit_vm' %}" title="add new virtual mechine">虚拟机</a></li>
+            <!--<li><a href="/admin/render/shell' %}" title="shell">shell</a></li>-->
+            <li><a href="/admin/render/add_or_edit_host" title="add new host">服务器</a></li>
+            <li><a href="/admin/render/add_or_edit_vm" title="add new virtual mechine">虚拟机</a></li>
           </div>
         </div>
 
@@ -54,14 +54,14 @@
         <div class="nav_pri_menu">
           <a href="javascript:void(0);" title="menu" class="pri_menu">管理</a>
           <div class="sub_menu_item">
-           {% if perms.admin.view_clusterinfo %}
-            <li><a href="{%url 'admin:get_cluster_list' %}" title="list cluster">集群</a></li>
+           {% if perms.app.view_clusterinfo %}
+            <li><a href="/admin/get-cluster-list" title="list cluster">集群</a></li>
             {% endif %}
-            <li><a href="{% url 'admin:render_temp' 'list_hosts' %}"  title="list hosts">服务器</a></li>
-            <li><a href="{% url 'admin:render_temp' 'list_vms' %}"  title="list vms">虚拟机</a></li>
-            <li><a href="{% url 'admin:render_temp' 'list_script' %}"  title="list script">脚本</a></li>
-            <li><a href="{% url 'admin:list_summary' %}"  title="summary">摘要</a></li>
-            <li><a href="{%url 'admin:render_temp' 'list_doc'%}" title="document manage">文档</a></li>
+            <li><a href="/admin/render/list_hosts"  title="list hosts">服务器</a></li>
+            <li><a href="/admin/render/list_vms"  title="list vms">虚拟机</a></li>
+            <li><a href="/admin/render/list_script"  title="list script">脚本</a></li>
+            <li><a href="/admin/index"  title="summary">摘要</a></li>
+            <li><a href="/admin/render/list_doc" title="document manage">文档</a></li>
           </div>
         </div>
 
@@ -79,19 +79,19 @@
           <div class="sub_menu_item">
             <!-- <li><a href="#" title="add primary menu">系统设置</a></li> -->
             {% if perms.auth.add_user %}
-              <li><a href="{% url 'admin:render_temp' 'add_or_edit_user' %}" title="new user">新增用户</a></li>
+              <li><a href="/admin/render/add_or_edit_user" title="new user">新增用户</a></li>
             {% endif %}
             {% if perms.auth.view_user %}
-              <li><a href="{%url 'admin:get_user_list'%}" title="add primary menu">用户管理</a></li>
+              <li><a href="/admin/get-user-list" title="get user list">用户管理</a></li>
             {% endif %}
-            <li><a href="{%url 'admin:render_temp' 'user_change_password'%}" title="add primary menu">修改密码</a></li>
+            <li><a href="/admin/render/user_change_password" title="chang user password">修改密码</a></li>
           </div>
         </div>
 
         <div class="nav_pri_menu">
           <a href="javascript:void(0);" title="menu" class="pri_menu">状态</a>
           <div class="sub_menu_item" style="display: none;">
-            <li><a href="{% url 'admin:user_logout' %}" title="logout">退出</a></li>
+            <li><a href="/admin/user-logout" title="logout">退出</a></li>
           </div>
         </div>
 
@@ -148,6 +148,6 @@
       $('#rightContainer').height(bodyHeight-topBarHeight)
     }
     resize_right_container();
-    </script>
+  </script>
 </body>
 </html>
