@@ -333,7 +333,7 @@
         </div>
     </div>
 </form>
-<script type="javascript">
+<script type="text/javascript">
     layui.use(['form', 'layedit', 'laydate'], function(){
       var form = layui.form
       ,laydate = layui.laydate
@@ -348,9 +348,10 @@
       });
 
       var host_id = $('#host_id').val()
+
       if (host_id != 0){
           var init_form_data = JSON.stringify($("form").serializeArray());
-      }  
+      }
       //监听提交
       form.on('submit(demo1)', function(data){
         var submit_form_data = JSON.stringify($("form").serializeArray());

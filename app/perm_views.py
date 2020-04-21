@@ -7,7 +7,8 @@ from django.db.models import Q
 
 @login_required()
 def permission_admin_view(request, nid):
-    """user permission admin for someone user
+    """
+    user permission admin for someone user
     
     Arguments:
         request {object} -- wsgi http request object
@@ -53,7 +54,8 @@ def permission_admin_view(request, nid):
 
 @login_required()
 def permission_control_view(request, method, perms, nid):
-    """ user permission controller,add and remove user permission for someone
+    """
+    user permission controller,add and remove user permission for someone
     
     Arguments:
         request {object} -- wsgi http request object
@@ -82,7 +84,8 @@ def permission_control_view(request, method, perms, nid):
 
 
 def perms_controller(method, perm, nid):
-    """permission controller
+    """
+    permission controller
     
     Arguments:
         method {str} -- permission action description just add or remove
@@ -111,13 +114,10 @@ def perms_controller(method, perm, nid):
 
 
 def permission_explain(perm):
-    """permission chinese explain
-    
-    Arguments:
-        perm {str} -- permission description
-    
-    Returns:
-        str -- permission chinese explain
+    """
+    permission chinese explain
+    :param perm: permission description
+    :return: permission chinese explain
     """
     if not perm:
         return None
@@ -141,6 +141,11 @@ def permission_explain(perm):
 
 @login_required()
 def init_admin_permission(request):
+    """
+    init privilege account for current user
+    :param request: wsgi request object
+    :return: text
+    """
     user = request.user
     model_array = [
         'clusterinfo',
@@ -164,3 +169,37 @@ def init_admin_permission(request):
                 user.user_permissions.add(perm)
     
     return HttpResponse('success,please comment this entry on urls.py file')
+
+
+@login_required()
+def init_user_permission(request, user_id):
+    """
+    init new user permission
+    :param request: wsgi request object
+    :param user_id: user id
+    :return: json response object
+    """
+    user = User.objects.get(id=user_id)
+    if not user:
+        return JsonResponse({
+            'code': 1,
+            'msg': 'not found this user.'
+        })
+    user_perms_list = [
+        'app.add_vminfo',
+        'app.change_vminfo',
+        'app.view_vminfo',
+        'app.add_hostinfo',
+        'app.change_hostinfo',
+        'app.view_hostinfo',
+    ]
+    for perm in user_perms_list:
+        if user.has_perm(perm):
+            continue
+        else:
+            perm = Permission.objects.get(codename=perm)
+            user.user_permissions.add(perm)
+    return JsonResponse({
+        'code': 0,
+        'msg': 'success'
+    })

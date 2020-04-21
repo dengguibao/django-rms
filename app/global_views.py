@@ -54,10 +54,21 @@ def render_edit_view(request, form_name, nid):
     """
         
     if form_name not in ['vm', 'host', 'user', 'cluster']:
-        return HttpResponse('object not found')
+        return render(request, 'admin/error.html', {'error_msg': 'illegal request!'})
 
-    temp_name = 'admin/add_or_edit_%s.html' % (form_name)
-    if form_name == 'vm' and request.user.has_perm('app.change_vminfo'):
+    perm = {
+        'vm': 'app.change_vminfo',
+        'host': 'app.change_hostinfo',
+        'cluster': 'app.change_clusterinfo',
+        'user': 'auth.change_user'
+    }
+    # permission verify
+    if not request.user.has_perm(perm[form_name]):
+        return render(request, 'admin/error.html')
+
+    temp_name = 'admin/add_or_edit_%s.html' % form_name
+
+    if form_name == 'vm':
         vm_obj = VmInfo.objects.get(id=nid)
         host_obj = HostInfo.objects.get(id=vm_obj.host_id)
         esxi_list = HostInfo.objects.filter(cluster_tag=host_obj.cluster_tag)
@@ -69,20 +80,20 @@ def render_edit_view(request, form_name, nid):
             'zabbix_api': settings.ZABBIX_API,
             'cluster_data': ClusterInfo.objects.filter(is_active=0).values('name','tag')
         }
-    elif form_name == 'host' and request.user.has_perm('app.change_hostinfo'):
+    elif form_name == 'host':
         host_obj = HostInfo.objects.get(id=nid)
         context = {
             'user_url_path': '编辑',
             'host_obj': host_obj,
             'cluster_data': ClusterInfo.objects.filter(is_active=0).values('name','tag')
         }
-    elif form_name == 'cluster' and request.user.has_perm('app.change_clusterinfo'):
+    elif form_name == 'cluster':
         obj = ClusterInfo.objects.get(id=nid)
         context = {
             'user_url_path': '编辑',
             'obj': obj,
         }
-    elif form_name == 'user' and request.user.has_perm('auth.change_user'):
+    elif form_name == 'user':
         context = {
             'user_url_path': '编辑',
             'data': User.objects.get(id=nid)
@@ -117,15 +128,28 @@ def delete(request, form_name, nid):
     }
     if form_name not in ['vm', 'host', 'user', 'cluster']:
         return JsonResponse(return_data)
+
+    model = {
+        'host': HostInfo,
+        'vm': VmInfo,
+        'cluster': ClusterInfo,
+        'user': User
+    }
+    perm = {
+        'vm': 'app.delete_vminfo',
+        'host': 'app.delete_hostinfo',
+        'cluster': 'app.delete_clusterinfo',
+        'user': 'auth.delete_user'
+    }
+    # permission verify
+    if not request.user.has_perm(perm[form_name]):
+        return JsonResponse({
+            'msg': 'permission denied',
+            'code': 1
+        })
+    # delete record
     res = None
-    if form_name == 'vm' and request.user.has_perm('app.delete_vminfo'):
-        res = VmInfo.objects.get(id=nid).delete()
-    elif form_name == 'host' and request.user.has_perm('app.delete_hostinfo'):
-        res = HostInfo.objects.get(id=nid).delete()
-    elif form_name == 'cluster' and request.user.has_perm('app.delete_clusterinfo'):
-        res = ClusterInfo.objects.get(id=nid).delete()
-    elif form_name == 'user' and request.user.has_perm('auth.delete_user'):
-        res = User.objects.get(id=nid).delete()
+    res = model[form_name].objects.get(id=nid).delete()
 
     if res:
         return_data['msg'] = 'ok'
@@ -135,7 +159,7 @@ def delete(request, form_name, nid):
 
 
 @login_required()
-def create_or_update(request, form_type):
+def create_or_update(request, form_name):
     """
     user post form event
     
@@ -150,7 +174,7 @@ def create_or_update(request, form_type):
         'code': 1,
         'msg': 'fail'
     }
-    if request.method != 'POST' or form_type not in ['vm', 'host', 'user', 'cluster']:
+    if request.method != 'POST' or form_name not in ['vm', 'host', 'user', 'cluster']:
         return JsonResponse(return_data)
 
     post_data = request.POST.dict()
@@ -161,70 +185,76 @@ def create_or_update(request, form_type):
     # according id defined action
     if nid == 0:
         act = 'create'
-        perm_act = 'add_'
+        perm_action_flag = 'add_'
     else:
         act = 'update'
-        perm_act = 'change_'
-    # define model and permission object
-    if form_type == 'host':
-        model = HostInfo
-        perm_app = 'app.'
-        perm_model = 'hostinfo'
-    elif form_type == 'vm':
-        model = VmInfo
+        perm_action_flag = 'change_'
+    # according form_name define perm app object
+    if form_name == 'user':
+        app_object = 'auth.'
+    else:
+        app_object = 'app.'
+    # according form_name define model
+    model = {
+        'host': HostInfo,
+        'vm': VmInfo,
+        'cluster': ClusterInfo,
+        'user': User
+    }
+    # according form_name define perm object
+    perm_object = {
+        'host': 'hostinfo',
+        'vm': 'vminfo',
+        'cluster': 'clusterinfo',
+        'user': 'user'
+    }
+    if form_name == 'vm':
         del post_data['cluster_tag']
-        perm_app = 'app.'
-        perm_model = 'vminfo'
-    elif form_type == 'cluster':
-        model = ClusterInfo
-        perm_app = 'app.'
-        perm_model = 'clusterinfo'
+    elif form_name == 'cluster':
         if post_data['tag'] == 'none':
             post_data['tag'] = '__none__'
-    elif form_type == 'user':
+    elif form_name == 'user':
         if post_data['password'].strip() == '':
             del post_data['password']
         else:
             post_data['password'] = make_password(post_data['password'])
-        model = User
-        perm_app = 'auth.'
-        perm_model = 'user'
+
     # permission verify
-    if not request.user.has_perm(perm_app+perm_act+perm_model):
+    if not request.user.has_perm(app_object+perm_action_flag+perm_object[form_name]):
         return JsonResponse({
             'code': 1,
             'msg': 'permission error'
         })
     # do
     if act == 'create':
-        res = model.objects.create(**post_data)
+        res = model[form_name].objects.create(**post_data)
         LogEntry.objects.log_action(
             user_id=request.user.pk,
-            content_type_id=get_content_type_for_model(model).pk,
+            content_type_id=get_content_type_for_model(model[form_name]).pk,
             object_id=res.id,
             object_repr='',
             action_flag=ADDITION,
             change_message=str(res)
         )
     elif act == 'update':
-        res = model.objects.filter(id=nid).update(**post_data)
+        res = model[form_name].objects.filter(id=nid).update(**post_data)
         LogEntry.objects.log_action(
             user_id=request.user.pk,
-            content_type_id=get_content_type_for_model(model).pk,
+            content_type_id=get_content_type_for_model(model[form_name]).pk,
             object_id=nid,
             object_repr='',
             action_flag=CHANGE,
-            change_message=str(model.objects.get(id=nid))
+            change_message=str(model[form_name].objects.get(id=nid))
         )
-        if form_type == 'user':
+        if form_name == 'user':
             update_session_auth_hash(request, request.user)
     else:
-        return_data['msg'] = act + ' fail'
+        return_data['msg'] = '%s fail' % act
         return_data['code'] = 1
     # according return object judge create or update
     if (act == 'update' and res) or (act == 'create' and res.id):
         return_data['code'] = 0
-        return_data['msg'] = act+' success'
+        return_data['msg'] = '%s success' % act
 
     return JsonResponse(return_data)
 
@@ -240,13 +270,14 @@ def view_log_view(request, content_type, object_id):
     if content_type not in model_array:
         return render(request, 'admin/error.html', {'error_msg':'illegal request!'})
     all_user_queryset = User.objects.all().values('id', 'first_name')
-    # all_user_dict = {i['id']:i['username'] for i in all_user_queryset}
     act_flag_exp = [
         {
-            'id':1, 'value':'创建'
+            'id': 1,
+            'value': '创建'
         },
         {
-            'id':2, 'value':'修改'
+            'id': 2,
+            'value': '修改'
         }
     ] 
     model = {
@@ -260,7 +291,7 @@ def view_log_view(request, content_type, object_id):
         content_type_id=get_content_type_for_model(model[content_type]).pk,
         object_id=res.id
     )
-    return render(request, 'admin/view_log.html',{
+    return render(request, 'admin/view_log.html', {
         'action_flag':act_flag_exp,
         'all_user': all_user_queryset,
         'log_data': log_entries

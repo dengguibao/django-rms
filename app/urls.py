@@ -21,7 +21,7 @@ urlpatterns = [
     path('render/<str:temp_name>/', global_views.render_static_temp_view),
     path('edit/<str:form_name>/<int:nid>/', global_views.render_edit_view),
     path('delete/<str:form_name>/<int:nid>/', global_views.delete),
-    path('create-or-update/<str:form_type>/', global_views.create_or_update),
+    path('create-or-update/<str:form_name>/', global_views.create_or_update),
     path('view-logs/<str:content_type>/<int:object_id>',global_views.view_log_view),
 
     path('get-hosts-list/type/<str:dev_type>/flag/<str:flag>/', server_views.get_hosts_list),
@@ -32,6 +32,7 @@ urlpatterns = [
     path('permission-control/<str:method>/<str:perms>/<int:nid>', perm_views.permission_control_view),
     # init administrator permissions
     path('init-admin-perm', perm_views.init_admin_permission),
+    path('init-user-perms/<int:user_id>', perm_views.init_user_permission),
 
     path('get-user-list/', user_views.get_user_list_view),
     path('user-logout', user_views.user_logout),

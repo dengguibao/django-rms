@@ -23,17 +23,28 @@ def get_hosts_list(request, dev_type, flag):
     Returns:
         json -- specific type json object
     """
+
+    perm = {
+        'vm': 'app.view_vminfo',
+        'host': 'app.view_hostinfo'
+    }
+    # permission verify
+    if not request.user.has_perm(perm[dev_type]):
+        return JsonResponse({
+            'msg': 'permission denied',
+            'code': 1
+        })
+
     page_size = settings.PAGE_SIZE
     return_data = {
         'code': 1,
         'msg': 'illegal request'
     }
+    if dev_type not in ['host', 'vm'] or len(flag) <= 0:
+        return JsonResponse(return_data)
 
     res_cluster = ClusterInfo.objects.filter(is_active=0).values('name', 'tag')
     cluster_array = {i['tag']: i['name'] for i in res_cluster}
-
-    if dev_type not in ['host', 'vm'] or len(flag) <= 0:
-        return JsonResponse(return_data)
 
     if dev_type == 'host':
         if flag not in cluster_array and flag not in ['all', 'none']:
@@ -87,9 +98,6 @@ def get_hosts_list(request, dev_type, flag):
         }
         return_data['code'] = 0
         return_data['msg'] = 'ok'
-    else:
-        return_data['msg'] = 'permission error'
-        return JsonResponse(return_data)
 
     return JsonResponse(return_data)
 
@@ -224,15 +232,24 @@ def search(request, dev_type, keyword):
             'code': 1,
             'msg': 'illegal request'
         })
-    if dev_type == 'vm' and request.user.has_perm('app.view_vminfo'):
-        model = VmInfo
-    elif dev_type == 'host' and request.user.has_perm('app.view_hostinfo'):
-        model = HostInfo
-    else:
+
+    perm = {
+        'vm': 'app.view_vminfo',
+        'host': 'app.view_hostinfo'
+    }
+    # permission verify
+    if not request.user.has_perm(perm[dev_type]):
         return JsonResponse({
-            'code': 1,
-            'msg': 'permission error'
+            'msg': 'permission denied',
+            'code': 1
         })
+
+    mod = {
+        'vm': VmInfo,
+        'host': HostInfo
+    }
+
+    model = mod[dev_type]
 
     if dev_type == 'vm':
         res = model.objects.filter(
