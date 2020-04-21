@@ -33,16 +33,19 @@
         <td>{%ifequal i.is_active True%}启用{%else%}禁用{%endifequal%}</td>
         <td>{{i.date_joined}}</td>
         <td>
-          <a href="/admin/edit/user/{{i.id}}" class="layui-btn layui-btn-primary layui-btn-xs">
+          <a href="/admin/edit/user/{{i.id}}" title="edit" class="layui-btn layui-btn-primary layui-btn-xs">
             &nbsp;<i class="layui-icon layui-icon-edit"></i>
           </a>
-          <a href="javascript:row_del({{ i.id }});" class="layui-btn layui-btn-primary layui-btn-xs">
+          <a href="javascript:row_del({{ i.id }});" title="delete" class="layui-btn layui-btn-primary layui-btn-xs">
             &nbsp;<i class="layui-icon layui-icon-delete"></i>
           </a>
-          <a href="/admin/permission-admin/{{i.id}}" class="layui-btn layui-btn-primary layui-btn-xs">
+          <a href="/admin/permission-admin/{{i.id}}" title="permission admin" class="layui-btn layui-btn-primary layui-btn-xs">
             &nbsp;<i class="layui-icon layui-icon-auz"></i>
           </a>
-          <a href="/admin/view-logs/user/{{ i.id }}" class="layui-btn layui-btn-primary layui-btn-xs">
+          <a flag="{{ i.id }}" title="init user permission" class="layui-btn layui-btn-primary layui-btn-xs init-user-perm">
+            &nbsp;<i class="layui-icon layui-icon-note"></i>
+          </a>
+          <a href="/admin/view-logs/user/{{ i.id }}" title="logs" class="layui-btn layui-btn-primary layui-btn-xs">
             &nbsp;<i class="layui-icon layui-icon-log"></i>
           </a>
         </td>
@@ -66,5 +69,15 @@
       }
     )
   }
+  $('.init-user-perm').bind('click', function () {
+    var id = $(this).attr('flag')
+    var url = "/admin/init-user-perms/" + id
+    $.getJSON(
+      url,
+      function (d) {
+        alert(d.msg);
+      }
+    )
+  })
 </script>
 {% endblock %}

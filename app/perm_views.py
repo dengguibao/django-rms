@@ -186,19 +186,19 @@ def init_user_permission(request, user_id):
             'msg': 'not found this user.'
         })
     user_perms_list = [
-        'app.add_vminfo',
-        'app.change_vminfo',
-        'app.view_vminfo',
-        'app.add_hostinfo',
-        'app.change_hostinfo',
-        'app.view_hostinfo',
+        'add_vminfo',
+        'change_vminfo',
+        'view_vminfo',
+        'add_hostinfo',
+        'change_hostinfo',
+        'view_hostinfo',
     ]
     for perm in user_perms_list:
         if user.has_perm(perm):
             continue
         else:
-            perm = Permission.objects.get(codename=perm)
-            user.user_permissions.add(perm)
+            p = Permission.objects.get(codename=perm)
+            user.user_permissions.add(p)
     return JsonResponse({
         'code': 0,
         'msg': 'success'

@@ -81,10 +81,10 @@
 </script>
 <script type="text/html" id="toolbar">
   <div class="layui-btn-container">
-    <a lay-event='edit' class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon layui-icon-edit'></i></a>
-    <a lay-event='del' class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon layui-icon-delete'></i></a>
-    <a lay-event='link' class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon layui-icon-link'></i></a>
-    <a lay-event='logs' class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon layui-icon-log'></i></a>
+    <a lay-event='edit' title="edit" class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon layui-icon-edit'></i></a>
+    <a lay-event='del' title="delete" class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon layui-icon-delete'></i></a>
+    <a lay-event='link' title="connect" class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon layui-icon-link'></i></a>
+    <a lay-event='logs' title="logs" class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon layui-icon-log'></i></a>
   </div>
 </script>
 
@@ -150,7 +150,8 @@
                                 obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
                                 layer.close(index);
                             }else{
-                                alert(msg.id);
+                                layer.close(index);
+                                layer.alert(d.msg);
                             }
                         }
                     )
