@@ -35,8 +35,8 @@ urlpatterns = [
     path('init-user-perms/<int:user_id>', perm_views.init_user_permission),
 
     path('get-user-list/', user_views.get_user_list_view),
-    path('user-logout', user_views.user_logout),
-    path('change-password', user_views.user_change_password),
+    path('user-logout/', user_views.user_logout),
+    path('change-password/', user_views.user_change_password),
 
     path('upload-file', file_view.upload_file),
     path('get-file-list/<str:t>', file_view.get_user_file_list),

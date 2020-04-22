@@ -5,7 +5,6 @@ from threading import Thread
 import time
 
 class Telnet:
-    channel =  None
 
     def __init__(self, websocker, message):
         self.websocker = websocker

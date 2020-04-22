@@ -35,7 +35,7 @@ html,body{padding:0;margin:0;font-size:12px}
         'yaml':'yaml',
         'yam': 'yaml',
     }
-    a=$('#filename').val().split('.');
+    a = $('#filename').val().split('.');
     $('#code').addClass(file_type[a[a.length-1]]);
     hljs.initHighlightingOnLoad();
 </script>

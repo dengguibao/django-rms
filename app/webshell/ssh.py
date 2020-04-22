@@ -7,6 +7,7 @@ import random
 import hashlib
 import time
 
+
 def get_key_obj(pkeyobj, pkey_file=None, pkey_obj=None, password=None):
     if pkey_file:
         with open(pkey_file) as fo:
@@ -22,6 +23,7 @@ def get_key_obj(pkeyobj, pkey_file=None, pkey_obj=None, password=None):
         except:
             pkey_obj.seek(0)
 
+
 def unique():
     ctime = str(time.time())
     salt = str(random.random())
@@ -29,9 +31,9 @@ def unique():
     m.update(bytes(ctime, encoding='utf-8'))
     return m.hexdigest()
 
-    
+
 class SSH:
-    channel = None
+
     def __init__(self, websocker, message):
         self.websocker = websocker
         self.message = message
@@ -48,7 +50,7 @@ class SSH:
         except Exception as e:
             # print(str(e))
             self.message['status'] = 0
-            self.message['message'] = str(e)+'\r\n'
+            self.message['message'] = str(e) + '\r\n'
             message = json.dumps(self.message)
             self.websocker.send(message)
             self.close()
@@ -88,8 +90,3 @@ class SSH:
 
     def shell(self, data):
         Thread(target=self.django_to_ssh, args=(data,)).start()
-
-
-
-
-

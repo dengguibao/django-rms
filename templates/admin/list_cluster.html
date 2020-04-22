@@ -5,60 +5,69 @@
 {% block mainbody %}
 
 <fieldset class="layui-elem-field layui-field-title">
-  <legend>集群管理</legend>
+    <legend>集群管理</legend>
 </fieldset>
 
 <div class="layui-form">
-  <table class="layui-table">
-    <thead>
-      <tr>
-        <th>序号</th>
-        <th>集群名称</th>
-        <th>集群标记</th>
-        <th>状态</th>
-        <th>创建时间</th>
-        <th>操作</th>
-      </tr>
-    </thead>
-    <tbody id="tbody">
-      {%for i in obj%}
-      <tr id="id_{{i.id}}">
-        <td>{{ forloop.counter }}</td>
-        <td>{{i.name}}</td>
-        <td>{{i.tag}}</td>
-        <!-- <td>{%ifequal i.is_staff True%}管理员{%else%}普通用户{%endifequal%}</td> -->
-        <td>{%ifequal i.is_active 0%}启用{%else%}禁用{%endifequal%}</td>
-        <td>{{i.pub_date}}</td>
-        <td>
-          <a href="/admin/edit/cluster/{{i.id}}" class="layui-btn layui-btn-primary layui-btn-xs">
-            &nbsp;<i class="layui-icon layui-icon-edit"></i>
-          </a>
-          <a href="javascript:row_del({{ i.id }});" class="layui-btn layui-btn-primary layui-btn-xs">
-            &nbsp;<i class="layui-icon layui-icon-delete"></i>
-          </a>
-          <a href="/admin/view-logs/clusterinfo/{{ i.id }}" class="layui-btn layui-btn-primary layui-btn-xs">
-            &nbsp;<i class="layui-icon layui-icon-log"></i>
-          </a>
-        </td>
-      </tr>
-      {%endfor%}
-    </tbody>
-  </table>
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th>集群名称</th>
+            <th>集群标记</th>
+            <th>状态</th>
+            <th>创建时间</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody id="tbody">
+        {%for i in obj%}
+        <tr id="id_{{i.id}}">
+            <td>{{ forloop.counter }}</td>
+            <td>{{i.name}}</td>
+            <td>{{i.tag}}</td>
+            <!-- <td>{%ifequal i.is_staff True%}管理员{%else%}普通用户{%endifequal%}</td> -->
+            <td>{%ifequal i.is_active 0%}启用{%else%}禁用{%endifequal%}</td>
+            <td>{{i.pub_date}}</td>
+            <td>
+                <a href="/admin/edit/cluster/{{i.id}}" title="edit" class="layui-btn layui-btn-primary layui-btn-xs">
+                    &nbsp;<i class="layui-icon layui-icon-edit"></i>
+                </a>
+                <a flag="{{ i.id }}" title="delete" class="layui-btn layui-btn-primary layui-btn-xs btn-delete">
+                    &nbsp;<i class="layui-icon layui-icon-delete"></i>
+                </a>
+                <a target="_blank" title="logs" href="/admin/view-logs/clusterinfo/{{ i.id }}"
+                   class="layui-btn layui-btn-primary layui-btn-xs">
+                    &nbsp;<i class="layui-icon layui-icon-log"></i>
+                </a>
+            </td>
+        </tr>
+        {%endfor%}
+        </tbody>
+    </table>
 </div>
 <script type="text/javascript">
-  function row_del(id) {
-    //alert(s)
-    var url = "/admin/delete/cluster/" + id
-    $.getJSON(
-      url,
-      function (d) {
-        if (d.code == 0) {
-          $('#id_' + id).empty();
-        }else{
-          alert(d.msg);
-        }
-      }
-    )
-  }
+    layui.use('layer', function () {
+        var $ = layui.jquery,
+            layer = layui.layer;
+
+        $('.btn-delete').bind('click', function () {
+            var id = $(this).attr('flag')
+            layer.confirm('真的要删除该项', function (index) {
+                var url = "/admin/delete/cluster/" + id
+                $.getJSON(
+                    url,
+                    function (d) {
+                        if (d.code == 0) {
+                            $('#id_' + id).empty();
+                        } else {
+                            layer.alert(d.msg);
+                        }
+                    }
+                );
+                layer.close(index)
+            });
+        });
+    })
 </script>
 {% endblock %}

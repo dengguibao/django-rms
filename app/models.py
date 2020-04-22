@@ -9,7 +9,7 @@ class ClusterInfo(models.Model):
     pub_date = models.DateTimeField(auto_now_add=True)  # 添加时间
 
     def __str__(self):
-        return "集群名称:{}，集群标记{}".format(self.name, self.tag)
+        return "集群名称:{} 集群标记:{}".format(self.name, self.tag)
 
 
 class FileInfo(models.Model):
@@ -24,7 +24,7 @@ class FileInfo(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)  # 文件属主
 
     def __str__(self):
-        return "name:{},type:{},".format(self.name, self.type)
+        return "name:{} type:{},".format(self.name, self.type)
 
 
 class HostInfo(models.Model):
@@ -65,25 +65,17 @@ class HostInfo(models.Model):
     pub_date = models.DateTimeField(auto_now_add=True)  # 添加时间
 
     def __str__(self):
-        return "主机名:{}，ip:{}，集群:{}，idrac ip:{}，" \
-               "CPU颗数:{}，CPU频率:{}，CPU核心数:{}，CPU总频率:{}，" \
-               "内存数量:{}，内存容量:{}，内存总容量:{}，" \
-               "SSD数量:{}，SSD容量:{}，SSD总容量:{}，" \
-               "硬盘数量:{}，硬盘容量:{}，硬盘总容量:{}，" \
-               "设备型号:{}，购买日期:{}，过保日期:{}，" \
-               "业务网络:{}，远程管理卡网络:{}，" \
-               "供应商联系人:{}，供应商联系号码:{}，供应商名称:{}" \
-               "机房名称:{}，机柜号:{}，槽位号:{}，RAID:{}，用途:{}，" \
-               "设备状态:{}，描述:{}，操作系统:{}".format(
+        return "主机名:{} ip:{} 集群:{} idrac ip:{} " \
+               "CPU颗数:{} CPU频率:{} CPU核心数:{} CPU总频率:{} " \
+               "内存数量:{} 内存容量:{} 内存总容量:{} " \
+               "SSD数量:{} SSD容量:{} SSD总容量:{} " \
+               "硬盘数量:{} 硬盘容量:{} 硬盘总容量:{} " \
+               "设备状态:{} 描述:{} 操作系统:{}".format(
             self.hostname, self.host_ip, self.cluster_tag, self.idrac_ip,
             self.cpu_nums, self.cpu_rate, self.cpu_core, self.cpu_total_rate,
             self.memory_nums, self.memory_size, self.memory_total_size,
             self.ssd_nums, self.ssd_size, self.ssd_total_size,
             self.sd_nums, self.sd_size, self.sd_total_size,
-            self.dev_model, self.buy_date, self.end_svc_date,
-            self.svc_net_in, self.idrac_net_in,
-            self.supply_contact_name, self.supply_phone, self.supply_name,
-            self.dc_name, self.rack_num, self.slot_num, self.raid, self.intention,
             '开机' if self.dev_status == 0 else '关机', self.desc, self.os
         )
 
@@ -107,8 +99,8 @@ class VmInfo(models.Model):
     pub_date = models.DateTimeField(auto_now_add=True)  # 添加时间
 
     def __str__(self):
-        return "主机名:{}，申请人:{}，用途:{}，ZABBIX监控:{}，IP:{}，VLAN ID:{}，VLAN标签:{}，" \
-               "宿主机:{}，CPU:{}，磁盘:{}，内存:{}，操作系统:{}，状态:{}，备注:{}".format(
+        return "主机名:{} 申请人:{} 用途:{} ZABBIX监控:{} IP:{} VLAN ID:{} VLAN标签:{} " \
+               "宿主机:{} CPU:{} 磁盘:{} 内存:{} 操作系统:{} 状态:{} 备注:{}".format(
             self.vm_hostname,
             self.vm_register,
             self.vm_intention,

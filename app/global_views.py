@@ -8,7 +8,79 @@ from django.contrib.admin.models import LogEntry, ADDITION, CHANGE
 from django.contrib.admin.options import get_content_type_for_model
 from django.conf import settings
 from .models import VmInfo, HostInfo, ClusterInfo
+import json
 
+
+def data_struct():
+    return {
+        'vm': {
+            'vm_hostname': '主机名',
+            'vm_ip': 'IP',
+            'vlan_tag': 'VLAN标签',
+            'vlan_id': 'VLAN ID',
+            'host_id': '宿主机',
+            'vm_status': '状态',
+            'vm_cpu': 'CPU',
+            'vm_disk': '硬盘(G)',
+            'vm_memory': '内存(G)',
+            'vm_os': '操作系统',
+            'vm_monitor': 'zabbix监控',
+            'pub_date': '加入时间',
+            'vm_register': '申请人',
+            'vm_intention': '用途',
+            'vm_desc': '备注',
+        },
+        'host': {
+            'hostname': '主机名',
+            'sn': '序列号',
+            'idrac_ip': 'iDRAC ip',
+            'host_ip': '主机IP',
+            'dev_status': '状态',
+            'cluster_tag': '集群信息',
+            'cpu_nums': 'CPU数量',
+            'cpu_core': 'CPU核心数',
+            'cpu_rate': 'CPU频率',
+            'cpu_total_rate': 'CPU总频率',
+            'sd_nums': 'sata数量',
+            'sd_size': 'sata容量(T)',
+            'sd_total_size': 'sata总容量(T)',
+            'ssd_nums': 'ssd数量',
+            'ssd_size': 'ssd容量(T)',
+            'ssd_total_size': 'ssd总容量(T)',
+            'memory_nums': '内存数量',
+            'memory_size': '内存容量(G)',
+            'memory_total_size': '内存总容量(G)',
+            'supply_name': '供应商名称',
+            'supply_contact_name': '供应商联系人',
+            'supply_phone': '供应商联系号码',
+            'dc_name': '数据中心',
+            'rack_num': '机柜号',
+            'slot_num': '槽位号',
+            'buy_date': '购买日期',
+            'end_svc_date': '过保日期',
+            'idrac_net_in': '业务网络接入',
+            'svc_net_in': 'iDRAC网络接入',
+            'raid': 'RAID模式',
+            'intention': '用途',
+            'os': '操作系统',
+            'dev_model': '设备型号',
+            'pub_date': '加入时间',
+            'desc': '备注',
+        },
+        'cluster': {
+            'name': '集群名称',
+            'tag': '集群标记',
+            'is_active': '是否激活'
+        },
+        'user':{
+            'username': '用户名',
+            'password': '密码',
+            'first_name': '姓名',
+            'email': '邮箱',
+            'is_active': '状态'
+
+        }
+    }
 
 @login_required()
 def render_static_temp_view(request, temp_name):
@@ -186,21 +258,17 @@ def create_or_update(request, form_name):
     if nid == 0:
         act = 'create'
         perm_action_flag = 'add_'
+        log_action_flag = ADDITION
     else:
         act = 'update'
         perm_action_flag = 'change_'
+        log_action_flag = CHANGE
+        log_object_id = nid
     # according form_name define perm app object
     if form_name == 'user':
         app_object = 'auth.'
     else:
         app_object = 'app.'
-    # according form_name define model
-    model = {
-        'host': HostInfo,
-        'vm': VmInfo,
-        'cluster': ClusterInfo,
-        'user': User
-    }
     # according form_name define perm object
     perm_object = {
         'host': 'hostinfo',
@@ -208,9 +276,21 @@ def create_or_update(request, form_name):
         'cluster': 'clusterinfo',
         'user': 'user'
     }
-    if form_name == 'vm':
-        del post_data['cluster_tag']
-    elif form_name == 'cluster':
+    # according form_name define model
+    model = {
+        'host': HostInfo,
+        'vm': VmInfo,
+        'cluster': ClusterInfo,
+        'user': User
+    }
+    # permission verify
+    if not request.user.has_perm(app_object + perm_action_flag + perm_object[form_name]):
+        return JsonResponse({
+            'code': 1,
+            'msg': 'permission error'
+        })
+    log_content_type_model_id = get_content_type_for_model(model[form_name]).pk
+    if form_name == 'cluster':
         if post_data['tag'] == 'none':
             post_data['tag'] = '__none__'
     elif form_name == 'user':
@@ -219,38 +299,59 @@ def create_or_update(request, form_name):
         else:
             post_data['password'] = make_password(post_data['password'])
 
-    # permission verify
-    if not request.user.has_perm(app_object+perm_action_flag+perm_object[form_name]):
-        return JsonResponse({
-            'code': 1,
-            'msg': 'permission error'
-        })
     # do
     if act == 'create':
         res = model[form_name].objects.create(**post_data)
-        LogEntry.objects.log_action(
-            user_id=request.user.pk,
-            content_type_id=get_content_type_for_model(model[form_name]).pk,
-            object_id=res.id,
-            object_repr='',
-            action_flag=ADDITION,
-            change_message=str(res)
-        )
+        log_object_id = res.id
     elif act == 'update':
-        res = model[form_name].objects.filter(id=nid).update(**post_data)
-        LogEntry.objects.log_action(
-            user_id=request.user.pk,
-            content_type_id=get_content_type_for_model(model[form_name]).pk,
-            object_id=nid,
-            object_repr='',
-            action_flag=CHANGE,
-            change_message=str(model[form_name].objects.get(id=nid))
-        )
+        model[form_name].objects.filter(id=nid).update(**post_data)
+        res = model[form_name].objects.get(id=nid)
+        log_object_id = res.id
         if form_name == 'user':
             update_session_auth_hash(request, request.user)
     else:
         return_data['msg'] = '%s fail' % act
         return_data['code'] = 1
+
+    # write log
+    change_field = request.GET.get('change_field', None)
+    log_change_data = []
+    field_explain = data_struct()
+    if change_field:
+        for f in change_field.split(','):
+            if form_name == 'vm' and f == 'host_id':
+                v = res.host.hostname
+            elif form_name in ['vm', 'host'] and f in ['vm_status', 'dev_status']:
+                v = '开机' if post_data[f] == '0' else '关机'
+            elif form_name == 'user' and f == 'is_active':
+                v = '启用' if post_data[f] == '1' else '禁用'
+            elif form_name == 'host' and f == 'cluster_tag':
+                if post_data[f] == 'none':
+                    v = '独立服务器'
+                else:
+                    x = ClusterInfo.objects.filter(tag=post_data[f])
+                    v = x[0].name
+            elif form_name == 'user' and f == 'password':
+                v = '******'
+            elif form_name == 'cluster' and f == 'is_active':
+                v = '启用' if post_data[f] == '0' else '禁用'
+            else:
+                v = post_data[f]
+            log_change_data.append('%s: %s' % (field_explain[form_name][f], v))
+
+    if log_action_flag == ADDITION:
+        log_object_repr = str(res)
+    else:
+        log_object_repr = ' '.join(log_change_data)
+
+    LogEntry.objects.log_action(
+        user_id=request.user.pk,
+        content_type_id=log_content_type_model_id,
+        object_id=log_object_id,
+        object_repr= log_object_repr,
+        action_flag=log_action_flag,
+        change_message=json.dumps(post_data, ensure_ascii=True)
+    )
     # according return object judge create or update
     if (act == 'update' and res) or (act == 'create' and res.id):
         return_data['code'] = 0

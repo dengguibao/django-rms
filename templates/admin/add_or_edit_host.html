@@ -350,18 +350,31 @@
       var host_id = $('#host_id').val()
 
       if (host_id != 0){
-          var init_form_data = JSON.stringify($("form").serializeArray());
+          var init_form_data = $("form").serializeArray();
       }
       //监听提交
       form.on('submit(demo1)', function(data){
-        var submit_form_data = JSON.stringify($("form").serializeArray());
-        if (init_form_data != undefined && init_form_data == submit_form_data){
+        var submit_form_data = $("form").serializeArray();
+        if (init_form_data != undefined && JSON.stringify(init_form_data) == JSON.stringify(submit_form_data)){
             layer.msg('表单无修改，无须提交')
             return false;
         }
+        var change_field = []
+        var url = '/admin/create-or-update/host/'
 
+        if (init_form_data != undefined){
+            $.each(submit_form_data,function(index,i){
+                if (submit_form_data[index]['value'] != init_form_data[index]['value']){
+                    change_field.push(submit_form_data[index]['name'])
+                }
+            })
+        }
+
+        if (change_field.length != 0){
+            url = url+'?change_field='+change_field.join(',')
+        }
         $.ajax({
-            url:"/admin/create-or-update/host/",
+            url: url,
             type:'post',
             data:data.field,
             success:function(d){

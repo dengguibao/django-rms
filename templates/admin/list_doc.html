@@ -5,287 +5,311 @@
 {% block mainbody %}
 
 <fieldset class="layui-elem-field layui-field-title">
-  <legend>文档管理</legend>
+    <legend>文档管理</legend>
 </fieldset>
 
 <div class="layui-upload">
-<input type="hidden" id="path" value="/">
-<input type="hidden" id="owner" value="{{ user.id }}">
-{% csrf_token %}
-  <button type="button" class="layui-btn" id="btn_upload"><i class="layui-icon layui-icon-upload"></i>上传文件</button>
-  <button type="button" class="layui-btn" id="btn_create_folder">新建文件夹</button>
-  <button type="button" class="layui-btn" id="btn_view_upload_progress">上传进度</button>
-  <div class="layui-upload-list">
-    <table class="layui-table" lay-skin="line">
-    <thead>
-      <colgroup>
-        <col>
-        <col width="150">
-        <col width="250">
-      </colgroup>
-      <tr style="background:#eee">
-        <th>名称</th>
-        <th>文件大小</th>
-        <th>上传时间</th>
-      </tr>
-    </thead>
-      <tbody id="folder_list"></tbody>
-      <tfoot id="file_list"></tfoot>
-    </table>
-  </div>
+    <input type="hidden" id="path" value="/">
+    <input type="hidden" id="owner" value="{{ user.id }}">
+    {% csrf_token %}
+    <button type="button" class="layui-btn" id="btn_upload"><i class="layui-icon layui-icon-upload"></i>上传文件</button>
+    <button type="button" class="layui-btn" id="btn_create_folder">新建文件夹</button>
+    <button type="button" class="layui-btn" id="btn_view_upload_progress">上传进度</button>
+    <div class="layui-upload-list">
+        <table class="layui-table" lay-skin="line">
+            <thead>
+            <colgroup>
+                <col>
+                <col width="150">
+                <col width="250">
+            </colgroup>
+            <tr style="background:#eee">
+                <th>名称</th>
+                <th>文件大小</th>
+                <th>上传时间</th>
+            </tr>
+            </thead>
+            <tbody id="folder_list"></tbody>
+            <tfoot id="file_list"></tfoot>
+        </table>
+    </div>
 </div>
-<link rel="stylesheet" href="/static/public/css/mouseRightMenu.css" />
+<link rel="stylesheet" href="/static/public/css/mouseRightMenu.css"/>
 <style type="text/css">
-  .mr{cursor:pointer}
-  .layui-icon-file{margin:0 5px}
-  .folder{margin-left:10px;font-weight:bolder;cursor:pointer}
-  .upload_progress_box{margin:20px 10px}
+    .mr {
+        cursor: pointer
+    }
+
+    .layui-icon-file {
+        margin: 0 5px
+    }
+
+    .folder {
+        margin-left: 10px;
+        font-weight: bolder;
+        cursor: pointer
+    }
+
+    .upload_progress_box {
+        margin: 20px 10px
+    }
 </style>
 <!-- upload progress bar -->
 <div style="display:none" id="upload_percent_box">
-  <div class="layui-progress layui-progress-big upload_progress_box" lay-showPercent="true"  lay-filter="upload_percent">
-    <div class="layui-progress-bar" lay-percent="0%"></div>
-  </div>
+    <div class="layui-progress layui-progress-big upload_progress_box" lay-showPercent="true"
+         lay-filter="upload_percent">
+        <div class="layui-progress-bar" lay-percent="0%"></div>
+    </div>
 </div>
 <script type="text/javascript">
-layui.config({base: '/static/public/layui-extends/'})
-layui.use(['upload', 'element', 'layer', 'mouseRightMenu'], function(){
-  var $ = layui.jquery
-  ,element = layui.element
-  ,layer = layui.layer
-  ,mouseRightMenu = layui.mouseRightMenu
-  ,upload = layui.upload;
-  
-  upload.render({ //允许上传的文件后缀
-    elem: '#btn_upload'
-    //,url: 'https://httpbin.org/post' //改成您自己的上传接口
-    ,url:'/admin/upload-file'
-    ,accept: 'file' //普通文件
-    ,size: 102400
-    ,data:{
-      'csrfmiddlewaretoken': function(){
-        return $('[name="csrfmiddlewaretoken"]').val()
-      },
-      'path': function(){
-        return $('#path').val()
-      }
-    }
-    ,progress: function(n, elem){
-      var percent = n + '%' //获取进度百分比
-      element.progress('upload_percent', percent); //配合 layui 进度条元素使用      
-  }
-    //,exts: 'zip|rar|7z' //只允许上传压缩文件
-    ,done: function(res){
-      if (res.code == 0){
-        element.progress('upload_percent', '0%');
-        layer.msg('上传成功');
-        container=$('#file_list')
-        append_str = '<tr id="tr'+res.data.id+'">'+
-        '<td>'+
-          '<a class="mr" tag="'+res.data.id+'" target="_blank" href="/admin/media/'+res.data.id+'">'+
-          '<i class="layui-icon layui-icon-file"></i>'+res.data.name+'</a>'+
-        '</td>'+
-        '<td>'+res.data.file_size+'</td>'+
-        '<td>'+res.data.pub_date+'</td></tr>'
-        container.append(append_str)
-        refresh_right_click_menu()
-      }
-    }
-    ,error: function(){
-    }
-  });
+    layui.config({base: '/static/public/layui-extends/'})
+    layui.use(['upload', 'element', 'layer', 'mouseRightMenu'], function () {
+        var $ = layui.jquery
+            , element = layui.element
+            , layer = layui.layer
+            , mouseRightMenu = layui.mouseRightMenu
+            , upload = layui.upload;
 
-  refresh_file_list()  
+        upload.render({ //允许上传的文件后缀
+            elem: '#btn_upload'
+            //,url: 'https://httpbin.org/post' //改成您自己的上传接口
+            , url: '/admin/upload-file'
+            , accept: 'file' //普通文件
+            , size: 102400
+            , data: {
+                'csrfmiddlewaretoken': function () {
+                    return $('[name="csrfmiddlewaretoken"]').val()
+                },
+                'path': function () {
+                    return $('#path').val()
+                }
+            }
+            , progress: function (n, elem) {
+                var percent = n + '%' //获取进度百分比
+                element.progress('upload_percent', percent); //配合 layui 进度条元素使用
+            }
+            //,exts: 'zip|rar|7z' //只允许上传压缩文件
+            , done: function (res) {
+                if (res.code == 0) {
+                    element.progress('upload_percent', '0%');
+                    layer.msg('上传成功');
+                    container = $('#file_list')
+                    append_str = '<tr id="tr' + res.data.id + '">' +
+                        '<td>' +
+                        '<a class="mr" tag="' + res.data.id + '" target="_blank" href="/admin/media/' + res.data.id + '">' +
+                        '<i class="layui-icon layui-icon-file"></i>' + res.data.name + '</a>' +
+                        '</td>' +
+                        '<td>' + res.data.file_size + '</td>' +
+                        '<td>' + res.data.pub_date + '</td></tr>'
+                    container.append(append_str)
+                    refresh_right_click_menu()
+                }
+            }
+            , error: function () {
+            }
+        });
 
-  $('#btn_create_folder').on('click',function(){
-    layer.prompt({title: '新建文件夹'}, function(val, index){
-      if (val.length <=0){
-        alert('目录名不能为空');
-        return false;
-      }else if(!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(val)){
-        alert('目录名不能有特殊字符')
-        return false;
-      }
-
-      $.ajax({
-        url:'/admin/create-folder',
-        type:'post',
-        data:{
-          'name':val,
-          'path':$('#path').val(),
-          'csrfmiddlewaretoken': $('[name="csrfmiddlewaretoken"]').val()
-        },
-        success:function(d){
-          if(d.code==0){
-            $('#folder_list').append('<tr id="tr'+d.data.id+'"><td colspan="3"><a tag="'+d.data.id+'" class="folder mr">'+d.data.name+'</a></td></tr>')
-            refresh_folder_click_event();
-            refresh_right_click_menu();
-          }else{
-            layer.msg(d.msg);
-          }
-        }
-      });
-      layer.close(index);
-    });
-  })
-
-  // view upload progress
-  $('#btn_view_upload_progress').on('click',function(){
-    layer.open({
-      type: 1
-      ,minleft: 1000
-      ,id: 'upload_percent'
-      ,area: ['400px','102px']
-      ,shade: 0
-      ,offset: 'rb'
-      ,title: '上传进度'
-      ,content: $('#upload_percent_box').html()
-    }); 
-  })
-
-  function refresh_folder_click_event(){
-      $('.folder').on('click',function(){
-        //alert($(this).text())
-        folder_name=$(this).text()
-        path=$('#path').val()
-        // 上级目录
-        // 最顶层目录直接点击无效
-        if (folder_name == '..' && path == '/'){
-          return false
-        }
-        if (folder_name == '..' && path != '/'){
-          a=path.split('/')
-          b=a.slice(0,a.length-2)
-          c=b.join('/')
-          if (c == ''){
-            $('#path').val('/')
-          }else{
-            $('#path').val(c+'/')
-          }
-        }else{
-          $('#path').val(path+folder_name+'/')
-        }
         refresh_file_list()
-      });
-  }
 
-  function refresh_right_click_menu(){
-    //右键监听
- 		$('.mr').bind("contextmenu",function(e){
-			var data = {id:$(this).attr('tag'),class:$(this).attr('class'),text:$(this).text()}
-      //console.log(data)
-      var menu_data=[
-        {'data':data,'type':2,'title':'删除'}			
-      ]
+        $('#btn_create_folder').on('click', function () {
+            layer.prompt({title: '新建文件夹'}, function (val, index) {
+                if (val.length <= 0) {
+                    alert('目录名不能为空');
+                    return false;
+                } else if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(val)) {
+                    alert('目录名不能有特殊字符')
+                    return false;
+                }
 
-      if(data.class.indexOf('folder') == -1){
-        menu_data.unshift({'data':data,'type':3,'title':'编辑'})
-        menu_data.unshift({'data':data,'type':1,'title':'下载'})
-      }
-      
- 			mouseRightMenu.open(menu_data,false,function(d){
- 				 //layer.alert(JSON.stringify(d));
-         //删除操作
-         if (d.type == 2){
-           $.getJSON(
-             '/admin/file-delete/'+d.data.id,
-             function(res){
-               if (res.code == 0){
-                 //layer.msg('删除成功');
-                 $('#tr'+d.data.id).empty()
-               }
-             }
-           )
-          //关闭菜单
-         }
-        //下载操作
-        if (d.type == 1){
-            window.open('/admin/media/'+d.data.id+'?d=1');
+                $.ajax({
+                    url: '/admin/create-folder',
+                    type: 'post',
+                    data: {
+                        'name': val,
+                        'path': $('#path').val(),
+                        'csrfmiddlewaretoken': $('[name="csrfmiddlewaretoken"]').val()
+                    },
+                    success: function (d) {
+                        if (d.code == 0) {
+                            $('#folder_list').append('<tr id="tr' + d.data.id + '">' +
+                                '<td colspan="3">' +
+                                '<a tag="' + d.data.id + '" class="folder mr">' + d.data.name + '</a>' +
+                                '</td>' +
+                                '</tr>')
+                            refresh_folder_click_event();
+                            refresh_right_click_menu();
+                        } else {
+                            layer.msg(d.msg);
+                        }
+                    }
+                });
+                layer.close(index);
+            });
+        })
+
+        // view upload progress
+        $('#btn_view_upload_progress').on('click', function () {
+            layer.open({
+                type: 1
+                , minleft: 1000
+                , id: 'upload_percent'
+                , area: ['400px', '102px']
+                , shade: 0
+                , offset: 'rb'
+                , title: '上传进度'
+                , content: $('#upload_percent_box').html()
+            });
+        })
+
+        function refresh_folder_click_event() {
+            $('.folder').on('click', function () {
+                //alert($(this).text())
+                folder_name = $(this).text()
+                path = $('#path').val()
+                // 上级目录
+                // 最顶层目录直接点击无效
+                if (folder_name == '..' && path == '/') {
+                    return false
+                }
+                if (folder_name == '..' && path != '/') {
+                    a = path.split('/')
+                    b = a.slice(0, a.length - 2)
+                    c = b.join('/')
+                    if (c == '') {
+                        $('#path').val('/')
+                    } else {
+                        $('#path').val(c + '/')
+                    }
+                } else {
+                    $('#path').val(path + folder_name + '/')
+                }
+                refresh_file_list()
+            });
         }
-        // 编辑操作
-        if (d.type == 3){
-          layer.open({
-            type: 2,
-            title: d.data.text,
-            area: ['900px', '600px'],
-            shade: false,
-            closeBtn: 1,
-            shadeClose: true,
-            maxmin: true,
-            content: ['/admin/edit/'+d.data.id, 'no'],
-          });
-          //window.open('/admin/edit/'+d.data.id);
-        }
- 			})
-			return false;
-		});
-  }
 
-  function refresh_file_list(){
-    $('#file_list').empty();
-    $('#folder_list').empty();
+        function refresh_right_click_menu() {
+            //右键监听
+            $('.mr').bind("contextmenu", function (e) {
+                let data = {id: $(this).attr('tag'), class: $(this).attr('class'), text: $(this).text()}
+                //console.log(data)
+                let menu_data = [
+                    {'data': data, 'type': 2, 'title': '删除'}
+                ]
 
-    if ($('#path').val() == '/'){
-      $('#folder_list').empty();
-    }else{
-      //alert($('#folder_list'))
-      $('#folder_list').append('<tr><td colspan="3"><a class="folder">..</a></td></tr>');
-    }
-    
-    file=$.ajax({
-      url:'/admin/get-file-list/file',
-      type:'post',
-      data:{
-        'csrfmiddlewaretoken': function(){
-          return $('[name="csrfmiddlewaretoken"]').val();
-        },
-        "path": function(){
-          return $('#path').val()
-        }        
-      },
-      success:function(d){
-        if (d.code == 0){
-          $.each(d.data,function(i,field){
-            append_str = '<tr id="tr'+field.id+'">'+
-            '<td>'+
-            '<a tag="'+field.id+'" class="mr" target="_blank" href="/admin/media/'+field.id+'"><i class="layui-icon layui-icon-file"></i>'+field.name+'</a>'+
-            '</td>'+
-            '<td>'+field.file_size+'</td>'+
-            '<td>'+field.pub_date+'</td></tr>'
-            $('#file_list').append(append_str)
-          })
+                if (data.class.indexOf('folder') == -1) {
+                    menu_data.unshift({'data': data, 'type': 3, 'title': '编辑'})
+                    menu_data.unshift({'data': data, 'type': 1, 'title': '下载'})
+                }
+
+                mouseRightMenu.open(menu_data, false, function (d) {
+                    //layer.alert(JSON.stringify(d));
+                    //删除操作
+                    if (d.type == 2) {
+                        $.getJSON(
+                            '/admin/file-delete/' + d.data.id,
+                            function (res) {
+                                if (res.code == 0) {
+                                    //layer.msg('删除成功');
+                                    $('#tr' + d.data.id).empty()
+                                }
+                            }
+                        )
+                        //关闭菜单
+                    }
+                    //下载操作
+                    if (d.type == 1) {
+                        window.open('/admin/media/' + d.data.id + '?d=1');
+                    }
+                    // 编辑操作
+                    if (d.type == 3) {
+                        layer.open({
+                            type: 2,
+                            title: d.data.text,
+                            area: ['900px', '600px'],
+                            shade: false,
+                            closeBtn: 1,
+                            shadeClose: true,
+                            maxmin: true,
+                            content: ['/admin/edit/' + d.data.id, 'no'],
+                        });
+                        //window.open('/admin/edit/'+d.data.id);
+                    }
+                })
+                return false;
+            });
         }
-      }
+
+        function refresh_file_list() {
+            $('#file_list').empty();
+            $('#folder_list').empty();
+
+            if ($('#path').val() == '/') {
+                $('#folder_list').empty();
+            } else {
+                //alert($('#folder_list'))
+                $('#folder_list').append('<tr><td colspan="3"><a class="folder">..</a></td></tr>');
+            }
+
+            let file = $.ajax({
+                url: '/admin/get-file-list/file',
+                type: 'post',
+                data: {
+                    'csrfmiddlewaretoken': function () {
+                        return $('[name="csrfmiddlewaretoken"]').val();
+                    },
+                    "path": function () {
+                        return $('#path').val()
+                    }
+                },
+                success: function (d) {
+                    if (d.code == 0) {
+                        $.each(d.data, function (i, field) {
+                            let append_str = '<tr id="tr' + field.id + '">' +
+                                '<td>' +
+                                '<a tag="' + field.id + '" class="mr" target="_blank" href="/admin/media/' + field.id + '">' +
+                                '<i class="layui-icon layui-icon-file"></i>' + field.name +
+                                '</a>' +
+                                '</td>' +
+                                '<td>' + field.file_size + '</td>' +
+                                '<td>' + field.pub_date + '</td></tr>'
+                            $('#file_list').append(append_str)
+                        })
+                    }
+                }
+            });
+
+            let folder = $.ajax({
+                url: '/admin/get-file-list/folder',
+                type: 'post',
+                data: {
+                    'csrfmiddlewaretoken': function () {
+                        return $('[name="csrfmiddlewaretoken"]').val();
+                    },
+                    "path": function () {
+                        return $('#path').val()
+                    }
+                },
+                success: function (d) {
+                    if (d.code == 0) {
+                        $.each(d.data, function (i, field) {
+                            let append_str = '<tr id="tr' + field.id + '">' +
+                                '<td colspan="3">' +
+                                '<a tag="' + field.id + '" class="mr folder">' + field.name + '</a>' +
+                                '</td>' +
+                                '</tr>'
+                            $('#folder_list').append(append_str);
+                        })
+                    }
+                }
+            })
+
+            $.when(file, folder).done(function () {
+
+                refresh_folder_click_event();
+                refresh_right_click_menu();
+            })
+
+        }
     });
-
-    folder=$.ajax({
-      url:'/admin/get-file-list/folder',
-      type:'post',
-      data:{
-        'csrfmiddlewaretoken': function(){
-          return $('[name="csrfmiddlewaretoken"]').val();
-        },
-        "path": function(){
-          return $('#path').val()
-        }        
-      },
-      success:function(d){
-        if (d.code == 0){
-          $.each(d.data,function(i,field){
-            append_str = '<tr id="tr'+field.id+'"><td colspan="3"><a tag="'+field.id+'" class="mr folder">'+field.name+'</a></td></tr>'
-            $('#folder_list').append(append_str);
-          })
-        }
-      }
-    })
-
-    $.when(file,folder).done(function(){
-      
-      refresh_folder_click_event();
-      refresh_right_click_menu();
-    })
-
-  }
-});
 </script>
 {% endblock %}

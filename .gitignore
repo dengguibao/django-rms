@@ -6,3 +6,5 @@ uploads/
 .vscode/
 *.pyc
 *.pid
+old.*
+.idea/

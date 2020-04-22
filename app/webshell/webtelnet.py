@@ -3,6 +3,7 @@ from .telnet import Telnet
 from django.http.request import QueryDict
 import json
 
+
 class WebTelnet(WebsocketConsumer):
     message = {'status': 0, 'message': None}
 
@@ -32,4 +33,3 @@ class WebTelnet(WebsocketConsumer):
             if status == 0:
                 data = data['data']
                 self.telnet.shell(data)
-
