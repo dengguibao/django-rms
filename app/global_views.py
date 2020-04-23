@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.admin.models import LogEntry, ADDITION, CHANGE
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.admin.options import get_content_type_for_model
 from django.conf import settings
 from .models import VmInfo, HostInfo, ClusterInfo
@@ -369,18 +370,14 @@ def view_log_view(request, content_type, object_id):
         'hostinfo'
     ]
     if content_type not in model_array:
-        return render(request, 'admin/error.html', {'error_msg':'illegal request!'})
+        return render(request, 'admin/error.html', {'error_msg': 'illegal request!'})
     all_user_queryset = User.objects.all().values('id', 'first_name')
     act_flag_exp = [
-        {
-            'id': 1,
-            'value': '创建'
-        },
-        {
-            'id': 2,
-            'value': '修改'
-        }
-    ] 
+        ('none', 0),
+        ('创建', 1),
+        ('修改', 2),
+        ('删除', 3)
+    ]
     model = {
         'user': User,
         'clusterinfo': ClusterInfo,
@@ -393,7 +390,58 @@ def view_log_view(request, content_type, object_id):
         object_id=res.id
     )
     return render(request, 'admin/view_log.html', {
-        'action_flag':act_flag_exp,
+        'action_flag': act_flag_exp,
         'all_user': all_user_queryset,
         'log_data': log_entries
     })
+
+
+@login_required()
+def log_rollback_view(request, log_id):
+    user_id = request.user.id;
+    model_map = {
+        'clusterinfo': ClusterInfo,
+        'hostinfo': HostInfo,
+        'vminfo': VmInfo,
+        'user': User
+    }
+    log_res = LogEntry.objects.get(id=log_id)
+    if not log_res:
+        return JsonResponse({
+            'code': 1,
+            'msg': 'not found this log resource!'
+        })
+
+    # if user_id != log_res.user_id:
+    #     return JsonResponse({
+    #         'code': 1,
+    #         'msg': 'permission denied'
+    #     })
+
+    if not log_res.change_message:
+        return JsonResponse({
+            'code': 1,
+            'msg': 'not found rollback data'
+        })
+
+    post_data = json.loads(log_res.change_message)
+
+    content_res = ContentType.objects.get(id=log_res.content_type_id)
+    origin_res = model_map[content_res.model].objects.get(id=log_res.object_id)
+    if not origin_res:
+        res = model_map[content_res.model].objects.create(**post_data)
+    else:
+        model_map[content_res.model].objects.filter(id=log_res.object_id).update(**post_data)
+        res = model_map[content_res.model].objects.get(id=log_res.object_id)
+
+    if res:
+        return JsonResponse({
+            'code': 0,
+            'msg': 'rollback success',
+            'jumpurl': '/admin/edit/%s/%s' % (content_res.model.replace('info', ''), res.id)
+        })
+    else:
+        return JsonResponse({
+            'code': 0,
+            'msg': 'rollback failed'
+        })

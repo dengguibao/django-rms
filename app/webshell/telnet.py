@@ -42,7 +42,7 @@ class Telnet:
                 data = self.channel.read_very_eager()
                 # print(data)
                 if not len(data) and data == b'':
-                    time.sleep(0.3)
+                    time.sleep(0.1)
                     # return
                 else:
                     self.message['status'] = 0

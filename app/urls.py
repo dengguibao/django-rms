@@ -33,6 +33,7 @@ urlpatterns = [
     # init administrator permissions
     path('init-admin-perm', perm_views.init_admin_permission),
     path('init-user-perms/<int:user_id>', perm_views.init_user_permission),
+    path('log-rollback/<int:log_id>',global_views.log_rollback_view),
 
     path('get-user-list/', user_views.get_user_list_view),
     path('user-logout/', user_views.user_logout),

@@ -176,8 +176,8 @@
                     success:function(){
                         //alert('1')
                         $(".layui-layer-content").empty();
-                        $(".layui-layer-content").append('<input type="text" class="layui-layer-input" value="root" id="shell_username" placeholder="用户名"/><br/>\
-                                                        <input type="password" id="shell_password" class="layui-layer-input" placeholder="密码">')
+                        $(".layui-layer-content").append('<form><input type="text" class="layui-layer-input" value="root" id="shell_username" placeholder="用户名"/><br/>\
+                                                        <input type="password" autocomplete="off" id="shell_password" class="layui-layer-input" placeholder="密码"></form>')
                         $('.layui-layer-btn0').on('click',function(){
                             var username = $('#shell_username').val().trim();
                             var password = $('#shell_password').val().trim();
@@ -300,7 +300,9 @@
                     var tbody = $('#esxi_tbody');
                     tbody.empty();
                     $.each(result.data, function (i, item) {
-                        var tbody_content = "<tr><td><a href='javascript:;' onclick='javascript:refresh_vms_of_esxi(\"" + item.hostname + "\");'>" + item.hostname + "</a></td></tr>";
+                        var tbody_content = "<tr><td>" +
+                            "<a href='javascript:;' onclick='javascript:refresh_vms_of_esxi(\"" + item.hostname + "\");'>" + item.hostname + "</a>" +
+                            "</td></tr>";
                         tbody.append(tbody_content);
                     })
                 }
