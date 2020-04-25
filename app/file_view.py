@@ -1,31 +1,30 @@
+import os
+import time
 from django.http import JsonResponse, FileResponse, Http404
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.conf import settings
 
-import os
-import time
-
 from .models import FileInfo
 
-today = time.strftime('%Y%m%d', time.localtime())
-upload_path = 'uploads'
+TODAY = time.strftime('%Y%m%d', time.localtime())
+UPLOAD_PATH = 'uploads'
 
 
 @login_required()
 def upload_file(request):
     if request.method == 'POST':
-        local_path = os.path.join(settings.BASE_DIR, upload_path, today)
+        local_path = os.path.join(settings.BASE_DIR, UPLOAD_PATH, TODAY)
         if os.path.exists(local_path) is False:
-            # os.chdir(upload_path)
+            # os.chdir(UPLOAD_PATH)
             os.makedirs(local_path)
 
         origin_file_obj = request.FILES.get('file')
 
         path = request.POST.get('path', '/')
         file_type = 1
-        real_path = os.path.join(upload_path, today)
+        real_path = os.path.join(UPLOAD_PATH, TODAY)
         name = origin_file_obj.name
         file_size = origin_file_obj.size
         if file_size >= 1024 * 1024 * 1024 * 100:
@@ -39,7 +38,7 @@ def upload_file(request):
             '%Y%m%d%H%M%S', time.localtime()) + '.' + file_ext
         # new file path
         new_file_path = os.path.join(
-            settings.BASE_DIR, upload_path, today, real_name)
+            settings.BASE_DIR, UPLOAD_PATH, TODAY, real_name)
 
         with open(new_file_path, 'wb') as f:
             for chunk in origin_file_obj.chunks():
@@ -142,8 +141,17 @@ def create_folder(request):
 
 
 @login_required
-def file_edit(request, id):
-    res = FileInfo.objects.get(id=id)
+def file_edit(request, fid):
+    """online edit the file according fid(fileinfo table id field)
+
+    Arguments:
+        request {object} -- wsgi request object
+        fid {int} -- fileinfo id field
+
+    Returns:
+        html -- online edit file of the html response view
+    """
+    res = FileInfo.objects.get(id=fid)
     if res and res.owner != request.user:
         return render(request, 'admin/error.html')
     file_path = '/'.join([settings.BASE_DIR, res.real_path, res.real_name])
@@ -187,9 +195,17 @@ def file_edit(request, id):
 
 @login_required
 def file_save(request):
-    id = request.POST.get('id', 0)
+    """online edit file save event
+
+    Arguments:
+        request {object} -- wsgi request object
+
+    Returns:
+        str -- json object of the event description
+    """
+    fid = request.POST.get('id', 0)
     content = request.POST.get('content', None)
-    res = FileInfo.objects.get(id=id)
+    res = FileInfo.objects.get(id=fid)
 
     if res and res.owner != request.user:
         return render(request, 'admin/error.html')
@@ -230,15 +246,24 @@ def file_save(request):
 
 
 @login_required
-def file_delete(request, i):
-    res = FileInfo.objects.get(id=i)
+def file_delete(request, fid):
+    """according fid delete record and file
+
+    Arguments:
+        request {object} -- wsgi request object
+        fid {int} -- fileinfo talbe id field
+
+    Returns:
+        str -- event description json
+    """
+    res = FileInfo.objects.get(id=fid)
     # delete file
     if res and res.type == 1:
         file = res.real_path + '/' + res.real_name
         affect = res.delete()
         try:
             os.remove(file)
-        except Exception:
+        except:
             return JsonResponse({
                 'code': '0',
                 'msg': '文件不存在'
@@ -267,8 +292,20 @@ def file_delete(request, i):
 
 
 # @login_required
-def file_download(request, id):
-    res = FileInfo.objects.get(id=id)
+def file_download(request, fid):
+    """according fid(fileinfo talbe id field) download or view file
+
+    Arguments:
+        request {object} -- wsgi request object
+        fid {int} -- fileinfo table id
+
+    Raises:
+        Http404: file does not exist
+
+    Returns:
+        html -- html response view
+    """
+    res = FileInfo.objects.get(id=fid)
     down = request.GET.get('d', 0)
     # if res and res.owner != request.user:
     if not res:
@@ -320,6 +357,14 @@ def file_download(request, id):
 
 
 def format_file_size(size):
+    """according file size return human format
+
+    Arguments:
+        size {int} -- file size
+
+    Returns:
+        str -- human format file size
+    """
     if size < 1024:
         return '%i' % size + 'B'
     elif 1024 <= size < 1024 ** 2:

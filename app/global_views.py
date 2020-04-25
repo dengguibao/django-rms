@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
@@ -86,11 +86,11 @@ def data_struct():
 @login_required()
 def render_static_temp_view(request, temp_name):
     """according parameter render static html template
-    
+
     Arguments:
         request {object} -- wsgi http request object
         temp_name {str} -- template name
-    
+
     Returns:
         html -- html template
     """
@@ -184,14 +184,13 @@ def render_edit_view(request, form_name, nid):
 
 @login_required()
 def delete(request, form_name, nid):
-    """
-    delete some resources by form name and primary key
-    
+    """delete some resources by form name and primary key
+
     Arguments:
         request {object} -- wsgi http request object
         form_name {str} -- according this judge resource type,just contains vm host user
         nid {int} -- resource model id
-    
+
     Returns:
         json -- json object
     """
@@ -233,13 +232,12 @@ def delete(request, form_name, nid):
 
 @login_required()
 def create_or_update(request, form_name):
-    """
-    user post form event
-    
+    """user post form event
+
     Arguments:
         request {object} -- wsgi http request object
         form_type {str} -- form type,just contains vm host user
-    
+
     Returns:
         json -- json object
     """
@@ -349,7 +347,7 @@ def create_or_update(request, form_name):
         user_id=request.user.pk,
         content_type_id=log_content_type_model_id,
         object_id=log_object_id,
-        object_repr= log_object_repr,
+        object_repr=log_object_repr,
         action_flag=log_action_flag,
         change_message=json.dumps(post_data, ensure_ascii=True)
     )
@@ -363,6 +361,16 @@ def create_or_update(request, form_name):
 
 @login_required()
 def view_log_view(request, content_type, object_id):
+    """view log view
+
+    Arguments:
+        request {object} -- wsgi request object
+        content_type {str} -- content type
+        object_id {int} -- admin_log id
+
+    Returns:
+        retun  -- html view
+    """
     model_array = [
         'user',
         'clusterinfo',
@@ -398,7 +406,15 @@ def view_log_view(request, content_type, object_id):
 
 @login_required()
 def log_rollback_view(request, log_id):
-    user_id = request.user.id;
+    """rollback according to the content of chang_message(**post_data) field in admin_log table
+
+    Arguments:
+        request {object} -- wsgi request object
+        log_id {int} -- admin_log id
+
+    Returns:
+        str -- rollback state json
+    """
     model_map = {
         'clusterinfo': ClusterInfo,
         'hostinfo': HostInfo,
@@ -411,7 +427,7 @@ def log_rollback_view(request, log_id):
             'code': 1,
             'msg': 'not found this log resource!'
         })
-
+    # user_id = request.user.id
     # if user_id != log_res.user_id:
     #     return JsonResponse({
     #         'code': 1,
@@ -445,3 +461,4 @@ def log_rollback_view(request, log_id):
             'code': 0,
             'msg': 'rollback failed'
         })
+        
