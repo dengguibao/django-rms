@@ -81,10 +81,18 @@
 </script>
 <script type="text/html" id="toolbar">
   <div class="layui-btn-container">
-    <a lay-event='edit' title="edit" class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon layui-icon-edit'></i></a>
-    <a lay-event='del' title="delete" class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon layui-icon-delete'></i></a>
-    <a lay-event='link' title="connect" class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon layui-icon-link'></i></a>
-    <a lay-event='logs' title="logs" class='layui-btn layui-btn-primary layui-btn-xs'>&nbsp;<i class='layui-icon layui-icon-log'></i></a>
+    <a lay-event='edit' title="edit" class='layui-btn layui-btn-primary layui-btn-xs'>
+        <i class='layui-icon layui-icon-edit'></i>
+    </a>
+    <a lay-event='del' title="delete" class='layui-btn layui-btn-primary layui-btn-xs'>
+        <i class='layui-icon layui-icon-delete'></i>
+    </a>
+    <a lay-event='link' title="connect" class='layui-btn layui-btn-primary layui-btn-xs'>
+        <i class='layui-icon layui-icon-link'></i>
+    </a>
+    <a lay-event='logs' title="logs" class='layui-btn layui-btn-primary layui-btn-xs'>
+        <i class='layui-icon layui-icon-log'></i>
+    </a>
   </div>
 </script>
 
@@ -262,7 +270,7 @@
                     ,{field: 'esxi_host_name', title: '宿主机', width: 200}
                     ,{field: 'vm_os', title: '操作系统', width: 80}
                     ,{field: 'pub_date', title: '添加时间', width: 100, templet: function(item){return item.pub_date.substring(0, 10)}}
-                    ,{title: '操作', width: 170, fixed: 'right', toolbar: '#toolbar'}
+                    ,{title: '操作', width: 170, align:'center', fixed: 'right', toolbar: '#toolbar'}
                 ]]
                 ,done: function(res,cur,count){
                     if ($('#zabbix_status').val() == 'enable'){

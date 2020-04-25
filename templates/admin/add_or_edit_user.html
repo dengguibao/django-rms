@@ -61,7 +61,7 @@
     <div class="layui-form-item" style="display:{%if data.id%}block;{%else%}none{%endif%}">
         <label class="layui-form-label">设置密码</label>
         <div class="layui-input-block">
-            <input type="checkbox" lay-skin="switch" lay-filter="set_password" lay-text="ON|OFF">
+            <input type="checkbox" id="set_password" lay-skin="switch" lay-filter="set_password" lay-text="ON|OFF">
         </div>
     </div>
 
@@ -132,9 +132,10 @@
                 layer.prompt({title: '输入密码，并确认', formType: 1}, function(pass, index){
                     if (pass.trim().length <= 0){
                         layer.alert('密码不能为空');
+                        //$('#set_password').prop("checked", false)
                         return false;
                     }
-                    var pwd = pass.trim()
+                    let pwd = pass.trim()
                     layer.close(index)
                     $('#password').val(pwd);
                 });
