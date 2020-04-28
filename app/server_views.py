@@ -1,3 +1,5 @@
+from io import BytesIO
+import xlwt
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -5,11 +7,7 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.conf import settings
 from .global_views import data_struct
-
 from .models import VmInfo, HostInfo, ClusterInfo
-
-from io import BytesIO
-import xlwt
 
 
 @login_required()
@@ -230,5 +228,4 @@ def search(request, dev_type, keyword):
             'msg': 'ok'
         }
     return JsonResponse(return_data)
-
-
+    

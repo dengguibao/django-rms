@@ -106,6 +106,14 @@ def get_user_file_list(request, t):
 
 @login_required
 def create_folder(request):
+    """create folder action
+
+    Arguments:
+        request {ojbect} -- wsgi request object
+
+    Returns:
+        html -- html response view
+    """
     folder_name = request.POST.get('name', '')
     p_path = request.POST.get('path', '/')
 

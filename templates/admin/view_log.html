@@ -39,9 +39,7 @@
         <td>{{forloop.counter}}</td>
         <td>{{i.action_time}}</td>
         <td>
-            {% for u in all_user %}
-            {% if u.id == i.user_id %}{{u.first_name}}{% endif %}
-            {% endfor %}
+        {{i.user.first_name}}
         </td>
         <td>
             {% for a in action_flag %}

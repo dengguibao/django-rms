@@ -50,7 +50,7 @@ urlpatterns = [
     path('list-scripts/<str:path>', script_views.get_file_list),
     path('view-script/<str:path>', script_views.view_file),
 
-    path('view-server-info/<int:id>', zabbix_info_view.zabbix_server_info_view),
+    path('view-server-info/<int:vm_id>', zabbix_info_view.zabbix_server_info_view),
 
     path('get-cluster-list/', cluster_view.get_cluster_list_view),
     

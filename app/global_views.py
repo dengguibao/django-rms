@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.models import User
@@ -9,10 +10,14 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.admin.options import get_content_type_for_model
 from django.conf import settings
 from .models import VmInfo, HostInfo, ClusterInfo
-import json
 
 
 def data_struct():
+    """field struct chinese description
+
+    Returns:
+        dict -- return struct description
+    """
     return {
         'vm': {
             'vm_hostname': '主机名',
@@ -94,7 +99,7 @@ def render_static_temp_view(request, temp_name):
     Returns:
         html -- html template
     """
-    res_cluster = ClusterInfo.objects.filter(is_active=0).values('name','tag')
+    res_cluster = ClusterInfo.objects.filter(is_active=0).values('name', 'tag')
 
     if 'list_' in temp_name:
         context = {
@@ -377,9 +382,10 @@ def view_log_view(request, content_type, object_id):
         'vminfo',
         'hostinfo'
     ]
+
     if content_type not in model_array:
         return render(request, 'admin/error.html', {'error_msg': 'illegal request!'})
-    all_user_queryset = User.objects.all().values('id', 'first_name')
+
     act_flag_exp = [
         ('none', 0),
         ('创建', 1),
@@ -393,13 +399,13 @@ def view_log_view(request, content_type, object_id):
         'hostinfo': HostInfo
     }
     res = model[content_type].objects.get(id=object_id)
+
     log_entries = LogEntry.objects.filter(
         content_type_id=get_content_type_for_model(model[content_type]).pk,
         object_id=res.id
     )
     return render(request, 'admin/view_log.html', {
         'action_flag': act_flag_exp,
-        'all_user': all_user_queryset,
         'log_data': log_entries
     })
 
@@ -427,6 +433,7 @@ def log_rollback_view(request, log_id):
             'code': 1,
             'msg': 'not found this log resource!'
         })
+
     # user_id = request.user.id
     # if user_id != log_res.user_id:
     #     return JsonResponse({
@@ -441,24 +448,24 @@ def log_rollback_view(request, log_id):
         })
 
     post_data = json.loads(log_res.change_message)
-
-    content_res = ContentType.objects.get(id=log_res.content_type_id)
-    origin_res = model_map[content_res.model].objects.get(id=log_res.object_id)
+    log_res.content_type.model
+    content_type = log_res.content_type.model
+    origin_res = model_map[content_type].objects.get(id=log_res.object_id)
     if not origin_res:
-        res = model_map[content_res.model].objects.create(**post_data)
+        res = model_map[content_type].objects.create(**post_data)
     else:
-        model_map[content_res.model].objects.filter(id=log_res.object_id).update(**post_data)
-        res = model_map[content_res.model].objects.get(id=log_res.object_id)
+        model_map[content_type].objects.filter(id=log_res.object_id).update(**post_data)
+        res = model_map[content_type].objects.get(id=log_res.object_id)
 
     if res:
         return JsonResponse({
             'code': 0,
             'msg': 'rollback success',
-            'jumpurl': '/admin/edit/%s/%s' % (content_res.model.replace('info', ''), res.id)
+            'jumpurl': '/admin/edit/%s/%s' % (content_type.replace('info', ''), res.id)
         })
-    else:
-        return JsonResponse({
-            'code': 0,
-            'msg': 'rollback failed'
-        })
+    # else action
+    return JsonResponse({
+        'code': 0,
+        'msg': 'rollback failed'
+    })
         

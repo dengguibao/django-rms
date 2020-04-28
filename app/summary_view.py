@@ -1,10 +1,10 @@
+import datetime
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from .models import VmInfo, HostInfo, FileInfo, ClusterInfo
-from django.db.models import Count
 from django.contrib.auth.models import User
-import datetime
+from django.db.models import Count
+from .models import VmInfo, HostInfo, FileInfo, ClusterInfo
 
 
 @login_required()
@@ -81,17 +81,17 @@ def get_cluster_count_info(request, cluster_name):
             'code': 1,
             'msg': 'cluster name error'
         })
-    else:
-        res = HostInfo.objects. \
-            filter(cluster_tag=cluster_name). \
-            annotate(count=Count("vminfo__vm_hostname")). \
-            values_list("hostname", "count")
-        return JsonResponse({
-            'code': 0,
-            'name': cluster_array[cluster_name],
-            'msg': 'success',
-            'data': list(res)
-        })
+
+    res = HostInfo.objects. \
+        filter(cluster_tag=cluster_name). \
+        annotate(count=Count("vminfo__vm_hostname")). \
+        values_list("hostname", "count")
+    return JsonResponse({
+        'code': 0,
+        'name': cluster_array[cluster_name],
+        'msg': 'success',
+        'data': list(res)
+    })
 
 
 @login_required
@@ -114,22 +114,25 @@ def get_guarantee_info(request, cluster_name):
             'code': 1,
             'msg': 'cluster name error'
         })
-    else:
-        now = datetime.datetime.now()
-        start = now - datetime.timedelta(hours=23, minutes=59, seconds=59)
-        in_guarantee_count = HostInfo.objects.filter(end_svc_date__gte=start, cluster_tag=cluster_name).count()
-        all_res = HostInfo.objects.filter(cluster_tag=cluster_name).count()
-        return JsonResponse({
-            'code': 0,
-            'name': cluster_array[cluster_name],
-            'msg': 'success',
-            'data': [
-                {
-                    'name': '在保',
-                    'y': in_guarantee_count
-                }, {
-                    'name': '过保',
-                    'y': all_res - in_guarantee_count
-                }
-            ]
-        })
+
+    now = datetime.datetime.now()
+    start = now - datetime.timedelta(hours=23, minutes=59, seconds=59)
+    in_guarantee_count = HostInfo.objects.filter(
+        end_svc_date__gte=start,
+        cluster_tag=cluster_name
+    ).count()
+    all_res = HostInfo.objects.filter(cluster_tag=cluster_name).count()
+    return JsonResponse({
+        'code': 0,
+        'name': cluster_array[cluster_name],
+        'msg': 'success',
+        'data': [
+            {
+                'name': '在保',
+                'y': in_guarantee_count
+            }, {
+                'name': '过保',
+                'y': all_res - in_guarantee_count
+            }
+        ]
+    })

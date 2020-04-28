@@ -51,11 +51,11 @@ def user_change_password(request):
             'code': 0,
             'msg': 'success'
         })
-    else:
-        return JsonResponse({
-            'code': 1,
-            'msg': 'failed'
-        })
+    # else action
+    return JsonResponse({
+        'code': 1,
+        'msg': 'failed'
+    })
 
 
 @login_required()
