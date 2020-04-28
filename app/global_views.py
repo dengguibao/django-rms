@@ -448,7 +448,6 @@ def log_rollback_view(request, log_id):
         })
 
     post_data = json.loads(log_res.change_message)
-    log_res.content_type.model
     content_type = log_res.content_type.model
     origin_res = model_map[content_type].objects.get(id=log_res.object_id)
     if not origin_res:
