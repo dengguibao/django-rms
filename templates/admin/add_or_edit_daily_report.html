@@ -1,0 +1,79 @@
+{% extends "admin/basic.html" %}
+{% block notice%}
+日常 / 工作日报
+{% endblock %}
+{% block mainbody %}
+
+<fieldset class="layui-elem-field layui-field-title">
+    <legend>工作日报</legend>
+</fieldset>
+
+<form class="layui-form" action="">
+    {% csrf_token %}
+    <input type="hidden" name="id" value="0" />
+    <input type="hidden" name="owner_id" value="{{ request.user.id}}" />
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">工作内容</label>
+        <div class="layui-input-block">
+            <textarea maxlength="100" lay-verify="required" placeholder="请输入工作内容" class="layui-textarea" name="content"></textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">工作类别</label>
+            <div class="layui-input-inline" style="width: 100px;">
+                <select name="type" lay-verify="required">
+                    <option value="">请选择</option>
+                    <option value="桌面维护">桌面维护</option>
+                    <option value="系统维护">系统维护</option>
+                    <option value="服务器维护">服务器维护</option>
+                    <option value="网络维护">网络维护</option>
+                    <option value="视频广播">视频广播</option>
+                    <option value="其它工作">其它工作</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button type="submit" class="layui-btn" lay-submit="" lay-filter="submit">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form
+            , layer = layui.layer;
+
+        form.on('submit(submit)', function (data) {
+            layer.confirm('提交后无法删除和修改，请确认', {
+                title: '提示',
+                btn: ['确定','取消'] //按钮
+            }, function(){
+                let url = "/admin/create-or-update/daily_report/?log=no"
+                $.ajax({
+                    url: url,
+                    type: 'post',
+                    data: data.field,
+                    success: function (d) {
+                        if (d.code == 0) {
+                            layer.msg(d.msg, {time: 1000, icon: 1})
+                            setTimeout(function () {
+                                window.location.reload(true) 
+                            }, 1000);
+                        }else{
+                            layer.msg(d.msg, {time: 1000, icon: 2})
+                        }
+                    }
+                })
+            }, function(){
+                // DO NOTHING
+            });
+            return false;
+        });
+    });
+</script>
+{% endblock %}

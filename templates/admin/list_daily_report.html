@@ -1,0 +1,114 @@
+{% extends "admin/basic.html" %}
+{% block notice%}
+管理 / 日报管理
+{% endblock %}
+{% block mainbody %}
+
+<fieldset class="layui-elem-field layui-field-title">
+    <legend>日报管理</legend>
+</fieldset>
+    <form class="layui-form" method="POST" action="/admin/list-report/?t=daily">
+    {% csrf_token %}
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">用户</label>
+            <div class="layui-input-inline" style="width:80px">
+                <select name="user_id" lay-verify="required">
+                {% if perms.auth.add_user or perms.auth.view_user %}
+                    <option value="0">全部</option>
+                    {% for u in users %}
+                    <option {%ifequal first_name u.first_name%}selected=""{%endifequal%} value="{{u.id}}">{{u.first_name}}</option>
+                    {% endfor %}
+                {% else %}
+                    <option value="{{request.user.id}}">{{request.user.first_name}}</option>
+                {% endif %}
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-inline">
+            <label class="layui-form-label">工作类别</label>
+            <div class="layui-input-inline" style="width:100px">
+                <select name="type">
+                    <option value="">全部</option>
+                    <option {% ifequal work_type '桌面维护' %}selected=""{% endifequal %} value="桌面维护">桌面维护</option>
+                    <option {% ifequal work_type '系统维护' %}selected=""{% endifequal %} value="系统维护">系统维护</option>
+                    <option {% ifequal work_type '服务器维护' %}selected=""{% endifequal %} value="服务器维护">服务器维护</option>
+                    <option {% ifequal work_type '网络维护' %}selected=""{% endifequal %} value="网络维护">网络维护</option>
+                    <option {% ifequal work_type '视频广播' %}selected=""{% endifequal %} value="视频广播">视频广播</option>
+                    <option {% ifequal work_type '其它工作' %}selected=""{% endifequal %} value="其它工作">其它工作</option>
+                </select>
+            </div>
+        </div>
+
+
+        <div class="layui-inline">
+            <label class="layui-form-label">开始时间</label>
+            <div class="layui-input-inline" style="width:120px">
+                <input type="text" name="start_date" id="start_date" placeholder="2020-03-18" value="{{start_date}}" lay-verify="start_date" autocomplete="off" class="layui-input">
+            </div>
+        </div> 
+        
+        <div class="layui-inline">
+            <label class="layui-form-label">结束时间</label>
+            <div class="layui-input-inline" style="width:120px">
+                <input type="text" name="end_date" id="end_date" placeholder="2020-03-18" value="{{end_date}}" lay-verify="end_date" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-inline">
+            <button type="submit" class="layui-btn" lay-submit="" lay-filter="submit">查找</button>
+        </div>
+    </div>
+    </form>
+
+<div class="layui-form">
+    <table class="layui-table">
+        <colgroup>
+            <col width="60">
+            <col width="150">
+            <col>
+            <col width="100">
+            <col width="200">
+        </colgroup>
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th>工作类别</th>
+            <th>工作内容</th>
+            <th>人员</th>
+            <th>工作时间</th>
+        </tr>
+        </thead>
+        <tbody id="tbody">
+        {%for i in data%}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{i.type}}</td>
+            <td>{{i.content|striptags}}</td>
+            <td>{{i.owner.first_name}}</td>
+            <td>{{i.pub_date|date:'Y年m月d日'}}</td>
+        </tr>
+        {%endfor%}
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript">
+    layui.use(['form', 'layer','laydate'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            laydate = layui.laydate,
+            layer = layui.layer;
+
+        laydate.render({
+            elem: '#start_date',
+            type: 'date'
+        });
+
+        laydate.render({
+            elem: '#end_date',
+            type: 'date'
+        });
+    })
+</script>
+{% endblock %}

@@ -1,6 +1,6 @@
 {% extends "admin/basic.html" %}
 {% block notice%}
-用户
+用户 / {% if data.id%}编辑{%else%}新建{% endif %}用户
 {% endblock %}
 {% block mainbody %}
 

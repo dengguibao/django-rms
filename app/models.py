@@ -1,8 +1,45 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class DailyReport(models.Model):
+    """daily report
+
+    Arguments:
+        models {object} -- django Model
+    """
+    content = models.TextField(null=False, verbose_name='工作内容')
+    type = models.CharField(null=False, max_length=10, verbose_name='工作类别')
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    pub_date = models.DateField(null=False, auto_now=True)
+
+    def __str__(self):
+        return '%s %s'% (self.owner.first_name, self.type)
+
+
+class TroubleReport(models.Model):
+    """trouble report
+
+    Arguments:
+        models {object} -- django Model
+    """
+    desc = models.CharField(verbose_name="故障说明", null=False, max_length=80)
+    type = models.CharField(verbose_name="故障类别", null=False, max_length=20)
+    start_date = models.DateTimeField(null=False, verbose_name="开始时间")
+    end_date = models.DateTimeField(null=True, verbose_name="结束时间")
+    device = models.CharField(verbose_name="故障设备", null=True, max_length=100)
+    info = models.TextField(null=True)
+    reason = models.TextField(null=True)
+    resolv_method = models.TextField(null=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    pub_date = models.DateTimeField(auto_now=True)
+
 
 class ClusterInfo(models.Model):
+    """esxi cluster info
+
+    Arguments:
+        models {object} -- django Model
+    """
     name = models.CharField('集群名称', unique=True, max_length=50)
     tag = models.CharField('集群标记', unique=True, max_length=50)
     is_active = models.IntegerField('是否激活', default=0)
@@ -13,6 +50,11 @@ class ClusterInfo(models.Model):
 
 
 class FileInfo(models.Model):
+    """user upload file info
+
+    Arguments:
+        models {object} -- django Model
+    """
     path = models.CharField(max_length=200, null=False)  # 路径
     type = models.IntegerField(null=False)  # 类型 0文件夹 1文件
     name = models.CharField(max_length=100, null=False)  # 名称
@@ -28,6 +70,11 @@ class FileInfo(models.Model):
 
 
 class HostInfo(models.Model):
+    """host info
+
+    Arguments:
+        models {object} -- django Model
+    """
     hostname = models.CharField(max_length=100, unique=True)  # 主机名
     sn = models.CharField(max_length=80)  # SN序列号
     idrac_ip = models.GenericIPAddressField(max_length=15)  # 远程管理卡IP
@@ -81,7 +128,11 @@ class HostInfo(models.Model):
 
 
 class VmInfo(models.Model):
-    '''vminfo（virtual machine） db table model'''
+    """virtual machine info
+
+    Arguments:
+        models {object} -- django Model
+    """
     vm_hostname = models.CharField(max_length=100, )  # 主机名
     vm_intention = models.CharField(max_length=100, null=True)  # 用途
     vm_register = models.CharField(max_length=10, null=True)  # 申请人

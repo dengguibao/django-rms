@@ -1,6 +1,6 @@
 {% extends "admin/basic.html" %}
 {% block notice%}
-服务器
+服务器 / {%if host_obj.id %}编辑{% else %}新建{% endif %}服务器
 {% endblock %}
 {% block mainbody %}
 
@@ -334,7 +334,7 @@
     </div>
 </form>
 <script type="text/javascript">
-    layui.use(['form', 'layedit', 'laydate'], function(){
+    layui.use(['form', 'layer', 'laydate'], function(){
       var form = layui.form
       ,laydate = layui.laydate
       ,layer = layui.layer;

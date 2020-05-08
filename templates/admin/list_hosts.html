@@ -1,6 +1,6 @@
 {% extends "admin/basic.html" %}
 {% block notice%}
-服务器管理
+管理 / 服务器管理
 {% endblock %}
 {% block mainbody %}
 <style type="text/css">
@@ -53,6 +53,9 @@
         </a>
         <a lay-event='del' title="delete" class='layui-btn layui-btn-primary layui-btn-xs'>
             <i class='layui-icon layui-icon-delete'></i>
+        </a>
+        <a lay-event='link' title="connect" class='layui-btn layui-btn-primary layui-btn-xs'>
+            <i class='layui-icon layui-icon-link'></i>
         </a>
         <a lay-event='logs' title="logs" class='layui-btn layui-btn-primary layui-btn-xs'>
             <i class='layui-icon layui-icon-log'></i>
@@ -231,6 +234,9 @@
             }
             if (event == 'logs') {
                 window.open('/admin/view-logs/hostinfo/' + obj.data.id)
+            }
+            if (event == 'link'){
+                window.open('https://'+obj.data.idrac_ip)
             }
         })
     });

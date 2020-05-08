@@ -10,6 +10,7 @@ from . import (
     cluster_view,
     summary_view,
     webshell_views,
+    report_views,
 )
 
 urlpatterns = [
@@ -22,7 +23,7 @@ urlpatterns = [
     path('edit/<str:form_name>/<int:nid>/', global_views.render_edit_view),
     path('delete/<str:form_name>/<int:nid>/', global_views.delete),
     path('create-or-update/<str:form_name>/', global_views.create_or_update),
-    path('view-logs/<str:content_type>/<int:object_id>',global_views.view_log_view),
+    path('view-logs/<str:content_type>/<int:object_id>', global_views.view_log_view),
 
     path('get-hosts-list/type/<str:dev_type>/flag/<str:flag>/', server_views.get_hosts_list),
     path('search/<str:dev_type>/<str:keyword>/', server_views.search),
@@ -33,7 +34,7 @@ urlpatterns = [
     # init administrator permissions
     path('init-admin-perm', perm_views.init_admin_permission),
     path('init-user-perms/<int:user_id>', perm_views.init_user_permission),
-    path('log-rollback/<int:log_id>',global_views.log_rollback_view),
+    path('log-rollback/<int:log_id>', global_views.log_rollback_view),
 
     path('get-user-list/', user_views.get_user_list_view),
     path('user-logout/', user_views.user_logout),
@@ -42,6 +43,7 @@ urlpatterns = [
     path('upload-file', file_view.upload_file),
     path('get-file-list/<str:t>', file_view.get_user_file_list),
     path('file-delete/<int:fid>', file_view.file_delete),
+    path('file-rename', file_view.file_rename),
     path('create-folder', file_view.create_folder),
     path('media/<int:fid>', file_view.file_download),
     path('edit/<int:fid>', file_view.file_edit),
@@ -55,4 +57,8 @@ urlpatterns = [
     path('get-cluster-list/', cluster_view.get_cluster_list_view),
     
     path('web-shell/', webshell_views.web_ssh),
+
+    path('list-report/', report_views.report_manage),
+    path('view-trouble-report/<int:t_id>', report_views.view_trouble_report),
+
 ]

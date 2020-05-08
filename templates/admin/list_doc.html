@@ -1,11 +1,11 @@
 {% extends "admin/basic.html" %}
 {% block notice%}
-文档管理
+文档 / 用户上传 
 {% endblock %}
 {% block mainbody %}
 
 <fieldset class="layui-elem-field layui-field-title">
-    <legend>文档管理</legend>
+    <legend>文件管理</legend>
 </fieldset>
 
 <div class="layui-upload">
@@ -14,17 +14,19 @@
     {% csrf_token %}
     <button type="button" class="layui-btn" id="btn_upload"><i class="layui-icon layui-icon-upload"></i>上传文件</button>
     <button type="button" class="layui-btn" id="btn_create_folder">新建文件夹</button>
-<!--    <button type="button" class="layui-btn" id="btn_view_upload_progress">上传进度</button>-->
+    <!--    <button type="button" class="layui-btn" id="btn_view_upload_progress">上传进度</button>-->
     <div class="layui-upload-list">
         <table class="layui-table" lay-skin="line">
             <thead>
             <colgroup>
                 <col>
+                <col width="100">
                 <col width="150">
                 <col width="250">
             </colgroup>
             <tr style="background:#eee">
                 <th>名称</th>
+                <th>归属</th>
                 <th>文件大小</th>
                 <th>上传时间</th>
             </tr>
@@ -132,7 +134,7 @@
                     success: function (d) {
                         if (d.code == 0) {
                             $('#folder_list').append('<tr id="tr' + d.data.id + '">' +
-                                '<td colspan="3">' +
+                                '<td colspan="4">' +
                                 '<a tag="' + d.data.id + '" class="folder mr">' + d.data.name + '</a>' +
                                 '</td>' +
                                 '</tr>')
@@ -193,7 +195,9 @@
                 let data = {id: $(this).attr('tag'), class: $(this).attr('class'), text: $(this).text()}
                 //console.log(data)
                 let menu_data = [
-                    {'data': data, 'type': 2, 'title': '删除'}
+                    {'data': data, 'type': 4, 'title': '重命名'},
+                    {'data': data, 'type': 2, 'title': '删除'},
+                    {'data': data, 'type': 5, 'title': '共享'},
                 ]
 
                 if (data.class.indexOf('folder') == -1) {
@@ -234,7 +238,70 @@
                         });
                         //window.open('/admin/edit/'+d.data.id);
                     }
-                })
+                    // 重命名操作
+                    if (d.type == 4) {
+                        let old_filename = d.data.text
+                        layer.prompt({
+                                title: '重命名',
+                                success: function () {
+                                    f_name_array = old_filename.split('.')
+                                    if (f_name_array.length>1){
+                                        f_name_array.pop()
+                                    }
+                                    $('div.layui-layer-content input.layui-layer-input').val(f_name_array.join('.'))
+                                }
+                            },
+                            // 点击确定事件
+                            function (new_file_name, index) {
+                                if (new_file_name.length <= 0) {
+                                    layer.alert('文件名不能为空');
+                                    return false;
+                                } else if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s.]+$").test(new_file_name)) {
+                                    layer.alert('文件名不能有特殊字符')
+                                    return false;
+                                }
+                                layer.close(index)
+                                $.ajax({
+                                    url: '/admin/file-rename',
+                                    type: 'post',
+                                    data: {
+                                        'file_id': d.data.id,
+                                        'name': new_file_name,
+                                        'csrfmiddlewaretoken': $('[name="csrfmiddlewaretoken"]').val()
+                                    },
+                                    success: function (response) {
+                                        if (response.code == 0) {
+                                            html_element = $('#tr' + d.data.id + ' td').first()
+                                            if (response.type == 0) {
+                                                $('#path').val(response.path)
+                                                html_element.html('<a tag="'+response.id+'" class="folder mr">'+response.name+'</a>')
+                                            } else {
+                                                html_element.html('<a tag="' + response.id + '" class="mr" target="_blank" href="/admin/media/' + response.id + '">' +
+                                                    '<i class="layui-icon layui-icon-file"></i>' +
+                                                    response.name +
+                                                    '</a>');
+                                            }
+                                            refresh_folder_click_event();
+                                            refresh_right_click_menu();
+                                        } else {
+                                            layer.msg(response.msg);
+                                        }
+                                    }
+                                });
+                            }
+                        );
+                    }
+                    //共享操作
+                    if (d.type == 5){
+                        layer.confirm('共享设置', {
+                          btn: ['打开','关闭'] //按钮
+                        }, function(){
+                          layer.msg('共享成功', {time: 1000, icon: 1});
+                        }, function(){
+                          layer.msg('取消成功', {time: 1000, icon: 2});
+                        });
+                    }
+                });
                 return false;
             });
         }
@@ -270,6 +337,7 @@
                                 '<i class="layui-icon layui-icon-file"></i>' + field.name +
                                 '</a>' +
                                 '</td>' +
+                                '<td>' + field.username + '</td>' +
                                 '<td>' + field.file_size + '</td>' +
                                 '<td>' + field.pub_date + '</td></tr>'
                             $('#file_list').append(append_str)
@@ -293,7 +361,7 @@
                     if (d.code == 0) {
                         $.each(d.data, function (i, field) {
                             let append_str = '<tr id="tr' + field.id + '">' +
-                                '<td colspan="3">' +
+                                '<td colspan="4">' +
                                 '<a tag="' + field.id + '" class="mr folder">' + field.name + '</a>' +
                                 '</td>' +
                                 '</tr>'

@@ -14,6 +14,14 @@ UPLOAD_PATH = 'uploads'
 
 @login_required()
 def upload_file(request):
+    """current user upload file to server
+
+    Arguments:
+        request {object} -- wsgi request object
+
+    Returns:
+        json -- file upload result object
+    """
     if request.method == 'POST':
         local_path = os.path.join(settings.BASE_DIR, UPLOAD_PATH, TODAY)
         if os.path.exists(local_path) is False:
@@ -67,41 +75,109 @@ def upload_file(request):
                     'pub_date': res.pub_date
                 }
             })
-        else:
-            return JsonResponse({
-                'code': 1,
-                'msg': 'upload fail'
-            })
+
+        return JsonResponse({
+            'code': 1,
+            'msg': 'upload fail'
+        })
 
 
 @login_required()
 def get_user_file_list(request, t):
+    """get current user all file or folder list
+
+    Arguments:
+        request {object} --wsgi request object
+        t {str} -- foler or file
+
+    Returns:
+        json -- user file list
+    """
     if t not in ['file', 'folder']:
         return JsonResponse({
             'code': 1,
             'msg': 'type error'
         })
-    else:
-        file_path = request.POST.get('path', '/')
-        user_id = request.user.id
 
-        file_type = {
-            'folder': 0,
-            'file': 1
-        }
-        res = FileInfo.objects.filter(
-            type=file_type[t], owner=user_id, path=file_path).values()
+    file_path = request.POST.get('path', '/')
+    user_id = request.user.id
+
+    file_type = {
+        'folder': 0,
+        'file': 1
+    }
+    res = FileInfo.objects.filter(
+        type=file_type[t], owner=user_id, path=file_path
+    )
+    list_res = list(res.values())
+    n = 0
+    for i in res:
+        list_res[n]['username'] = i.owner.first_name
+        n += 1
+
     if res:
         return JsonResponse({
             'code': 0,
             'message': 'ok',
-            'data': list(res)
+            'data': list_res
         })
-    else:
+    return JsonResponse({
+        'code': 1,
+        'message': 'fail'
+    })
+
+
+@login_required
+def file_rename(request):
+    """file rename
+
+    Arguments:
+        request {object} -- wsgi request object
+
+    Returns:
+        json -- json object
+    """
+    file_id = request.POST.get('file_id', 0)
+    new_name = request.POST.get('name', None)
+    
+    if file_id == 0 or new_name is None:
         return JsonResponse({
             'code': 1,
-            'message': 'fail'
+            'msg': 'illegal request'
         })
+    res = FileInfo.objects.get(id=file_id)
+
+    update_rs_count = 0
+    if res.file_type:
+        new_filename = '.'.join([new_name, res.file_type])
+    else:
+        new_filename = new_name
+    update_rs_count = FileInfo.objects.filter(id=file_id).update(name=new_filename)
+
+    if res.type == 0:
+        sub_res = FileInfo.objects.filter(
+            path__startswith=res.path+res.name,
+            owner=request.user.id
+        )
+        if sub_res:
+            for i in sub_res:
+                new_path = res.path+new_name+i.path[len(res.path+res.name):]
+                update_rs_count += FileInfo.objects.filter(id=i.id).update(path=new_path)
+    
+    if update_rs_count > 0:
+        return JsonResponse({
+            'code': 0,
+            'type': res.type,
+            'msg': 'success',
+            'path': res.path,
+            'id': res.id,
+            'name': new_filename
+        })
+    return JsonResponse({
+        'code': 1,
+        'msg': 'rename fail'
+    })
+
 
 
 @login_required
@@ -116,7 +192,8 @@ def create_folder(request):
     """
     folder_name = request.POST.get('name', '')
     p_path = request.POST.get('path', '/')
-
+    if '/' in folder_name:
+        folder_name = folder_name.replace('/', '')
     folder = FileInfo.objects.filter(name=folder_name, path=p_path)
     if folder:
         return JsonResponse({
@@ -130,22 +207,21 @@ def create_folder(request):
         'owner': User.objects.get(id=request.user.id),
         'path': p_path
     })
-    if res:
-        return JsonResponse({
-            'code': 0,
-            'msg': 'success',
-            'data': {
-                'id': res.id,
-                'path': res.path,
-                'name': res.name,
-                'pub_date': res.pub_date
-            }
-        })
-    else:
+    if not res:
         return JsonResponse({
             'code': 1,
             'msg': 'fail'
         })
+    return JsonResponse({
+        'code': 0,
+        'msg': 'success',
+        'data': {
+            'id': res.id,
+            'path': res.path,
+            'name': res.name,
+            'pub_date': res.pub_date
+        }
+    })
 
 
 @login_required
@@ -246,11 +322,11 @@ def file_save(request):
             'code': 0,
             'msg': '写入成功'
         })
-    else:
-        return JsonResponse({
-            'code': 1,
-            'msg': '写入失败'
-        })
+
+    return JsonResponse({
+        'code': 1,
+        'msg': '写入失败'
+    })
 
 
 @login_required
@@ -267,7 +343,7 @@ def file_delete(request, fid):
     res = FileInfo.objects.get(id=fid)
     # delete file
     if res and res.type == 1:
-        file = res.real_path + '/' + res.real_name
+        file = '/'.join([settings.BASE_DIR, res.real_path, res.real_name])
         affect = res.delete()
         try:
             os.remove(file)
@@ -284,7 +360,8 @@ def file_delete(request, fid):
 
         for i in sub_res:
             if i.type == 1:
-                os.remove(i.real_path + '/' + i.real_name)
+                file = '/'.join([settings.BASE_DIR, i.real_path, i.real_name])
+                os.remove(file)
         affect = sub_res.delete()
         res.delete()
     if affect:
@@ -292,11 +369,10 @@ def file_delete(request, fid):
             'code': 0,
             'msg': 'ok'
         })
-    else:
-        return JsonResponse({
-            'code': 1,
-            'msg': 'fail'
-        })
+    return JsonResponse({
+        'code': 1,
+        'msg': 'fail'
+    })
 
 
 # @login_required
@@ -316,8 +392,8 @@ def file_download(request, fid):
     res = FileInfo.objects.get(id=fid)
     down = request.GET.get('d', 0)
     # if res and res.owner != request.user:
-    if not res:
-        return render(request, 'admin/error.html')
+    if not res or res.type == 0:
+        return render(request, 'admin/error.html',{'error_msg':'illegal request'})
 
     if res.file_type == 'md':
         temp_name = 'file_view_md.html'
@@ -355,13 +431,13 @@ def file_download(request, fid):
             'filename': res.name,
             'content': content
         })
-    else:
-        file = open(file_path, 'rb')
-        response = FileResponse(file)
-        response['Content-Type'] = 'application/octet-stream'
-        response['Content-Disposition'] = 'attachment;filename="{}"'.format(
-            res.name.encode('utf-8').decode('ISO-8859-1'))
-        return response
+
+    file = open(file_path, 'rb')
+    response = FileResponse(file)
+    response['Content-Type'] = 'application/octet-stream'
+    response['Content-Disposition'] = 'attachment;filename="{}"'.format(
+        res.name.encode('utf-8').decode('ISO-8859-1'))
+    return response
 
 
 def format_file_size(size):
@@ -375,9 +451,10 @@ def format_file_size(size):
     """
     if size < 1024:
         return '%i' % size + 'B'
-    elif 1024 <= size < 1024 ** 2:
+    if 1024 <= size < 1024 ** 2:
         return '%.1f' % float(size / 1024) + 'K'
-    elif 1024 ** 2 <= size < 1024 ** 3:
+    if 1024 ** 2 <= size < 1024 ** 3:
         return '%.1f' % float(size / 1024 ** 2) + 'M'
-    elif 1024 ** 3 <= size < 1024 ** 4:
+    if 1024 ** 3 <= size < 1024 ** 4:
         return '%.1f' % float(size / 1024 ** 3) + 'G'
+    return 'n/a'

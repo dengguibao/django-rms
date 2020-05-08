@@ -1,0 +1,130 @@
+{% extends "admin/basic.html" %}
+{% block notice%}
+日常 / 故障报告
+{% endblock %}
+{% block mainbody %}
+
+<fieldset class="layui-elem-field layui-field-title">
+    <legend>故障报告</legend>
+</fieldset>
+
+<form class="layui-form" action="">
+    {% csrf_token %}
+    <input type="hidden" name="id" value="0" />
+    <input type="hidden" name="owner_id" value="{{ request.user.id}}" />
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">故障说明</label>
+            <div class="layui-input-inline" style="width: 600px;">
+                <input type="text" maxlength="100" placeholder="简要说明故障现象" name="desc" value="" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">故障类别</label>
+            <div class="layui-input-inline">
+                <select name="type" lay-verify="required">
+                    <option value="">请选择</option>
+                    <option value="桌面故障">桌面故障</option>
+                    <option value="系统故障">系统故障</option>
+                    <option value="服务器故障">服务器故障</option>
+                    <option value="网络故障">网络故障</option>
+                    <option value="视频广播故障">视频广播故障</option>
+                    <option value="其它">其它</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">产生时间</label>
+            <div class="layui-input-inline">
+                <input type="text" name="start_date" id="start_date" placeholder="2020-03-18" value="" lay-verify="start_date" autocomplete="off" class="layui-input">
+            </div>
+        </div> 
+        <div class="layui-inline">
+            <label class="layui-form-label">恢复时间</label>
+            <div class="layui-input-inline">
+                <input type="text" name="end_date" id="end_date" placeholder="2020-03-18" value="" lay-verify="end_date" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">故障设备</label>
+            <div class="layui-input-inline" style="width: 300px;">
+                <input type="text" maxlength="100" placeholder="娄底汇聚s3700" name="device" value="" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">故障现象</label>
+        <div class="layui-input-block">
+            <textarea placeholder="请详细说明故障现象" maxlength="200" class="layui-textarea" name="info"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">故障原因</label>
+        <div class="layui-input-block">
+            <textarea placeholder="请详细说明故障原因" maxlength="200" class="layui-textarea" name="reason"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">解决办法</label>
+        <div class="layui-input-block">
+            <textarea placeholder="请详细说明解决办法" maxlength="200" class="layui-textarea" name="resolv_method"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button type="submit" class="layui-btn" lay-submit="" lay-filter="submit">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+    layui.use(['form', 'layer', 'layedit', 'laydate'], function () {
+        var form = layui.form,
+            laydate = layui.laydate,
+            layer = layui.layer;
+
+        laydate.render({
+            elem: '#start_date',
+            type: 'datetime'
+        });
+
+        laydate.render({
+            elem: '#end_date',
+            type: 'datetime'
+        });
+
+        form.on('submit(submit)', function (data) {
+            layer.confirm('提交后无法删除和修改，请确认', {
+                title: '提示',
+                btn: ['确定','取消'] //按钮
+            }, function(){
+                let url = "/admin/create-or-update/trouble_report/?log=no"
+                $.ajax({
+                    url: url,
+                    type: 'post',
+                    data: data.field,
+                    success: function (d) {
+                        if (d.code == 0) {
+                            layer.msg(d.msg, {icon:1})
+                            setTimeout(function () {
+                                window.location.reload(true) 
+                            }, 1000);
+                        }else{
+                            layer.msg(d.msg, {time: 1000, icon: 2})
+                        }
+                    }
+                })
+            }, function(){
+                // DO NOTHING
+            });
+            return false;
+        });
+    });
+</script>
+{% endblock %}

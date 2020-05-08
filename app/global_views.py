@@ -6,10 +6,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.admin.models import LogEntry, ADDITION, CHANGE
-from django.contrib.contenttypes.models import ContentType
+# from django.contrib.contenttypes.models import ContentType
 from django.contrib.admin.options import get_content_type_for_model
 from django.conf import settings
-from .models import VmInfo, HostInfo, ClusterInfo
+from .models import VmInfo, HostInfo, ClusterInfo, TroubleReport, DailyReport
 
 
 def data_struct():
@@ -100,21 +100,10 @@ def render_static_temp_view(request, temp_name):
         html -- html template
     """
     res_cluster = ClusterInfo.objects.filter(is_active=0).values('name', 'tag')
-
-    if 'list_' in temp_name:
-        context = {
-            'user_url_path': '管理',
-        }
-    elif 'change_password' in temp_name:
-        context = {
-            'user_url_path': '用户'
-        }
-    else:
-        context = {
-            'user_url_path': '添加',
-        }
-    context['cluster_data'] = res_cluster
-    context['zabbix_api'] = settings.ZABBIX_API
+    context = {
+        'cluster_data': res_cluster,
+        'zabbix_api': settings.ZABBIX_API
+    }
     return render(request, 'admin/%s.html' % temp_name, context)
 
 
@@ -131,14 +120,16 @@ def render_edit_view(request, form_name, nid):
         html -- html template
     """
         
-    if form_name not in ['vm', 'host', 'user', 'cluster']:
+    if form_name not in ['vm', 'host', 'user', 'cluster', 'daily_report', 'trouble_report']:
         return render(request, 'admin/error.html', {'error_msg': 'illegal request!'})
 
     perm = {
         'vm': 'app.change_vminfo',
         'host': 'app.change_hostinfo',
         'cluster': 'app.change_clusterinfo',
-        'user': 'auth.change_user'
+        'user': 'auth.change_user',
+        'trouble': 'app.change_troublereport',
+        'daily_report': 'app.change_dailyreport',
     }
     # permission verify
     if not request.user.has_perm(perm[form_name]):
@@ -151,29 +142,25 @@ def render_edit_view(request, form_name, nid):
         host_obj = HostInfo.objects.get(id=vm_obj.host_id)
         esxi_list = HostInfo.objects.filter(cluster_tag=host_obj.cluster_tag)
         context = {
-            'user_url_path': '编辑',
             'vm_obj': vm_obj,
             'cluster_tag': host_obj.cluster_tag,
             'esxi_list': esxi_list,
             'zabbix_api': settings.ZABBIX_API,
-            'cluster_data': ClusterInfo.objects.filter(is_active=0).values('name','tag')
+            'cluster_data': ClusterInfo.objects.filter(is_active=0).values('name', 'tag')
         }
     elif form_name == 'host':
         host_obj = HostInfo.objects.get(id=nid)
         context = {
-            'user_url_path': '编辑',
             'host_obj': host_obj,
-            'cluster_data': ClusterInfo.objects.filter(is_active=0).values('name','tag')
+            'cluster_data': ClusterInfo.objects.filter(is_active=0).values('name', 'tag')
         }
     elif form_name == 'cluster':
         obj = ClusterInfo.objects.get(id=nid)
         context = {
-            'user_url_path': '编辑',
             'obj': obj,
         }
     elif form_name == 'user':
         context = {
-            'user_url_path': '编辑',
             'data': User.objects.get(id=nid)
         }
     else:
@@ -203,20 +190,24 @@ def delete(request, form_name, nid):
         'code': 1,
         'msg': 'illegal request'
     }
-    if form_name not in ['vm', 'host', 'user', 'cluster']:
+    if form_name not in ['vm', 'host', 'user', 'cluster', 'trouble_report', 'daily_report' ]:
         return JsonResponse(return_data)
 
     model = {
         'host': HostInfo,
         'vm': VmInfo,
         'cluster': ClusterInfo,
-        'user': User
+        'user': User,
+        'trouble': TroubleReport,
+        'daily_report': DailyReport,
     }
     perm = {
         'vm': 'app.delete_vminfo',
         'host': 'app.delete_hostinfo',
         'cluster': 'app.delete_clusterinfo',
-        'user': 'auth.delete_user'
+        'user': 'auth.delete_user',
+        'trouble': 'app.change_troublereport',
+        'daily_report': 'app.change_dailyreport',
     }
     # permission verify
     if not request.user.has_perm(perm[form_name]):
@@ -250,13 +241,16 @@ def create_or_update(request, form_name):
         'code': 1,
         'msg': 'fail'
     }
-    if request.method != 'POST' or form_name not in ['vm', 'host', 'user', 'cluster']:
-        return JsonResponse(return_data)
+    if request.method != 'POST' or form_name not in ['vm', 'host', 'user', 'cluster', 'trouble_report', 'daily_report']:
+        return JsonResponse({
+            'code': 1,
+            'msg': 'illegal request!'
+        })
 
     post_data = request.POST.dict()
     del post_data['csrfmiddlewaretoken']
     del post_data['id']
-
+    log = request.GET.get('log', True)
     nid = int(request.POST.get('id', 0))
     # according id defined action
     if nid == 0:
@@ -278,14 +272,18 @@ def create_or_update(request, form_name):
         'host': 'hostinfo',
         'vm': 'vminfo',
         'cluster': 'clusterinfo',
-        'user': 'user'
+        'user': 'user',
+        'trouble_report': 'troublereport',
+        'daily_report': 'dailyreport'
     }
     # according form_name define model
     model = {
         'host': HostInfo,
         'vm': VmInfo,
         'cluster': ClusterInfo,
-        'user': User
+        'user': User,
+        'trouble_report': TroubleReport,
+        'daily_report': DailyReport
     }
     # permission verify
     if not request.user.has_perm(app_object + perm_action_flag + perm_object[form_name]):
@@ -293,7 +291,7 @@ def create_or_update(request, form_name):
             'code': 1,
             'msg': 'permission error'
         })
-    log_content_type_model_id = get_content_type_for_model(model[form_name]).pk
+    
     if form_name == 'cluster':
         if post_data['tag'] == 'none':
             post_data['tag'] = '__none__'
@@ -303,7 +301,7 @@ def create_or_update(request, form_name):
         else:
             post_data['password'] = make_password(post_data['password'])
 
-    # do
+    # write to db
     if act == 'create':
         res = model[form_name].objects.create(**post_data)
         log_object_id = res.id
@@ -318,44 +316,48 @@ def create_or_update(request, form_name):
         return_data['code'] = 1
 
     # write log
-    change_field = request.GET.get('change_field', None)
-    log_change_data = []
-    field_explain = data_struct()
-    if change_field:
-        for f in change_field.split(','):
-            if form_name == 'vm' and f == 'host_id':
-                v = res.host.hostname
-            elif form_name in ['vm', 'host'] and f in ['vm_status', 'dev_status']:
-                v = '开机' if post_data[f] == '0' else '关机'
-            elif form_name == 'user' and f == 'is_active':
-                v = '启用' if post_data[f] == '1' else '禁用'
-            elif form_name == 'host' and f == 'cluster_tag':
-                if post_data[f] == 'none':
-                    v = '独立服务器'
-                else:
-                    x = ClusterInfo.objects.filter(tag=post_data[f])
-                    v = x[0].name
-            elif form_name == 'user' and f == 'password':
-                v = '******'
-            elif form_name == 'cluster' and f == 'is_active':
-                v = '启用' if post_data[f] == '0' else '禁用'
-            else:
-                v = post_data[f]
-            log_change_data.append('%s: %s' % (field_explain[form_name][f], v))
-
-    if log_action_flag == ADDITION:
-        log_object_repr = str(res)
+    if log == 'no':
+        pass
     else:
-        log_object_repr = ' '.join(log_change_data)
+        log_content_type_model_id = get_content_type_for_model(model[form_name]).pk
+        change_field = request.GET.get('change_field', None)
+        log_change_data = []
+        field_explain = data_struct()
+        if change_field:
+            for f in change_field.split(','):
+                if form_name == 'vm' and f == 'host_id':
+                    v = res.host.hostname
+                elif form_name in ['vm', 'host'] and f in ['vm_status', 'dev_status']:
+                    v = '开机' if post_data[f] == '0' else '关机'
+                elif form_name == 'user' and f == 'is_active':
+                    v = '启用' if post_data[f] == '1' else '禁用'
+                elif form_name == 'host' and f == 'cluster_tag':
+                    if post_data[f] == 'none':
+                        v = '独立服务器'
+                    else:
+                        x = ClusterInfo.objects.filter(tag=post_data[f])
+                        v = x[0].name
+                elif form_name == 'user' and f == 'password':
+                    v = '******'
+                elif form_name == 'cluster' and f == 'is_active':
+                    v = '启用' if post_data[f] == '0' else '禁用'
+                else:
+                    v = post_data[f]
+                log_change_data.append('%s: %s' % (field_explain[form_name][f], v))
 
-    LogEntry.objects.log_action(
-        user_id=request.user.pk,
-        content_type_id=log_content_type_model_id,
-        object_id=log_object_id,
-        object_repr=log_object_repr,
-        action_flag=log_action_flag,
-        change_message=json.dumps(post_data, ensure_ascii=True)
-    )
+        if log_action_flag == ADDITION:
+            log_object_repr = str(res)
+        else:
+            log_object_repr = ' '.join(log_change_data)
+
+        LogEntry.objects.log_action(
+            user_id=request.user.pk,
+            content_type_id=log_content_type_model_id,
+            object_id=log_object_id,
+            object_repr=log_object_repr,
+            action_flag=log_action_flag,
+            change_message=json.dumps(post_data, ensure_ascii=True)
+        )
     # according return object judge create or update
     if (act == 'update' and res) or (act == 'create' and res.id):
         return_data['code'] = 0

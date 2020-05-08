@@ -31,7 +31,9 @@ def permission_admin_view(request, nid):
             # Q(codename__contains='fileinfo') |
             Q(codename__contains='clusterinfo') |
             Q(codename__contains='hostinfo') |
-            Q(codename__contains='user') 
+            Q(codename__contains='user') |
+            Q(codename__contains='dailyreport') |
+            Q(codename__contains='troublereport')
         ).values()
         for i in all_perms_list:
             i['permission_explain'] = permission_explain(i['codename'])
@@ -64,7 +66,7 @@ def permission_control_view(request, method, perms, nid):
         nid {int} -- user id
     
     Returns:
-        [type] -- [description]
+        json -- json object
     """
     return_data = {
         'code': 1,
@@ -131,10 +133,12 @@ def permission_explain(perm):
     }
     res_data = {
         'vminfo': '虚拟机',
-        'hostinfo': '主机',
+        'hostinfo': '服务器',
         'user': '用户',
         'fileinfo': '文件',
-        'clusterinfo': '集群'
+        'clusterinfo': '集群',
+        'troublereport': '故障报告',
+        'dailyreport': '日报'
     }
     return act_data[x[0]]+res_data[x[1]]
 
@@ -152,7 +156,9 @@ def init_admin_permission(request):
         # 'fileinfo',
         'hostinfo',
         'vminfo',
-        'user'
+        'user',
+        'dailyreport',
+        'troublereport'
     ]
     action_flag_array = [
         'add_',
@@ -192,6 +198,10 @@ def init_user_permission(request, user_id):
         'add_hostinfo',
         'change_hostinfo',
         'view_hostinfo',
+        'view_dailyreport',
+        'add_dailyreport',
+        'view_troublereport',
+        'add_troublereport'
     ]
     for perm in user_perms_list:
         if user.has_perm(perm):

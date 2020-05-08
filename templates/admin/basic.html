@@ -39,64 +39,102 @@
     <div id="topContainer">运维信息管理平台</div>
     <div id="leftContainer">
       <div id="nav">
-        <!--news area-->
 
         <div class="nav_pri_menu">
-          <a href="javascript:void(0);" title="menu" class="pri_menu">添加</a>
+            <a href="javascript:void(0);" title="menu" class="pri_menu">日常</a>
+            <div class="sub_menu_item">
+              {% if perms.app.add_dailyreport %}
+              <li><a href="/admin/render/add_or_edit_daily_report" title="日报">工作日报</a></li>
+              {% endif %}
+              {% if perms.app.add_troublereport %}
+              <li><a href="/admin/render/add_or_edit_trouble_report" title="故障报告">故障报告</a></li>
+              {% endif %}
+            </div>
+        </div>
+        <!--server area-->
+        {% if perms.app.add_clusterinfo or perms.app.add_hostinfo or perms.app.add_vminfo %}
+        <div class="nav_pri_menu">
+          <a href="javascript:void(0);" title="menu" class="pri_menu">服务器</a>
           <div class="sub_menu_item">
             {% if perms.app.add_clusterinfo %}
-            <li><a href="/admin/render/add_or_edit_cluster" title="cluster">集群</a></li>
+            <li><a href="/admin/render/add_or_edit_cluster" title="cluster">ESXi集群</a></li>
             {% endif %}
             <!--<li><a href="/admin/render/shell' %}" title="shell">shell</a></li>-->
+            {% if perms.app.add_hostinfo %}
             <li><a href="/admin/render/add_or_edit_host" title="add new host">服务器</a></li>
+            {% endif %}
+
+            {% if perms.app.add_vminfo %}
             <li><a href="/admin/render/add_or_edit_vm" title="add new virtual mechine">虚拟机</a></li>
+            {% endif %}
           </div>
         </div>
-
-        <!--new article area-->
+        {% endif %}
+        <!--manage area-->
         <div class="nav_pri_menu">
           <a href="javascript:void(0);" title="menu" class="pri_menu">管理</a>
           <div class="sub_menu_item">
            {% if perms.app.view_clusterinfo %}
-            <li><a href="/admin/get-cluster-list" title="list cluster">集群</a></li>
+            <li><a href="/admin/get-cluster-list" title="list cluster">ESXi集群</a></li>
             {% endif %}
+
+            {% if perms.app.view_hostinfo %}
             <li><a href="/admin/render/list_hosts"  title="list hosts">服务器</a></li>
+            {% endif %}
+
+            {% if perms.app.view_vminfo %}
             <li><a href="/admin/render/list_vms"  title="list vms">虚拟机</a></li>
-            <li><a href="/admin/render/list_script"  title="list script">脚本</a></li>
-            <li><a href="/admin/index"  title="summary">摘要</a></li>
-            <li><a href="/admin/render/list_doc" title="document manage">文档</a></li>
+            {% endif %}
+
+            {% if perms.app.view_dailyreport %}
+            <li><a href="/admin/list-report/?t=daily" title="list daily report">工作日报</a></li>
+            {% endif %}
+
+            {% if perms.app.view_troublereport %}
+            <li><a href="/admin/list-report/?t=trouble" title="list trouble report">故障报告</a></li>
+            {% endif %}
           </div>
         </div>
 
-        <!--Message area-->
-        <!-- <div class="nav_pri_menu">
-          <a href="javascript:void(0);" title="message" class="pri_menu">配置管理</a>
+        <!--summary area-->
+        <div class="nav_pri_menu">
+          <a href="javascript:void(0);" title="menu" class="pri_menu">摘要</a>
           <div class="sub_menu_item">
-            <li><a href="#" title="Add category">网络设备</a></li>
+            <li><a href="/admin/index"  title="server summary">服务器</a></li>
           </div>
-        </div> -->
+        </div>
 
-        <!--menu area-->
+        <!-- document manage -->
+        <div class="nav_pri_menu">
+          <a href="javascript:void(0);" title="menu" class="pri_menu">文档</a>
+          <div class="sub_menu_item">
+            <li><a href="/admin/render/list_doc" title="document manage">用户上传</a></li>
+            <li><a href="/admin/render/list_script"  title="list script">配置脚本</a></li>
+          </div>
+        </div>
+
+        <!--user area-->
         <div class="nav_pri_menu">
           <a href="javascript:void(0);" title="menu" class="pri_menu">用户</a>
           <div class="sub_menu_item">
             <!-- <li><a href="#" title="add primary menu">系统设置</a></li> -->
             {% if perms.auth.add_user %}
-              <li><a href="/admin/render/add_or_edit_user" title="new user">新增用户</a></li>
+              <li><a href="/admin/render/add_or_edit_user" title="new user">新建用户</a></li>
             {% endif %}
             {% if perms.auth.view_user %}
               <li><a href="/admin/get-user-list" title="get user list">用户管理</a></li>
             {% endif %}
             <li><a href="/admin/render/user_change_password" title="chang user password">修改密码</a></li>
-          </div>
-        </div>
-
-        <div class="nav_pri_menu">
-          <a href="javascript:void(0);" title="menu" class="pri_menu">状态</a>
-          <div class="sub_menu_item" style="display: none;">
             <li><a href="/admin/user-logout" title="logout">退出</a></li>
           </div>
         </div>
+
+<!--        <div class="nav_pri_menu">-->
+<!--          <a href="javascript:void(0);" title="menu" class="pri_menu">状态</a>-->
+<!--          <div class="sub_menu_item" style="display: none;">-->
+<!--            <li><a href="/admin/user-logout" title="logout">退出</a></li>-->
+<!--          </div>-->
+<!--        </div>-->
 
       </div>
     </div>
@@ -105,7 +143,7 @@
     </div>
     <div id="rightContainer">
       <blockquote class="layui-elem-quote layui-text" style="font-weight:bold">
-      管理首页 > {{user_url_path}} >
+          管理首页 /
         {% block notice %}
         {% endblock %}
     </blockquote>
