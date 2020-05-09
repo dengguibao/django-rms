@@ -123,7 +123,7 @@ def report_manage(request):
     user_data = User.objects.all()
     return render(request, 'admin/list_%s_report.html' % t, {
         'users': user_data,
-        'data': res.order_by('-pub_date'),
+        'data': res.order_by('-id'),
         'start_date': start_date,
         'end_date': end_date,
         'work_type': work_type,
