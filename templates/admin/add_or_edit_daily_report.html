@@ -15,7 +15,7 @@
     <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">工作内容</label>
         <div class="layui-input-block">
-            <textarea maxlength="100" lay-verify="required" placeholder="请输入工作内容" class="layui-textarea" name="content"></textarea>
+            <textarea maxlength="100" lay-verify="required" placeholder="请输入工作内容，按回车键直接提交" class="layui-textarea" name="content"></textarea>
         </div>
     </div>
 
@@ -38,7 +38,7 @@
 
     <div class="layui-form-item">
         <div class="layui-input-block">
-            <button type="submit" class="layui-btn" lay-submit="" lay-filter="submit">立即提交</button>
+            <button type="submit" class="layui-btn submit" lay-submit="" lay-filter="submit">立即提交</button>
             <button type="reset" class="layui-btn layui-btn-primary">重置</button>
         </div>
     </div>
@@ -48,30 +48,40 @@
         var form = layui.form
             , layer = layui.layer;
 
+
+        $('textarea').keypress(function (event) {
+            if (event.keyCode == 13){
+                $('.submit').click();
+                return false;
+            }
+        })
         form.on('submit(submit)', function (data) {
-            layer.confirm('提交后无法删除和修改，请确认', {
-                title: '提示',
-                btn: ['确定','取消'] //按钮
-            }, function(){
-                let url = "/admin/create-or-update/daily_report/?log=no"
-                $.ajax({
-                    url: url,
-                    type: 'post',
-                    data: data.field,
-                    success: function (d) {
-                        if (d.code == 0) {
-                            layer.msg(d.msg, {time: 1000, icon: 1})
-                            setTimeout(function () {
-                                window.location.reload(true) 
-                            }, 1000);
-                        }else{
-                            layer.msg(d.msg, {time: 1000, icon: 2})
-                        }
+            // layer.confirm('提交后无法删除和修改，请确认', {
+            //     title: '提示',
+            //     btn: ['确定','取消'] //按钮
+            // }, function(){
+            // }, function(){
+            //     // DO NOTHING
+            // });
+            let url = "/admin/create-or-update/daily_report/?log=no"
+            $.ajax({
+                url: url,
+                type: 'post',
+                data: data.field,
+                success: function (d) {
+                    if (d.code == 0) {
+                        layer.msg(d.msg, {time: 1000, icon: 1})
+                        setTimeout(function () {
+                            $('textarea').val('')
+                            $('textarea').focus();
+                            //window.location.reload(true)
+                        }, 1000);
+                    }else{
+                        layer.msg(d.msg, {time: 1000, icon: 2})
                     }
-                })
-            }, function(){
-                // DO NOTHING
-            });
+
+                }
+            })
             return false;
         });
     });

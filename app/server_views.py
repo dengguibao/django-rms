@@ -228,4 +228,3 @@ def search(request, dev_type, keyword):
             'msg': 'ok'
         }
     return JsonResponse(return_data)
-    

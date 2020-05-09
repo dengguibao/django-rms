@@ -84,8 +84,26 @@ def data_struct():
             'first_name': '姓名',
             'email': '邮箱',
             'is_active': '状态'
-
+        },
+        'daily': {
+            'content': '工作内容',
+            'type': '工作类型',
+            'owner': '人员',
+            'pub_date': '工作时间',
+        },
+        'trouble': {
+            'desc': '故障描述',
+            'type': '故障类型',
+            'start_date': '产生时间',
+            'end_date': '恢复时间',
+            'device': '所属设备',
+            'info': '故障现象',
+            'reason': '故障原因',
+            'resolv_method': '解决方法',
+            'owner': '值班人员',
+            'pub_date': '报告时间',
         }
+
     }
 
 @login_required()

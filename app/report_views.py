@@ -1,9 +1,13 @@
+import xlwt
 import time
 import datetime
+from io import BytesIO
 from .models import TroubleReport, DailyReport
+from .global_views import data_struct
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.http.response import HttpResponse
 
 
 @login_required
@@ -19,7 +23,7 @@ def report_manage(request):
     t = request.GET.get('t', None)
     if t not in ['trouble', 'daily']:
         return render(request, 'admin/error.html')
-
+    export = request.GET.get('export', None)
     model = {
         'trouble': TroubleReport,
         'daily': DailyReport,
@@ -86,6 +90,36 @@ def report_manage(request):
             owner=user_id
         )
     # print(user_id, work_type)
+    if export:
+        wb = xlwt.Workbook(encoding='utf8')
+        sheet = wb.add_sheet('sheet1', cell_overwrite_ok=True)
+        column = 0
+        backup_data_struct = data_struct()
+        for title in backup_data_struct[t]:
+            sheet.write(0, column, backup_data_struct[t][title])
+            column += 1
+
+        column = 0
+        data_row_num = 1
+        for res_row in res.values():
+            for key in backup_data_struct[t]:
+                if key == 'owner':
+                    sheet.write(data_row_num, column, res[data_row_num-1].owner.first_name)
+                else:
+                    sheet.write(data_row_num, column, res_row[key])
+                column += 1
+            column = 0
+            data_row_num += 1
+        response = HttpResponse(content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment;filename=%sReport.xls' % t
+        output = BytesIO()
+        wb.save(output)
+
+        # 重新定位到开始
+        output.seek(0)
+        response.write(output.getvalue())
+        return response
+
     user_data = User.objects.all()
     return render(request, 'admin/list_%s_report.html' % t, {
         'users': user_data,
@@ -103,14 +137,14 @@ def view_trouble_report(request, t_id):
 
     Arguments:
         request {object} -- wsgi request object
-        t_id {int} -- troublereport id
+        t_id {int} -- trouble report table id
 
     Returns:
         html -- response html
     """
     res = TroubleReport.objects.get(id=t_id)
     if not res:
-        return render(request, 'admin/error.html', {'error_msg': 'not found resouce!'})
+        return render(request, 'admin/error.html', {'error_msg': 'not found resource!'})
     # administrator not verify own
     if request.user.has_perm('auth.add_user') and request.user.has_perm('auth.view_user'):
         return render(request, 'admin/view_trouble_report.html', {'data': res})

@@ -3,7 +3,11 @@
 管理 / 故障报告
 {% endblock %}
 {% block mainbody %}
-
+<style type="text/css">
+    .layui-form-item .layui-inline{
+        margin-right: 0px;
+    }
+</style>
 <fieldset class="layui-elem-field layui-field-title">
     <legend>故障报告</legend>
 </fieldset>
@@ -12,7 +16,7 @@
     <div class="layui-form-item">
         <div class="layui-inline">
             <label class="layui-form-label">用户</label>
-            <div class="layui-input-inline" style="width:80px">
+            <div class="layui-input-inline" style="width:90px">
                 <select name="user_id" lay-verify="required">
                 {% if perms.auth.add_user or perms.auth.view_user %}
                     <option value="0">全部</option>
@@ -57,7 +61,12 @@
         </div>
 
         <div class="layui-inline">
-            <button type="submit" class="layui-btn" lay-submit="" lay-filter="submit">查找</button>
+            <button type="submit" class="layui-btn" lay-submit="" lay-filter="submit">
+                <i class="layui-icon layui-icon-search"></i>查找
+            </button>
+            <a href="javascript:export_search_result();" class="layui-btn">
+                <i class="layui-icon layui-icon-download-circle"></i>导出
+            </a>
         </div>
     </div>
     </form>
@@ -110,5 +119,9 @@
             type: 'date'
         });
     })
+    function export_search_result() {
+        $('form').attr('action','/admin/list-report/?t=trouble&export=t');
+        $('form').submit();
+    }
 </script>
 {% endblock %}
