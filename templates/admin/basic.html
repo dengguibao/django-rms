@@ -1,165 +1,116 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
 <head>
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
-  <title>运维信息管理平台</title>
-  <script src="/static/admin/js/jquery-1.4.3.min.js"></script>
-  <link href="/static/admin/css/background-common-top-menu.css" rel="stylesheet" />
-  <!--load layui-->
-  <script src="/static/public/layui.js"></script>
-  <link href="/static/public/css/layui.css" rel="stylesheet" />
-  <!--easy menu-->
-  <script src="/static/admin/js/jquery.easymenu.js"></script>
-  <link href="/static/admin/css/jquery.easymenu.css" rel="stylesheet" />
-  <!--fav icon-->
-  <link href="/static/public/images/favicon.ico" rel="SHORTCUT ICON" type="image/x-icon">
-  <style type="text/css">
-    .layui-btn .layui-icon {
+    <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+    <title>运维信息管理平台</title>
+    <script src="/static/admin/js/jquery-1.4.3.min.js"></script>
+    <link href="/static/admin/css/background-common-top-menu.css" rel="stylesheet"/>
+    <!--load layui-->
+    <script src="/static/public/layui.js"></script>
+    <link href="/static/public/css/layui.css" rel="stylesheet"/>
+    <!--easy menu-->
+    <script src="/static/admin/js/jquery.easymenu.js"></script>
+    <link href="/static/admin/css/jquery.easymenu.css" rel="stylesheet"/>
+    <!--fav icon-->
+    <link href="/static/public/images/favicon.ico" rel="SHORTCUT ICON" type="image/x-icon">
+    <style type="text/css">
+        .layui-btn .layui-icon {
             margin-right: 0;
         }
-  </style>
+    </style>
 
 </head>
 
 <body>
-    <div id="topContainer">运维信息管理平台</div>
-<!--    <div id="leftContainer">-->
-<!--      <div id="nav">-->
-
-<!--        <div class="nav_pri_menu">-->
-<!--            <a href="javascript:void(0);" title="menu" class="pri_menu">日常</a>-->
-<!--            <div class="sub_menu_item">-->
-<!--              {% if perms.app.add_dailyreport %}-->
-<!--              <li><a href="/admin/render/add_or_edit_daily_report" title="日报">工作日报</a></li>-->
-<!--              {% endif %}-->
-<!--              {% if perms.app.add_troublereport %}-->
-<!--              <li><a href="/admin/render/add_or_edit_trouble_report" title="故障报告">故障报告</a></li>-->
-<!--              {% endif %}-->
-<!--            </div>-->
-<!--        </div>-->
-<!--        &lt;!&ndash;server area&ndash;&gt;-->
-<!--        {% if perms.app.add_clusterinfo or perms.app.add_hostinfo or perms.app.add_vminfo %}-->
-<!--        <div class="nav_pri_menu">-->
-<!--          <a href="javascript:void(0);" title="menu" class="pri_menu">服务器</a>-->
-<!--          <div class="sub_menu_item">-->
-<!--            {% if perms.app.add_clusterinfo %}-->
-<!--            <li><a href="/admin/render/add_or_edit_cluster" title="cluster">ESXi集群</a></li>-->
-<!--            {% endif %}-->
-<!--            &lt;!&ndash;<li><a href="/admin/render/shell' %}" title="shell">shell</a></li>&ndash;&gt;-->
-<!--            {% if perms.app.add_hostinfo %}-->
-<!--            <li><a href="/admin/render/add_or_edit_host" title="add new host">服务器</a></li>-->
-<!--            {% endif %}-->
-
-<!--            {% if perms.app.add_vminfo %}-->
-<!--            <li><a href="/admin/render/add_or_edit_vm" title="add new virtual mechine">虚拟机</a></li>-->
-<!--            {% endif %}-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        {% endif %}-->
-<!--        &lt;!&ndash;manage area&ndash;&gt;-->
-<!--        <div class="nav_pri_menu">-->
-<!--          <a href="javascript:void(0);" title="menu" class="pri_menu">管理</a>-->
-<!--          <div class="sub_menu_item">-->
-<!--           {% if perms.app.view_clusterinfo %}-->
-<!--            <li><a href="/admin/get-cluster-list" title="list cluster">ESXi集群</a></li>-->
-<!--            {% endif %}-->
-
-<!--            {% if perms.app.view_hostinfo %}-->
-<!--            <li><a href="/admin/render/list_hosts"  title="list hosts">服务器</a></li>-->
-<!--            {% endif %}-->
-
-<!--            {% if perms.app.view_vminfo %}-->
-<!--            <li><a href="/admin/render/list_vms"  title="list vms">虚拟机</a></li>-->
-<!--            {% endif %}-->
-
-<!--            {% if perms.app.view_dailyreport %}-->
-<!--            <li><a href="/admin/list-report/?t=daily" title="list daily report">工作日报</a></li>-->
-<!--            {% endif %}-->
-
-<!--            {% if perms.app.view_troublereport %}-->
-<!--            <li><a href="/admin/list-report/?t=trouble" title="list trouble report">故障报告</a></li>-->
-<!--            {% endif %}-->
-<!--          </div>-->
-<!--        </div>-->
-
-<!--        &lt;!&ndash;summary area&ndash;&gt;-->
-<!--        <div class="nav_pri_menu">-->
-<!--          <a href="javascript:void(0);" title="menu" class="pri_menu">摘要</a>-->
-<!--          <div class="sub_menu_item">-->
-<!--            <li><a href="/admin/index"  title="server summary">服务器</a></li>-->
-<!--          </div>-->
-<!--        </div>-->
-
-<!--        &lt;!&ndash; document manage &ndash;&gt;-->
-<!--        <div class="nav_pri_menu">-->
-<!--          <a href="javascript:void(0);" title="menu" class="pri_menu">文档</a>-->
-<!--          <div class="sub_menu_item">-->
-<!--            <li><a href="/admin/render/list_doc" title="document manage">用户上传</a></li>-->
-<!--            <li><a href="/admin/render/list_script"  title="list script">配置脚本</a></li>-->
-<!--          </div>-->
-<!--        </div>-->
-
-<!--        &lt;!&ndash;user area&ndash;&gt;-->
-<!--        <div class="nav_pri_menu">-->
-<!--          <a href="javascript:void(0);" title="menu" class="pri_menu">用户</a>-->
-<!--          <div class="sub_menu_item">-->
-<!--            &lt;!&ndash; <li><a href="#" title="add primary menu">系统设置</a></li> &ndash;&gt;-->
-<!--            {% if perms.auth.add_user %}-->
-<!--              <li><a href="/admin/render/add_or_edit_user" title="new user">新建用户</a></li>-->
-<!--            {% endif %}-->
-<!--            {% if perms.auth.view_user %}-->
-<!--              <li><a href="/admin/get-user-list" title="get user list">用户管理</a></li>-->
-<!--            {% endif %}-->
-<!--            <li><a href="/admin/render/user_change_password" title="chang user password">修改密码</a></li>-->
-<!--            <li><a href="/admin/user-logout" title="logout">退出</a></li>-->
-<!--          </div>-->
-<!--        </div>-->
-
-<!--&lt;!&ndash;        <div class="nav_pri_menu">&ndash;&gt;-->
-<!--&lt;!&ndash;          <a href="javascript:void(0);" title="menu" class="pri_menu">状态</a>&ndash;&gt;-->
-<!--&lt;!&ndash;          <div class="sub_menu_item" style="display: none;">&ndash;&gt;-->
-<!--&lt;!&ndash;            <li><a href="/admin/user-logout" title="logout">退出</a></li>&ndash;&gt;-->
-<!--&lt;!&ndash;          </div>&ndash;&gt;-->
-<!--&lt;!&ndash;        </div>&ndash;&gt;-->
-
-<!--      </div>-->
-<!--    </div>-->
-
-    <div id="navMenu">
-      <ul id="menu">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Menu 2</a>
-        <ul>
-          <li><a href="#">Menu 2-1</a>
+{% comment %} <div id="topContainer">运维信息管理平台</div> {% endcomment %}
+<div id="navMenu">
+    <img src="/static/admin/img/icon.png" style="float:left;weight:38px;height:38px;margin:12px" alt="logo" />
+    <ul id="menu">
+        <li><a href="/admin/index">首页</a></li>
+        <li>
+            <a href="#">日常</a>
             <ul>
-              <li><a href="#">Menu 2-1-1</a></li>
-              <li><a href="#">Menu 2-1-2</a></li>
+                <li><a href="#">管理</a>
+                    <ul>
+                        {% if perms.app.view_dailyreport %}
+                        <li><a href="/admin/list-report/?t=daily" title="list daily report">工作日报</a></li>
+                        {% endif %}
+                        {% if perms.app.view_troublereport %}
+                        <li><a href="/admin/list-report/?t=trouble" title="list trouble report">故障报告</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+                {% if perms.app.add_dailyreport %}
+                <li><a href="/admin/render/add_or_edit_daily_report" title="日报">工作日报</a></li>
+                {% endif %}
+                {% if perms.app.add_troublereport %}
+                <li><a href="/admin/render/add_or_edit_trouble_report" title="故障报告">故障报告</a></li>
+                {% endif %}
             </ul>
-          </li>
-          <li><a href="#">Menu 2-2</a></li>
-          </ul>
         </li>
-      </ul>
-    </div>
+        <li>
+            <a href="#">服务器</a>
+            <ul>
+                <li><a href="#">管理</a>
+                    <ul>
+                        {% if perms.app.view_clusterinfo %}
+                        <li><a href="/admin/get-cluster-list" title="list cluster">ESXi集群</a></li>
+                        {% endif %}
 
-    <div id="contentContainer">
-      <blockquote class="layui-elem-quote layui-text" style="font-weight:bold">
-          管理首页 /
+                        {% if perms.app.view_hostinfo %}
+                        <li><a href="/admin/render/list_hosts" title="list hosts">服务器</a></li>
+                        {% endif %}
+
+                        {% if perms.app.view_vminfo %}
+                        <li><a href="/admin/render/list_vms" title="list vms">虚拟机</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+                {% if perms.app.add_clusterinfo %}
+                <li><a href="/admin/render/add_or_edit_cluster" title="add cluster">ESXi集群</a></li>
+                {% endif %}
+                <!--<li><a href="/admin/render/shell' %}" title="shell">shell</a></li>-->
+                {% if perms.app.add_hostinfo %}
+                <li><a href="/admin/render/add_or_edit_host" title="add new host">服务器</a></li>
+                {% endif %}
+
+                {% if perms.app.add_vminfo %}
+                <li><a href="/admin/render/add_or_edit_vm" title="add new virtual mechine">虚拟机</a></li>
+                {% endif %}
+            </ul>
+        </li>
+        <li>
+            <a href="#">文档</a>
+            <ul>
+                <li><a href="/admin/render/list_doc" title="document manage">用户上传</a></li>
+                <li><a href="/admin/render/list_script" title="list script">配置脚本</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">用户</a>
+            <ul>
+                {% if perms.auth.add_user %}
+                <li><a href="/admin/render/add_or_edit_user" title="new user">新建用户</a></li>
+                {% endif %}
+                {% if perms.auth.view_user %}
+                <li><a href="/admin/get-user-list" title="get user list">用户管理</a></li>
+                {% endif %}
+                <li><a href="/admin/render/user_change_password">修改密码</a></li>
+                <li><a href="/admin/user-logout">退出</a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+<div id="contentContainer">
+    <blockquote class="layui-elem-quote layui-text" style="font-weight:bold">
         {% block notice %}
         {% endblock %}
     </blockquote>
-      {% block mainbody %}
-      {% endblock %}
-    </div>
-  <script type="application/x-javascript">
-    // function resize_container(){
-    //   topBarHeight = $('#contentContainer').height()+20 //20px scroll bar
-    //   bodyHeight = $(window).height()
-    //   console.log(bodyHeight)
-    //   console.log(topBarHeight)
-    //   $('#contentContainer').height(bodyHeight-topBarHeight)
-    // }
-    // resize_container();
+    {% block mainbody %}
+    {% endblock %}
+</div>
+<script type="application/x-javascript">
     $("#menu").easymenu();
-  </script>
+</script>
 </body>
 </html>
