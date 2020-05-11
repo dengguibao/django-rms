@@ -29,52 +29,51 @@
         <li>
             <a href="#">日常</a>
             <ul>
-                <li><a href="#">管理</a>
+                <li><a href="javascript:;">添加</a>
                     <ul>
-                        {% if perms.app.view_dailyreport %}
-                        <li><a href="/admin/list-report/?t=daily" title="list daily report">工作日报</a></li>
-                        {% endif %}
-                        {% if perms.app.view_troublereport %}
-                        <li><a href="/admin/list-report/?t=trouble" title="list trouble report">故障报告</a></li>
-                        {% endif %}
+                    {% if perms.app.add_dailyreport %}
+                    <li><a href="/admin/render/add_or_edit_daily_report" title="日报">工作日报</a></li>
+                    {% endif %}
+                    {% if perms.app.add_troublereport %}
+                    <li><a href="/admin/render/add_or_edit_trouble_report" title="故障报告">故障报告</a></li>
+                    {% endif %}  
                     </ul>
                 </li>
-                {% if perms.app.add_dailyreport %}
-                <li><a href="/admin/render/add_or_edit_daily_report" title="日报">工作日报</a></li>
+                {% if perms.app.view_dailyreport %}
+                <li><a href="/admin/list-report/?t=daily" title="list daily report">工作日报</a></li>
                 {% endif %}
-                {% if perms.app.add_troublereport %}
-                <li><a href="/admin/render/add_or_edit_trouble_report" title="故障报告">故障报告</a></li>
+                {% if perms.app.view_troublereport %}
+                <li><a href="/admin/list-report/?t=trouble" title="list trouble report">故障报告</a></li>
                 {% endif %}
             </ul>
         </li>
         <li>
             <a href="#">服务器</a>
             <ul>
-                <li><a href="#">管理</a>
+                <li><a href="#">添加</a>
                     <ul>
-                        {% if perms.app.view_clusterinfo %}
-                        <li><a href="/admin/get-cluster-list" title="list cluster">ESXi集群</a></li>
+                        {% if perms.app.add_clusterinfo %}
+                        <li><a href="/admin/render/add_or_edit_cluster" title="add cluster">ESXi集群</a></li>
                         {% endif %}
-
-                        {% if perms.app.view_hostinfo %}
-                        <li><a href="/admin/render/list_hosts" title="list hosts">服务器</a></li>
+                        <!--<li><a href="/admin/render/shell' %}" title="shell">shell</a></li>-->
+                        {% if perms.app.add_hostinfo %}
+                        <li><a href="/admin/render/add_or_edit_host" title="add new host">服务器</a></li>
                         {% endif %}
-
-                        {% if perms.app.view_vminfo %}
-                        <li><a href="/admin/render/list_vms" title="list vms">虚拟机</a></li>
+                        {% if perms.app.add_vminfo %}
+                        <li><a href="/admin/render/add_or_edit_vm" title="add new virtual mechine">虚拟机</a></li>
                         {% endif %}
                     </ul>
                 </li>
-                {% if perms.app.add_clusterinfo %}
-                <li><a href="/admin/render/add_or_edit_cluster" title="add cluster">ESXi集群</a></li>
-                {% endif %}
-                <!--<li><a href="/admin/render/shell' %}" title="shell">shell</a></li>-->
-                {% if perms.app.add_hostinfo %}
-                <li><a href="/admin/render/add_or_edit_host" title="add new host">服务器</a></li>
+                {% if perms.app.view_clusterinfo %}
+                <li><a href="/admin/get-cluster-list" title="list cluster">ESXi集群</a></li>
                 {% endif %}
 
-                {% if perms.app.add_vminfo %}
-                <li><a href="/admin/render/add_or_edit_vm" title="add new virtual mechine">虚拟机</a></li>
+                {% if perms.app.view_hostinfo %}
+                <li><a href="/admin/render/list_hosts" title="list hosts">服务器</a></li>
+                {% endif %}
+
+                {% if perms.app.view_vminfo %}
+                <li><a href="/admin/render/list_vms" title="list vms">虚拟机</a></li>
                 {% endif %}
             </ul>
         </li>

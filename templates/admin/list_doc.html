@@ -13,7 +13,7 @@
     <input type="hidden" id="owner" value="{{ user.id }}">
     {% csrf_token %}
     <button type="button" class="layui-btn" id="btn_upload"><i class="layui-icon layui-icon-upload"></i>上传文件</button>
-    <button type="button" class="layui-btn" id="btn_create_folder">新建文件夹</button>
+    <button type="button" class="layui-btn" style="margin-left:1px" id="btn_create_folder">新建文件夹</button>
     <!--    <button type="button" class="layui-btn" id="btn_view_upload_progress">上传进度</button>-->
     <div class="layui-upload-list">
         <table class="layui-table" lay-skin="line">
@@ -197,7 +197,7 @@
                 let menu_data = [
                     {'data': data, 'type': 4, 'title': '重命名'},
                     {'data': data, 'type': 2, 'title': '删除'},
-                    {'data': data, 'type': 5, 'title': '共享'},
+                    //{'data': data, 'type': 5, 'title': '共享'},
                 ]
 
                 if (data.class.indexOf('folder') == -1) {
@@ -314,7 +314,7 @@
                 $('#folder_list').empty();
             } else {
                 //alert($('#folder_list'))
-                $('#folder_list').append('<tr><td colspan="3"><a class="folder">..</a></td></tr>');
+                $('#folder_list').append('<tr><td colspan="4"><a class="folder">..</a></td></tr>');
             }
 
             let file = $.ajax({

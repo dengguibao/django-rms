@@ -373,7 +373,10 @@
                         'vfs.fs.size[/home,pused]',
                     ];
                     tips_str="";
-
+                    if (server_info.result.length == 0){
+                        layer.alert('无结果返回')
+                        return false;
+                    }
                     if(server_info.result[0].status == 1){
                         tips_str+="状态: 停用</br>"
                     }else{
