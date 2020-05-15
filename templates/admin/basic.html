@@ -21,9 +21,11 @@
 </head>
 
 <body>
-{% comment %} <div id="topContainer">运维信息管理平台</div> {% endcomment %}
+{% comment %}
+<div id="topContainer">运维信息管理平台</div>
+{% endcomment %}
 <div id="navMenu">
-    <img src="/static/admin/img/icon.png" style="float:left;weight:38px;height:38px;margin:12px" alt="logo" />
+    <img src="/static/admin/img/icon.png" style="float:left;width:38px;height:38px;margin:12px" alt="logo"/>
     <ul id="menu">
         <li><a href="/admin/index">首页</a></li>
         <li>
@@ -31,12 +33,12 @@
             <ul>
                 <li><a href="javascript:;">添加</a>
                     <ul>
-                    {% if perms.app.add_dailyreport %}
-                    <li><a href="/admin/render/add_or_edit_daily_report" title="日报">工作日报</a></li>
-                    {% endif %}
-                    {% if perms.app.add_troublereport %}
-                    <li><a href="/admin/render/add_or_edit_trouble_report" title="故障报告">故障报告</a></li>
-                    {% endif %}  
+                        {% if perms.app.add_dailyreport %}
+                        <li><a href="/admin/render/add_or_edit_daily_report" title="日报">工作日报</a></li>
+                        {% endif %}
+                        {% if perms.app.add_troublereport %}
+                        <li><a href="/admin/render/add_or_edit_trouble_report" title="故障报告">故障报告</a></li>
+                        {% endif %}
                     </ul>
                 </li>
                 {% if perms.app.view_dailyreport %}
@@ -78,6 +80,42 @@
             </ul>
         </li>
         <li>
+            <a href="#">网络设备</a>
+            <ul>
+                <li><a href="#">添加</a>
+                    <ul>
+                        {% if perms.app.add_branch %}
+                        <li><a href="/admin/render/add_or_edit_branch" title="add branch">办公组织</a></li>
+                        {% endif %}
+
+                        {% if perms.app.add_networkdevices %}
+                        <li><a href="/admin/render/add_or_edit_net_devices" title="add devices">网络设备</a></li>
+                        {% endif %}
+
+                        {% if perms.app.add_wannetworks %}
+                        <li><a href="/admin/render/add_or_edit_wan_net" title="add wan net">互联网信息</a></li>
+                        {% endif %}
+
+                        {% if perms.app.add_lannetworks %}
+                        <li><a href="/admin/render/add_or_edit_lan_net" title="add lan net">网络信息</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+                <li><a href="/admin/render/list_branch" title="list branch">办公组织</a></li>
+                {% if perms.app.view_branch %}
+                <li><a href="/admin/render/list_network_devices" title="list network_devices">设备信息</a></li>
+                {% endif %}
+
+                {% if perms.app.view_wannetworks %}
+                <li><a href="/admin/render/list_wan_net" title="list wan net">互联网信息</a></li>
+                {% endif %}
+
+                {% if perms.app.view_lannetworks %}
+                <li><a href="/admin/render/list_lan_net" title="list lan net">网络信息</a></li>
+                {% endif %}
+            </ul>
+        </li>
+        <li>
             <a href="#">文档</a>
             <ul>
                 <li><a href="/admin/render/list_doc" title="document manage">用户上传</a></li>
@@ -105,6 +143,7 @@
         {% block notice %}
         {% endblock %}
     </blockquote>
+    <p><br></p>
     {% block mainbody %}
     {% endblock %}
 </div>

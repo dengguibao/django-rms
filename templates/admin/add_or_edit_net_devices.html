@@ -1,0 +1,166 @@
+{% extends "admin/basic.html" %}
+{% block notice%}
+网络设备 / {%if network_devices.id %}编辑{% else %}新建{% endif %}网络设备信息
+{% endblock %}
+{% block mainbody %}
+
+<fieldset class="layui-elem-field layui-field-title">
+    <legend>基本信息</legend>
+</fieldset>
+
+<form class="layui-form">
+    {% csrf_token %}
+    <input type="hidden" id="network_devices_id" name="id" value="{%if obj.id %}{{ obj.id }}{% else %}0{% endif %}" />
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">设备名称</label>
+            <div class="layui-input-inline" style="width: 300px;">
+                <input type="text" maxlength="50" placeholder="XYGJ-S5700_Lay9" name="hostname" value="{{ obj.hostname}}" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">管理IP</label>
+            <div class="layui-input-inline" style="width: 150px;">
+                <input type="text" placeholder="170.31.1.1" maxlength="50" name="ip" value="{{ obj.ip}}" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">类型</label>
+            <div class="layui-input-inline" style="width: 100px;">
+                <select lay-verify="required" name="device_type">
+                    <option value="">请选择</option>
+                    <option {% ifequal obj.device_type '交换机'%} selected=""{%endifequal%}>交换机</option>
+                    <option {% ifequal obj.device_type '路由器'%} selected=""{%endifequal%}>路由器</option>
+                    <option {% ifequal obj.device_type '防火墙'%} selected=""{%endifequal%}>防火墙</option>
+                    <option {% ifequal obj.device_type 'VPN'%} selected=""{%endifequal%}>VPN</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">品牌</label>
+            <div class="layui-input-inline" style="width: 100px;">
+                <select lay-verify="required" name="brand">
+                    <option value="">请选择</option>
+                    <option {% ifequal obj.device_type 'H3C'%} selected=""{%endifequal%}>H3C</option>
+                    <option {% ifequal obj.device_type 'Huawei'%} selected=""{%endifequal%}>Huawei</option>
+                    <option {% ifequal obj.device_type 'Sangfor'%} selected=""{%endifequal%}>Sangfor</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">序列号</label>
+            <div class="layui-input-inline" style="width: 300px;">
+                <input type="text" maxlength="50" placeholder="AXXAKLAS1313656156" name="sn" value="{{ obj.sn}}" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">型号</label>
+            <div class="layui-input-inline" style="width: 300px;">
+                <input type="text" maxlength="50" placeholder="USG6306E" name="device_model" value="{{ obj.device_model}}" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">版本号</label>
+            <div class="layui-input-inline" style="width: 300px;">
+                <input type="text" maxlength="50" name="version" placeholder="VER_DA1321560" value="{{ obj.version}}" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div> 
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">地区</label>
+            <div class="layui-input-inline" style="width: 150px;">
+                <select name="branch_id" lay-verify="required" lay-search="">
+                  <option>直接选择或搜索</option>
+                    {% for i in branch_data %}
+                    <option {%ifequal obj.branch_id i.id %}selected=""{%endifequal%} value="{{i.id}}">{{i.name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button type="submit" class="layui-btn" lay-submit="" lay-filter="submit">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form
+            , layer = layui.layer;
+
+        url = '/admin/create-or-update/net_devices/?log=no'
+        form.on('submit(submit)', function (data) {
+            $.ajax({
+                url: url,
+                type: 'post',
+                data: data.field,
+                success: function (d) {
+                    layer.msg(d.msg)
+                    if (d.code == 0) {
+                        setTimeout(function () {
+                            window.location.href = document.referrer
+                        }, 1000);
+                    }
+                },
+                error: function () {
+                    layer.msg(d.Status)
+                }
+            })
+            return false;
+        });
+
+        // form.on('select(cluster_tag)', function (data) {
+        //     var cluster_tag = data.value;
+        //     var url = "/admin/get-hosts-list/type/host/flag/" + cluster_tag;
+        //     var device_list_control = $("#host_id");
+        //     device_list_control.empty();
+        //     $.getJSON(
+        //         url,
+        //         function (result) {
+        //             device_list_control.html("<option value=''>请选择</option>");
+        //             $.each(result.data, function (i, item) {
+        //                 var opt_value = "<option value='" + item.id + "'>" + item.hostname + "</option>";
+        //                 device_list_control.append(opt_value);
+        //             })
+        //             form.render('select');
+        //         })
+        // });
+
+        form.verify({
+            ip: function (value, item) {
+                function isValidIP(ip) {
+                    var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
+                    return reg.test(ip);
+                }
+                if (isValidIP(value) == false) {
+                    return '请输入正确的IP地址';
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

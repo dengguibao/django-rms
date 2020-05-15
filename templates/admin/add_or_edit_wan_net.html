@@ -1,0 +1,116 @@
+{% extends "admin/basic.html" %}
+{% block notice%}
+网络设备 / {%if branch.id %}编辑{% else %}新建{% endif %}互联网信息
+{% endblock %}
+{% block mainbody %}
+
+<fieldset class="layui-elem-field layui-field-title">
+    <legend>基本信息</legend>
+</fieldset>
+
+<form class="layui-form">
+    {% csrf_token %}
+    <input type="hidden" id="branch_id" name="id" value="{%if obj.id %}{{ obj.id }}{% else %}0{% endif %}" />
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">IP/掩码</label>
+            <div class="layui-input-inline" style="width: 200px;">
+                <input type="text" placeholder="222.1.1.5/24" maxlength="50" name="ip" value="{{obj.ip}}" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">网关</label>
+            <div class="layui-input-inline" style="width: 200px;">
+                <input type="text" maxlength="50" name="gateway" placeholder="222.1.1.1" value="{{obj.gateway}}" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">带宽</label>
+            <div class="layui-input-inline" style="width: 100px;">
+                <input type="text" placeholder="100M" maxlength="50" name="bandwidth" value="{{obj.bandwidth}}" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">付费方式</label>
+            <div class="layui-input-inline" style="width: 100px;">
+                <input type="text" placeholder="1200/月" maxlength="50" name="rent" value="{{rent}}" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">运营商</label>
+            <div class="layui-input-inline" style="width: 100px;">
+                <input type="text" placeholder="联通" maxlength="50" name="isp" value="{{obj.isp}}" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">联系人</label>
+            <div class="layui-input-inline" style="width: 200px;">
+                <input type="text" placeholder="范 15607830768" maxlength="50" name="contact" value="{{obj.contact}}" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">地区</label>
+            <div class="layui-input-inline" style="width: 200px;">
+                <select name="branch_id" lay-verify="required" lay-search="">
+                  <option>直接选择或搜索</option>
+                    {% for i in branch_data %}
+                    <option {%ifequal obj.branch_id i.id %}selected=""{%endifequal%} value="{{i.id}}">{{i.name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button type="submit" class="layui-btn" lay-submit="" lay-filter="submit">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+    layui.use(['form', 'layedit'], function () {
+        var form = layui.form
+            , layer = layui.layer;
+        url = '/admin/create-or-update/wan_net/?log=no'
+        form.on('submit(submit)', function (data) {
+            $.ajax({
+                url: url,
+                type: 'post',
+                data: data.field,
+                success: function (d) {
+                    layer.msg(d.msg)
+                    if (d.code == 0) {
+                        setTimeout(function () {
+                            window.location.href = document.referrer
+                        }, 1000);
+                    }
+                },
+                error: function () {
+                    layer.msg(d.msg)
+                }
+            })
+            return false;
+        });
+    });
+</script>
+{% endblock %}

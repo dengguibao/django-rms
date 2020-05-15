@@ -33,7 +33,12 @@ def permission_admin_view(request, nid):
             Q(codename__contains='hostinfo') |
             Q(codename__contains='user') |
             Q(codename__contains='dailyreport') |
-            Q(codename__contains='troublereport')
+            Q(codename__contains='troublereport') |
+            Q(codename__contains='branch') |
+            Q(codename__contains='wannetworks') |
+            Q(codename__contains='lannetworks') |
+            Q(codename__contains='networkdevices')
+
         ).values()
         for i in all_perms_list:
             i['permission_explain'] = permission_explain(i['codename'])
@@ -137,8 +142,12 @@ def permission_explain(perm):
         'user': '用户',
         'fileinfo': '文件',
         'clusterinfo': '集群',
+        'dailyreport': '日报',
         'troublereport': '故障报告',
-        'dailyreport': '日报'
+        'branch': '分公司',
+        'networkdevices': '网络设备',
+        'lannetworks': '网络信息',
+        'wannetworks': '互联网信息',
     }
     return act_data[x[0]]+res_data[x[1]]
 
@@ -158,7 +167,11 @@ def init_admin_permission(request):
         'vminfo',
         'user',
         'dailyreport',
-        'troublereport'
+        'troublereport',
+        'branch',
+        'networkdevices',
+        'lannetworks',
+        'wannetworks',
     ]
     action_flag_array = [
         'add_',

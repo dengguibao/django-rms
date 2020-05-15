@@ -9,7 +9,10 @@ from django.contrib.admin.models import LogEntry, ADDITION, CHANGE
 # from django.contrib.contenttypes.models import ContentType
 from django.contrib.admin.options import get_content_type_for_model
 from django.conf import settings
-from .models import VmInfo, HostInfo, ClusterInfo, TroubleReport, DailyReport
+from .models import(
+    VmInfo, HostInfo, ClusterInfo, TroubleReport, DailyReport,
+    Branch, NetworkDevices, WanNetworks, LanNetworks
+) 
 
 
 def data_struct():
@@ -106,6 +109,22 @@ def data_struct():
 
     }
 
+
+def form_array():
+    return [
+        'vm', 
+        'host', 
+        'user', 
+        'cluster', 
+        'trouble_report', 
+        'daily_report', 
+        'branch', 
+        'lan_net',
+        'wan_net',
+        'net_devices'
+    ]
+
+
 @login_required()
 def render_static_temp_view(request, temp_name):
     """according parameter render static html template
@@ -120,7 +139,8 @@ def render_static_temp_view(request, temp_name):
     res_cluster = ClusterInfo.objects.filter(is_active=0).values('name', 'tag')
     context = {
         'cluster_data': res_cluster,
-        'zabbix_api': settings.ZABBIX_API
+        'zabbix_api': settings.ZABBIX_API,
+        'branch_data': Branch.objects.all()
     }
     return render(request, 'admin/%s.html' % temp_name, context)
 
@@ -137,8 +157,10 @@ def render_edit_view(request, form_name, nid):
     Returns:
         html -- html template
     """
+
+    request_form_array = form_array()
         
-    if form_name not in ['vm', 'host', 'user', 'cluster', 'daily_report', 'trouble_report']:
+    if form_name not in request_form_array:
         return render(request, 'admin/error.html', {'error_msg': 'illegal request!'})
 
     perm = {
@@ -148,6 +170,22 @@ def render_edit_view(request, form_name, nid):
         'user': 'auth.change_user',
         'trouble': 'app.change_troublereport',
         'daily_report': 'app.change_dailyreport',
+        'branch': 'app.change_branch',
+        'lan_net': 'app.change_lannetworks',
+        'wan_net': 'app.change_wannetworks',
+        'net_devices': 'app.change_networkdevices',
+    }
+    models = {
+        'host': HostInfo,
+        'vm': VmInfo,
+        'cluster': ClusterInfo,
+        'user': User,
+        'trouble': TroubleReport,
+        'daily_report': DailyReport,
+        'branch': Branch,
+        'lan_net': LanNetworks,
+        'wan_net': WanNetworks,
+        'net_devices': NetworkDevices
     }
     # permission verify
     if not request.user.has_perm(perm[form_name]):
@@ -156,7 +194,7 @@ def render_edit_view(request, form_name, nid):
     temp_name = 'admin/add_or_edit_%s.html' % form_name
 
     if form_name == 'vm':
-        vm_obj = VmInfo.objects.get(id=nid)
+        vm_obj = models[form_name].objects.get(id=nid)
         host_obj = HostInfo.objects.get(id=vm_obj.host_id)
         esxi_list = HostInfo.objects.filter(cluster_tag=host_obj.cluster_tag)
         context = {
@@ -167,19 +205,24 @@ def render_edit_view(request, form_name, nid):
             'cluster_data': ClusterInfo.objects.filter(is_active=0).values('name', 'tag')
         }
     elif form_name == 'host':
-        host_obj = HostInfo.objects.get(id=nid)
+        host_obj = models[form_name].objects.get(id=nid)
         context = {
             'host_obj': host_obj,
             'cluster_data': ClusterInfo.objects.filter(is_active=0).values('name', 'tag')
         }
     elif form_name == 'cluster':
-        obj = ClusterInfo.objects.get(id=nid)
+        obj = models[form_name].objects.get(id=nid)
         context = {
             'obj': obj,
         }
     elif form_name == 'user':
         context = {
-            'data': User.objects.get(id=nid)
+            'data': models[form_name].objects.get(id=nid)
+        }
+    elif form_name in ['lan_net','wan_net','branch','net_devices']:
+        context = {
+            'obj': models[form_name].objects.filter(id=nid),
+            'branch_data': Branch.objects.all()
         }
     else:
         temp_name = 'admin/error.html'
@@ -208,7 +251,8 @@ def delete(request, form_name, nid):
         'code': 1,
         'msg': 'illegal request'
     }
-    if form_name not in ['vm', 'host', 'user', 'cluster', 'trouble_report', 'daily_report' ]:
+    request_form_array = form_array()
+    if form_name not in request_form_array:
         return JsonResponse(return_data)
 
     model = {
@@ -218,14 +262,22 @@ def delete(request, form_name, nid):
         'user': User,
         'trouble': TroubleReport,
         'daily_report': DailyReport,
+        'branch': Branch,
+        'lan_net': LanNetworks,
+        'wan_net': WanNetworks,
+        'net_devices': NetworkDevices
     }
     perm = {
         'vm': 'app.delete_vminfo',
         'host': 'app.delete_hostinfo',
         'cluster': 'app.delete_clusterinfo',
         'user': 'auth.delete_user',
-        'trouble': 'app.change_troublereport',
-        'daily_report': 'app.change_dailyreport',
+        'trouble': 'app.delete_troublereport',
+        'daily_report': 'app.delete_dailyreport',
+        'branch': 'app.delete_branch',
+        'lan_net': 'app.delete_lannetworks',
+        'wan_net': 'app.delete_wannetworks',
+        'net_devices': 'app.delete_networkdevices',
     }
     # permission verify
     if not request.user.has_perm(perm[form_name]):
@@ -259,7 +311,8 @@ def create_or_update(request, form_name):
         'code': 1,
         'msg': 'fail'
     }
-    if request.method != 'POST' or form_name not in ['vm', 'host', 'user', 'cluster', 'trouble_report', 'daily_report']:
+    request_form_array = form_array()
+    if request.method != 'POST' and form_name not in request_form_array:
         return JsonResponse({
             'code': 1,
             'msg': 'illegal request!'
@@ -292,7 +345,11 @@ def create_or_update(request, form_name):
         'cluster': 'clusterinfo',
         'user': 'user',
         'trouble_report': 'troublereport',
-        'daily_report': 'dailyreport'
+        'daily_report': 'dailyreport',
+        'branch': 'branch',
+        'lan_net': 'lannetworks',
+        'wan_net': 'wannetworks',
+        'net_devices': 'networkdevices',
     }
     # according form_name define model
     model = {
@@ -301,7 +358,11 @@ def create_or_update(request, form_name):
         'cluster': ClusterInfo,
         'user': User,
         'trouble_report': TroubleReport,
-        'daily_report': DailyReport
+        'daily_report': DailyReport,
+        'branch': Branch,
+        'lan_net': LanNetworks,
+        'wan_net': WanNetworks,
+        'net_devices': NetworkDevices
     }
     # permission verify
     if not request.user.has_perm(app_object + perm_action_flag + perm_object[form_name]):

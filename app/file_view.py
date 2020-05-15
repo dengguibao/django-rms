@@ -107,7 +107,9 @@ def get_user_file_list(request, t):
         'file': 1
     }
     res = FileInfo.objects.filter(
-        type=file_type[t], owner=user_id, path=file_path
+        type=file_type[t],
+        # owner=user_id,
+        path=file_path
     )
     list_res = list(res.values())
     n = 0

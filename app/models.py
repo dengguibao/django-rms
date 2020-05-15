@@ -167,3 +167,37 @@ class VmInfo(models.Model):
             '开机' if self.vm_status == 0 else '关机',
             self.vm_desc
         )
+
+
+class Branch(models.Model):
+    name = models.CharField(max_length=20)   # 分公司名称
+    address = models.CharField(max_length=100)   # 分公司地址
+
+
+class NetworkDevices(models.Model):
+    hostname = models.CharField(max_length=50)   # 设备名称
+    device_type = models.CharField(max_length=20)   # 设备类型
+    brand = models.CharField(max_length=20)   # 设备品牌
+    sn = models.CharField(max_length=50)   # 设备序列号
+    device_model = models.CharField(max_length=50)   # 设备型号
+    version = models.CharField(max_length=50)   # 软件版本号
+    ip = models.CharField(max_length=20)   # 管理IP
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)   # 地区
+
+
+class WanNetworks(models.Model):
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)   # 地区
+    isp = models.CharField(max_length=20)   # 运营商
+    ip = models.CharField(max_length=50)   # IP/掩码
+    gateway = models.CharField(max_length=20)   # 网关
+    bandwidth = models.CharField(max_length=10)   # 带宽
+    rent = models.CharField(max_length=20)   # 付费方式/金额
+    contact = models.CharField(max_length=50)   # 运营商联系人
+
+
+class LanNetworks(models.Model):
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)   # 地区
+    ip = models.CharField(max_length=50)   # IP/掩码
+    gateway = models.CharField(max_length=20)   # 网关
+    vlanid = models.IntegerField()  # vlan id
+    function = models.CharField(max_length=20)   # 用途

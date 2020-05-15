@@ -143,13 +143,16 @@ def view_trouble_report(request, t_id):
         html -- response html
     """
     res = TroubleReport.objects.get(id=t_id)
+    duration = res.end_date - res.start_date
+    duration_minute = duration.days*24+duration.seconds/60
+    # print(duration.days*24+duration.seconds/60)
     if not res:
         return render(request, 'admin/error.html', {'error_msg': 'not found resource!'})
     # administrator not verify own
     if request.user.has_perm('auth.add_user') and request.user.has_perm('auth.view_user'):
-        return render(request, 'admin/view_trouble_report.html', {'data': res})
+        return render(request, 'admin/view_trouble_report.html', {'data': res, 'duration': int(duration_minute)})
     # verify object own
     if res.owner_id != request.user.id:
         return render(request, 'admin/error.html')
     else:
-        return render(request, 'admin/view_trouble_report.html', {'data': res})
+        return render(request, 'admin/view_trouble_report.html', {'data': res, 'duration': int(duration_minute)})
