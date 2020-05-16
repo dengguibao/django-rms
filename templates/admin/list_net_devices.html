@@ -1,0 +1,80 @@
+{% extends "admin/basic.html" %}
+{% block notice%}
+管理 / 网络设备信息管理
+{% endblock %}
+{% block mainbody %}
+
+<fieldset class="layui-elem-field layui-field-title">
+    <legend>网络设备信息管理</legend>
+</fieldset>
+
+<div class="layui-form">
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th>设备名称</th>
+            <th>设备类型</th>
+            <th>设备品牌</th>
+            <th>序列号</th>
+            <th>设备型号</th>
+            <th>软件版本</th>
+            <th>管理IP</th>
+            <th>地区</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody id="tbody">
+        {%for i in obj%}
+        <tr id="id_{{i.id}}">
+            <td>{{ forloop.counter }}</td>
+            <td>{{i.hostname}}</td>
+            <td>{{i.device_type}}</td>
+            <td>{{ i.brand }}</td>
+            <td>{{i.sn}}</td>
+            <td>{{i.device_model}}</td>
+            <td>{{i.version}}</td>
+            <td>{{ i.ip }}</td>
+            <td>{{i.branch.name}}</td>
+            <td>
+                <a href="/admin/edit/net_devices/{{i.id}}" title="edit" class="layui-btn layui-btn-primary layui-btn-xs">
+                    <i class="layui-icon layui-icon-edit"></i>
+                </a>
+                <a flag="{{ i.id }}" title="delete" class="layui-btn layui-btn-primary layui-btn-xs btn-delete">
+                    <i class="layui-icon layui-icon-delete"></i>
+                </a>
+                <!-- <a target="_blank" title="logs" href="/admin/view-logs/clusterinfo/{{ i.id }}"
+                   class="layui-btn layui-btn-primary layui-btn-xs">
+                    <i class="layui-icon layui-icon-log"></i>
+                </a> -->
+            </td>
+        </tr>
+        {%endfor%}
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript">
+    layui.use('layer', function () {
+        var $ = layui.jquery,
+            layer = layui.layer;
+
+        $('.btn-delete').bind('click', function () {
+            var id = $(this).attr('flag')
+            layer.confirm('真的要删除该项', function (index) {
+                var url = "/admin/delete/net_devices/" + id
+                $.getJSON(
+                    url,
+                    function (d) {
+                        if (d.code == 0) {
+                            $('#id_' + id).empty();
+                        } else {
+                            layer.alert(d.msg);
+                        }
+                    }
+                );
+                layer.close(index)
+            });
+        });
+    })
+</script>
+{% endblock %}

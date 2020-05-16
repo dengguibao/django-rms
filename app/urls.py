@@ -11,6 +11,10 @@ from . import (
     summary_view,
     webshell_views,
     report_views,
+    branch_views,
+    net_devices_views,
+    wan_net_views,
+    lan_net_views,
 )
 
 urlpatterns = [
@@ -60,5 +64,10 @@ urlpatterns = [
 
     path('list-report/', report_views.report_manage),
     path('view-trouble-report/<int:t_id>', report_views.view_trouble_report),
+
+    path('get-branch-list/', branch_views.get_branch_list_view),
+    path('list_net_devices/', net_devices_views.list_net_devices_view),
+    path('list_wan_net/', wan_net_views.list_wan_net_view),
+    path('list_lan_net/', lan_net_views.list_lan_net_view),
 
 ]

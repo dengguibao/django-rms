@@ -101,17 +101,19 @@
                         {% endif %}
                     </ul>
                 </li>
-                <li><a href="/admin/render/list_branch" title="list branch">办公组织</a></li>
                 {% if perms.app.view_branch %}
-                <li><a href="/admin/render/list_network_devices" title="list network_devices">设备信息</a></li>
+                <li><a href="/admin/get-branch-list" title="list branch">办公组织</a></li>
+                {% endif %}
+                {% if perms.app.view_networkdevices %}
+                <li><a href="/admin/list_net_devices" title="list network_devices">设备信息</a></li>
                 {% endif %}
 
                 {% if perms.app.view_wannetworks %}
-                <li><a href="/admin/render/list_wan_net" title="list wan net">互联网信息</a></li>
+                <li><a href="/admin/list_wan_net" title="list wan net">互联网信息</a></li>
                 {% endif %}
 
                 {% if perms.app.view_lannetworks %}
-                <li><a href="/admin/render/list_lan_net" title="list lan net">网络信息</a></li>
+                <li><a href="/admin/list_lan_net" title="list lan net">网络信息</a></li>
                 {% endif %}
             </ul>
         </li>

@@ -50,9 +50,9 @@
             <div class="layui-input-inline" style="width: 100px;">
                 <select lay-verify="required" name="brand">
                     <option value="">请选择</option>
-                    <option {% ifequal obj.device_type 'H3C'%} selected=""{%endifequal%}>H3C</option>
-                    <option {% ifequal obj.device_type 'Huawei'%} selected=""{%endifequal%}>Huawei</option>
-                    <option {% ifequal obj.device_type 'Sangfor'%} selected=""{%endifequal%}>Sangfor</option>
+                    <option {% ifequal obj.brand 'H3C'%} selected=""{%endifequal%}>H3C</option>
+                    <option {% ifequal obj.brand 'Huawei'%} selected=""{%endifequal%}>Huawei</option>
+                    <option {% ifequal obj.brand 'Sangfor'%} selected=""{%endifequal%}>Sangfor</option>
                 </select>
             </div>
         </div>

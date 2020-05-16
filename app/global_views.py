@@ -221,13 +221,13 @@ def render_edit_view(request, form_name, nid):
         }
     elif form_name in ['lan_net','wan_net','branch','net_devices']:
         context = {
-            'obj': models[form_name].objects.filter(id=nid),
+            'obj': models[form_name].objects.get(id=nid),
             'branch_data': Branch.objects.all()
         }
     else:
         temp_name = 'admin/error.html'
         context = {}
-
+    
     return render(
         request,
         temp_name,
