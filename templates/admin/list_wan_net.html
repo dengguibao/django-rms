@@ -1,20 +1,36 @@
 {% extends "admin/basic.html" %}
 {% block notice%}
-管理 / 办公组织信息管理
+网络设备 / 互联网信息
 {% endblock %}
 {% block mainbody %}
 
 <fieldset class="layui-elem-field layui-field-title">
-    <legend>办公组织信息管理</legend>
+    <legend>互联网信息管理</legend>
 </fieldset>
 
 <div class="layui-form">
     <table class="layui-table">
+        <colgroup>
+            <col width="80">
+            <col width="100">
+            <col>
+            <col>
+            <col>
+            <col>
+            <col>
+            <col>
+            <col width="150">
+        </colgroup>
         <thead>
         <tr>
             <th>序号</th>
-            <th>组织名称</th>
-            <th>办公地址</th>
+            <th>分公司</th>
+            <th>IP</th>
+            <th>网关</th>
+            <th>带宽</th>
+            <th>费用</th>
+            <th>ISP</th>
+            <th>联系人</th>
             <th>操作</th>
         </tr>
         </thead>
@@ -22,10 +38,15 @@
         {%for i in obj%}
         <tr id="id_{{i.id}}">
             <td>{{ forloop.counter }}</td>
-            <td>{{i.name}}</td>
-            <td>{{i.address}}</td>
+            <td>{{ i.branch.name }}</td>
+            <td>{{ i.ip }}</td>
+            <td>{{ i.gateway }}</td>
+            <td>{{ i.bandwidth }}</td>
+            <td>{{ i.rent }}</td>
+            <td>{{ i.isp }}</td>
+            <td>{{ i.contact }}</td>
             <td>
-                <a href="/admin/edit/branch/{{i.id}}" title="edit" class="layui-btn layui-btn-primary layui-btn-xs">
+                <a href="/admin/edit/wan_net/{{i.id}}" title="edit" class="layui-btn layui-btn-primary layui-btn-xs">
                     <i class="layui-icon layui-icon-edit"></i>
                 </a>
                 <a flag="{{ i.id }}" title="delete" class="layui-btn layui-btn-primary layui-btn-xs btn-delete">
