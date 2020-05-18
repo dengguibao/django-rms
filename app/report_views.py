@@ -69,26 +69,36 @@ def report_manage(request):
         end_date_tuple[0], end_date_tuple[1], end_date_tuple[2]
     )
 
-    if user_id == 0 and work_type is None:
-        res = model[t].objects.filter(
-            pub_date__range=(s_date, e_date)
-        )
-    elif user_id == 0 and work_type is not None:
-        res = model[t].objects.filter(
-            pub_date__range=(s_date, e_date),
-            type=work_type
-        )
-    elif user_id != 0 and work_type is None:
-        res = model[t].objects.filter(
-            pub_date__range=(s_date, e_date),
-            owner=user_id
-        )
-    elif user_id != 0 and work_type is not None:
-        res = model[t].objects.filter(
-            type=work_type,
-            pub_date__range=(s_date, e_date),
-            owner=user_id
-        )
+    res = model[t].objects.filter(
+        pub_date__range=(s_date, e_date)
+    )
+
+    if user_id != 0:
+        res = res.filter(owner=user_id)
+    
+    if work_type:
+        res = res.filter(type=work_type)
+
+    # if user_id == 0 and work_type is None:
+    #     res = model[t].objects.filter(
+    #         pub_date__range=(s_date, e_date)
+    #     )
+    # elif user_id == 0 and work_type is not None:
+    #     res = model[t].objects.filter(
+    #         pub_date__range=(s_date, e_date),
+    #         type=work_type
+    #     )
+    # elif user_id != 0 and work_type is None:
+    #     res = model[t].objects.filter(
+    #         pub_date__range=(s_date, e_date),
+    #         owner=user_id
+    #     )
+    # elif user_id != 0 and work_type is not None:
+    #     res = model[t].objects.filter(
+    #         type=work_type,
+    #         pub_date__range=(s_date, e_date),
+    #         owner=user_id
+    #     )
     # print(user_id, work_type)
     if export:
         wb = xlwt.Workbook(encoding='utf8')

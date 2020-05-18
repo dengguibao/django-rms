@@ -28,12 +28,28 @@
             </div>
         </div>
     </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">DNS1</label>
+            <div class="layui-input-inline" style="width: 200px;">
+                <input type="text" maxlength="50" name="dns1" placeholder="8.8.8.8" value="{{obj.dns1}}" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">DNS2</label>
+            <div class="layui-input-inline" style="width: 200px;">
+                <input type="text" maxlength="50" name="dns2" placeholder="8.8.4.4" value="{{obj.dns2}}" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
 
     <div class="layui-form-item">
         <div class="layui-inline">
             <label class="layui-form-label">带宽</label>
             <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" placeholder="100M" maxlength="50" name="bandwidth" value="{{obj.bandwidth}}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" placeholder="100M" maxlength="50" name="bandwidth" value="{{obj.bandwidth}}" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -50,8 +66,11 @@
     <div class="layui-form-item">
         <div class="layui-inline">
             <label class="layui-form-label">运营商</label>
-            <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" placeholder="联通" maxlength="50" name="isp" value="{{obj.isp}}" lay-verify="required" autocomplete="off" class="layui-input">
+            <div class="layui-input-inline">
+                <input type="radio" name="isp" value="移动" title="移动"{%ifequal obj.isp '移动'%} checked=""{%endifequal%}>
+                <input type="radio" name="isp" value="联通" title="联通"{%ifequal obj.isp '联通'%} checked=""{%endifequal%}>
+                <input type="radio" name="isp" value="电信" title="电信"{%ifequal obj.isp '电信'%} checked=""{%endifequal%}>
+                <input type="radio" name="isp" value="网通" title="网通"{%ifequal obj.isp '网通'%} checked=""{%endifequal%}>
             </div>
         </div>
     </div>
@@ -60,7 +79,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">联系人</label>
             <div class="layui-input-inline" style="width: 200px;">
-                <input type="text" placeholder="范 15607830768" maxlength="50" name="contact" value="{{obj.contact}}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" placeholder="张三 15607830768" maxlength="50" name="contact" value="{{obj.contact}}" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>

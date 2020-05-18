@@ -8,18 +8,44 @@
     <legend>网络设备信息管理</legend>
 </fieldset>
 
+<div class="layui-row">
+    <form class="layui-form" method="POST" action="/admin/get-device-list/net_devices">
+    {% csrf_token %}
+        <div class="layui-form-item" style="text-align: center;">
+            <div class="layui-inline">
+                <div class="layui-input-inline" style="width:100px">
+                    <select name="branch_id" lay-verify="required" lay-search="">
+                        <option {%ifequal current_branch_id 0 %}selected=""{%endifequal%} value="0">全部</option>
+                        {% for i in branch_data %}
+                        <option {%ifequal current_branch_id i.id %}selected=""{%endifequal%} value="{{i.id}}">{{i.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <div class="layui-input-inline" style="width: 300px;">
+                    <input type="text" id="keyword" name="keyword" placeholder="请输入查询关键字" class="layui-input">
+                </div>
+                <button type="button" onclick="$(form).submit();" class="layui-btn" id="search" >
+                    <i class="layui-icon layui-icon-search"></i>查找
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
 <div class="layui-form">
-    <table class="layui-table">
+    <table class="layui-table" lay-size="sm">
         <colgroup>
+            <col width="50">
+            <col width="150">
             <col width="80">
-            <col width="150">
-            <col width="100">
-            <col width="100">
+            <col width="80">
             <col>
+            <col width="200">
             <col>
-            <col>
-            <col width="180">
-            <col width="150">
+            <col width="120">
+            <col width="80">
             <col width="150">
         </colgroup>
         <thead>
@@ -55,20 +81,35 @@
                 <a flag="{{ i.id }}" title="delete" class="layui-btn layui-btn-primary layui-btn-xs btn-delete">
                     <i class="layui-icon layui-icon-delete"></i>
                 </a>
-                <!-- <a target="_blank" title="logs" href="/admin/view-logs/clusterinfo/{{ i.id }}"
-                   class="layui-btn layui-btn-primary layui-btn-xs">
-                    <i class="layui-icon layui-icon-log"></i>
-                </a> -->
             </td>
         </tr>
         {%endfor%}
         </tbody>
     </table>
+    <div id="page"></div>
 </div>
 <script type="text/javascript">
-    layui.use('layer', function () {
+    layui.use(['layer', 'form', 'laypage'], function () {
         var $ = layui.jquery,
+            form = layui.form,
+            laypage = layui.laypage,
             layer = layui.layer;
+
+        laypage.render({
+            elem: 'page',
+            count: {{rs_count}},
+            limit: {{page_size}},
+            curr: {{curr_page}},
+            layout: ['count','prev', 'page', 'next'],
+            jump: function(obj, first){
+                //console.log(obj.curr);
+                //console.log(obj.limit);
+                if(!first){
+                    window.location.href='/admin/get-device-list/net_devices?page='+obj.curr
+                
+                }
+            }
+        });
 
         $('.btn-delete').bind('click', function () {
             var id = $(this).attr('flag')

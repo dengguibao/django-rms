@@ -18,16 +18,16 @@
 报告人：{{data.owner.first_name}}
 
 ### 发生时间
-{{data.start_date|date:"Y年m月d日 h时m分s秒" }}
+{{data.start_date|date:"Y年m月d日 H时i分" }}
 
 ### 恢复时间
-{{data.end_date|date:"Y年m月d日 h时m分s秒" }}
+{{data.end_date|date:"Y年m月d日 H时i分" }}
 
 ### 故障持续时间
 {{duration}}分钟
 
 ### 故障处理人
-{{data.owner.first_name}}
+{{data.repairer}}
 
 ### 故障设备
 {{data.device}}
@@ -40,6 +40,9 @@
 
 ### 解决方法
 {{data.resolv_method}}
+
+### 预防措施
+{{data.prevent}}
     </textarea>             
 </div>
 <script src="/static/public/md-editor/jquery.min.js"></script>

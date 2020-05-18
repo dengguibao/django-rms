@@ -101,6 +101,7 @@
                         {% endif %}
                     </ul>
                 </li>
+                <li><a href="/admin/render/list_script" title="list script">配置脚本</a></li>
                 {% if perms.app.view_branch %}
                 <li><a href="/admin/get-device-list/branch" title="list branch">办公组织</a></li>
                 {% endif %}
@@ -121,7 +122,6 @@
             <a href="#">文档</a>
             <ul>
                 <li><a href="/admin/render/list_doc" title="document manage">用户上传</a></li>
-                <li><a href="/admin/render/list_script" title="list script">配置脚本</a></li>
             </ul>
         </li>
         <li>
@@ -138,14 +138,16 @@
             </ul>
         </li>
     </ul>
+    <div style="float:right;margin:20px 10px;color:#ddd">
+        你好,{{request.user.first_name}},欢迎登陆
+    </div>
 </div>
 
 <div id="contentContainer">
-    <blockquote class="layui-elem-quote layui-text" style="font-weight:bold">
+    <blockquote class="layui-elem-quote layui-text" style="font-weight:bold;margin:20px 0">
         {% block notice %}
         {% endblock %}
     </blockquote>
-    <p><br></p>
     {% block mainbody %}
     {% endblock %}
 </div>

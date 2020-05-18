@@ -1,6 +1,6 @@
 {% extends "admin/basic.html" %}
 {% block notice%}
-日常 / 故障报告
+日常 / 添加 / 故障报告
 {% endblock %}
 {% block mainbody %}
 
@@ -52,6 +52,14 @@
     </div>
     <div class="layui-form-item">
         <div class="layui-inline">
+            <label class="layui-form-label">故障处理人</label>
+            <div class="layui-input-inline" style="width: 200px;">
+                <input type="text" maxlength="100" placeholder="张三/李四/王五" name="repairer" value="" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
             <label class="layui-form-label">故障设备</label>
             <div class="layui-input-inline" style="width: 300px;">
                 <input type="text" maxlength="100" placeholder="娄底汇聚s3700" name="device" value="" lay-verify="required" autocomplete="off" class="layui-input">
@@ -61,19 +69,25 @@
     <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">故障现象</label>
         <div class="layui-input-block">
-            <textarea placeholder="请详细说明故障现象" maxlength="200" class="layui-textarea" name="info"></textarea>
+            <textarea rows="2" placeholder="请详细说明故障现象" maxlength="200" class="layui-textarea" name="info"></textarea>
         </div>
     </div>
     <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">故障原因</label>
         <div class="layui-input-block">
-            <textarea placeholder="请详细说明故障原因" maxlength="200" class="layui-textarea" name="reason"></textarea>
+            <textarea rows="2" placeholder="请详细说明故障原因" maxlength="200" class="layui-textarea" name="reason"></textarea>
         </div>
     </div>
     <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">解决办法</label>
         <div class="layui-input-block">
-            <textarea placeholder="请详细说明解决办法" maxlength="200" class="layui-textarea" name="resolv_method"></textarea>
+            <textarea rows="2" placeholder="请详细说明解决办法" maxlength="200" class="layui-textarea" name="resolv_method"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">预防措施</label>
+        <div class="layui-input-block">
+            <textarea rows="2" placeholder="请详细说明预防措施" maxlength="200" class="layui-textarea" name="prevent"></textarea>
         </div>
     </div>
     <div class="layui-form-item">

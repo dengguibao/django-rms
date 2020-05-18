@@ -27,11 +27,13 @@ class TroubleReport(models.Model):
     start_date = models.DateTimeField(null=False, verbose_name="开始时间")
     end_date = models.DateTimeField(null=True, verbose_name="结束时间")
     device = models.CharField(verbose_name="故障设备", null=True, max_length=100)
-    info = models.TextField(null=True)
-    reason = models.TextField(null=True)
-    resolv_method = models.TextField(null=True)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    pub_date = models.DateTimeField(auto_now=True)
+    info = models.TextField(null=True) # 故障现象
+    reason = models.TextField(null=True) # 故障原因
+    resolv_method = models.TextField(null=True) # 解决方法
+    repairer =  models.CharField(null=True,max_length=100) # 处理人
+    prevent = models.TextField(null=True) # 预防措施
+    owner = models.ForeignKey(User, on_delete=models.CASCADE) # 报告人
+    pub_date = models.DateTimeField(auto_now=True) # 报告时间
 
 
 class ClusterInfo(models.Model):
@@ -172,6 +174,7 @@ class VmInfo(models.Model):
 class Branch(models.Model):
     name = models.CharField(max_length=20)   # 分公司名称
     address = models.CharField(max_length=100)   # 分公司地址
+    isenable = models.IntegerField(default=1, null=False) # 是否启用
 
 
 class NetworkDevices(models.Model):
@@ -192,6 +195,8 @@ class WanNetworks(models.Model):
     gateway = models.CharField(max_length=20)   # 网关
     bandwidth = models.CharField(max_length=10)   # 带宽
     rent = models.CharField(max_length=20)   # 付费方式/金额
+    dns1 = models.CharField(max_length=20, null=True)   # dns1
+    dns2 = models.CharField(max_length=20, null=True)   # dns2
     contact = models.CharField(max_length=50)   # 运营商联系人
 
 

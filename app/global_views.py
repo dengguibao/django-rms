@@ -140,7 +140,7 @@ def render_static_temp_view(request, temp_name):
     context = {
         'cluster_data': res_cluster,
         'zabbix_api': settings.ZABBIX_API,
-        'branch_data': Branch.objects.all()
+        'branch_data': Branch.objects.filter(isenable=1)
     }
     return render(request, 'admin/%s.html' % temp_name, context)
 
@@ -222,7 +222,7 @@ def render_edit_view(request, form_name, nid):
     elif form_name in ['lan_net','wan_net','branch','net_devices']:
         context = {
             'obj': models[form_name].objects.get(id=nid),
-            'branch_data': Branch.objects.all()
+            'branch_data': Branch.objects.filter(isenable=1)
         }
     else:
         temp_name = 'admin/error.html'

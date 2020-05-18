@@ -8,12 +8,29 @@
     <legend>办公组织信息管理</legend>
 </fieldset>
 
+<div class="layui-row">
+    <form class="layui-form" method="POST" action="/admin/get-device-list/branch">
+    {% csrf_token %}
+        <div class="layui-form-item" style="text-align: center;">
+            <div class="layui-inline">
+                <div class="layui-input-inline" style="width: 300px;">
+                    <input type="text" id="keyword" name="keyword" placeholder="请输入查询关键字" class="layui-input">
+                </div>
+                <button type="button" onclick="$(form).submit();" class="layui-btn" id="search" >
+                    <i class="layui-icon layui-icon-search"></i>查找
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
 <div class="layui-form">
-    <table class="layui-table">
+    <table class="layui-table" lay-size="sm">
         <colgroup>
             <col width="80">
             <col width="200">
             <col>
+            <col width="100">
             <col width="150">
         </colgroup>
         <thead>
@@ -21,6 +38,7 @@
             <th>序号</th>
             <th>组织名称</th>
             <th>办公地址</th>
+            <th>状态</th>
             <th>操作</th>
         </tr>
         </thead>
@@ -30,6 +48,7 @@
             <td>{{ forloop.counter }}</td>
             <td>{{i.name}}</td>
             <td>{{i.address}}</td>
+            <td>{%ifequal i.isenable 1%}启用{%else%}停用{%endifequal%}</td>
             <td>
                 <a href="/admin/edit/branch/{{i.id}}" title="edit" class="layui-btn layui-btn-primary layui-btn-xs">
                     <i class="layui-icon layui-icon-edit"></i>
@@ -37,20 +56,34 @@
                 <a flag="{{ i.id }}" title="delete" class="layui-btn layui-btn-primary layui-btn-xs btn-delete">
                     <i class="layui-icon layui-icon-delete"></i>
                 </a>
-                <!-- <a target="_blank" title="logs" href="/admin/view-logs/clusterinfo/{{ i.id }}"
-                   class="layui-btn layui-btn-primary layui-btn-xs">
-                    <i class="layui-icon layui-icon-log"></i>
-                </a> -->
             </td>
         </tr>
         {%endfor%}
         </tbody>
     </table>
 </div>
+<div id="page"></div>
 <script type="text/javascript">
-    layui.use('layer', function () {
+    layui.use(['laypage', 'layer'], function () {
         var $ = layui.jquery,
+            laypage = layui.laypage,
             layer = layui.layer;
+
+        laypage.render({
+            elem: 'page',
+            count: {{rs_count}},
+            limit: {{page_size}},
+            curr: {{curr_page}},
+            layout: ['count','prev', 'page', 'next'],
+            jump: function(obj, first){
+                //console.log(obj.curr);
+                //console.log(obj.limit);
+                if(!first){
+                    window.location.href='/admin/get-device-list/branch?page='+obj.curr
+                
+                }
+            }
+        });
 
         $('.btn-delete').bind('click', function () {
             var id = $(this).attr('flag')
