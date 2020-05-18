@@ -10,17 +10,17 @@
 - 支持虚拟机web ssh和telnet方式远程登陆  
 - 支持上传文件在线编辑，类似于web vim 
 - 支持工作日报、故障报告管理以及导出功能  
-- 服务器、虚拟机、用户、集群进行生命周期管理，以及日志回滚功能  
+- 服务器、虚拟机、用户、集群进行生命周期管理，以及日志回滚功能     
 
 ## 截图预览  
- 
+
 ![01](https://raw.githubusercontent.com/dengguibao/django-rms/master/screenshot/01.png)
- 
+
 ![02](https://raw.githubusercontent.com/dengguibao/django-rms/master/screenshot/02.png)
 
 
 ![03](https://raw.githubusercontent.com/dengguibao/django-rms/master/screenshot/03.png)
 
- 
+
 ![04](https://raw.githubusercontent.com/dengguibao/django-rms/master/screenshot/04.png)
 
