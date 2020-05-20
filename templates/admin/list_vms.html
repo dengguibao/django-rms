@@ -25,7 +25,7 @@
 }
 </style>
 <fieldset class="layui-elem-field layui-field-title">
-    <legend>虚拟机管理</legend>
+    <legend>虚拟机列表</legend>
 </fieldset>
 <div class="layui-row">
     <div class="layui-form-item" style="text-align: center;">
@@ -107,6 +107,12 @@
 
         var flag = "cs";
         var tab_act = '_all';
+
+        $('#keyword').on('keydown',function(event){
+            if(event.keyCode==13){
+                $('#search').click();
+            }
+        })
         
         $('.layui-tab-title li').first().addClass('layui-this')
         $('#search').on('click',function () {
@@ -201,19 +207,20 @@
                             pwd = window.btoa(password);
                             layer.closeAll();
                             // 弹出webshell iframe
-                            layer.open({
-                                type: 2,
-                                title: obj.data.vm_ip,
-                                area: ['800px', '600px'],
-                                shade: false,
-                                closeBtn: 1,
-                                shadeClose: true,
-                                maxmin: true,
-                                content: ['/admin/web-shell/?type=ssh&host='+obj.data.vm_ip+'&port=22&user='+ username +'&password='+pwd, 'no'],
-                                //success: function(layero, index) {
-                                //    layer.iframeAuto(index);
-                                //}
-                            });
+                            window.open('/admin/web-shell/?type=ssh&host='+obj.data.vm_ip+'&port=22&user='+ username +'&password='+pwd)
+                            //layer.open({
+                            //    type: 2,
+                            //    title: obj.data.vm_ip,
+                            //    area: ['800px', '600px'],
+                            //    shade: false,
+                            //    closeBtn: 1,
+                            //    shadeClose: true,
+                            ///    maxmin: true,
+                            //    content: ['/admin/web-shell/?type=ssh&host='+obj.data.vm_ip+'&port=22&user='+ username +'&password='+pwd, 'no'],
+                            //    //success: function(layero, index) {
+                            //    //    layer.iframeAuto(index);
+                            //    //}
+                            //});
                         })
                     }
                 });

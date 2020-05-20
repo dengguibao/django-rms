@@ -5,7 +5,7 @@
 {% block mainbody %}
 
 <fieldset class="layui-elem-field layui-field-title">
-    <legend>基本信息</legend>
+    <legend>设备信息</legend>
 </fieldset>
 
 <form class="layui-form">
@@ -35,6 +35,7 @@
             <div class="layui-input-inline" style="width: 100px;">
                 <select lay-verify="required" name="device_type">
                     <option value="">请选择</option>
+                    <option {% ifequal obj.device_type 'IPS'%} selected=""{%endifequal%}>IPS</option>
                     <option {% ifequal obj.device_type '交换机'%} selected=""{%endifequal%}>交换机</option>
                     <option {% ifequal obj.device_type '路由器'%} selected=""{%endifequal%}>路由器</option>
                     <option {% ifequal obj.device_type '防火墙'%} selected=""{%endifequal%}>防火墙</option>

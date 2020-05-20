@@ -5,6 +5,7 @@ from django.core.paginator import Paginator
 from django.conf import settings
 from .models import NetworkDevices, Branch, LanNetworks, WanNetworks
 
+
 @login_required()
 def list_device_info(request, form_name):
     """render lannetworks list
@@ -15,8 +16,8 @@ def list_device_info(request, form_name):
     Returns:
         html -- render html template
     """
-    branch_id = request.POST.get('branch_id',0)
-    keyworyd = request.POST.get('keyword', None)
+    branch_id = request.GET.get('branch_id', 0)
+    keyworyd = request.GET.get('keyword', None)
     page_size = settings.PAGE_SIZE
     page = int(request.GET.get('page', 1))
 
@@ -36,30 +37,34 @@ def list_device_info(request, form_name):
         'wan_net': WanNetworks,
         'net_devices': NetworkDevices,
     }
-    
+
     if form_name not in perms:
-        return render(request, 'admin/error.html', {
-            'error_msg': 'Illegal request'
-        })
+        return render(
+            request, 'admin/error.html',
+            {'error_msg': 'Illegal request'}
+        )
 
     if not request.user.has_perm(perms[form_name] % (app_name, perm_action)):
-        return render(request, 'admin/error.html', {
-            'error_msg': 'permission denied'
-        })
-    
-    res_list = models[form_name].objects.all()
+        return render(
+            request, 'admin/error.html',
+            {
+                'error_msg': 'permission denied'
+            }
+        )
+
+    res_list = models[form_name].objects.all().order_by('-id')
 
     if form_name == 'branch' and keyworyd:
-        res_list = models[form_name].objects.filter(
-            Q(name__contains=keyworyd)|
+        res_list = res_list.filter(
+            Q(name__contains=keyworyd) |
             Q(address__contains=keyworyd)
         )
     elif form_name == 'lan_net' and keyworyd:
-        res_list = models[form_name].objects.filter(
+        res_list = res_list.filter(
             Q(ip__contains=keyworyd)
         )
     elif form_name == 'wan_net' and keyworyd:
-        res_list = models[form_name].objects.filter(
+        res_list = res_list.filter(
             Q(ip__contains=keyworyd) |
             Q(bandwidth__contains=keyworyd) |
             Q(rent__contains=keyworyd) |
@@ -67,7 +72,7 @@ def list_device_info(request, form_name):
             Q(isp__contains=keyworyd)
         )
     elif form_name == 'net_devices' and keyworyd:
-        res_list = models[form_name].objects.filter(
+        res_list = res_list.filter(
             Q(sn__contains=keyworyd) |
             Q(ip__contains=keyworyd) |
             Q(device_model__contains=keyworyd) |
@@ -77,23 +82,23 @@ def list_device_info(request, form_name):
         )
 
     if not keyworyd:
-        res_lsit = models[form_name].objects.all()
-
+        pass
 
     if int(branch_id) == 0:
         pass
     else:
-        res_list = res_list.filter(branch_id=branch_id)       
+        res_list = res_list.filter(branch_id=branch_id)
 
     p = Paginator(res_list, page_size)
-    
+
     return render(
-        request,
-        'admin/list_%s.html' % form_name,
+        request, 
+        'admin/list_%s.html' % form_name, 
         {
             'obj': p.page(page),
-            'branch_data': Branch.objects.all(),
-            'current_branch_id': branch_id,
+            'branch_data': Branch.objects.filter(isenable=1),
+            'keyword': keyworyd,
+            'current_branch_id': int(branch_id),
             'rs_count': p.count,
             'page_size': page_size,
             'curr_page': page

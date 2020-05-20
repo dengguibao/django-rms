@@ -17,7 +17,7 @@
     }
 </style>
 <fieldset class="layui-elem-field layui-field-title">
-    <legend>服务器管理</legend>
+    <legend>服务器列表</legend>
 </fieldset>
 <div class="layui-row">
     <div class="layui-form-item" style="text-align: center;">
@@ -70,6 +70,12 @@
             laypage = layui.laypage,
             element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
 
+        $('#keyword').on('keydown',function(event){
+            if(event.keyCode==13){
+                $('#search').click();
+            }
+        })
+        
         $('.layui-tab-title li').first().addClass('layui-this')
         refresh_table("/admin/get-hosts-list/type/host/flag/cs", 'cs');
 

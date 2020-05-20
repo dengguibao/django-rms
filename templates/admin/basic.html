@@ -29,7 +29,7 @@
     <ul id="menu">
         <li><a href="/admin/index">首页</a></li>
         <li>
-            <a href="#">日常</a>
+            <a href="#">报告</a>
             <ul>
                 <li><a href="javascript:;">添加</a>
                     <ul>
@@ -50,9 +50,32 @@
             </ul>
         </li>
         <li>
-            <a href="#">服务器</a>
+            <a href="javascript:;">组织架构</a>
             <ul>
                 <li><a href="#">添加</a>
+                    <ul>
+                        {% if perms.app.add_branch %}
+                        <li><a href="/admin/render/add_or_edit_branch" title="add branch">办公组织</a></li>
+                        {% endif %}
+
+                        {% if perms.auth.add_user %}
+                        <li><a href="/admin/render/add_or_edit_user" title="new user">新建用户</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+                {% if perms.app.view_branch %}
+                <li><a href="/admin/get-device-list/branch" title="list branch">办公组织</a></li>
+                {% endif %}
+
+                {% if perms.auth.view_user %}
+                <li><a href="/admin/get-user-list" title="get user list">用户管理</a></li>
+                {% endif %}
+            </ul>
+        </li>
+        <li>
+            <a href="javascript:;">服务器</a>
+            <ul>
+                <li><a href="javascript:;">添加</a>
                     <ul>
                         {% if perms.app.add_clusterinfo %}
                         <li><a href="/admin/render/add_or_edit_cluster" title="add cluster">ESXi集群</a></li>
@@ -80,13 +103,13 @@
             </ul>
         </li>
         <li>
-            <a href="#">网络设备</a>
+            <a href="javascript:;">网络设备</a>
             <ul>
-                <li><a href="#">添加</a>
+                <li><a href="javascript:;">添加</a>
                     <ul>
-                        {% if perms.app.add_branch %}
+                        {% comment %} {% if perms.app.add_branch %}
                         <li><a href="/admin/render/add_or_edit_branch" title="add branch">办公组织</a></li>
-                        {% endif %}
+                        {% endif %} {% endcomment %}
 
                         {% if perms.app.add_networkdevices %}
                         <li><a href="/admin/render/add_or_edit_net_devices" title="add devices">网络设备</a></li>
@@ -102,9 +125,9 @@
                     </ul>
                 </li>
                 <li><a href="/admin/render/list_script" title="list script">配置脚本</a></li>
-                {% if perms.app.view_branch %}
+                {% comment %} {% if perms.app.view_branch %}
                 <li><a href="/admin/get-device-list/branch" title="list branch">办公组织</a></li>
-                {% endif %}
+                {% endif %} {% endcomment %}
                 {% if perms.app.view_networkdevices %}
                 <li><a href="/admin/get-device-list/net_devices" title="list network_devices">设备信息</a></li>
                 {% endif %}
@@ -119,20 +142,14 @@
             </ul>
         </li>
         <li>
-            <a href="#">文档</a>
+            <a href="javascript:;">文档</a>
             <ul>
                 <li><a href="/admin/render/list_doc" title="document manage">用户上传</a></li>
             </ul>
         </li>
         <li>
-            <a href="#">用户</a>
+            <a href="javascript:;">用户</a>
             <ul>
-                {% if perms.auth.add_user %}
-                <li><a href="/admin/render/add_or_edit_user" title="new user">新建用户</a></li>
-                {% endif %}
-                {% if perms.auth.view_user %}
-                <li><a href="/admin/get-user-list" title="get user list">用户管理</a></li>
-                {% endif %}
                 <li><a href="/admin/render/user_change_password">修改密码</a></li>
                 <li><a href="/admin/user-logout">退出</a></li>
             </ul>
@@ -144,7 +161,7 @@
 </div>
 
 <div id="contentContainer">
-    <blockquote class="layui-elem-quote layui-text" style="font-weight:bold;margin:20px 0">
+    <blockquote class="layui-elem-quote layui-text" style="font-weight:bold;margin:15px 0px">
         {% block notice %}
         {% endblock %}
     </blockquote>

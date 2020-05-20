@@ -1,6 +1,6 @@
 {% extends "admin/basic.html" %}
 {% block notice%}
-日常 / 故障报告管理
+报告 / 故障报告管理
 {% endblock %}
 {% block mainbody %}
 <style type="text/css">
@@ -17,7 +17,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">用户</label>
             <div class="layui-input-inline" style="width:90px">
-                <select name="user_id" lay-verify="required">
+                <select name="user_id" lay-filter="args" lay-verify="required">
                 {% if perms.auth.add_user or perms.auth.view_user %}
                     <option value="0">全部</option>
                     {% for u in users %}
@@ -33,7 +33,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">工作类别</label>
             <div class="layui-input-inline" style="width:100px">
-                <select name="type">
+                <select name="type" lay-filter="args">
                     <option value="">全部</option>
                     <option {% ifequal work_type '桌面故障' %}selected=""{% endifequal %} value="桌面故障">桌面故障</option>
                     <option {% ifequal work_type '系统故障' %}selected=""{% endifequal %} value="系统故障">系统故障</option>
@@ -61,7 +61,7 @@
         </div>
 
         <div class="layui-inline">
-            <button type="submit" class="layui-btn" lay-submit="" lay-filter="submit">
+            <button type="submit" id="search" class="layui-btn" lay-submit="" lay-filter="submit">
                 <i class="layui-icon layui-icon-search"></i>查找
             </button>
             <a href="javascript:export_search_result();" class="layui-btn">
@@ -118,6 +118,10 @@
             elem: '#end_date',
             type: 'date'
         });
+
+        form.on('select(args)',function(){
+            $('#search').click();
+        })
     })
     function export_search_result() {
         $('form').attr('action','/admin/list-report/?t=trouble&export=t');

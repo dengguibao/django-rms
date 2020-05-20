@@ -19,8 +19,8 @@ caption{
 }
 </style>
 <script src="/static/public/highcharts/highcharts.js"></script>
-<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-    <legend>服务器</legend>
+<fieldset class="layui-elem-field layui-field-title">
+    <legend>摘要信息</legend>
 </fieldset>
 
 <div class="layui-row">
@@ -31,18 +31,15 @@ caption{
                 <th rowspan="2">用户</th>
                 <th rowspan="2">文件</th>
                 <th rowspan="2">独立服务器</th>
-                <th colspan="{{data.cluster_count}}">虚拟机</th>
-                <th colspan="{{data.cluster_count}}">ESXi服务器</th>
+                <th rowspan="2">分子公司</th>
+                <th colspan="{{data.net_device_data|length}}">网络设备</th>
                 <th colspan="2">服务器保修信息</th>
             </tr>
             <tr>
                 <th>物理机</th>
                 <th>虚拟机</th>
-                {% for i in data.cluster_data %}
-                <th>{{i.name}}</th>
-                {% endfor %}
-                {% for i in data.cluster_data %}
-                <th>{{i.name}}</th>
+                {% for i in data.net_device_data %}
+                <th>{{ i.device_type }}</th>
                 {% endfor %}
                 <th>在保</th>
                 <th>过保</th>
@@ -53,14 +50,11 @@ caption{
                 <td>{{data.hosts_count}}</td>
                 <td>{{data.vms_count}}</td>
                 <td>{{data.user_count}}</td>
-                <td>{{data.file_count}}</td>
+                <td>{{data.file_count}}</td>                
                 <td>{{data.esxi_none_count}}</td>
-                {% for i in data.vms_count_data %}
-                <td>{{i}}</td>
-                {% endfor %}
-
-                {% for i in data.esxi_count_data %}
-                <td>{{i}}</td>
+                <td>{{data.branch_count}}</td>
+                {% for i in data.net_device_data %}
+                <td>{{i.count}}</td>
                 {% endfor %}
                 <td>{{data.in_guarantee_count}}</td>
                 <td>{{data.out_guarantee_count }}</td>
@@ -68,6 +62,9 @@ caption{
         </tbody>
     </table>
 </div>
+<fieldset class="layui-elem-field layui-field-title">
+    <legend>服务器{{a}}</legend>
+</fieldset>
 <div class="layui-tab layui-tab-card" lay-filter="tab_cluster">
   <ul class="layui-tab-title">
     {% for i in data.cluster_data %}

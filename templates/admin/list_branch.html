@@ -1,20 +1,20 @@
 {% extends "admin/basic.html" %}
 {% block notice%}
-网络设备 / 办公组织信息管理
+组织架构 / 办公组织信息管理
 {% endblock %}
 {% block mainbody %}
 
 <fieldset class="layui-elem-field layui-field-title">
-    <legend>办公组织信息管理</legend>
+    <legend>办公组织信息列表</legend>
 </fieldset>
 
 <div class="layui-row">
-    <form class="layui-form" method="POST" action="/admin/get-device-list/branch">
-    {% csrf_token %}
+    <form class="layui-form" method="GET" action="/admin/get-device-list/branch">
+    {% comment %} {% csrf_token %} {% endcomment %}
         <div class="layui-form-item" style="text-align: center;">
             <div class="layui-inline">
                 <div class="layui-input-inline" style="width: 300px;">
-                    <input type="text" id="keyword" name="keyword" placeholder="请输入查询关键字" class="layui-input">
+                    <input type="text" id="keyword" name="keyword" value="{%ifnotequal keyword None%}{{keyword}}{%endifnotequal%}" placeholder="请输入查询关键字" class="layui-input">
                 </div>
                 <button type="button" onclick="$(form).submit();" class="layui-btn" id="search" >
                     <i class="layui-icon layui-icon-search"></i>查找
@@ -69,6 +69,12 @@
             laypage = layui.laypage,
             layer = layui.layer;
 
+        $('#keyword').on('keydown',function(event){
+            if(event.keyCode==13){
+                $('#search').click();
+            }
+        })
+
         laypage.render({
             elem: 'page',
             count: {{rs_count}},
@@ -79,7 +85,8 @@
                 //console.log(obj.curr);
                 //console.log(obj.limit);
                 if(!first){
-                    window.location.href='/admin/get-device-list/branch?page='+obj.curr
+                    let keyword = $('input[name="keyword"]').val()
+                    window.location.href='/admin/get-device-list/branch?keyword='+keyword+'&page='+obj.curr
                 
                 }
             }

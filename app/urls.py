@@ -11,7 +11,7 @@ from . import (
     summary_view,
     webshell_views,
     report_views,
-    device_views,
+    network_device_views,
 )
 
 urlpatterns = [
@@ -62,6 +62,6 @@ urlpatterns = [
     path('list-report/', report_views.report_manage),
     path('view-trouble-report/<int:t_id>', report_views.view_trouble_report),
 
-    path('get-device-list/<str:form_name>', device_views.list_device_info),
+    path('get-device-list/<str:form_name>', network_device_views.list_device_info),
 
 ]

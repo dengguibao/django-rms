@@ -45,6 +45,7 @@ def report_manage(request):
             not request.user.has_perm('auth.add_user') and \
             not request.user.has_perm('auth.view_user'):
         return render(request, '/admin/error.html')
+
     first_name = None
     if user_id > 0:
         user_info = User.objects.get(id=user_id)
@@ -54,7 +55,8 @@ def report_manage(request):
     if work_type == '':
         work_type = None
     start_date = request.POST.get(
-        'start_date', (datetime.datetime.now()+datetime.timedelta(days=-1)).strftime('%Y-%m-%d')
+        'start_date', (datetime.datetime.now() +
+                       datetime.timedelta(days=-1)).strftime('%Y-%m-%d')
     )
     end_date = request.POST.get(
         'end_date', time.strftime('%Y-%m-30', time.localtime())
@@ -75,31 +77,10 @@ def report_manage(request):
 
     if user_id != 0:
         res = res.filter(owner=user_id)
-    
+
     if work_type:
         res = res.filter(type=work_type)
 
-    # if user_id == 0 and work_type is None:
-    #     res = model[t].objects.filter(
-    #         pub_date__range=(s_date, e_date)
-    #     )
-    # elif user_id == 0 and work_type is not None:
-    #     res = model[t].objects.filter(
-    #         pub_date__range=(s_date, e_date),
-    #         type=work_type
-    #     )
-    # elif user_id != 0 and work_type is None:
-    #     res = model[t].objects.filter(
-    #         pub_date__range=(s_date, e_date),
-    #         owner=user_id
-    #     )
-    # elif user_id != 0 and work_type is not None:
-    #     res = model[t].objects.filter(
-    #         type=work_type,
-    #         pub_date__range=(s_date, e_date),
-    #         owner=user_id
-    #     )
-    # print(user_id, work_type)
     if export:
         wb = xlwt.Workbook(encoding='utf8')
         sheet = wb.add_sheet('sheet1', cell_overwrite_ok=True)
@@ -114,7 +95,8 @@ def report_manage(request):
         for res_row in res.values():
             for key in backup_data_struct[t]:
                 if key == 'owner':
-                    sheet.write(data_row_num, column, res[data_row_num-1].owner.first_name)
+                    sheet.write(data_row_num, column,
+                                res[data_row_num-1].owner.first_name)
                 else:
                     sheet.write(data_row_num, column, res_row[key])
                 column += 1

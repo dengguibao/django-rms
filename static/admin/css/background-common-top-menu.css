@@ -5,12 +5,17 @@ body{
 /* a{text-decoration: none;color: #098;}
 a:hover{text-decoration: underline} */
 #navMenu {
-    display: block;
+	position: fixed;
+	top:0px;
+	left: 0px;
+	right: 0px;
     background: #393D49;
     height: 60px;
 	padding: 0 10px;
+	z-index: 999;
 }
 #contentContainer{
+	margin-top: 50px;
     display: block;
 	text-align: left;
     padding: 10px 10px;
