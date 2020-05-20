@@ -26,7 +26,7 @@
 
 ```bash
 PROJECT_DIR=/usr/local/www/dms
-cat > /etc/systemd/system/ops.service<<<EOF
+cat > /etc/systemd/system/ops.service<<EOF
 [Unit]
 Description=ops daemon
 
@@ -42,7 +42,7 @@ Restart=always
 WantedBy=multi-user.target
 EOF
 
-cat > /etc/systemd/system/ops-channels.service<<<EOF
+cat > /etc/systemd/system/ops-channels.service<<EOF
 [Unit]
 Description=ops daemon
 
