@@ -165,11 +165,13 @@ def render_edit_view(request, form_name, nid):
 
     app_name = 'app'
     perm_action = 'change'
+    if form_name == 'user':
+        app_name = 'auth'
     perm = {
         'vm': '%s.%s_vminfo',
         'host': '%s.%s_hostinfo',
         'cluster': '%s.%s_clusterinfo',
-        'user': 'auth.change_user',
+        'user': '%s.%s_user',
         'trouble': '%s.%s_troublereport',
         'daily_report': '%s.%s_dailyreport',
         'branch': '%s.%s_branch',
@@ -211,6 +213,7 @@ def render_edit_view(request, form_name, nid):
             'cluster_data': cluster_data
         },
         'branch': {},
+        'user': {},
         'host': {
             'cluster_data': cluster_data
         },
