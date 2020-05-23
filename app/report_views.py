@@ -1,13 +1,14 @@
 import xlwt
-import time
-import datetime
+import time, datetime
+import re
+import os
 from io import BytesIO
 from .models import TroubleReport, DailyReport
 from .global_views import data_struct
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from django.http.response import HttpResponse
+from django.http.response import HttpResponse, JsonResponse, Http404
 
 
 @login_required
@@ -56,7 +57,7 @@ def report_manage(request):
         work_type = None
     start_date = request.POST.get(
         'start_date', (datetime.datetime.now() +
-                       datetime.timedelta(days=-1)).strftime('%Y-%m-%d')
+                       datetime.timedelta(days=-7)).strftime('%Y-%m-%d')
     )
     end_date = request.POST.get(
         'end_date', time.strftime('%Y-%m-30', time.localtime())
@@ -148,3 +149,51 @@ def view_trouble_report(request, t_id):
         return render(request, 'admin/error.html')
     else:
         return render(request, 'admin/view_trouble_report.html', {'data': res, 'duration': int(duration_minute)})
+
+
+@login_required
+def create_inspect(request):
+    content = request.POST.get('content')
+    if not content:
+        return JsonResponse({
+            'code':1,
+            'msg': 'content is None'
+        })
+    # content = content.split('\n')
+    # print(content)
+
+    file_name = "inspect_order_%s.txt" % time.strftime('%Y-%m', time.localtime())
+    with open(file_name, 'w+', encoding='utf-8', errors="ignore") as f:
+        f.write(content)
+
+    return JsonResponse({
+        'code':0,
+        'msg': 'success'
+    })
+
+
+@login_required
+def list_inspect(request):
+    file_name = "inspect_order_%s.txt" % time.strftime('%Y-%m', time.localtime())
+    if not os.path.exists(file_name):
+        raise Http404()
+
+    with open(file_name, 'r', encoding='utf-8', errors="ignore") as f:
+        lines=f.read().replace('	',' ')
+    
+    lines = re.sub(' +', ' ', lines)
+    data=[]
+    for line in lines.split('\n'):
+        if line.strip() == '':
+            continue
+        x = line.split(' ')
+        data.append({
+            'date': x[0],
+            'person': x[1]
+        })
+    edit = request.GET.get('edit',None)
+    if edit:
+        print(lines)
+        return render(request, 'admin/add_or_edit_inspection_order.html',{'content': lines})
+
+    return render(request, 'admin/list_inspect.html',{'obj': data})

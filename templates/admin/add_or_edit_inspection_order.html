@@ -1,0 +1,69 @@
+{% extends "admin/basic.html" %}
+{% block notice%}
+报告 / 添加 / 巡检计划
+{% endblock %}
+{% block mainbody %}
+
+<fieldset class="layui-elem-field layui-field-title">
+    <legend>巡检计划</legend>
+</fieldset>
+
+<form class="layui-form" action="">
+    {% csrf_token %}
+    <input type="hidden" name="id" value="0" />
+    <input type="hidden" name="owner_id" value="{{ request.user.id}}" />
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">巡检计划</label>
+        <div class="layui-input-block">
+            <textarea rows="15" lay-verify="required" placeholder="2020/05/01 刘伟" class="layui-textarea" name="content">{{content}}</textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button type="submit" class="layui-btn submit" lay-submit="" lay-filter="submit">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form
+            , layer = layui.layer;
+
+
+        {% comment %} $('textarea').keypress(function (event) {
+            if (event.keyCode == 13){
+                $('.submit').click();
+                return false;
+            }
+        }) {% endcomment %}
+        form.on('submit(submit)', function (data) {
+            // layer.confirm('提交后无法删除和修改，请确认', {
+            //     title: '提示',
+            //     btn: ['确定','取消'] //按钮
+            // }, function(){
+            // }, function(){
+            //     // DO NOTHING
+            // });
+            let url = "/admin/create-inspect/?log=no"
+            $.ajax({
+                url: url,
+                type: 'post',
+                data: data.field,
+                success: function (d) {
+                    if (d.code == 0) {
+                        layer.msg(d.msg, {time: 1000, icon: 1})
+                        setTimeout(function () {
+                            window.location.href='/admin/list-inspect'
+                        }, 1000);
+                    }else{
+                        layer.msg(d.msg, {time: 1000, icon: 2})
+                    }
+
+                }
+            })
+            return false;
+        });
+    });
+</script>
+{% endblock %}

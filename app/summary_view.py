@@ -1,10 +1,14 @@
-import datetime
+import datetime, time
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Count
-from .models import VmInfo, HostInfo, FileInfo, ClusterInfo, Branch, NetworkDevices
+from .models import (
+    VmInfo, HostInfo, FileInfo, 
+    ClusterInfo, Branch, NetworkDevices,
+    TroubleReport, DailyReport
+)
 
 
 @login_required()
@@ -40,6 +44,32 @@ def list_summary_view(request):
     net_device_annotate = NetworkDevices.objects.values("device_type").annotate(count=Count("id"))
     esxi_none_count = HostInfo.objects.filter(cluster_tag='none').count()
 
+    start_date = time.strftime('%Y-%m-01', time.localtime())
+    end_date = time.strftime('%Y-%m-31', time.localtime())
+    fmt = '%Y-%m-%d'
+
+    start_date_tuple = time.strptime(start_date, fmt)
+    end_date_tuple = time.strptime(end_date, fmt)
+
+    s_date = datetime.date(
+        start_date_tuple[0], start_date_tuple[1], start_date_tuple[2]
+    )
+    e_date = datetime.date(
+        end_date_tuple[0], end_date_tuple[1], end_date_tuple[2]
+    )
+
+    trouble_annotate_count = TroubleReport.objects.filter(
+        pub_date__range=(s_date, e_date)
+    ).values('type').annotate(count=Count('id'))
+
+    user_work_annotate_count = User.objects.filter(
+        dailyreport__pub_date__range=(s_date, e_date)
+    ).annotate(count=Count('dailyreport__owner_id')).values('first_name','count')
+
+    # print(user_work_annotate_count.query)
+
+    # print(user_work_annotate_count.query)
+
     user_count = User.objects.all().count()
     file_count = FileInfo.objects.all().count()
 
@@ -54,6 +84,8 @@ def list_summary_view(request):
         'admin/list_summary.html', 
         {
         'data': {
+            'trouble_count_data': trouble_annotate_count,
+            'user_work_count_data': user_work_annotate_count,
             'branch_count': branch_count,
             'vms_count': vms_count,
             'hosts_count': hosts_count,

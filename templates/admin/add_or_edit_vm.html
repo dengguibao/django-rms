@@ -1,6 +1,6 @@
 {% extends "admin/basic.html" %}
 {% block notice%}
-服务器 / {%if vm_obj.id %}编辑{% else %}新建{% endif %}虚拟机
+服务器 / {%if obj.id %}编辑{% else %}新建{% endif %}虚拟机
 {% endblock %}
 {% block mainbody %}
 
@@ -17,12 +17,12 @@
 
 <form class="layui-form">
     {% csrf_token %}
-    <input type="hidden" id="vm_id" name="id" value="{%if vm_obj.id %}{{ vm_obj.id }}{% else %}0{% endif %}" />
+    <input type="hidden" id="vm_id" name="id" value="{%if obj.id %}{{ obj.id }}{% else %}0{% endif %}" />
     <div class="layui-form-item">
         <div class="layui-inline">
             <label class="layui-form-label">主机名</label>
             <div class="layui-input-inline" style="width: 300px;">
-                <input type="text" placeholder="vm host name" maxlength="50" name="vm_hostname" id="vm_hostname" value="{{ vm_obj.vm_hostname}}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" placeholder="vm host name" maxlength="50" name="vm_hostname" id="vm_hostname" value="{{ obj.vm_hostname}}" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -31,7 +31,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">申请人</label>
             <div class="layui-input-inline">
-                <input type="text" maxlength="10" placeholder="张三" name="vm_register" value="{{ vm_obj.vm_register}}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" maxlength="10" placeholder="张三" name="vm_register" value="{{ obj.vm_register}}" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -40,7 +40,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">用途</label>
             <div class="layui-input-inline" style="width:500px">
-                <input type="text" maxlength="100" placeholder="视频转码服务器" name="vm_intention" value="{{ vm_obj.vm_intention}}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" maxlength="100" placeholder="视频转码服务器" name="vm_intention" value="{{ obj.vm_intention}}" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -49,8 +49,8 @@
         <div class="layui-inline">
             <label class="layui-form-label">状态</label>
             <div class="layui-input-block">
-                <input type="radio" name="vm_status" value="0" title="开机"{%ifequal vm_obj.vm_status 0%} checked=""{%endifequal%}>
-                <input type="radio" name="vm_status" value="1" title="关机"{%ifequal vm_obj.vm_status 1%} checked=""{%endifequal%}>
+                <input type="radio" name="vm_status" value="0" title="开机"{%ifequal obj.vm_status 0%} checked=""{%endifequal%}>
+                <input type="radio" name="vm_status" value="1" title="关机"{%ifequal obj.vm_status 1%} checked=""{%endifequal%}>
             </div>
         </div>
     </div>
@@ -61,13 +61,13 @@
         <div class="layui-inline">
             <label class="layui-form-label">vlan标签</label>
             <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" name="vlan_tag" placeholder="capture" maxlength="50" value="{{ vm_obj.vlan_tag}}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" name="vlan_tag" placeholder="capture" maxlength="50" value="{{ obj.vlan_tag}}" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-inline">
             <label class="layui-form-label">vlan ID</label>
             <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" name="vlan_id" maxlength="4" placeholder="1000" value="{{ vm_obj.vlan_id}}" lay-verify="required|number" autocomplete="off" class="layui-input">
+                <input type="text" name="vlan_id" maxlength="4" placeholder="1000" value="{{ obj.vlan_id}}" lay-verify="required|number" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -79,7 +79,7 @@
                 <select lay-filter="cluster_tag" lay-verify="required">
                     <option value="">请选择</option>
                     {% for i in cluster_data %}
-                    <option {% ifequal cluster_tag i.tag %}selected="" {% endifequal %} value="{{i.tag}}">{{i.name}}</option>
+                    <option {% ifequal obj.host.cluster_tag i.tag %}selected="" {% endifequal %} value="{{i.tag}}">{{i.name}}</option>
                     {% endfor %}
                     {% comment %} <option {% ifequal cluster_tag 'cs' %}selected="" {% endifequal %} value="cs">长沙</option>
                     <option {% ifequal cluster_tag 'xh' %}selected="" {% endifequal %} value="xh">新化</option>
@@ -93,7 +93,7 @@
             <div class="layui-input-inline" style="width: 200px;">
                 <select id="host_id" name="host_id" lay-verify="required">
                     {% for i in esxi_list %}
-                    <option {% ifequal vm_obj.host_id i.id %}selected="" {% endifequal %} value="{{ i.id }}">{{ i.hostname }}</option>
+                    <option {% ifequal obj.host_id i.id %}selected="" {% endifequal %} value="{{ i.id }}">{{ i.hostname }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -104,19 +104,19 @@
         <div class="layui-inline">
             <label class="layui-form-label">CPU</label>
             <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" name="vm_cpu" placeholder="个" value="{{ vm_obj.vm_cpu}}" maxlength="4" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" name="vm_cpu" placeholder="个" value="{{ obj.vm_cpu}}" maxlength="4" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-inline">
             <label class="layui-form-label">内存</label>
             <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" name="vm_memory" maxlength="4" placeholder="G" value="{{ vm_obj.vm_memory}}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" name="vm_memory" maxlength="4" placeholder="G" value="{{ obj.vm_memory}}" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-inline">
             <label class="layui-form-label">硬盘</label>
             <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" name="vm_disk" maxlength="4" placeholder="G" value="{{ vm_obj.vm_disk}}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" name="vm_disk" maxlength="4" placeholder="G" value="{{ obj.vm_disk}}" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -129,11 +129,11 @@
             <div class="layui-input-inline" style="width: 100px;">
                 <select name="vm_os" lay-verify="required">
                     <option value="">请选择</option>
-                    <option {% ifequal vm_obj.vm_os 'CentOS' %}selected="" {% endifequal %} value="CentOS">CentOS</option>
-                    <option {% ifequal vm_obj.vm_os 'Ubuntu' %}selected="" {% endifequal %} value="Ubuntu">Ubuntu</option>
-                    <option {% ifequal vm_obj.vm_os 'Slackware' %}selected="" {% endifequal %} value="Slackware">Slackware</option>
-                    <option {% ifequal vm_obj.vm_os 'General Linux' %}selected="" {% endifequal %} value="General Linux">General Linux</option>
-                    <option {% ifequal vm_obj.vm_os 'Windows' %}selected="" {% endifequal %} value="Windows">Windows</option>
+                    <option {% ifequal obj.vm_os 'CentOS' %}selected="" {% endifequal %} value="CentOS">CentOS</option>
+                    <option {% ifequal obj.vm_os 'Ubuntu' %}selected="" {% endifequal %} value="Ubuntu">Ubuntu</option>
+                    <option {% ifequal obj.vm_os 'Slackware' %}selected="" {% endifequal %} value="Slackware">Slackware</option>
+                    <option {% ifequal obj.vm_os 'General Linux' %}selected="" {% endifequal %} value="General Linux">General Linux</option>
+                    <option {% ifequal obj.vm_os 'Windows' %}selected="" {% endifequal %} value="Windows">Windows</option>
                 </select>
             </div>
         </div>
@@ -141,7 +141,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">管理IP</label>
             <div class="layui-input-inline" style="width: 334px;">
-                <input type="text" maxlength="15" name="vm_ip" placeholder="1.2.3.4" id="vm_ip" value="{{ vm_obj.vm_ip}}" lay-verify="required|ip" autocomplete="off" class="layui-input">
+                <input type="text" maxlength="15" name="vm_ip" placeholder="1.2.3.4" id="vm_ip" value="{{ obj.vm_ip}}" lay-verify="required|ip" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -149,15 +149,15 @@
     <div class="layui-form-item">
         <label class="layui-form-label">Zabbix监控</label>
         <div class="layui-input-block">
-            <input type="checkbox" id="vm_monitor_switch" {% ifequal vm_obj.vm_monitor 'on' %} checked="" {% endifequal %} lay-skin="switch" lay-filter="vm_monitor" lay-text="ON|OFF">
-            <input type="hidden" id="vm_monitor" value="{% ifequal vm_obj.vm_monitor 'on' %}on{%else%}off{% endifequal %}" name="vm_monitor">
+            <input type="checkbox" id="vm_monitor_switch" {% ifequal obj.vm_monitor 'on' %} checked="" {% endifequal %} lay-skin="switch" lay-filter="vm_monitor" lay-text="ON|OFF">
+            <input type="hidden" id="vm_monitor" value="{% ifequal obj.vm_monitor 'on' %}on{%else%}off{% endifequal %}" name="vm_monitor">
         </div>
     </div>
 
     <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">备注</label>
         <div class="layui-input-block">
-            <textarea placeholder="请输入内容" class="layui-textarea" name="vm_desc">{{ vm_obj.vm_desc }}</textarea>
+            <textarea placeholder="请输入内容" class="layui-textarea" name="vm_desc">{{ obj.vm_desc }}</textarea>
         </div>
     </div>
 

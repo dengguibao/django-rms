@@ -17,10 +17,13 @@ caption{
 .layui-col-md4{
     padding:0 5px
 }
+.bg1{background:#eee}
+.bg2{background:#e2e2e2}
+.bg3{background:#ddd}
 </style>
 <script src="/static/public/highcharts/highcharts.js"></script>
 <fieldset class="layui-elem-field layui-field-title">
-    <legend>摘要信息</legend>
+    <legend>设备摘要</legend>
 </fieldset>
 
 <div class="layui-row">
@@ -62,8 +65,44 @@ caption{
         </tbody>
     </table>
 </div>
+
 <fieldset class="layui-elem-field layui-field-title">
-    <legend>服务器{{a}}</legend>
+    <legend>工作统计</legend>
+</fieldset>
+
+<div class="layui-row">
+    <table class="layui-table">
+        <thead>
+            <tr>
+                <th colspan="{{data.user_work_count_data|length}}">工作日报（本月）</th>
+                <th class="bg1" colspan="{{data.trouble_count_data|length}}">故障报告（本月）</th>
+            </tr>
+            <tr>
+                {% for i in data.user_work_count_data %}
+                <th>{{i.first_name}}</th>
+                {% endfor %}
+                {% for i in data.trouble_count_data %}
+                <th class="bg1">{{i.type}}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                
+                {% for i in data.user_work_count_data %}
+                <td>{{i.count}}</td>
+                {% endfor %}
+
+                {% for i in data.trouble_count_data %}
+                <td>{{i.count}}</td>
+                {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<fieldset class="layui-elem-field layui-field-title">
+    <legend>服务器分布</legend>
 </fieldset>
 <div class="layui-tab layui-tab-card" lay-filter="tab_cluster">
   <ul class="layui-tab-title">

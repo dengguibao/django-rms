@@ -1,5 +1,5 @@
 import json
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -163,17 +163,19 @@ def render_edit_view(request, form_name, nid):
     if form_name not in request_form_array:
         return render(request, 'admin/error.html', {'error_msg': 'illegal request!'})
 
+    app_name = 'app'
+    perm_action = 'change'
     perm = {
-        'vm': 'app.change_vminfo',
-        'host': 'app.change_hostinfo',
-        'cluster': 'app.change_clusterinfo',
+        'vm': '%s.%s_vminfo',
+        'host': '%s.%s_hostinfo',
+        'cluster': '%s.%s_clusterinfo',
         'user': 'auth.change_user',
-        'trouble': 'app.change_troublereport',
-        'daily_report': 'app.change_dailyreport',
-        'branch': 'app.change_branch',
-        'lan_net': 'app.change_lannetworks',
-        'wan_net': 'app.change_wannetworks',
-        'net_devices': 'app.change_networkdevices',
+        'trouble': '%s.%s_troublereport',
+        'daily_report': '%s.%s_dailyreport',
+        'branch': '%s.%s_branch',
+        'lan_net': '%s.%s_lannetworks',
+        'wan_net': '%s.%s_wannetworks',
+        'net_devices': '%s.%s_networkdevices',
     }
     models = {
         'host': HostInfo,
@@ -188,50 +190,47 @@ def render_edit_view(request, form_name, nid):
         'net_devices': NetworkDevices
     }
     # permission verify
-    if not request.user.has_perm(perm[form_name]):
+    if not request.user.has_perm(perm[form_name] % (app_name, perm_action)):
         return render(request, 'admin/error.html')
 
     temp_name = 'admin/add_or_edit_%s.html' % form_name
 
+    edit_obj = get_object_or_404(models[form_name], id=nid)
+
+    # get all foreigenkey data
+    cluster_data = ClusterInfo.objects.filter(is_active=0)
+    branch_data = Branch.objects.filter(isenable=1)
+    esxi_data = None
     if form_name == 'vm':
-        vm_obj = models[form_name].objects.get(id=nid)
-        host_obj = HostInfo.objects.get(id=vm_obj.host_id)
-        esxi_list = HostInfo.objects.filter(cluster_tag=host_obj.cluster_tag)
-        context = {
-            'vm_obj': vm_obj,
-            'cluster_tag': host_obj.cluster_tag,
-            'esxi_list': esxi_list,
+        esxi_data = HostInfo.objects.filter(cluster_tag=edit_obj.host.cluster_tag)
+
+    extra_context = {
+        'vm': {
+            'esxi_list': esxi_data,
             'zabbix_api': settings.ZABBIX_API,
-            'cluster_data': ClusterInfo.objects.filter(is_active=0).values('name', 'tag')
-        }
-    elif form_name == 'host':
-        host_obj = models[form_name].objects.get(id=nid)
-        context = {
-            'host_obj': host_obj,
-            'cluster_data': ClusterInfo.objects.filter(is_active=0).values('name', 'tag')
-        }
-    elif form_name == 'cluster':
-        obj = models[form_name].objects.get(id=nid)
-        context = {
-            'obj': obj,
-        }
-    elif form_name == 'user':
-        context = {
-            'data': models[form_name].objects.get(id=nid)
-        }
-    elif form_name in ['lan_net','wan_net','branch','net_devices']:
-        context = {
-            'obj': models[form_name].objects.get(id=nid),
-            'branch_data': Branch.objects.filter(isenable=1)
-        }
-    else:
-        temp_name = 'admin/error.html'
-        context = {}
-    
+            'cluster_data': cluster_data
+        },
+        'branch': {},
+        'host': {
+            'cluster_data': cluster_data
+        },
+        'lan_net': {
+            'branch_data': branch_data
+        },
+        'wan_net': {
+            'branch_data': branch_data
+        },
+        'net_devices': {
+            'branch_data': branch_data
+        },
+    }
+    # append default object
+    extra_context[form_name]['obj'] = edit_obj
+
     return render(
         request,
         temp_name,
-        context=context,
+        extra_context[form_name],
     )
 
 
@@ -457,14 +456,14 @@ def view_log_view(request, content_type, object_id):
     Returns:
         retun  -- html view
     """
-    model_array = [
-        'user',
-        'clusterinfo',
-        'vminfo',
-        'hostinfo'
-    ]
+    model = {
+        'user': User,
+        'clusterinfo': ClusterInfo,
+        'vminfo': VmInfo,
+        'hostinfo': HostInfo
+    }
 
-    if content_type not in model_array:
+    if content_type not in model:
         return render(request, 'admin/error.html', {'error_msg': 'illegal request!'})
 
     act_flag_exp = [
@@ -473,12 +472,7 @@ def view_log_view(request, content_type, object_id):
         ('修改', 2),
         ('删除', 3)
     ]
-    model = {
-        'user': User,
-        'clusterinfo': ClusterInfo,
-        'vminfo': VmInfo,
-        'hostinfo': HostInfo
-    }
+    
     res = model[content_type].objects.get(id=object_id)
 
     log_entries = LogEntry.objects.filter(
@@ -502,7 +496,7 @@ def log_rollback_view(request, log_id):
     Returns:
         str -- rollback state json
     """
-    model_map = {
+    models = {
         'clusterinfo': ClusterInfo,
         'hostinfo': HostInfo,
         'vminfo': VmInfo,
@@ -530,12 +524,12 @@ def log_rollback_view(request, log_id):
 
     post_data = json.loads(log_res.change_message)
     content_type = log_res.content_type.model
-    origin_res = model_map[content_type].objects.get(id=log_res.object_id)
+    origin_res = models[content_type].objects.get(id=log_res.object_id)
     if not origin_res:
-        res = model_map[content_type].objects.create(**post_data)
+        res = models[content_type].objects.create(**post_data)
     else:
-        model_map[content_type].objects.filter(id=log_res.object_id).update(**post_data)
-        res = model_map[content_type].objects.get(id=log_res.object_id)
+        models[content_type].objects.filter(id=log_res.object_id).update(**post_data)
+        res = models[content_type].objects.get(id=log_res.object_id)
 
     if res:
         return JsonResponse({
@@ -548,4 +542,12 @@ def log_rollback_view(request, log_id):
         'code': 0,
         'msg': 'rollback failed'
     })
-        
+
+
+from django.views import generic
+
+class Details(generic.DetailView):
+    model = VmInfo
+    a=kwargs.get('flag')
+    
+  

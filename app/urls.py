@@ -61,7 +61,11 @@ urlpatterns = [
 
     path('list-report/', report_views.report_manage),
     path('view-trouble-report/<int:t_id>', report_views.view_trouble_report),
+    path('create-inspect/', report_views.create_inspect),
+    path('list-inspect/', report_views.list_inspect),
 
     path('get-device-list/<str:form_name>', network_device_views.list_device_info),
+
+    path('test/<str:flag>', global_views.Details.as_view())
 
 ]

@@ -33,6 +33,7 @@
             <ul>
                 <li><a href="javascript:;">添加</a>
                     <ul>
+                        <li><a href="/admin/render/add_or_edit_inspection_order" title="巡检计划">巡检计划</a></li>
                         {% if perms.app.add_dailyreport %}
                         <li><a href="/admin/render/add_or_edit_daily_report" title="日报">工作日报</a></li>
                         {% endif %}
@@ -41,6 +42,7 @@
                         {% endif %}
                     </ul>
                 </li>
+                 <li><a href="/admin/list-inspect/" title="巡检计划">巡检计划</a></li>
                 {% if perms.app.view_dailyreport %}
                 <li><a href="/admin/list-report/?t=daily" title="list daily report">工作日报</a></li>
                 {% endif %}

@@ -1,0 +1,39 @@
+{% extends "admin/basic.html" %}
+{% block notice%}
+报表 / 巡检计划管理
+{% endblock %}
+{% block mainbody %}
+
+<fieldset class="layui-elem-field layui-field-title">
+    <legend>巡检计划列表</legend>
+</fieldset>
+
+<div class="layui-form">
+    <table class="layui-table">
+        <colgroup>
+            <col width="80">
+            <col>
+            <col width="150">
+        </colgroup>
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th>日期</th>
+            <th>人员</th>
+        </tr>
+        </thead>
+        <tbody id="tbody">
+        {%for i in obj%}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{i.date}}</td>
+            <td>{{i.person}}</td>
+        </tr>
+        {%endfor%}
+        </tbody>
+    </table>
+    <a href="/admin/list-inspect/?edit=1" class="layui-btn">
+        <i class="layui-icon layui-icon-edit" style="margin-right:10px"></i>修改
+    </a>
+</div>
+{% endblock %}

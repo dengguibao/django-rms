@@ -1,6 +1,6 @@
 {% extends "admin/basic.html" %}
 {% block notice%}
-服务器 / {%if host_obj.id %}编辑{% else %}新建{% endif %}服务器
+服务器 / {%if obj.id %}编辑{% else %}新建{% endif %}服务器
 {% endblock %}
 {% block mainbody %}
 
@@ -10,12 +10,12 @@
 
 <form class="layui-form" action="">
     {% csrf_token %}
-    <input type="hidden" name="id" id="host_id" value="{%if host_obj.id %}{{ host_obj.id }}{% else %}0{% endif %}"/>
+    <input type="hidden" name="id" id="host_id" value="{%if obj.id %}{{ obj.id }}{% else %}0{% endif %}"/>
     <div class="layui-form-item">
         <div class="layui-inline">
             <label class="layui-form-label">主机名</label>
             <div class="layui-input-inline" style="width: 300px;">
-                <input type="text" maxlength="80" placeholder="esxi88.cs.hnyongxiong.com" name="hostname" value="{{ host_obj.hostname }}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" maxlength="80" placeholder="esxi88.cs.hnyongxiong.com" name="hostname" value="{{ obj.hostname }}" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -26,11 +26,11 @@
           <div class="layui-input-inline" style="width: 100px;">
             <select name="os" lay-verify="required">
                 <option value="">请选择</option>
-                <option {% ifequal host_obj.os 'CentOS' %}selected=""{% endifequal %} value="CentOS">CentOS</option{% ifequal vm_obj.vm_os 'CentOS' %}selected=""{% endifequal %}>
-                <option {% ifequal host_obj.os 'Ubuntu' %}selected=""{% endifequal %} value="Ubuntu">Ubuntu</option>
-                <option {% ifequal host_obj.os 'Windows' %}selected=""{% endifequal %} value="Windows">Windows</option>
-                <option {% ifequal host_obj.os 'ESXi' %}selected=""{% endifequal %} value="ESXi">ESXi</option>
-                <option {% ifequal host_obj.os 'general linux' %}selected=""{% endifequal %} value="general linux">General Linux</option>
+                <option {% ifequal obj.os 'CentOS' %}selected=""{% endifequal %} value="CentOS">CentOS</option>
+                <option {% ifequal obj.os 'Ubuntu' %}selected=""{% endifequal %} value="Ubuntu">Ubuntu</option>
+                <option {% ifequal obj.os 'Windows' %}selected=""{% endifequal %} value="Windows">Windows</option>
+                <option {% ifequal obj.os 'ESXi' %}selected=""{% endifequal %} value="ESXi">ESXi</option>
+                <option {% ifequal obj.os 'general linux' %}selected=""{% endifequal %} value="general linux">General Linux</option>
                 
             </select>
           </div>
@@ -41,7 +41,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">iDRAC ip</label>
             <div class="layui-input-inline">
-                <input type="text" name="idrac_ip" placeholder="1.2.3.4" maxlength="15" value="{{ host_obj.idrac_ip }}" lay-verify="required|ip" autocomplete="off" class="layui-input">
+                <input type="text" name="idrac_ip" placeholder="1.2.3.4" maxlength="15" value="{{ obj.idrac_ip }}" lay-verify="required|ip" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -50,7 +50,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">主机ip</label>
             <div class="layui-input-inline">
-                <input type="text" name="host_ip" maxlength="15" placeholder="1.2.3.4" value="{{ host_obj.host_ip }}" lay-verify="required|ip" autocomplete="off" class="layui-input">
+                <input type="text" name="host_ip" maxlength="15" placeholder="1.2.3.4" value="{{ obj.host_ip }}" lay-verify="required|ip" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -59,7 +59,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">用途</label>
             <div class="layui-input-inline" style="width: 400px;">
-                <input type="text" name="intention" maxlength="150" placeholder="vmware虚拟化服务器" value="{{ host_obj.intention }}" autocomplete="off" class="layui-input">
+                <input type="text" name="intention" maxlength="150" placeholder="vmware虚拟化服务器" value="{{ obj.intention }}" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -67,8 +67,8 @@
         <div class="layui-inline">
             <label class="layui-form-label">状态</label>
             <div class="layui-input-block">
-                <input type="radio" name="dev_status" value="0" title="开机"{%ifequal host_obj.dev_status 0%} checked=""{%endifequal%}>
-                <input type="radio" name="dev_status" value="1" title="关机"{%ifequal host_obj.dev_status 1%} checked=""{%endifequal%}>
+                <input type="radio" name="dev_status" value="0" title="开机"{%ifequal obj.dev_status 0%} checked=""{%endifequal%}>
+                <input type="radio" name="dev_status" value="1" title="关机"{%ifequal obj.dev_status 1%} checked=""{%endifequal%}>
             </div>
         </div>
     </div>
@@ -82,9 +82,9 @@
                 <select name="cluster_tag" lay-verify="required">
                     <option value="">请选择</option>
                     {% for i in cluster_data %}
-                    <option {% ifequal host_obj.cluster_tag i.tag %}selected="" {% endifequal %} value="{{i.tag}}">{{i.name}}</option>
+                    <option {% ifequal obj.cluster_tag i.tag %}selected="" {% endifequal %} value="{{i.tag}}">{{i.name}}</option>
                     {% endfor %}
-                    <option {% ifequal host_obj.cluster_tag 'none' %}selected=""{% endifequal %} value="none">独立服务器</option>
+                    <option {% ifequal obj.cluster_tag 'none' %}selected=""{% endifequal %} value="none">独立服务器</option>
                 </select>
             </div>
         </div>
@@ -96,12 +96,12 @@
             <div class="layui-input-inline" style="width: 100px;">
                 <select name="dc_name" lay-verify="required" lay-search="">
                     <option value="">直接选择或搜索选择</option>
-                    <option{% ifequal host_obj.dc_name '总部6F' %} selected=""{% endifequal %} value="总部6F">总部6F</option>
-                    <option{% ifequal host_obj.dc_name '总部7F' %} selected=""{% endifequal %} value="总部7F">总部7F</option>
-                    <option{% ifequal host_obj.dc_name '新化机房' %} selected=""{% endifequal %} value="新化机房">新化机房</option>
-                    <option{% ifequal host_obj.dc_name '日业机房' %} selected=""{% endifequal %} value="日业机房">日业机房</option>
-                    <option{% ifequal host_obj.dc_name '鑫远机房' %} selected=""{% endifequal %} value="鑫远机房">鑫远机房</option>
-                    <option{% ifequal host_obj.dc_name '公园道机房' %} selected=""{% endifequal %} value="公园道机房">公园道机房</option>
+                    <option{% ifequal obj.dc_name '总部6F' %} selected=""{% endifequal %} value="总部6F">总部6F</option>
+                    <option{% ifequal obj.dc_name '总部7F' %} selected=""{% endifequal %} value="总部7F">总部7F</option>
+                    <option{% ifequal obj.dc_name '新化机房' %} selected=""{% endifequal %} value="新化机房">新化机房</option>
+                    <option{% ifequal obj.dc_name '日业机房' %} selected=""{% endifequal %} value="日业机房">日业机房</option>
+                    <option{% ifequal obj.dc_name '鑫远机房' %} selected=""{% endifequal %} value="鑫远机房">鑫远机房</option>
+                    <option{% ifequal obj.dc_name '公园道机房' %} selected=""{% endifequal %} value="公园道机房">公园道机房</option>
                 </select>
             </div>
         </div>
@@ -113,20 +113,20 @@
             <div class="layui-input-inline" style="width:100px">
                 <select name="rack_num" lay-search="">
                     <option value="">请选择</option>
-                    <option{% ifequal host_obj.rack_num 'A' %} selected=""{% endifequal %} value="A">A</option>
-                    <option{% ifequal host_obj.rack_num 'B' %} selected=""{% endifequal %} value="B">B</option>
-                    <option{% ifequal host_obj.rack_num 'C' %} selected=""{% endifequal %} value="C">C</option>
-                    <option{% ifequal host_obj.rack_num 'D' %} selected=""{% endifequal %} value="D">D</option>
-                    <option{% ifequal host_obj.rack_num 'E' %} selected=""{% endifequal %} value="E">E</option>
-                    <option{% ifequal host_obj.rack_num 'F' %} selected=""{% endifequal %} value="F">F</option>
-                    <option{% ifequal host_obj.rack_num 'G' %} selected=""{% endifequal %} value="G">G</option>
-                    <option{% ifequal host_obj.rack_num 'H' %} selected=""{% endifequal %} value="H">H</option>
-                    <option{% ifequal host_obj.rack_num 'I' %} selected=""{% endifequal %} value="I">I</option>
-                    <option{% ifequal host_obj.rack_num 'J' %} selected=""{% endifequal %} value="J">J</option>
-                    <option{% ifequal host_obj.rack_num 'K' %} selected=""{% endifequal %} value="K">K</option>
-                    <option{% ifequal host_obj.rack_num 'L' %} selected=""{% endifequal %} value="L">L</option>
-                    <option{% ifequal host_obj.rack_num 'M' %} selected=""{% endifequal %} value="M">M</option>
-                    <option{% ifequal host_obj.rack_num 'N' %} selected=""{% endifequal %} value="N">N</option>
+                    <option{% ifequal obj.rack_num 'A' %} selected=""{% endifequal %} value="A">A</option>
+                    <option{% ifequal obj.rack_num 'B' %} selected=""{% endifequal %} value="B">B</option>
+                    <option{% ifequal obj.rack_num 'C' %} selected=""{% endifequal %} value="C">C</option>
+                    <option{% ifequal obj.rack_num 'D' %} selected=""{% endifequal %} value="D">D</option>
+                    <option{% ifequal obj.rack_num 'E' %} selected=""{% endifequal %} value="E">E</option>
+                    <option{% ifequal obj.rack_num 'F' %} selected=""{% endifequal %} value="F">F</option>
+                    <option{% ifequal obj.rack_num 'G' %} selected=""{% endifequal %} value="G">G</option>
+                    <option{% ifequal obj.rack_num 'H' %} selected=""{% endifequal %} value="H">H</option>
+                    <option{% ifequal obj.rack_num 'I' %} selected=""{% endifequal %} value="I">I</option>
+                    <option{% ifequal obj.rack_num 'J' %} selected=""{% endifequal %} value="J">J</option>
+                    <option{% ifequal obj.rack_num 'K' %} selected=""{% endifequal %} value="K">K</option>
+                    <option{% ifequal obj.rack_num 'L' %} selected=""{% endifequal %} value="L">L</option>
+                    <option{% ifequal obj.rack_num 'M' %} selected=""{% endifequal %} value="M">M</option>
+                    <option{% ifequal obj.rack_num 'N' %} selected=""{% endifequal %} value="N">N</option>
                 </select>
             </div>
         </div>
@@ -134,7 +134,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">机架号</label>
             <div class="layui-input-inline">
-                <input type="text" name="slot_num" placeholder="1-2" value="{{host_obj.slot_num}}" autocomplete="off" class="layui-input">
+                <input type="text" name="slot_num" placeholder="1-2" value="{{obj.slot_num}}" autocomplete="off" class="layui-input">
             </div>
         </div>    
     </div>
@@ -143,13 +143,13 @@
         <div class="layui-inline">
             <label class="layui-form-label">购买日期</label>
             <div class="layui-input-inline">
-                <input type="text" name="buy_date" id="buy_date" placeholder="2018-03-18" value="{{host_obj.buy_date}}" lay-verify="buy_date" placeholder="{{ host_obj.buy_date }}" autocomplete="off" class="layui-input">
+                <input type="text" name="buy_date" id="buy_date" placeholder="2018-03-18" value="{{obj.buy_date}}" lay-verify="buy_date" placeholder="{{ obj.buy_date }}" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-inline">
             <label class="layui-form-label">过保日期</label>
             <div class="layui-input-inline">
-                <input type="text" name="end_svc_date" id="end_svc_date" placeholder="2024-03-18" value="{{host_obj.end_svc_date}}" lay-verify="end_svc_date" placeholder="{{ host_obj.end_svc_date }}" autocomplete="off" class="layui-input">
+                <input type="text" name="end_svc_date" id="end_svc_date" placeholder="2024-03-18" value="{{obj.end_svc_date}}" lay-verify="end_svc_date" placeholder="{{ obj.end_svc_date }}" autocomplete="off" class="layui-input">
             </div>
         </div>    
     </div>
@@ -158,19 +158,19 @@
         <div class="layui-inline">
             <label class="layui-form-label">供应商</label>
             <div class="layui-input-inline">
-                <input type="text" name="supply_name" placeholder="惠捷电子科技" maxlength="15" value="{{ host_obj.supply_name }}" class="layui-input">
+                <input type="text" name="supply_name" placeholder="惠捷电子科技" maxlength="15" value="{{ obj.supply_name }}" class="layui-input">
             </div>
         </div>
         <div class="layui-inline">
             <label class="layui-form-label">联系人</label>
             <div class="layui-input-inline">
-                <input type="text" name="supply_contact_name" placeholder="张三" maxlength="15" value="{{ host_obj.supply_contact_name }}" class="layui-input">
+                <input type="text" name="supply_contact_name" placeholder="张三" maxlength="15" value="{{ obj.supply_contact_name }}" class="layui-input">
             </div>
         </div>
         <div class="layui-inline">
             <label class="layui-form-label">联系号码</label>
             <div class="layui-input-inline">
-                <input type="text" name="supply_phone" maxlength="15" placeholder="13807361234" value="{{ host_obj.supply_phone }}" class="layui-input">
+                <input type="text" name="supply_phone" maxlength="15" placeholder="13807361234" value="{{ obj.supply_phone }}" class="layui-input">
             </div>
         </div>
     </div>
@@ -182,28 +182,28 @@
         <div class="layui-inline">
           <label class="layui-form-label">CPU数量</label>
           <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="cpu_nums" value="{{ host_obj.cpu_nums }}" maxlength="30" lay-verify="required" placeholder="个" autocomplete="off" class="layui-input">
+            <input type="text" name="cpu_nums" value="{{ obj.cpu_nums }}" maxlength="30" lay-verify="required" placeholder="个" autocomplete="off" class="layui-input">
           </div>
         </div>
 
         <div class="layui-inline">
           <label class="layui-form-label">CPU内核</label>
           <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="cpu_core" value="{{ host_obj.cpu_core }}" maxlength="30" lay-verify="required" placeholder="核" autocomplete="off" class="layui-input">
+            <input type="text" name="cpu_core" value="{{ obj.cpu_core }}" maxlength="30" lay-verify="required" placeholder="核" autocomplete="off" class="layui-input">
           </div>
         </div>
 
         <div class="layui-inline">
           <label class="layui-form-label">CPU频率</label>
           <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="cpu_rate" maxlength="30" value="{{ host_obj.cpu_rate }}" lay-verify="required" placeholder="G/Hz" autocomplete="off" class="layui-input">
+            <input type="text" name="cpu_rate" maxlength="30" value="{{ obj.cpu_rate }}" lay-verify="required" placeholder="G/Hz" autocomplete="off" class="layui-input">
           </div>
         </div>
 
         <div class="layui-inline">
           <label class="layui-form-label">CPU总频率</label>
           <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="cpu_total_rate" maxlength="30" value="{{ host_obj.cpu_total_rate }}" placeholder="G/Hz" lay-verify="required" autocomplete="off" class="layui-input">
+            <input type="text" name="cpu_total_rate" maxlength="30" value="{{ obj.cpu_total_rate }}" placeholder="G/Hz" lay-verify="required" autocomplete="off" class="layui-input">
           </div>
         </div>
     </div>
@@ -212,21 +212,21 @@
         <div class="layui-inline">
           <label class="layui-form-label">内存数量</label>
           <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="memory_nums" value="{{ host_obj.memory_nums }}" maxlength="30" lay-verify="required" placeholder="条" autocomplete="off" class="layui-input">
+            <input type="text" name="memory_nums" value="{{ obj.memory_nums }}" maxlength="30" lay-verify="required" placeholder="条" autocomplete="off" class="layui-input">
           </div>
         </div>
 
         <div class="layui-inline">
           <label class="layui-form-label">内存容量</label>
           <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="memory_size" maxlength="30" value="{{ host_obj.memory_size }}" placeholder="G" lay-verify="required" autocomplete="off" class="layui-input">
+            <input type="text" name="memory_size" maxlength="30" value="{{ obj.memory_size }}" placeholder="G" lay-verify="required" autocomplete="off" class="layui-input">
           </div>
         </div>
 
         <div class="layui-inline">
           <label class="layui-form-label">内存总容量</label>
           <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="memory_total_size" maxlength="30" value="{{ host_obj.memory_total_size }}" placeholder="G" lay-verify="required" autocomplete="off" class="layui-input">
+            <input type="text" name="memory_total_size" maxlength="30" value="{{ obj.memory_total_size }}" placeholder="G" lay-verify="required" autocomplete="off" class="layui-input">
           </div>
         </div>
     </div>
@@ -235,21 +235,21 @@
         <div class="layui-inline">
           <label class="layui-form-label">硬盘数量</label>
           <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="sd_nums" value="{{ host_obj.sd_nums }}" maxlength="30" lay-verify="required" placeholder="块" autocomplete="off" class="layui-input">
+            <input type="text" name="sd_nums" value="{{ obj.sd_nums }}" maxlength="30" lay-verify="required" placeholder="块" autocomplete="off" class="layui-input">
           </div>
         </div>
 
         <div class="layui-inline">
           <label class="layui-form-label">硬盘容量</label>
           <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="sd_size" maxlength="30" value="{{ host_obj.sd_size }}" lay-verify="required" placeholder="T" autocomplete="off" class="layui-input">
+            <input type="text" name="sd_size" maxlength="30" value="{{ obj.sd_size }}" lay-verify="required" placeholder="T" autocomplete="off" class="layui-input">
           </div>
         </div>
 
         <div class="layui-inline">
           <label class="layui-form-label">硬盘总容量</label>
           <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="sd_total_size" maxlength="30" value="{{ host_obj.sd_total_size }}" lay-verify="required" placeholder="T" autocomplete="off" class="layui-input">
+            <input type="text" name="sd_total_size" maxlength="30" value="{{ obj.sd_total_size }}" lay-verify="required" placeholder="T" autocomplete="off" class="layui-input">
           </div>
         </div>
     </div>
@@ -258,21 +258,21 @@
         <div class="layui-inline">
           <label class="layui-form-label">SSD数量</label>
           <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="ssd_nums" value="{{ host_obj.ssd_nums }}" maxlength="30" lay-verify="required" placeholder="块" autocomplete="off" class="layui-input">
+            <input type="text" name="ssd_nums" value="{{ obj.ssd_nums }}" maxlength="30" lay-verify="required" placeholder="块" autocomplete="off" class="layui-input">
           </div>
         </div>
 
         <div class="layui-inline">
           <label class="layui-form-label">SSD容量</label>
           <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="ssd_size" maxlength="30" value="{{ host_obj.ssd_size }}" lay-verify="required" placeholder="T" autocomplete="off" class="layui-input">
+            <input type="text" name="ssd_size" maxlength="30" value="{{ obj.ssd_size }}" lay-verify="required" placeholder="T" autocomplete="off" class="layui-input">
           </div>
         </div>
 
         <div class="layui-inline">
           <label class="layui-form-label">SSD总容量</label>
           <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="ssd_total_size" maxlength="30" value="{{ host_obj.ssd_total_size }}" placeholder="T" lay-verify="required" autocomplete="off" class="layui-input">
+            <input type="text" name="ssd_total_size" maxlength="30" value="{{ obj.ssd_total_size }}" placeholder="T" lay-verify="required" autocomplete="off" class="layui-input">
           </div>
         </div>
     </div>
@@ -281,7 +281,7 @@
         <div class="layui-inline">
           <label class="layui-form-label">RAID</label>
           <div class="layui-input-inline">
-            <input type="text" name="raid" placeholder="RAID5" value="{{ host_obj.raid }}" autocomplete="off" class="layui-input">
+            <input type="text" name="raid" placeholder="RAID5" value="{{ obj.raid }}" autocomplete="off" class="layui-input">
           </div>
         </div>
     </div>
@@ -290,14 +290,14 @@
         <div class="layui-inline">
           <label class="layui-form-label">设备型号</label>
           <div class="layui-input-inline">
-            <input type="text" name="dev_model" placeholder="Dell R740" maxlength="50" value="{{ host_obj.dev_model }}" lay-verify="required" autocomplete="off" class="layui-input">
+            <input type="text" name="dev_model" placeholder="Dell R740" maxlength="50" value="{{ obj.dev_model }}" lay-verify="required" autocomplete="off" class="layui-input">
           </div>
         </div>
 
         <div class="layui-inline">
             <label class="layui-form-label">序列号</label>
             <div class="layui-input-inline" style="width: 250px;">
-                <input type="text" maxlength="50" name="sn" placeholder="ZXD9ASFL0" value="{{ host_obj.sn }}"  autocomplete="off" class="layui-input">
+                <input type="text" maxlength="50" name="sn" placeholder="ZXD9ASFL0" value="{{ obj.sn }}"  autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -306,14 +306,14 @@
         <div class="layui-inline">
           <label class="layui-form-label">网络接入</label>
           <div class="layui-input-inline" style="width:300px">
-            <input type="text" name="svc_net_in" value="{{ host_obj.svc_net_in }}" autocomplete="off" class="layui-input">
+            <input type="text" name="svc_net_in" value="{{ obj.svc_net_in }}" autocomplete="off" class="layui-input">
           </div>
         </div>
 
         <div class="layui-inline">
           <label class="layui-form-label">iDRAC接入</label>
           <div class="layui-input-inline" style="width:300px">
-            <input type="text" name="idrac_net_in" value="{{ host_obj.idrac_net_in }}" autocomplete="off" class="layui-input">
+            <input type="text" name="idrac_net_in" value="{{ obj.idrac_net_in }}" autocomplete="off" class="layui-input">
           </div>
         </div>
     </div>
@@ -321,7 +321,7 @@
     <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">备注</label>
         <div class="layui-input-block">
-          <textarea placeholder="请输入内容" class="layui-textarea" name="desc">{{ host_obj.desc }}</textarea>
+          <textarea placeholder="请输入内容" class="layui-textarea" name="desc">{{ obj.desc }}</textarea>
         </div>
     </div>
 
