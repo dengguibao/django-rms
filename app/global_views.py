@@ -543,11 +543,4 @@ def log_rollback_view(request, log_id):
         'msg': 'rollback failed'
     })
 
-
-from django.views import generic
-
-class Details(generic.DetailView):
-    model = VmInfo
-    a=kwargs.get('flag')
-    
   

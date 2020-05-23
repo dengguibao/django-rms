@@ -66,6 +66,4 @@ urlpatterns = [
 
     path('get-device-list/<str:form_name>', network_device_views.list_device_info),
 
-    path('test/<str:flag>', global_views.Details.as_view())
-
 ]
