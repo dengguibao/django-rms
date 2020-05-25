@@ -104,14 +104,14 @@
                     }
                 })
             }
-
+            
             if (change_field.length != 0){
                 url = url+'?change_field='+change_field.join(',')
             }
             $.ajax({
                 url: url,
                 type:'post',
-                data:obj.field,
+                data: data.field,
                 success:function(d){
                     layer.msg(d.msg)
                     if (d.code == 0){

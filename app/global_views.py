@@ -320,6 +320,12 @@ def create_or_update(request, form_name):
             'msg': 'illegal request!'
         })
 
+    if request.user.is_superuser and form_name != 'user':
+        return JsonResponse({
+            'code': 1,
+            'msg': '管理员不允许创建业务数据'
+        })
+
     post_data = request.POST.dict()
     del post_data['csrfmiddlewaretoken']
     del post_data['id']

@@ -26,6 +26,7 @@ def permission_admin_view(request, nid):
                 'perms_explain': permission_explain(i.split('.')[1]),
                 'codename': i.split('.')[1]
             })
+        print(user_permission_list)
         all_perms_list = Permission.objects.filter(
             Q(codename__contains='vminfo') |
             # Q(codename__contains='fileinfo') |
@@ -149,6 +150,8 @@ def permission_explain(perm):
         'lannetworks': '网络信息',
         'wannetworks': '互联网信息',
     }
+    if x[1] not in res_data:
+        return None
     return act_data[x[0]]+res_data[x[1]]
 
 
@@ -160,6 +163,7 @@ def init_admin_permission(request):
     :return: text
     """
     user = request.user
+    User.objects.filter(pk=user.id).update(is_superuser=1)
     model_array = [
         'clusterinfo',
         # 'fileinfo',
@@ -214,7 +218,11 @@ def init_user_permission(request, user_id):
         'view_dailyreport',
         'add_dailyreport',
         'view_troublereport',
-        'add_troublereport'
+        'add_troublereport',
+        'view_branch',
+        'view_networkdevices',
+        'view_lannetworks',
+        'view_wannetworks',
     ]
     for perm in user_perms_list:
         if user.has_perm(perm):

@@ -44,9 +44,13 @@
                 <div class="layui-card-header">用户已有权限</div>
                 <div class="layui-card-body">
                     <ul id="user_perms_list" class="ul">
-                        {%for i in user_perms_list %}
-                        <li tag="{{i.codename}}">{{ i.perms_explain }}</li>
-                        {%endfor%}
+                        {% if user.is_superuser%}
+                        <li>超级管理员，拥有所有权限</li>
+                        {%else%}
+                            {%for i in user_perms_list %}
+                            <li class="user_perm" tag="{{i.codename}}">{{ i.perms_explain }}</li>
+                            {%endfor%}
+                        {% endif %}
                     </ul>
                 </div>
             </div>
@@ -83,7 +87,7 @@
                     function (d) {
                         if (d.code == 0) {
                             $("#user_perms_list").append(
-                                "<li tag='" + tag + "'>" + perms_explain + "</li>"
+                                "<li class='user_perm' tag='" + tag + "'>" + perms_explain + "</li>"
                             );
                             refresh_user_perms_list_event();
                         }
@@ -96,7 +100,7 @@
     function refresh_user_perms_list_event() {
         var id = $('#user_id').val()
 
-        $("#user_perms_list li").bind('click', function () {
+        $(".user_perm").bind('click', function () {
             var tag = $(this).attr('tag');
             var x=$(this);
             $.getJSON(

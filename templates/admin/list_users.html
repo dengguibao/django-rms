@@ -16,7 +16,7 @@
             <th>用户名</th>
             <th>姓名</th>
             <th>邮箱</th>
-            <!-- <th>类型</th> -->
+            <th>角色</th>
             <th>状态</th>
             <th>注册时间</th>
             <th>操作</th>
@@ -29,7 +29,7 @@
             <td>{{i.username}}</td>
             <td>{{i.first_name}}</td>
             <td>{{i.email}}</td>
-            <!-- <td>{%ifequal i.is_staff True%}管理员{%else%}普通用户{%endifequal%}</td> -->
+            <td>{%ifequal i.is_superuser True%}管理员{%else%}普通用户{%endifequal%}</td>
             <td>{%ifequal i.is_active True%}启用{%else%}禁用{%endifequal%}</td>
             <td>{{i.date_joined}}</td>
             <td>

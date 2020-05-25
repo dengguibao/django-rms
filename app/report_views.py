@@ -31,22 +31,19 @@ def report_manage(request):
     }
     user_id = request.POST.get('user_id', None)
 
-    if user_id is None and \
-            request.user.has_perm('auth.add_user') and \
-            request.user.has_perm('auth.view_user'):
+    super_user_flag = request.user.is_superuser
+    if not user_id and super_user_flag:
         user_id = 0
 
-    if user_id is None and \
-            not request.user.has_perm('auth.add_user') and \
-            not request.user.has_perm('auth.view_user'):
+    if not user_id and not super_user_flag:
         user_id = request.user.id
-    user_id = int(user_id)
-
-    if user_id == 0 and \
-            not request.user.has_perm('auth.add_user') and \
-            not request.user.has_perm('auth.view_user'):
+    
+    if user_id == 0 and not super_user_flag:
         return render(request, '/admin/error.html')
 
+    # convert user to int
+    user_id = int(user_id)
+    
     first_name = None
     if user_id > 0:
         user_info = User.objects.get(id=user_id)
