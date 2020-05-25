@@ -48,12 +48,16 @@
 </div>
 <script type="text/html" id="toolbar">
     <div class="layui-btn-container">
+        {% if perms.app.change_hostinfo %}
         <a lay-event='edit' title="edit" class='layui-btn layui-btn-primary layui-btn-xs'>
             <i class='layui-icon layui-icon-edit'></i>
         </a>
+        {% endif %}
+        {% if perms.app.delete_hostinfo %}
         <a lay-event='del' title="delete" class='layui-btn layui-btn-primary layui-btn-xs'>
             <i class='layui-icon layui-icon-delete'></i>
         </a>
+        {% endif %}
         <a lay-event='link' title="connect" class='layui-btn layui-btn-primary layui-btn-xs'>
             <i class='layui-icon layui-icon-link'></i>
         </a>

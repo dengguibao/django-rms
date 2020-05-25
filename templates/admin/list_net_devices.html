@@ -75,15 +75,21 @@
             <td>{{ i.ip }}</td>
             <td>{{i.branch.name}}</td>
             <td>
+                {% if perms.app.change_networkdevices %}
                 <a href="/admin/edit/net_devices/{{i.id}}" title="edit" class="layui-btn layui-btn-primary layui-btn-xs">
                     <i class="layui-icon layui-icon-edit"></i>
                 </a>
+                {% endif %}
+                {% if perms.app.delete_networkdevices %}
                 <a flag="{{ i.id }}" title="delete" class="layui-btn layui-btn-primary layui-btn-xs btn-delete">
                     <i class="layui-icon layui-icon-delete"></i>
                 </a>
+                {% endif %}
+                {% if perms.app.view_networkdevices %}
                 <a target="_blank" href="/admin/web-shell/?type=telnet&port=23&host={{i.ip}}" lay-event='link' title="connect" class='layui-btn layui-btn-primary layui-btn-xs'>
                     <i class='layui-icon layui-icon-link'></i>
                 </a>
+                {% endif %}
             </td>
         </tr>
         {%endfor%}

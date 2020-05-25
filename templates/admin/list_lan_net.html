@@ -64,12 +64,16 @@
             <td>{{ i.vlanid }}</td>
             <td>{{ i.function }}</td>
             <td>
+                {% if perms.app.change_lannetworks %}
                 <a href="/admin/edit/lan_net/{{i.id}}" title="edit" class="layui-btn layui-btn-primary layui-btn-xs">
                     <i class="layui-icon layui-icon-edit"></i>
                 </a>
+                {% endif %}
+                {% if perms.app.delete_lannetworks %}
                 <a flag="{{ i.id }}" title="delete" class="layui-btn layui-btn-primary layui-btn-xs btn-delete">
                     <i class="layui-icon layui-icon-delete"></i>
                 </a>
+                {% endif %}
             </td>
         </tr>
         {%endfor%}

@@ -50,12 +50,16 @@
             <td>{{i.address}}</td>
             <td>{%ifequal i.isenable 1%}启用{%else%}停用{%endifequal%}</td>
             <td>
+                {% if perms.app.change_branch %}
                 <a href="/admin/edit/branch/{{i.id}}" title="edit" class="layui-btn layui-btn-primary layui-btn-xs">
                     <i class="layui-icon layui-icon-edit"></i>
                 </a>
+                {% endif %}
+                {% if perms.app.delete_branch %}
                 <a flag="{{ i.id }}" title="delete" class="layui-btn layui-btn-primary layui-btn-xs btn-delete">
                     <i class="layui-icon layui-icon-delete"></i>
                 </a>
+                {% endif %}
             </td>
         </tr>
         {%endfor%}
