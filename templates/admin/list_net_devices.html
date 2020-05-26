@@ -85,7 +85,7 @@
                     <i class="layui-icon layui-icon-delete"></i>
                 </a>
                 {% endif %}
-                {% if perms.app.view_networkdevices %}
+                {% if perms.app.change_networkdevices %}
                 <a target="_blank" href="/admin/web-shell/?type=telnet&port=23&host={{i.ip}}" lay-event='link' title="connect" class='layui-btn layui-btn-primary layui-btn-xs'>
                     <i class='layui-icon layui-icon-link'></i>
                 </a>

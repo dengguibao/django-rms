@@ -1,11 +1,11 @@
 {% extends "admin/basic.html" %}
 {% block notice%}
-报告 / 添加 / 巡检计划
+巡检值班 / 添加 / 巡检值班
 {% endblock %}
 {% block mainbody %}
 
 <fieldset class="layui-elem-field layui-field-title">
-    <legend>巡检计划</legend>
+    <legend>巡检值班</legend>
 </fieldset>
 
 <form class="layui-form" action="">
@@ -13,7 +13,7 @@
     <input type="hidden" name="id" value="0" />
     <input type="hidden" name="owner_id" value="{{ request.user.id}}" />
     <div class="layui-form-item layui-form-text">
-        <label class="layui-form-label">巡检计划</label>
+        <label class="layui-form-label">巡检值班</label>
         <div class="layui-input-block">
             <textarea rows="15" lay-verify="required" placeholder="2020/05/01 刘伟" class="layui-textarea" name="content">{{content}}</textarea>
         </div>

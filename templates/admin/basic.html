@@ -29,11 +29,11 @@
     <ul id="menu">
         <li><a href="/admin/index">首页</a></li>
         <li>
-            <a href="#">报告</a>
+            <a href="javascript:;">报告</a>
             <ul>
                 <li><a href="javascript:;">添加</a>
                     <ul>
-                        <li><a href="/admin/render/add_or_edit_inspection_order" title="巡检计划">巡检计划</a></li>
+                        {% comment %} <li><a href="/admin/render/add_or_edit_inspection_order" title="巡检计划">巡检计划</a></li> {% endcomment %}
                         {% if perms.app.add_dailyreport %}
                         <li><a href="/admin/render/add_or_edit_daily_report" title="日报">工作日报</a></li>
                         {% endif %}
@@ -42,7 +42,7 @@
                         {% endif %}
                     </ul>
                 </li>
-                 <li><a href="/admin/list-inspect/" title="巡检计划">巡检计划</a></li>
+                {% comment %} <li><a href="/admin/list-inspect/" title="巡检计划">巡检计划</a></li> {% endcomment %}
                 {% if perms.app.view_dailyreport %}
                 <li><a href="/admin/list-report/?t=daily" title="list daily report">工作日报</a></li>
                 {% endif %}
@@ -144,9 +144,20 @@
             </ul>
         </li>
         <li>
-            <a href="javascript:;">文档</a>
-            <ul>
+            <a href="/admin/render/list_doc">文档</a>
+            {% comment %} <ul>
                 <li><a href="/admin/render/list_doc" title="document manage">用户上传</a></li>
+            </ul> {% endcomment %}
+        </li>
+        <li>
+            <a href="/admin/list-inspect/">巡检值班</a>
+            <ul>
+                <li><a href="javascript:;">添加</a>
+                    <ul>
+                        <li><a href="/admin/render/add_or_edit_inspection_order" title="巡检值班">巡检值班</a></li>
+                    </ul>
+                </li>
+                <li><a href="/admin/list-inspect/" title="巡检值班">巡检值班</a></li>
             </ul>
         </li>
         <li>
