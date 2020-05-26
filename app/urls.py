@@ -31,6 +31,7 @@ urlpatterns = [
     path('export-server/<str:dev_type>', server_views.export),
 
     path('permission-admin/<int:nid>', perm_views.permission_admin_view),
+    path('get-user-perms-list/<int:nid>', perm_views.get_user_perms_list),
     path('permission-control/<str:method>/<str:perms>/<int:nid>', perm_views.permission_control_view),
     # init administrator permissions
     path('init-admin-perm', perm_views.init_admin_permission),

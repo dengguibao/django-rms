@@ -1,12 +1,28 @@
-from django.shortcuts import render
+import json
+from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Permission
 from django.db.models import Q
 
 
+@login_required
+def permission_admin_view(request,nid):
+    if not request.user.is_superuser:
+        return render(request, 'admin/error.html')
+
+    user = get_object_or_404(User, pk=nid)
+    return render(
+        request,
+        'admin/permission_admin.html',
+        {
+            'user': user
+        }
+    )
+
+
 @login_required()
-def permission_admin_view(request, nid):
+def get_user_perms_list(request, nid):
     """
     user permission admin for someone user
     
@@ -17,48 +33,64 @@ def permission_admin_view(request, nid):
     Returns:
         html -- html template
     """
-    if request.user.has_perm('auth.add_user') and request.user.has_perm('auth.change_user'):
-        user = User.objects.get(id=nid)
-        user_permission_list = user.get_all_permissions()
-        data = []
-        for i in user_permission_list:
-            data.append({
-                'perms_explain': permission_explain(i.split('.')[1]),
-                'codename': i.split('.')[1]
+    if not request.user.is_superuser:
+        return render(request, 'admin/error.html')
+
+    user = get_object_or_404(User, pk=nid)
+    
+    action_flag = {
+        'add': '新增',
+        'change': '修改',
+        'view': '查看',
+        'delete': '删除'
+    }
+
+    all_perms_object = {
+        'vminfo': '虚拟机',
+        'hostinfo': '服务器',
+        'user': '用户',
+        #'fileinfo': '文件',
+        'clusterinfo': '集群',
+        'dailyreport': '日报',
+        'troublereport': '故障报告',
+        'branch': '分公司',
+        'networkdevices': '网络设备',
+        'lannetworks': '网络信息',
+        'wannetworks': '互联网信息',
+    }
+    perm_app = 'app'
+
+    data = []
+    for i in all_perms_object:
+        if i == 'user':
+            perm_app = 'auth'
+        else:
+            perm_app = 'app'
+
+        children_perms=[]
+        for a in action_flag:
+            perm_code = '%s.%s_%s' %(perm_app, a, i)
+            children_perms.append({
+                'title': action_flag[a],
+                'id': perm_code,
+                'checked': user.has_perm(perm_code),
+                'field':''
             })
-        print(user_permission_list)
-        all_perms_list = Permission.objects.filter(
-            Q(codename__contains='vminfo') |
-            # Q(codename__contains='fileinfo') |
-            Q(codename__contains='clusterinfo') |
-            Q(codename__contains='hostinfo') |
-            Q(codename__contains='user') |
-            Q(codename__contains='dailyreport') |
-            Q(codename__contains='troublereport') |
-            Q(codename__contains='branch') |
-            Q(codename__contains='wannetworks') |
-            Q(codename__contains='lannetworks') |
-            Q(codename__contains='networkdevices')
 
-        ).values()
-        for i in all_perms_list:
-            i['permission_explain'] = permission_explain(i['codename'])
-        context = {
-            'user_url_path': '用户',
-            'user': user,
-            'user_perms_list': data,
-            'all_perm_list': all_perms_list
-        }
-        temp_name = 'admin/permission_admin.html'
-    else:
-        context = {}
-        temp_name = 'admin/error.html'
-    return render(
-        request,
-        temp_name,
-        context=context
-    )
-
+        data.append({
+            'title': all_perms_object[i],
+            'children': children_perms,
+            'spread': False,
+            'id': 'parent_node_'+i,
+            'disabled': True
+        })
+        del children_perms
+    
+    return JsonResponse({
+        'code':0,
+        'data': data
+    })
+    
 
 @login_required()
 def permission_control_view(request, method, perms, nid):
@@ -81,8 +113,9 @@ def permission_control_view(request, method, perms, nid):
     if method not in ['add', 'remove']:
         return JsonResponse(return_data)
 
-    if request.user.has_perm('auth.add_user') and request.user.has_perm('auth.change_user'):
-        data = perms_controller(method, perms, nid)
+    if request.user.is_superuser:
+        # perm_code:'auth.add_user'->split('.')[1]->'add_user'
+        data = perms_controller(method, perms.split('.')[1], nid)
         return JsonResponse(data)
 
     return JsonResponse({
@@ -107,7 +140,7 @@ def perms_controller(method, perm, nid):
         'code': 1,
         'msg': 'not found user'
     }
-    user = User.objects.get(id=nid)
+    user = get_object_or_404(User, pk=nid)
     if user:
         user_perm = Permission.objects.get(codename=perm)
         if method == 'add':
@@ -119,40 +152,6 @@ def perms_controller(method, perm, nid):
             return_data['code'] = 0
             return_data['msg'] = 'ok'
     return return_data
-
-
-def permission_explain(perm):
-    """
-    permission chinese explain
-    :param perm: permission description
-    :return: permission chinese explain
-    """
-    if not perm:
-        return None
-
-    x = perm.split('_')
-    act_data = {
-        'add': '新增',
-        'change': '修改',
-        'view': '查看',
-        'delete': '删除'
-    }
-    res_data = {
-        'vminfo': '虚拟机',
-        'hostinfo': '服务器',
-        'user': '用户',
-        'fileinfo': '文件',
-        'clusterinfo': '集群',
-        'dailyreport': '日报',
-        'troublereport': '故障报告',
-        'branch': '分公司',
-        'networkdevices': '网络设备',
-        'lannetworks': '网络信息',
-        'wannetworks': '互联网信息',
-    }
-    if x[1] not in res_data:
-        return None
-    return act_data[x[0]]+res_data[x[1]]
 
 
 @login_required()

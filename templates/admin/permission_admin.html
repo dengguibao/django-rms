@@ -4,23 +4,13 @@
 {% endblock %}
 {%block mainbody%}
 <style>
-    .lb {
-        padding-right: 10px;
-        color: #666;
+    ol li{
+        padding:3px 0;
     }
-
-    .ol li {
-        height: 35px;
-    }
-
-    .ul li{
-        color: #333;
-        cursor: pointer;
-        height: 30px;
-        line-height: 30px;
-        border-bottom:1px dashed #ddd
-    }
-    
+    .layui-disabled, .layui-disabled:hover{
+        color:#3e3e3e !important;
+        cursor: default !important;
+    }    
 </style>
 <div style="padding: 20px; background-color: #F2F2F2;">
     <input type="hidden" id="user_id" value="{{user.id}}" />
@@ -38,84 +28,65 @@
                 </div>
             </div>
         </div>
-
-        <div class="layui-col-md6">
-            <div class="layui-card">
-                <div class="layui-card-header">用户已有权限</div>
-                <div class="layui-card-body">
-                    <ul id="user_perms_list" class="ul">
-                        {% if user.is_superuser%}
-                        <li>超级管理员，拥有所有权限</li>
-                        {%else%}
-                            {%for i in user_perms_list %}
-                            <li class="user_perm" tag="{{i.codename}}">{{ i.perms_explain }}</li>
-                            {%endfor%}
-                        {% endif %}
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="layui-col-md6">
+        <div class="layui-col-md12">
             <div class="layui-card">
                 <div class="layui-card-header">权限列表</div>
-                <div class="layui-card-body">
-                    <ul id="all_perms_list" class="ul">
-                        {%for i in all_perm_list %}
-                        <li tag="{{i.codename}}">{{ i.permission_explain }}</li>
-                        {%endfor%}
-                    </ul>
+                <div id="tree" class="layui-card-body">
+                    
                 </div>
             </div>
         </div>
     </div>
 </div>
 <script type="text/javascript">
-    function init() {
-        $("#all_perms_list li").bind('click', function () {
-            var tag = $(this).attr('tag');
-            var perms_explain = $(this).text();
-            var id = $('#user_id').val()
+    layui.use(['tree', 'util'], function(){
+    var tree = layui.tree
+    ,layer = layui.layer
+    ,util = layui.util;
 
-            user_perms_tag_array = new Array();
-            $("#user_perms_list li").each(function (i, e) {
-                user_perms_tag_array.push($(this).attr('tag'))
-            })
+        let first = true
+        $.getJSON(
+            '/admin/get-user-perms-list/'+$('#user_id').val(),
+            function(res){
+                if (res.code == 0){
+                    tree.render({
+                        'elem': '#tree',
+                        'data': res.data,
+                        'showCheckbox': true,
+                        'accordion': true,
+                        //'onlyIconControl': true,
+                        'oncheck': function(obj){
+                            if (first){
+                                return;
+                            }
 
-            if (user_perms_tag_array.indexOf(tag) < 0) {
-                $.getJSON(
-                    '/admin/permission-control/add/' + tag + '/' + id,
-                    function (d) {
-                        if (d.code == 0) {
-                            $("#user_perms_list").append(
-                                "<li class='user_perm' tag='" + tag + "'>" + perms_explain + "</li>"
-                            );
-                            refresh_user_perms_list_event();
+                            check_state = obj.checked;
+                            perm_code = obj.data.id;
+                            user_id = $('#user_id').val()
+
+                            let perm_flag=undefined
+                            if (check_state){
+                                perm_flag='add'
+                            }else{
+                                perm_flag='remove'
+                            }
+                            $.getJSON(
+                                '/admin/permission-control/'+perm_flag+'/' + perm_code + '/' + user_id,
+                                function (d) {
+                                    if (d.code == 1) {
+                                        alert(d.msg)
+                                    }
+                                }
+                            )
+                            //console.log(obj.data); //得到当前点击的节点数据
+                            //console.log(obj.checked); //得到当前节点的展开状态：open、close、normal
+                            //console.log(obj.elem); //得到当前节点元素
                         }
-                    }
-                )
-            }
-        });
-    }
-
-    function refresh_user_perms_list_event() {
-        var id = $('#user_id').val()
-
-        $(".user_perm").bind('click', function () {
-            var tag = $(this).attr('tag');
-            var x=$(this);
-            $.getJSON(
-                '/admin/permission-control/remove/' + tag + '/' + id,
-                function (d) {
-                    if (d.code == 0) {
-                        x.remove();
-                    }
+                    })
                 }
-            )
-        })
-    }
-
-    init()
-    refresh_user_perms_list_event()
-
+                first = false
+            }
+        )
+    })
 </script>
 {%endblock%}
