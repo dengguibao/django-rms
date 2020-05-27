@@ -7,7 +7,7 @@ from django.db.models import Q
 
 
 @login_required
-def permission_admin_view(request,nid):
+def permission_admin_view(request, nid):
     if not request.user.is_superuser:
         return render(request, 'admin/error.html')
 
@@ -37,7 +37,7 @@ def get_user_perms_list(request, nid):
         return render(request, 'admin/error.html')
 
     user = get_object_or_404(User, pk=nid)
-    
+
     action_flag = {
         'add': '新增',
         'change': '修改',
@@ -59,7 +59,9 @@ def get_user_perms_list(request, nid):
         'wannetworks': '互联网信息',
     }
     perm_app = 'app'
+    user_all_perms = user.get_all_permissions()
 
+    n = 1
     data = []
     for i in all_perms_object:
         if i == 'user':
@@ -67,30 +69,34 @@ def get_user_perms_list(request, nid):
         else:
             perm_app = 'app'
 
-        children_perms=[]
+        children_perms = []
         for a in action_flag:
-            perm_code = '%s.%s_%s' %(perm_app, a, i)
+            perm_code = '%s.%s_%s' % (perm_app, a, i)
+            checked = False
+            if perm_code in user_all_perms:
+                checked = True
             children_perms.append({
                 'title': action_flag[a],
-                'id': perm_code,
+                'id': n,
                 'checked': user.has_perm(perm_code),
-                'field':''
+                'field': perm_code
             })
-
+            n += 1
         data.append({
             'title': all_perms_object[i],
             'children': children_perms,
             'spread': False,
-            'id': 'parent_node_'+i,
+            'id': n,
             'disabled': True
         })
+        n += 1
         del children_perms
-    
+
     return JsonResponse({
-        'code':0,
+        'code': 0,
         'data': data
     })
-    
+
 
 @login_required()
 def permission_control_view(request, method, perms, nid):
@@ -189,7 +195,7 @@ def init_admin_permission(request):
             else:
                 perm = Permission.objects.get(codename=a+m)
                 user.user_permissions.add(perm)
-    
+
     return HttpResponse('success,please comment this entry on urls.py file')
 
 

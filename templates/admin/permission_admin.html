@@ -50,18 +50,23 @@
             function(res){
                 if (res.code == 0){
                     tree.render({
-                        'elem': '#tree',
-                        'data': res.data,
-                        'showCheckbox': true,
-                        'accordion': true,
+                        elem: '#tree',
+                        id: 'tree',
+                        data: res.data,
+                        showCheckbox: true,
+                        accordion: true,
                         //'onlyIconControl': true,
-                        'oncheck': function(obj){
+                        click: function(obj){
+                            obj.elem[0].children[0].children[0].children[2].click() 
+                            //tree.setChecked('tree', tree_id)
+                        },
+                        oncheck: function(obj){
                             if (first){
                                 return;
                             }
 
                             check_state = obj.checked;
-                            perm_code = obj.data.id;
+                            perm_code = obj.data.field;
                             user_id = $('#user_id').val()
 
                             let perm_flag=undefined
@@ -78,9 +83,6 @@
                                     }
                                 }
                             )
-                            //console.log(obj.data); //得到当前点击的节点数据
-                            //console.log(obj.checked); //得到当前节点的展开状态：open、close、normal
-                            //console.log(obj.elem); //得到当前节点元素
                         }
                     })
                 }
