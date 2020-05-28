@@ -136,10 +136,9 @@ def render_static_temp_view(request, temp_name):
     Returns:
         html -- html template
     """
-    res_cluster = ClusterInfo.objects.filter(is_active=0).values('name', 'tag')
+    res_cluster = ClusterInfo.objects.filter(is_active=0)
     context = {
         'cluster_data': res_cluster,
-        'zabbix_api': settings.ZABBIX_API,
         'branch_data': Branch.objects.filter(isenable=1)
     }
     return render(request, 'admin/%s.html' % temp_name, context)
@@ -253,6 +252,9 @@ def delete(request, form_name, nid):
         'code': 1,
         'msg': 'illegal request'
     }
+    if not request.is_ajax():
+        return JsonResponse(return_data)
+
     request_form_array = form_array()
     if form_name not in request_form_array:
         return JsonResponse(return_data)
@@ -269,20 +271,22 @@ def delete(request, form_name, nid):
         'wan_net': WanNetworks,
         'net_devices': NetworkDevices
     }
+    perm_app = 'app'
+    perm_action_flag = 'delete'
     perm = {
-        'vm': 'app.delete_vminfo',
-        'host': 'app.delete_hostinfo',
-        'cluster': 'app.delete_clusterinfo',
+        'vm': '%s.%s_vminfo',
+        'host': '%s.%s_hostinfo',
+        'cluster': '%s.%s_clusterinfo',
         'user': 'auth.delete_user',
-        'trouble': 'app.delete_troublereport',
-        'daily_report': 'app.delete_dailyreport',
-        'branch': 'app.delete_branch',
-        'lan_net': 'app.delete_lannetworks',
-        'wan_net': 'app.delete_wannetworks',
-        'net_devices': 'app.delete_networkdevices',
+        'trouble': '%s.%s_troublereport',
+        'daily_report': '%s.%s_dailyreport',
+        'branch': '%s.%s_branch',
+        'lan_net': '%s.%s_lannetworks',
+        'wan_net': '%s.%s_wannetworks',
+        'net_devices': '%s.%s_networkdevices',
     }
     # permission verify
-    if not request.user.has_perm(perm[form_name]):
+    if not request.user.has_perm(perm[form_name] % (perm_app, perm_action_flag)):
         return JsonResponse({
             'msg': 'permission denied',
             'code': 1
@@ -314,7 +318,7 @@ def create_or_update(request, form_name):
         'msg': 'fail'
     }
     request_form_array = form_array()
-    if request.method != 'POST' and form_name not in request_form_array:
+    if not request.is_ajax() and form_name not in request_form_array:
         return JsonResponse({
             'code': 1,
             'msg': 'illegal request!'

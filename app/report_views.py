@@ -52,26 +52,35 @@ def report_manage(request):
     work_type = request.POST.get('type', None)
     if work_type == '':
         work_type = None
+
     start_date = request.POST.get(
-        'start_date', (datetime.datetime.now() +
-                       datetime.timedelta(days=-7)).strftime('%Y-%m-%d')
+        'start_date', 
+        (
+            datetime.datetime.now() +
+            datetime.timedelta(days=-7)
+        ).strftime('%Y-%m-%d')
     )
     end_date = request.POST.get(
-        'end_date', time.strftime('%Y-%m-30', time.localtime())
+        'end_date',
+        time.strftime('%Y-%m-30', time.localtime())
     )
     fmt = '%Y-%m-%d'
     start_date_tuple = time.strptime(start_date, fmt)
     end_date_tuple = time.strptime(end_date, fmt)
     s_date = datetime.date(
-        start_date_tuple[0], start_date_tuple[1], start_date_tuple[2]
+        start_date_tuple[0],
+        start_date_tuple[1],
+        start_date_tuple[2]
     )
     e_date = datetime.date(
-        end_date_tuple[0], end_date_tuple[1], end_date_tuple[2]
+        end_date_tuple[0],
+        end_date_tuple[1],
+        end_date_tuple[2]
     )
 
     res = model[t].objects.filter(
         pub_date__range=(s_date, e_date)
-    )
+    ).select_related('owner')
 
     if user_id != 0:
         res = res.filter(owner=user_id)
@@ -93,8 +102,11 @@ def report_manage(request):
         for res_row in res.values():
             for key in backup_data_struct[t]:
                 if key == 'owner':
-                    sheet.write(data_row_num, column,
-                                res[data_row_num-1].owner.first_name)
+                    sheet.write(
+                        data_row_num, 
+                        column,
+                        res[data_row_num-1].owner.first_name
+                    )
                 else:
                     sheet.write(data_row_num, column, res_row[key])
                 column += 1

@@ -8,11 +8,11 @@
     <legend>基本信息</legend>
 </fieldset>
 
-<input type="hidden" id="auth" value="{{zabbix_api.AUTH}}" />
-<input type="hidden" id="url" value="{{zabbix_api.URL}}" />
-<input type="hidden" id="temp_id" value="{{zabbix_api.TEMPLATE_ID}}" />
-<input type="hidden" id="group_id" value="{{zabbix_api.GROUP_ID}}" />
-<input type="hidden" id="zabbix_status" value="{{zabbix_api.STATUS}}" />
+<input type="hidden" id="auth" value="{{settings.ZABBIX_API.AUTH}}" />
+<input type="hidden" id="url" value="{{settings.ZABBIX_API.URL}}" />
+<input type="hidden" id="temp_id" value="{{settings.ZABBIX_API.TEMPLATE_ID}}" />
+<input type="hidden" id="group_id" value="{{settings.ZABBIX_API.GROUP_ID}}" />
+<input type="hidden" id="zabbix_status" value="{{settings.ZABBIX_API.STATUS}}" />
 <input type="hidden" id="vm_hostid" value="" />
 
 <form class="layui-form">

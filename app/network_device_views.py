@@ -17,7 +17,7 @@ def list_device_info(request, form_name):
         html -- render html template
     """
     branch_id = request.GET.get('branch_id', 0)
-    keyworyd = request.GET.get('keyword', None)
+    keyword = request.GET.get('keyword', None)
     page_size = settings.PAGE_SIZE
     page = int(request.GET.get('page', 1))
 
@@ -51,37 +51,39 @@ def list_device_info(request, form_name):
                 'error_msg': 'permission denied'
             }
         )
+    if form_name == 'branch':
+        res_list = models[form_name].objects.all().order_by('-id')
+    else:
+        res_list = models[form_name].objects.all().select_related('branch').order_by('-id')
 
-    res_list = models[form_name].objects.all().order_by('-id')
-
-    if form_name == 'branch' and keyworyd:
+    if form_name == 'branch' and keyword:
         res_list = res_list.filter(
-            Q(name__contains=keyworyd) |
-            Q(address__contains=keyworyd)
+            Q(name__contains=keyword) |
+            Q(address__contains=keyword)
         )
-    elif form_name == 'lan_net' and keyworyd:
+    elif form_name == 'lan_net' and keyword:
         res_list = res_list.filter(
-            Q(ip__contains=keyworyd)
+            Q(ip__contains=keyword)
         )
-    elif form_name == 'wan_net' and keyworyd:
+    elif form_name == 'wan_net' and keyword:
         res_list = res_list.filter(
-            Q(ip__contains=keyworyd) |
-            Q(bandwidth__contains=keyworyd) |
-            Q(rent__contains=keyworyd) |
-            Q(contact__contains=keyworyd) |
-            Q(isp__contains=keyworyd)
+            Q(ip__contains=keyword) |
+            Q(bandwidth__contains=keyword) |
+            Q(rent__contains=keyword) |
+            Q(contact__contains=keyword) |
+            Q(isp__contains=keyword)
         )
-    elif form_name == 'net_devices' and keyworyd:
+    elif form_name == 'net_devices' and keyword:
         res_list = res_list.filter(
-            Q(sn__contains=keyworyd) |
-            Q(ip__contains=keyworyd) |
-            Q(device_model__contains=keyworyd) |
-            Q(brand__contains=keyworyd) |
-            Q(device_type__contains=keyworyd) |
-            Q(hostname__contains=keyworyd)
+            Q(sn__contains=keyword) |
+            Q(ip__contains=keyword) |
+            Q(device_model__contains=keyword) |
+            Q(brand__contains=keyword) |
+            Q(device_type__contains=keyword) |
+            Q(hostname__contains=keyword)
         )
 
-    if not keyworyd:
+    if not keyword:
         pass
 
     if int(branch_id) == 0:
@@ -97,7 +99,7 @@ def list_device_info(request, form_name):
         {
             'obj': p.page(page),
             'branch_data': Branch.objects.filter(isenable=1),
-            'keyword': keyworyd,
+            'keyword': keyword,
             'current_branch_id': int(branch_id),
             'rs_count': p.count,
             'page_size': page_size,

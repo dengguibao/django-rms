@@ -50,9 +50,9 @@
     </ul>
     <div class="layui-row">
         <!--left content-->
-        <input type="hidden" id="auth" value="{{zabbix_api.AUTH}}" />
-        <input type="hidden" id="url" value="{{zabbix_api.URL}}" />
-        <input type="hidden" id="zabbix_status" value="{{zabbix_api.STATUS}}" />
+        <input type="hidden" id="auth" value="{{settings.ZABBIX_API.AUTH}}" />
+        <input type="hidden" id="url" value="{{settings.ZABBIX_API.URL}}" />
+        <input type="hidden" id="zabbix_status" value="{{settings.ZABBIX_API.STATUS}}" />
         <div class="layui-col-md10" id="vms_list">
             <table id="dt" lay-filter="dt"></table>
             <div id="page"></div>
@@ -366,6 +366,9 @@
                 info=$.ajax({
                     url:$('#url').val(),
                     type:'POST',
+                    xhrFields: {  
+                        withCredentials: true // 设置运行跨域操作  
+                    },
                     dataType:'json', //返回类型
                     contentType: "application/json", //必须有
                     data:JSON.stringify(post_data),
