@@ -37,28 +37,28 @@
 <div class="layui-form">
     <table class="layui-table" lay-size="sm">
         <colgroup>
-            <col width="50">
+            <col width="80">
+            <col width="100">
             <col width="150">
             <col width="80">
             <col width="80">
             <col>
             <col width="200">
             <col>
-            <col width="120">
-            <col width="80">
+            <col width="120">            
             <col width="150">
         </colgroup>
         <thead>
         <tr>
             <th>序号</th>
+            <th>地区</th>
             <th>设备名称</th>
             <th>设备类型</th>
             <th>设备品牌</th>
             <th>序列号</th>
             <th>设备型号</th>
             <th>软件版本</th>
-            <th>管理IP</th>
-            <th>地区</th>
+            <th>管理IP</th>            
             <th>操作</th>
         </tr>
         </thead>
@@ -66,14 +66,14 @@
         {%for i in obj%}
         <tr id="id_{{i.id}}">
             <td>{{ forloop.counter }}</td>
+            <td>{{i.branch.name}}</td>
             <td>{{i.hostname}}</td>
             <td>{{i.device_type}}</td>
             <td>{{ i.brand }}</td>
             <td>{{i.sn}}</td>
             <td>{{i.device_model}}</td>
             <td>{{i.version}}</td>
-            <td>{{ i.ip }}</td>
-            <td>{{i.branch.name}}</td>
+            <td>{{ i.ip }}</td>            
             <td>
                 {% if perms.app.change_networkdevices %}
                 <a href="/admin/edit/net_devices/{{i.id}}" title="edit" class="layui-btn layui-btn-primary layui-btn-xs">

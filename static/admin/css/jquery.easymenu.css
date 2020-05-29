@@ -20,8 +20,8 @@ ul, li {
   position: relative;
   /* background: #e0e0e0; */
   float: left;
-  height: 50px;
-  line-height: 50px;
+  height: 60px;
+  line-height: 60px;
 }
 
 #menu a {
@@ -48,7 +48,7 @@ ul, li {
   padding: 2px 20px 0px 10px;
 }
 
-#menu li { padding: 5px 10px; }
+#menu li { padding: 0px 10px; }
 
 #menu li.hover { background: #316ac5; }
 

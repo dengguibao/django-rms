@@ -48,7 +48,10 @@ def get_hosts_list(request, dev_type, flag):
 
     if dev_type == 'host':
         if flag not in cluster_array and flag not in ['all', 'none']:
-            return JsonResponse(return_data)
+            return JsonResponse({
+                'code': 1,
+                'msg': 'illegal request'
+            })
         if flag == 'all':
             rs = HostInfo.objects.all()
         else:
