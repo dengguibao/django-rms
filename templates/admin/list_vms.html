@@ -10,7 +10,11 @@
     padding:0 2px;
 }
 .zbx_st,.vm_host_tips{
-    cursor:pointer
+    {% ifequal settings.ZABBIX_API.STATUS 'enable'%}
+    cursor:pointer;
+    {%else%}
+    cursor:default;
+    {%endifequal%}
 }
 
 #vm_host_tips_content{
@@ -366,11 +370,8 @@
                 info=$.ajax({
                     url:$('#url').val(),
                     type:'POST',
-                    xhrFields: {  
-                        withCredentials: true // 设置运行跨域操作  
-                    },
                     dataType:'json', //返回类型
-                    contentType: "application/json", //必须有
+                    contentType: "application/json-rpc", //必须有
                     data:JSON.stringify(post_data),
                     success:function(d){
                         server_info = d

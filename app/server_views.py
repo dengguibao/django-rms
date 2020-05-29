@@ -50,27 +50,30 @@ def get_hosts_list(request, dev_type, flag):
         if flag not in cluster_array and flag not in ['all', 'none']:
             return JsonResponse(return_data)
         if flag == 'all':
-            rs = HostInfo.objects.order_by('hostname').all()
+            rs = HostInfo.objects.all()
         else:
-            rs = HostInfo.objects.filter(cluster_tag=flag).order_by('hostname')
+            rs = HostInfo.objects.filter(cluster_tag=flag)
         
-        data = rs.values()
+        data = rs.order_by('hostname').values()
 
     if dev_type == 'vm':
         if '_all' in flag:
-            rs = VmInfo.objects.filter(host__cluster_tag=flag.split('_')[0]).select_related('host').order_by('-pub_date')
+            rs = VmInfo.objects.filter(host__cluster_tag=flag.split('_')[0]).select_related()
         elif flag == 'all':
-            rs = VmInfo.objects.exclude(host__cluster_tag='none').select_related('host').order_by('-pub_date')
+            rs = VmInfo.objects.exclude(host__cluster_tag='none').select_related().order_by('-pub_date')
         else:
-            rs = VmInfo.objects.filter(host__hostname=flag).select_related('host').order_by('-pub_date')
+            rs = VmInfo.objects.filter(host__hostname=flag).select_related().order_by('-pub_date')
 
-        n = 0
-        data = []
-        for i in rs.values():
-            i['esxi_host_name'] = rs[n].host.hostname
-            data.append(i)
-            n += 1
 
+        data = rs.values()
+        # bug: no this follow code,will be large query database
+        for i in data:
+            pass
+
+        nn = 0
+        for i in rs:
+            data[nn]['esxi_host_name'] = i.host.hostname
+            nn += 1
 
     p = Paginator(data, page_size)
     query_set = p.page(page)
