@@ -6,68 +6,72 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.conf import settings
-from .global_views import data_struct
+from .global_views import data_struct, perms, models
 from .models import VmInfo, HostInfo, ClusterInfo
 
 
 @login_required()
-def get_hosts_list(request, dev_type, flag):
+def get_hosts_list(request, host_type, flag):
     """get all host and virtual machine resource
     
     Arguments:
         request {object} -- wsgi http request object
-        dev_type {str} -- device type, vm or hosts
+        host_type {str} -- host type, vm or host
         flag {str} -- e.g. cs_all or esxi01.cs.hnyongxiong.com
     
     Returns:
         json -- specific type json object
     """
 
-    perms = {
-        'vm': 'app.view_vminfo',
-        'host': 'app.view_hostinfo'
-    }
+    perm_action_flag = 'view'
     # permission verify
-    if not request.user.has_perm(perms[dev_type]):
+    if not request.is_ajax() or not request.user.has_perm(perms[host_type] % perm_action_flag):
         return JsonResponse({
             'msg': 'permission denied',
             'code': 1
         })
 
-    if not request.is_ajax() or dev_type not in ['host', 'vm'] or len(flag) <= 0:
+    if host_type not in ['host', 'vm'] or len(flag) <= 0:
         return JsonResponse({
             'code': 1,
             'msg': 'illegal request'
         })
 
     page_size = request.GET.get('page_size', settings.PAGE_SIZE)
+    keyword = request.GET.get('keyword', None)
     page = int(request.GET.get('page', 1))
 
-    res_cluster = ClusterInfo.objects.filter(is_active=0).values('name', 'tag')
-    cluster_array = {i['tag']: i['name'] for i in res_cluster}
-
-    if dev_type == 'host':
-        if flag not in cluster_array and flag not in ['all', 'none']:
-            return JsonResponse({
-                'code': 1,
-                'msg': 'illegal request'
-            })
+    if host_type == 'host':
         if flag == 'all':
             rs = HostInfo.objects.all()
         else:
             rs = HostInfo.objects.filter(cluster_tag=flag)
         
-        data = rs.order_by('hostname').values()
-
-    if dev_type == 'vm':
+    if host_type == 'vm':
         if '_all' in flag:
-            rs = VmInfo.objects.filter(host__cluster_tag=flag.split('_')[0]).select_related()
+            rs = VmInfo.objects.filter(host__cluster_tag=flag.split('_')[0]).select_related().order_by('-pub_date')
         elif flag == 'all':
             rs = VmInfo.objects.exclude(host__cluster_tag='none').select_related().order_by('-pub_date')
         else:
             rs = VmInfo.objects.filter(host__hostname=flag).select_related().order_by('-pub_date')
 
+    if keyword:
+        if host_type == 'host':
+            rs = rs.filter(
+                Q(host_ip__contains=keyword) |
+                Q(hostname__contains=keyword) |
+                Q(idrac_ip__contains=keyword)
+            )
+        if host_type == 'vm':
+            rs = rs.filter(
+                Q(vm_ip__contains=keyword) |
+                Q(vm_hostname__contains=keyword)
+            )
+    
+    if host_type == 'host':
+        data = rs.order_by('hostname').values()
 
+    if host_type == 'vm':
         data = rs.values()
         # bug: no this follow code,will be large query database
         for i in data:
@@ -97,19 +101,19 @@ def get_hosts_list(request, dev_type, flag):
 
 
 @login_required()
-def export(request, dev_type):
+def export(request, host_type):
     backup_data_struct = data_struct()
     export_file_name = None
-    if dev_type not in ['vm', 'host']:
+    if host_type not in ['vm', 'host']:
         return render(request, 'admin/error.html')
 
     wb = xlwt.Workbook(encoding='utf8')
     sheet = wb.add_sheet('sheet1', cell_overwrite_ok=True)
 
-    if dev_type == 'host':
+    if host_type == 'host':
         res = HostInfo.objects.all()
         export_file_name = 'host_info.xls'
-    if dev_type == 'vm':
+    if host_type == 'vm':
         export_file_name = 'vms_info.xls'
         res = VmInfo.objects.all().select_related('host')
 
@@ -119,14 +123,14 @@ def export(request, dev_type):
     status = ['开机', '关机']
     if res:
         column = 0
-        for title in backup_data_struct[dev_type]:
-            sheet.write(0, column, backup_data_struct[dev_type][title])
+        for title in backup_data_struct[host_type]:
+            sheet.write(0, column, backup_data_struct[host_type][title])
             column += 1
 
         column = 0
         data_row_num = 1
         for res_row in res:
-            for key in backup_data_struct[dev_type]:
+            for key in backup_data_struct[host_type]:
                 field_value = eval('res_row.%s' % key)
                 if key == 'cluster_tag':
                     sheet.write(data_row_num, column, cluster_tag[field_value])
@@ -148,76 +152,3 @@ def export(request, dev_type):
     output.seek(0)
     response.write(output.getvalue())
     return response
-
-
-@login_required()
-def search(request, dev_type, keyword):
-    """
-    according keyword search host or virtual machine
-    
-    Arguments:
-        request {object} -- wsgi http request object
-        dev_type {str} -- deivce type just contain vm or hosts
-        keyword {str} -- search keyword
-    
-    Returns:
-        json -- json object
-    """
-    if dev_type not in ['vm', 'host'] or len(keyword) == 0:
-        return JsonResponse({
-            'code': 1,
-            'msg': 'illegal request'
-        })
-
-    perm = {
-        'vm': 'app.view_vminfo',
-        'host': 'app.view_hostinfo'
-    }
-    # permission verify
-    if not request.user.has_perm(perm[dev_type]):
-        return JsonResponse({
-            'msg': 'permission denied',
-            'code': 1
-        })
-
-    mod = {
-        'vm': VmInfo,
-        'host': HostInfo
-    }
-
-    model = mod[dev_type]
-
-    if dev_type == 'vm':
-        res = model.objects.filter(
-            Q(vm_ip__contains=keyword) |
-            Q(vm_hostname__contains=keyword)
-        )
-        host_obj = HostInfo.objects.all()
-        esxi_kvp = {i.id: i.hostname for i in host_obj}
-        vm_data = []
-        for i in res.values():
-            i["esxi_host_name"] = esxi_kvp[i['host_id']]
-            vm_data.append(i)
-        return_data = {
-            'data': vm_data,
-            'code': 0,
-            'msg': 'ok',
-            'page_data': {
-                'rs_count': 1,
-                'page_count': 1,
-                'page_size': 1,
-                'curr_page': 1,
-            }
-        }
-    elif dev_type == 'host':
-        res = model.objects.filter(
-            Q(host_ip__contains=keyword) |
-            Q(hostname__contains=keyword) |
-            Q(idrac_ip__contains=keyword)
-        )
-        return_data = {
-            'data': [i for i in res.values()],
-            'code': 0,
-            'msg': 'ok'
-        }
-    return JsonResponse(return_data)

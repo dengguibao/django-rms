@@ -26,9 +26,8 @@ urlpatterns = [
     path('create-or-update/<str:form_name>/', global_views.create_or_update),
     path('view-logs/<str:content_type>/<int:object_id>', global_views.view_log_view),
 
-    path('get-hosts-list/type/<str:dev_type>/flag/<str:flag>/', server_views.get_hosts_list),
-    path('search/<str:dev_type>/<str:keyword>/', server_views.search),
-    path('export-server/<str:dev_type>', server_views.export),
+    path('get-hosts-list/<str:host_type>/<str:flag>/', server_views.get_hosts_list),
+    path('export-server/<str:host_type>', server_views.export),
 
     path('permission-admin/<int:nid>', perm_views.permission_admin_view),
     path('get-user-perms-list/<int:nid>', perm_views.get_user_perms_list),

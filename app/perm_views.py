@@ -58,6 +58,9 @@ def get_user_perms_list(request, nid):
         'lannetworks': '网络信息',
         'wannetworks': '互联网信息',
     }
+    if not user.is_superuser:
+        del all_perms_object['user']
+        
     perm_app = 'app'
     user_all_perms = user.get_all_permissions()
 

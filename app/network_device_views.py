@@ -7,6 +7,7 @@ from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.conf import settings
 from .models import NetworkDevices, Branch, LanNetworks, WanNetworks
+from .global_views import perms, models
 
 
 @login_required()
@@ -25,30 +26,14 @@ def list_device_info(request, form_name):
     page = int(request.GET.get('page', 1))
     export = request.GET.get('export', None)
 
-    app_name = 'app'
-    perm_action = 'view'
-
-    perms = {
-        'branch': '%s.%s_branch',
-        'lan_net': '%s.%s_lannetworks',
-        'wan_net': '%s.%s_wannetworks',
-        'net_devices': '%s.%s_networkdevices',
-    }
-
-    models = {
-        'branch': Branch,
-        'lan_net': LanNetworks,
-        'wan_net': WanNetworks,
-        'net_devices': NetworkDevices,
-    }
-
     if form_name not in perms:
         return render(
             request, 'admin/error.html',
             {'error_msg': 'Illegal request'}
         )
-
-    if not request.user.has_perm(perms[form_name] % (app_name, perm_action)):
+        
+    perm_action_flag = 'view'
+    if not request.user.has_perm(perms[form_name] % perm_action_flag ):
         return render(
             request, 'admin/error.html',
             {

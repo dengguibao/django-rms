@@ -81,12 +81,12 @@
         })
         
         $('.layui-tab-title li').first().addClass('layui-this')
-        refresh_table("/admin/get-hosts-list/type/host/flag/cs", 'cs');
+        refresh_table("/admin/get-hosts-list/host/cs", 'cs');
 
         element.on('tab(tab_cluster)', function (data) {
             $('#page').empty()
             var flag = $(this).attr('flag');
-            var url = "/admin/get-hosts-list/type/host/flag/" + flag;
+            var url = "/admin/get-hosts-list/host/" + flag;
             refresh_table(url, flag);
         })
 
@@ -98,7 +98,7 @@
                 return;
             }
             $('#page').hide()
-            refresh_table('/admin/search/host/' + keyword, 'null')
+            refresh_table('/admin/get-hosts-list/host/all?keyword=' + keyword, 'null')
         })
 
         function refresh_table(url, flag) {
@@ -213,7 +213,7 @@
                         jump: function (obj, first) {
                             //首次不执行
                             if (!first) {
-                                refresh_table("/admin/get-hosts-list/type/host/flag/" + flag + "/?page=" + obj.curr, flag)
+                                refresh_table("/admin/get-hosts-list/host/" + flag + "/?page=" + obj.curr, flag)
                             }
                         }
                     });
@@ -243,7 +243,7 @@
                 });
             }
             if (event == 'logs') {
-                window.open('/admin/view-logs/hostinfo/' + obj.data.id)
+                window.open('/admin/view-logs/host/' + obj.data.id)
             }
             if (event == 'link'){
                 window.open('https://'+obj.data.idrac_ip)

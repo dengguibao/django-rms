@@ -132,7 +132,7 @@
             $('#page').hide()
             $('#host_list').hide()
             $('#vms_list').css('width','100%')
-            refresh_vms_table('/admin/search/vm/'+keyword)
+            refresh_vms_table('/admin/get-hosts-list/vm/all?keyword='+keyword)
         })
 
         form.on('switch(zbx_status)', function(obj){
@@ -142,8 +142,8 @@
 
 
         //初始化加载
-        refresh_esxi_table("/admin/get-hosts-list/type/host/flag/cs");
-        refresh_vms_table("/admin/get-hosts-list/type/vm/flag/cs_all");
+        refresh_esxi_table("/admin/get-hosts-list/host/cs");
+        refresh_vms_table("/admin/get-hosts-list/vm/cs_all");
 
         // listen tab click event
         element.on('tab(tab_cluster)', function (data) {
@@ -151,10 +151,11 @@
             tab_act = '_all'
             flag = $(this).attr('flag');
             $('#page').empty()
+            $('#page').show()
             $('#host_list').show()
             $('#vms_list').removeAttr('style')
-            refresh_esxi_table("/admin/get-hosts-list/type/host/flag/" + flag);
-            refresh_vms_table("/admin/get-hosts-list/type/vm/flag/" + flag + "_all");
+            refresh_esxi_table("/admin/get-hosts-list/host/" + flag);
+            refresh_vms_table("/admin/get-hosts-list/vm/" + flag + "_all");
         })
 
         table.on('tool(dt)',function(obj){
@@ -180,7 +181,7 @@
                 });
             }
             if (event == 'logs'){
-                window.open('/admin/view-logs/vminfo/'+obj.data.id)
+                window.open('/admin/view-logs/vm/'+obj.data.id)
             }
             if (event == 'link'){
                 // clear all prompt layer
@@ -307,7 +308,7 @@
                         jump: function (obj, first) {
                             //首次不执行
                             if (!first) {
-                                refresh_vms_table("/admin/get-hosts-list/type/vm/flag/" + flag + tab_act + "/?page=" + obj.curr)
+                                refresh_vms_table("/admin/get-hosts-list/vm/" + flag + tab_act + "/?page=" + obj.curr)
                             } 
                         }
                     });
@@ -419,7 +420,7 @@
         window.refresh_vms_of_esxi = function (s) {
             flag = s
             tab_act = ''
-            refresh_vms_table("/admin/get-hosts-list/type/vm/flag/" + flag + tab_act)
+            refresh_vms_table("/admin/get-hosts-list/vm/" + flag + tab_act)
         }
     });
 </script>

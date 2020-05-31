@@ -101,6 +101,7 @@
                         '<a class="mr" tag="' + res.data.id + '" target="_blank" href="/admin/media/' + res.data.id + '">' +
                         '<i class="layui-icon layui-icon-file"></i>' + res.data.name + '</a>' +
                         '</td>' +
+                        '<td>' + res.data.owner + '</td>' +
                         '<td>' + res.data.file_size + '</td>' +
                         '<td>' + res.data.pub_date + '</td></tr>'
                     container.append(append_str)
@@ -372,7 +373,6 @@
             })
 
             $.when(file, folder).done(function () {
-
                 refresh_folder_click_event();
                 refresh_right_click_menu();
             })

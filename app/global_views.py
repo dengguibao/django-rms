@@ -12,7 +12,33 @@ from django.conf import settings
 from .models import(
     VmInfo, HostInfo, ClusterInfo, TroubleReport, DailyReport,
     Branch, NetworkDevices, WanNetworks, LanNetworks
-) 
+)
+
+models = {
+    'host': HostInfo,
+    'vm': VmInfo,
+    'cluster': ClusterInfo,
+    'user': User,
+    'trouble_report': TroubleReport,
+    'daily_report': DailyReport,
+    'branch': Branch,
+    'lan_net': LanNetworks,
+    'wan_net': WanNetworks,
+    'net_devices': NetworkDevices
+}
+
+perms = {
+    'vm': 'app.%s_vminfo',
+    'host': 'app.%s_hostinfo',
+    'cluster': 'app.%s_clusterinfo',
+    'user': 'auth.%s_user',
+    'trouble_report': 'app.%s_troublereport',
+    'daily_report': 'app.%s_dailyreport',
+    'branch': 'app.%s_branch',
+    'lan_net': 'app.%s_lannetworks',
+    'wan_net': 'app.%s_wannetworks',
+    'net_devices': 'app.%s_networkdevices',
+}
 
 
 def data_struct():
@@ -162,36 +188,10 @@ def render_edit_view(request, form_name, nid):
     if form_name not in request_form_array:
         return render(request, 'admin/error.html', {'error_msg': 'illegal request!'})
 
-    app_name = 'app'
-    perm_action = 'change'
-    if form_name == 'user':
-        app_name = 'auth'
-    perm = {
-        'vm': '%s.%s_vminfo',
-        'host': '%s.%s_hostinfo',
-        'cluster': '%s.%s_clusterinfo',
-        'user': '%s.%s_user',
-        'trouble': '%s.%s_troublereport',
-        'daily_report': '%s.%s_dailyreport',
-        'branch': '%s.%s_branch',
-        'lan_net': '%s.%s_lannetworks',
-        'wan_net': '%s.%s_wannetworks',
-        'net_devices': '%s.%s_networkdevices',
-    }
-    models = {
-        'host': HostInfo,
-        'vm': VmInfo,
-        'cluster': ClusterInfo,
-        'user': User,
-        'trouble': TroubleReport,
-        'daily_report': DailyReport,
-        'branch': Branch,
-        'lan_net': LanNetworks,
-        'wan_net': WanNetworks,
-        'net_devices': NetworkDevices
-    }
+
+    perm_action_flag = 'change'
     # permission verify
-    if not request.user.has_perm(perm[form_name] % (app_name, perm_action)):
+    if not request.user.has_perm(perms[form_name] % perm_action_flag):
         return render(request, 'admin/error.html')
 
     temp_name = 'admin/add_or_edit_%s.html' % form_name
@@ -259,41 +259,17 @@ def delete(request, form_name, nid):
     if form_name not in request_form_array:
         return JsonResponse(return_data)
 
-    model = {
-        'host': HostInfo,
-        'vm': VmInfo,
-        'cluster': ClusterInfo,
-        'user': User,
-        'trouble': TroubleReport,
-        'daily_report': DailyReport,
-        'branch': Branch,
-        'lan_net': LanNetworks,
-        'wan_net': WanNetworks,
-        'net_devices': NetworkDevices
-    }
-    perm_app = 'app'
-    perm_action_flag = 'delete'
-    perm = {
-        'vm': '%s.%s_vminfo',
-        'host': '%s.%s_hostinfo',
-        'cluster': '%s.%s_clusterinfo',
-        'user': 'auth.delete_user',
-        'trouble': '%s.%s_troublereport',
-        'daily_report': '%s.%s_dailyreport',
-        'branch': '%s.%s_branch',
-        'lan_net': '%s.%s_lannetworks',
-        'wan_net': '%s.%s_wannetworks',
-        'net_devices': '%s.%s_networkdevices',
-    }
+
+    perm_action_flag = 'delete'  
     # permission verify
-    if not request.user.has_perm(perm[form_name] % (perm_app, perm_action_flag)):
+    if not request.user.has_perm(perms[form_name] % perm_action_flag):
         return JsonResponse({
             'msg': 'permission denied',
             'code': 1
         })
     # delete record
     res = None
-    res = model[form_name].objects.get(id=nid).delete()
+    res = models[form_name].objects.get(id=nid).delete()
 
     if res:
         return_data['msg'] = 'ok'
@@ -323,6 +299,13 @@ def create_or_update(request, form_name):
             'code': 1,
             'msg': 'illegal request!'
         })
+    
+    # permission verify
+    if not request.user.has_perm(perms[form_name] % perm_action_flag):
+        return JsonResponse({
+            'code': 1,
+            'msg': 'permission error'
+        })
 
     if request.user.is_superuser and form_name != 'user':
         return JsonResponse({
@@ -333,55 +316,19 @@ def create_or_update(request, form_name):
     post_data = request.POST.dict()
     del post_data['csrfmiddlewaretoken']
     del post_data['id']
+    
     log = request.GET.get('log', True)
     nid = int(request.POST.get('id', 0))
     # according id defined action
     if nid == 0:
         act = 'create'
-        perm_action_flag = 'add_'
+        perm_action_flag = 'add'
         log_action_flag = ADDITION
     else:
         act = 'update'
-        perm_action_flag = 'change_'
+        perm_action_flag = 'change'
         log_action_flag = CHANGE
         log_object_id = nid
-    # according form_name define perm app object
-    if form_name == 'user':
-        app_object = 'auth.'
-    else:
-        app_object = 'app.'
-    # according form_name define perm object
-    perm_object = {
-        'host': 'hostinfo',
-        'vm': 'vminfo',
-        'cluster': 'clusterinfo',
-        'user': 'user',
-        'trouble_report': 'troublereport',
-        'daily_report': 'dailyreport',
-        'branch': 'branch',
-        'lan_net': 'lannetworks',
-        'wan_net': 'wannetworks',
-        'net_devices': 'networkdevices',
-    }
-    # according form_name define model
-    model = {
-        'host': HostInfo,
-        'vm': VmInfo,
-        'cluster': ClusterInfo,
-        'user': User,
-        'trouble_report': TroubleReport,
-        'daily_report': DailyReport,
-        'branch': Branch,
-        'lan_net': LanNetworks,
-        'wan_net': WanNetworks,
-        'net_devices': NetworkDevices
-    }
-    # permission verify
-    if not request.user.has_perm(app_object + perm_action_flag + perm_object[form_name]):
-        return JsonResponse({
-            'code': 1,
-            'msg': 'permission error'
-        })
     
     if form_name == 'cluster':
         if post_data['tag'] == 'none':
@@ -394,11 +341,11 @@ def create_or_update(request, form_name):
 
     # write to db
     if act == 'create':
-        res = model[form_name].objects.create(**post_data)
+        res = models[form_name].objects.create(**post_data)
         log_object_id = res.id
     elif act == 'update':
-        model[form_name].objects.filter(id=nid).update(**post_data)
-        res = model[form_name].objects.get(id=nid)
+        models[form_name].objects.filter(id=nid).update(**post_data)
+        res = models[form_name].objects.get(id=nid)
         log_object_id = res.id
         if form_name == 'user':
             update_session_auth_hash(request, request.user)
@@ -410,7 +357,7 @@ def create_or_update(request, form_name):
     if log == 'no':
         pass
     else:
-        log_content_type_model_id = get_content_type_for_model(model[form_name]).pk
+        log_content_type_model_id = get_content_type_for_model(models[form_name]).pk
         change_field = request.GET.get('change_field', None)
         log_change_data = []
         field_explain = data_struct()
@@ -469,14 +416,8 @@ def view_log_view(request, content_type, object_id):
     Returns:
         retun  -- html view
     """
-    model = {
-        'user': User,
-        'clusterinfo': ClusterInfo,
-        'vminfo': VmInfo,
-        'hostinfo': HostInfo
-    }
 
-    if content_type not in model:
+    if content_type not in models:
         return render(request, 'admin/error.html', {'error_msg': 'illegal request!'})
 
     act_flag_exp = [
@@ -486,10 +427,10 @@ def view_log_view(request, content_type, object_id):
         ('删除', 3)
     ]
     
-    res = model[content_type].objects.get(id=object_id)
+    res = models[content_type].objects.get(id=object_id)
 
     log_entries = LogEntry.objects.filter(
-        content_type_id=get_content_type_for_model(model[content_type]).pk,
+        content_type_id=get_content_type_for_model(models[content_type]).pk,
         object_id=res.id
     )
     return render(request, 'admin/view_log.html', {
@@ -509,12 +450,6 @@ def log_rollback_view(request, log_id):
     Returns:
         str -- rollback state json
     """
-    models = {
-        'clusterinfo': ClusterInfo,
-        'hostinfo': HostInfo,
-        'vminfo': VmInfo,
-        'user': User
-    }
     log_res = LogEntry.objects.get(id=log_id)
     if not log_res:
         return JsonResponse({
