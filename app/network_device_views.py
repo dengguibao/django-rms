@@ -1,7 +1,10 @@
+from io import BytesIO
+import xlwt
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.db.models import Q
 from django.core.paginator import Paginator
+from django.http import HttpResponse
 from django.conf import settings
 from .models import NetworkDevices, Branch, LanNetworks, WanNetworks
 
@@ -20,6 +23,7 @@ def list_device_info(request, form_name):
     keyword = request.GET.get('keyword', None)
     page_size = settings.PAGE_SIZE
     page = int(request.GET.get('page', 1))
+    export = request.GET.get('export', None)
 
     app_name = 'app'
     perm_action = 'view'
@@ -90,6 +94,50 @@ def list_device_info(request, form_name):
         pass
     else:
         res_list = res_list.filter(branch_id=branch_id)
+
+    if export:
+        wb = xlwt.Workbook(encoding='utf8')
+        sheet = wb.add_sheet('sheet1', cell_overwrite_ok=True)
+        # column = 0
+        # backup_data_struct = data_struct()
+        # for title in backup_data_struct[t]:
+        #     sheet.write(0, column, backup_data_struct[t][title])
+        #     column += 1
+
+        column = 0
+        data_row_num = 0
+        for i in res_list.values():
+            for key,value in i.items():
+                if key == 'branch_id':
+                    sheet.write(
+                        data_row_num, 
+                        column,
+                        res_list[data_row_num].branch.name
+                    )
+                elif key == 'id':
+                    sheet.write(
+                        data_row_num, 
+                        column,
+                        data_row_num+1
+                    )
+                elif key == 'isenable':
+                    pass
+                else:
+                    sheet.write(data_row_num, column, value)
+                column += 1
+            column = 0
+            data_row_num += 1
+        
+       
+        response = HttpResponse(content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment;filename=%s.xls' % form_name
+        output = BytesIO()
+        wb.save(output)
+        
+        # 重新定位到开始
+        output.seek(0)
+        response.write(output.getvalue())
+        return response
 
     p = Paginator(res_list, page_size)
 

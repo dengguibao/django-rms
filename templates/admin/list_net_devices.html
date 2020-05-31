@@ -29,6 +29,9 @@
                 <button type="button" onclick="$(form).submit();" class="layui-btn" id="search" >
                     <i class="layui-icon layui-icon-search"></i>查找
                 </button>
+                <a href="javascript:;" class="layui-btn btn-export">
+                    <i class="layui-icon layui-icon-download-circle"></i>导出
+                </a>
             </div>
         </div>
     </form>
@@ -109,6 +112,14 @@
             if(event.keyCode==13){
                 $('#search').click();
             }
+        })
+
+        $('.btn-export').click(function(){
+            let action_url = $('form').attr('action');
+            let branch_id = $('select[name="branch_id"]').val();
+            let keyword = $('input[name="keyword"]').val();
+            let new_url = action_url+'?branch_id='+branch_id+'&keyword='+keyword+'&export=t';
+            window.open(new_url);
         })
 
         form.on('select(branch)',function(data){
