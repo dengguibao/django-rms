@@ -62,7 +62,7 @@ def report_manage(request):
     )
     end_date = request.POST.get(
         'end_date',
-        time.strftime('%Y-%m-30', time.localtime())
+        time.strftime('%Y-%m-31', time.localtime())
     )
     fmt = '%Y-%m-%d'
     start_date_tuple = time.strptime(start_date, fmt)

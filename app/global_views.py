@@ -301,6 +301,7 @@ def create_or_update(request, form_name):
         })
     
     # permission verify
+    perm_action_flag = 'add'
     if not request.user.has_perm(perms[form_name] % perm_action_flag):
         return JsonResponse({
             'code': 1,
@@ -316,7 +317,7 @@ def create_or_update(request, form_name):
     post_data = request.POST.dict()
     del post_data['csrfmiddlewaretoken']
     del post_data['id']
-    
+
     log = request.GET.get('log', True)
     nid = int(request.POST.get('id', 0))
     # according id defined action
