@@ -220,7 +220,7 @@
 
         form.on('select(cluster_tag)', function (data) {
             var cluster_tag = data.value;
-            var url = "/admin/get-hosts-list/type/host/flag/" + cluster_tag + '?page_size=30';
+            var url = "/admin/get-hosts-list/host/" + cluster_tag + '?page_size=30';
             var device_list_control = $("#host_id");
             device_list_control.empty();
             $.getJSON(

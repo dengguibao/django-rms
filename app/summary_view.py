@@ -1,4 +1,4 @@
-import datetime, time
+import datetime, time, calendar
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -45,7 +45,12 @@ def list_summary_view(request):
     esxi_none_count = HostInfo.objects.filter(cluster_tag='none').count()
 
     start_date = time.strftime('%Y-%m-01', time.localtime())
-    end_date = time.strftime('%Y-%m-31', time.localtime())
+    end_date = time.strftime('%Y-%m-', time.localtime())
+    x=end_date.split('-')
+    end_date = end_date + '%s' % calendar.monthrange(
+        int(x[0]),int(x[1])
+    )[1]
+
     fmt = '%Y-%m-%d'
 
     start_date_tuple = time.strptime(start_date, fmt)

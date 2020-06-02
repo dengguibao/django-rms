@@ -1,5 +1,5 @@
 import xlwt
-import time, datetime
+import time, datetime, calendar
 import re
 import os
 from io import BytesIO
@@ -60,10 +60,17 @@ def report_manage(request):
             datetime.timedelta(days=-7)
         ).strftime('%Y-%m-%d')
     )
+    
     end_date = request.POST.get(
         'end_date',
-        time.strftime('%Y-%m-31', time.localtime())
+        time.strftime('%Y-%m-', time.localtime())
     )
+    if end_date.strip()[-1] == '-':
+        x = end_date.split('-')
+        end_date = end_date + '%s' % calendar.monthrange(
+            int(x[0]),int(x[1])
+        )[1]
+    
     fmt = '%Y-%m-%d'
     start_date_tuple = time.strptime(start_date, fmt)
     end_date_tuple = time.strptime(end_date, fmt)
@@ -185,7 +192,7 @@ def create_inspect(request):
 def list_inspect(request):
     file_name = "inspect_order_%s.txt" % time.strftime('%Y-%m', time.localtime())
     if not os.path.exists(file_name):
-        raise Http404()
+        return render(request,'admin/error.html',{'error_msg': '本月暂无巡检值班安排'})
 
     with open(file_name, 'r', encoding='utf-8', errors="ignore") as f:
         lines=f.read().replace('	',' ')

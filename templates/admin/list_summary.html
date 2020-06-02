@@ -80,9 +80,13 @@ caption{
             <tr>
                 {% for i in data.user_work_count_data %}
                 <th>{{i.first_name}}</th>
+                {% empty %}
+                <th>暂无数据</th>
                 {% endfor %}
                 {% for i in data.trouble_count_data %}
                 <th class="bg1">{{i.type}}</th>
+                {% empty %}
+                <th>暂无数据</th>
                 {% endfor %}
             </tr>
         </thead>
@@ -91,10 +95,14 @@ caption{
                 
                 {% for i in data.user_work_count_data %}
                 <td>{{i.count}}</td>
+                {% empty %}
+                <td>暂无数据</td>
                 {% endfor %}
 
                 {% for i in data.trouble_count_data %}
                 <td>{{i.count}}</td>
+                {% empty %}
+                <td>暂无数据</td>
                 {% endfor %}
             </tr>
         </tbody>

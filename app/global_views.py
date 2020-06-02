@@ -205,14 +205,16 @@ def render_edit_view(request, form_name, nid):
     if form_name == 'vm':
         esxi_data = HostInfo.objects.filter(cluster_tag=edit_obj.host.cluster_tag)
 
+    context={
+        'obj': edit_obj
+    }
+
     extra_context = {
         'vm': {
             'esxi_list': esxi_data,
             'zabbix_api': settings.ZABBIX_API,
             'cluster_data': cluster_data
         },
-        'branch': {},
-        'user': {},
         'host': {
             'cluster_data': cluster_data
         },
@@ -227,12 +229,13 @@ def render_edit_view(request, form_name, nid):
         },
     }
     # append default object
-    extra_context[form_name]['obj'] = edit_obj
+    if form_name in extra_context:
+        context.update(extra_context[form_name])
 
     return render(
         request,
         temp_name,
-        extra_context[form_name],
+        context
     )
 
 
@@ -427,9 +430,9 @@ def view_log_view(request, content_type, object_id):
         ('修改', 2),
         ('删除', 3)
     ]
-    
-    res = models[content_type].objects.get(id=object_id)
 
+    res = get_object_or_404(models[content_type],pk=object_id)
+    
     log_entries = LogEntry.objects.filter(
         content_type_id=get_content_type_for_model(models[content_type]).pk,
         object_id=res.id
