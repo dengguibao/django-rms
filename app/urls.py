@@ -65,5 +65,5 @@ urlpatterns = [
     path('list-inspect/', report_views.list_inspect),
 
     path('get-device-list/<str:form_name>', network_device_views.list_device_info),
-
+    path('navigation/',global_views.navigation),
 ]

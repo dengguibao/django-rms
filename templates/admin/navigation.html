@@ -1,0 +1,64 @@
+{% extends "admin/basic.html" %}
+{% block notice%}
+网址导航
+{% endblock %}
+{% block mainbody %}
+
+<table class="navigation">
+    <tr>
+        <td>
+            <a href="http://ops.cs.hnyongxiong.com" class="link">
+                <img src="/static/admin/img/ops.png">   运维信息管理平台
+            </a>
+        </td>
+        <td>
+            <a href="http://zabbix.cs.hnyongxiong.com" class="link">
+                <img src="/static/admin/img/zabbix.png">   zabbix监控平台
+            </a>
+        </td>
+        <td>
+            <a href="http://email.yubang168.cn:8080/yxemail/security/login.do" class="link">
+                <img src="/static/admin/img/email.png">   公司邮箱
+            </a>
+        </td>
+        <td>
+            <a href="http://172.31.19.254:3000" class="link">
+                <img src="/static/admin/img/granafa.png">   granafa展示平台
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <a href="http://elk.cs.hnyongxiong.com" class="link">
+                <img src="/static/admin/img/kibana.png">   kibana日志平台
+            </a>
+        </td>
+        <td>
+            <a href="https://pldsec.cs.hnyongxiong.com" class="link">
+                <img src="/static/admin/img/pldsec.png">   堡垒机
+            </a>
+        </td>
+        <td>
+            <a href="http://10.7.252.66:8899/" class="link">
+                <img src="/static/admin/img/smartping.png">   SmartPing
+            </a>
+        </td>
+    </tr>
+</table>
+    
+<style>
+    img{
+        width: 70px;
+        height: 70px;
+    }
+    .link{
+        margin-left: 100px;
+        font-size: 11pt;
+        font-weight: 550;
+    }
+    .navigation{
+        border-collapse:separate; 
+        border-spacing:30px 40px;
+    }
+</style>
+{% endblock %}
