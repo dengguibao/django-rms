@@ -495,4 +495,5 @@ def log_rollback_view(request, log_id):
         'msg': 'rollback failed'
     })
 
-  
+def navigation(request):
+    return render(request, 'admin/navigation.html')
