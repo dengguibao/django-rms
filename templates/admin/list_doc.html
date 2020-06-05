@@ -216,6 +216,8 @@
                                 if (res.code == 0) {
                                     //layer.msg('删除成功');
                                     $('#tr' + d.data.id).empty()
+                                }else{
+                                    layer.alert(res.msg)
                                 }
                             }
                         )

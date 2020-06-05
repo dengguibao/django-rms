@@ -5,7 +5,6 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.conf import settings
-
 from .models import FileInfo
 
 TODAY = time.strftime('%Y%m%d', time.localtime())
@@ -344,6 +343,11 @@ def file_delete(request, fid):
         str -- event description json
     """
     res = FileInfo.objects.get(id=fid)
+    if res.owner_id != request.user.id and not request.user.is_superuser:
+        return JsonResponse({
+        'code': 1,
+        'msg': 'permission denied'
+    })
     # delete file
     if res and res.type == 1:
         file = '/'.join([settings.BASE_DIR, res.real_path, res.real_name])

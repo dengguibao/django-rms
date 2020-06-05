@@ -58,7 +58,7 @@ class Poll():
         if 'token' in jump302_url:
             args = self.get_url_args(jump302_url)
         else:
-            return '%s 链接打开失败' % url
+            return '%s 无效链接' % url
         score_data = {
             "qnrSuggestion": "",
             "questionList": [
@@ -235,11 +235,11 @@ class Ui_Form(object):
         self.groupBox.setTitle(_translate("Form", "日志"))
         self.btn_ok.setText(_translate("Form", "开始"))
         self.btn_stop.setText(_translate("Form", "停止"))
-        self.label.setText(_translate("Form", u"       提前"))
+        self.label.setText(_translate("Form", u"       延后"))
         self.label_2.setText(_translate("Form", "分钟"))
 
     def update_log(self, val):
-        self.progressBar.setValue(val[0]*100)
+        self.progressBar.setValue(int(val[0]*100))
         self.txbLogs.appendPlainText(val[1])
 
     def btn_stop_click_event(self):
@@ -248,19 +248,23 @@ class Ui_Form(object):
         self.spinBox.setReadOnly(False)
         self.stopEvent = True
         self.running = False
+        if self.running is False:
+            return
+        self.txbLogs.appendPlainText(u"停止执行")
 
     def btn_start_click_event(self):
         # self.msgBox.about(self.form, 'test title', 'test content')
         self.stopEvent = False
         if self.running == True:
             return
-        self.txbList.setReadOnly(True)
-        self.txbLogs.setPlainText('')
-        self.spinBox.setReadOnly(True)
+        
         text = self.txbList.toPlainText()
         if not text.strip():
             self.msgBox.about(self.form, u'通知', u'内容为空')
             return
+        self.txbList.setReadOnly(True)
+        self.spinBox.setReadOnly(True)
+        self.txbLogs.setPlainText('开始执行...')
         text = text.replace('	', '|')
         text = re.sub(' +', ' ', text)
         _thread.start_new_thread(self.poll_start, (text,))
@@ -285,17 +289,18 @@ class Ui_Form(object):
 
             # print(success_list)
             if len(success_list) == len(data):
-                self.sig.signal.emit(u'执行结束')
+                self.sig.signal.emit([0, u'执行结束'])
                 self.stopEvent = True
                 self.running = False
+                self.txbList.setReadOnly(False)
 
             for line in data:
                 x = line.split('|')
                 now = int(time.time())
-                end_date = time.mktime(time.strptime(x[0], fmt))
-                is_start = end_date - now
-                # print(is_start)
-                if is_start < pre_time * 60 and is_start > 0 and line not in success_list:
+                user_date = time.mktime(time.strptime(x[0], fmt))
+                is_start = user_date+pre_time*60
+                print(is_start,now,now-is_start)
+                if (is_start == now+1 or is_start == now-1) and line not in success_list:
                     resp_text = poll.submit_poll(x[1])
                     # self.txbLogs.appendPlainText(resp_text)
                     success_list.append(line)
