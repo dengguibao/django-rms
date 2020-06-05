@@ -246,11 +246,11 @@ class Ui_Form(object):
         self.txbList.setReadOnly(False)
         self.progressBar.setValue(0)
         self.spinBox.setReadOnly(False)
-        self.stopEvent = True
-        self.running = False
+        self.stopEvent = True        
         if self.running is False:
             return
         self.txbLogs.appendPlainText(u"停止执行")
+        self.running = False
 
     def btn_start_click_event(self):
         # self.msgBox.about(self.form, 'test title', 'test content')
@@ -292,12 +292,22 @@ class Ui_Form(object):
                 self.sig.signal.emit([0, u'执行结束'])
                 self.stopEvent = True
                 self.running = False
+                self.spinBox.setReadOnly(False)
                 self.txbList.setReadOnly(False)
 
             for line in data:
-                x = line.split('|')
-                now = int(time.time())
-                user_date = time.mktime(time.strptime(x[0], fmt))
+                try:
+                    x = line.split('|')
+                    now = int(time.time())
+                    user_date = time.mktime(time.strptime(x[0], fmt))
+                except Exception as e:
+                    self.sig.signal.emit([0,u'列表格式错误，已停止执行'])
+                    self.stopEvent = True
+                    self.running = False
+                    self.spinBox.setReadOnly(False)
+                    self.txbList.setReadOnly(False)
+                    exit()
+                    
                 is_start = user_date+pre_time*60
                 print(is_start,now,now-is_start)
                 if (is_start == now+1 or is_start == now-1) and line not in success_list:
