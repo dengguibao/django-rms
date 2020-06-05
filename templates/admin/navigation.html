@@ -3,62 +3,72 @@
 网址导航
 {% endblock %}
 {% block mainbody %}
-
-<table class="navigation">
-    <tr>
-        <td>
-            <a href="http://ops.cs.hnyongxiong.com" class="link">
-                <img src="/static/admin/img/ops.png">   运维信息管理平台
+<div>
+    <ul class="test">
+        <li>
+            <a href="http://zabbix.cs.hnyongxiong.com" target="_blank">
+                <img src="/static/admin/img/zabbix.png">
+                <p style="height:16px;line-height:16px;">Zabbix</p>
             </a>
-        </td>
-        <td>
-            <a href="http://zabbix.cs.hnyongxiong.com" class="link">
-                <img src="/static/admin/img/zabbix.png">   zabbix监控平台
+        </li>
+        <li>
+            <a href="http://email.yubang168.cn:8080/yxemail/security/login.do" target="_blank">
+                <img src="/static/admin/img/email.png">
+                <p style="height:16px;line-height:16px;">永雄邮箱</p>
             </a>
-        </td>
-        <td>
-            <a href="http://email.yubang168.cn:8080/yxemail/security/login.do" class="link">
-                <img src="/static/admin/img/email.png">   公司邮箱
+        </li>
+        <li>
+            <a href="http://172.31.19.254:3000" target="_blank">
+                <img src="/static/admin/img/grafana.png">
+                <p style="height:16px;line-height:16px;">Grafana</p>
             </a>
-        </td>
-        <td>
-            <a href="http://172.31.19.254:3000" class="link">
-                <img src="/static/admin/img/granafa.png">   granafa展示平台
+        </li>
+        <li>
+            <a href="http://elk.cs.hnyongxiong.com" target="_blank">
+                <img src="/static/admin/img/kibana.png">
+                <p style="height:16px;line-height:16px;">ELK</p>
             </a>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <a href="http://elk.cs.hnyongxiong.com" class="link">
-                <img src="/static/admin/img/kibana.png">   kibana日志平台
+        </li>
+        <li>
+            <a href="https://pldsec.cs.hnyongxiong.com" target="_blank">
+                <img src="/static/admin/img/pldsec.png">
+                <p style="height:16px;line-height:16px;">帕拉迪</p>
             </a>
-        </td>
-        <td>
-            <a href="https://pldsec.cs.hnyongxiong.com" class="link">
-                <img src="/static/admin/img/pldsec.png">   堡垒机
+        </li>
+        <li>
+           <a href="http://10.7.252.66:8899/" target="_blank">
+                <img src="/static/admin/img/smartping.png">
+                <p style="height:16px;line-height:16px;">SmartPing</p>
             </a>
-        </td>
-        <td>
-            <a href="http://10.7.252.66:8899/" class="link">
-                <img src="/static/admin/img/smartping.png">   SmartPing
-            </a>
-        </td>
-    </tr>
-</table>
-    
+        </li>
+        
+    </ul>
+</div>
 <style>
-    img{
-        width: 70px;
-        height: 70px;
+    .test {
+        display:block;
+        float:left;
+        width:100%;
+        padding:10px;
     }
-    .link{
-        margin-left: 100px;
-        font-size: 11pt;
-        font-weight: 550;
+    .test li{
+        margin-right:40px;
+        float:left;
+        display:block;
     }
-    .navigation{
-        border-collapse:separate; 
-        border-spacing:30px 40px;
+    .test li a {
+        display: block;
+        font-size:14px;
+        {% comment %} border:1px solid #ddd; {% endcomment %}
+        {% comment %} background:#eee; {% endcomment %}
+        width:100px;
+        text-align:center;
+        padding-bottom:10px;
+    }
+    .test li a img{
+        margin:10px 0;
+        width: 60px;
+        height: 60px;
     }
 </style>
 {% endblock %}
