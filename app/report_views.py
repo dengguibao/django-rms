@@ -5,6 +5,7 @@ import os
 from io import BytesIO
 from .models import TroubleReport, DailyReport
 from .global_views import data_struct
+from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
@@ -22,9 +23,11 @@ def report_manage(request):
         html -- html response
     """
     t = request.GET.get('t', None)
+    keyword = request.POST.get('keyword', None)
     if t not in ['trouble', 'daily']:
         return render(request, 'admin/error.html')
     export = request.GET.get('export', None)
+
     model = {
         'trouble': TroubleReport,
         'daily': DailyReport,
@@ -94,6 +97,18 @@ def report_manage(request):
 
     if work_type:
         res = res.filter(type=work_type)
+    
+    if keyword:
+        if t == 'trouble':
+            res = res.filter(
+                Q(info__contains=keyword)|
+                Q(reason__contains=keyword)|
+                Q(resolv_method__contains=keyword)
+            )
+        if t == 'daily':
+            res = res.filter(
+                content__contains=keyword
+            )
 
     if export:
         wb = xlwt.Workbook(encoding='utf8')
@@ -136,7 +151,8 @@ def report_manage(request):
         'start_date': start_date,
         'end_date': end_date,
         'work_type': work_type,
-        'first_name': first_name
+        'first_name': first_name,
+        'keyword': keyword
     })
 
 

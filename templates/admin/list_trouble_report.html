@@ -15,7 +15,7 @@
     {% csrf_token %}
     <div class="layui-form-item">
         <div class="layui-inline">
-            <label class="layui-form-label">用户</label>
+            <label class="layui-form-label" style="margin-left:-60px">用户</label>
             <div class="layui-input-inline" style="width:90px">
                 <select name="user_id" lay-filter="args" lay-verify="required">
                 {% if perms.auth.add_user or perms.auth.view_user %}
@@ -57,6 +57,13 @@
             <label class="layui-form-label">结束时间</label>
             <div class="layui-input-inline" style="width:120px">
                 <input type="text" name="end_date" id="end_date" placeholder="2020-03-18" value="{{end_date}}" lay-verify="end_date" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-inline">
+            <label class="layui-form-label">关键字</label>
+            <div class="layui-input-inline">
+                <input type="text" id="keyword" name="keyword" value="{%ifnotequal keyword None%}{{keyword}}{%endifnotequal%}" placeholder="关键字" class="layui-input">
             </div>
         </div>
 
