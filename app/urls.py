@@ -65,5 +65,8 @@ urlpatterns = [
     path('list-inspect/', report_views.list_inspect),
 
     path('get-device-list/<str:form_name>', network_device_views.list_device_info),
+    path('get-port-desc-list/<int:device_id>', network_device_views.get_port_desc_list),
+    path('update-port-desc', network_device_views.update_port_desc),
+
     path('navigation/',global_views.navigation),
 ]

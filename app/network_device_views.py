@@ -4,9 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.db.models import Q
 from django.core.paginator import Paginator
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.conf import settings
-from .models import NetworkDevices, Branch, LanNetworks, WanNetworks
+from .models import NetworkDevices, Branch, LanNetworks, WanNetworks, PortDesc
 from .global_views import perms, models
 
 
@@ -139,3 +139,47 @@ def list_device_info(request, form_name):
             'curr_page': page
         }
     )
+
+
+def update_port_desc(request):
+    id = request.GET.get('id',None)
+    port_index = request.GET.get('port_index',None)
+    port_desc = request.GET.get('port_desc',None)
+    branch_id = request.GET.get('branch_id',None)
+    device_id = request.GET.get('device_id',None)
+
+    branch_obj = Branch.objects.get(id=branch_id)
+    device_obj = NetworkDevices.objects.get(id=device_id)
+
+    if id:
+        res = PortDesc.objects.filter(id=id).update(
+            branch=branch_obj,
+            device=device_obj,
+            desc=port_desc,
+            index=port_index
+        )
+    else:
+        res = PortDesc.objects.create(
+            branch=branch_obj,
+            device=device_obj,
+            desc=port_desc,
+            index=port_index
+        )
+    if res:
+        return JsonResponse({
+            'code': 0,
+            'msg': 'success'
+        })
+
+    return JsonResponse({
+        'code': 1,
+        'msg': 'failed'
+    })
+
+
+def get_port_desc_list(request, device_id):
+    res = PortDesc.objects.filter(device=device_id)
+    return JsonResponse({
+        'code':0,
+        'data':list(res.values())
+    })

@@ -4,6 +4,29 @@
 {% endblock %}
 {% block mainbody %}
 
+<style type="text/css">
+.devPort {
+    width:90%;
+}
+.devPort tr td {
+    border:1px solid #ddd;
+    height:35px;
+    text-align:center;
+}
+.devPort tr td i{
+    margin:0 4px;
+}
+.devPort tr td input{
+    border:1px solid #fff;
+    text-align:center;
+    cursor:pointer;
+    font-size:12px;
+}
+.devPort thead tr td{
+    background:#eee;
+}
+</style>
+
 <fieldset class="layui-elem-field layui-field-title">
     <legend>设备信息</legend>
 </fieldset>
@@ -61,6 +84,60 @@
 
     <div class="layui-form-item">
         <div class="layui-inline">
+            <label class="layui-form-label">端口数量</label>
+            <div class="layui-input-inline" style="width: 100px;">
+                <select lay-verify="required" id="portNum" lay-filter="portNum" name="port_num">
+                    {% comment %} <option value="">请选择</option> {% endcomment %}
+                    <option {% ifequal obj.port_num 8 %} selected=""{%endifequal%}>8</option>
+                    <option {% ifequal obj.port_num 16 %} selected=""{%endifequal%}>16</option>
+                    <option {% ifequal obj.port_num 18 %} selected=""{%endifequal%}>18</option>
+                    <option {% ifequal obj.port_num 24 %} selected=""{%endifequal%}>24</option>
+                    <option {% ifequal obj.port_num 26 %} selected=""{%endifequal%}>26</option>
+                    <option {% ifequal obj.port_num 48 %} selected=""{%endifequal%}>48</option>
+                    <option {% ifequal obj.port_num 50 %} selected=""{%endifequal%}>50</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item" style="overflow-x:auto;margin-left:110px;">
+        <table class="devPort">
+            <thead>
+                <tr id="port_desc">
+                    {% comment %} <td><i class="layui-icon layui-icon-up"></i>1 <i class="layui-icon layui-icon-down"></i>2</td>
+                    <td><i class="layui-icon layui-icon-up"></i>3 <i class="layui-icon layui-icon-down"></i>4</td>
+                    <td><i class="layui-icon layui-icon-up"></i>5 <i class="layui-icon layui-icon-down"></i>6</td>
+                    <td><i class="layui-icon layui-icon-up"></i>7 <i class="layui-icon layui-icon-down"></i>8</td>
+                    <td><i class="layui-icon layui-icon-up"></i>9 <i class="layui-icon layui-icon-down"></i>10</td>
+                    <td><i class="layui-icon layui-icon-up"></i>11 <i class="layui-icon layui-icon-down"></i>12</td>
+                    <td><i class="layui-icon layui-icon-up"></i>13 <i class="layui-icon layui-icon-down"></i>14</td> {% endcomment %}
+                <tr>
+            </thead>
+            <tbody>
+                <tr id="port_single">
+                    {% comment %} <td>1</td>
+                    <td>3</td>
+                    <td>5</td>
+                    <td>7</td>
+                    <td>9</td>
+                    <td>11</td>
+                    <td>13</td> {% endcomment %}
+                </tr>
+                <tr id="port_double">
+                    {% comment %} <td>2</td>
+                    <td>4</td>
+                    <td>6</td>
+                    <td>8</td>
+                    <td>10</td>
+                    <td>12</td>
+                    <td>14</td> {% endcomment %}
+                </tr>
+            </tbody>        
+        </table>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
             <label class="layui-form-label">序列号</label>
             <div class="layui-input-inline" style="width: 300px;">
                 <input type="text" maxlength="50" placeholder="AXXAKLAS1313656156" name="sn" value="{{ obj.sn}}" lay-verify="required" autocomplete="off" class="layui-input">
@@ -90,7 +167,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">地区</label>
             <div class="layui-input-inline" style="width: 150px;">
-                <select name="branch_id" lay-verify="required" lay-search="">
+                <select name="branch_id" id="branch_id" lay-verify="required" lay-search="">
                   <option>直接选择或搜索</option>
                     {% for i in branch_data %}
                     <option {%ifequal obj.branch_id i.id %}selected=""{%endifequal%} value="{{i.id}}">{{i.name}}</option>
@@ -112,8 +189,7 @@
     layui.use(['form', 'layer'], function () {
         var form = layui.form
             , layer = layui.layer;
-
-        url = '/admin/create-or-update/net_devices/?log=no'
+        
         form.on('submit(submit)', function (data) {
             $.ajax({
                 url: url,
@@ -134,22 +210,79 @@
             return false;
         });
 
-        // form.on('select(cluster_tag)', function (data) {
-        //     var cluster_tag = data.value;
-        //     var url = "/admin/get-hosts-list/type/host/flag/" + cluster_tag;
-        //     var device_list_control = $("#host_id");
-        //     device_list_control.empty();
-        //     $.getJSON(
-        //         url,
-        //         function (result) {
-        //             device_list_control.html("<option value=''>请选择</option>");
-        //             $.each(result.data, function (i, item) {
-        //                 var opt_value = "<option value='" + item.id + "'>" + item.hostname + "</option>";
-        //                 device_list_control.append(opt_value);
-        //             })
-        //             form.render('select');
-        //         })
-        // });
+        port_click_event = function(){
+            $('.port').click(function(){
+                ele_obj=$(this)
+                layer.prompt(
+                    {
+                        'title':'端口描述',
+                    },
+                    function(text, index){
+                        ele_obj.val(text);
+                        layer.close(index)
+                        if (id>0){
+                            let branch_id = $('#branch_id').val()
+                            let url = `/admin/update-port-desc?device_id=${id}&branch_id=${branch_id}&port_index=${ele_obj.attr('name')}&port_desc=${text}`
+                            let data_id = ele_obj.attr('data-id')
+                            if (data_id != undefined){
+                                url += '&id='+data_id
+                            }
+                            $.getJSON(
+                                url,
+                                function(res){
+                                    console.log(res)
+                                }
+                            )
+                        }
+                    }
+                )
+            })
+        }
+
+        build_port_desc_talbe = function(data){
+            $('#port_desc').empty()
+            $('#port_single').empty()
+            $('#port_double').empty()
+
+            let portTotal=data
+            n=1;
+            while(n<=portTotal){
+                let cell_html=`<td><input type="text" id="port_index_${n}" name="port_index_${n}" class="port" value="${n}" readonly/></td>`
+                if (n%2==1){
+                    $('#port_single').append(cell_html)
+                }else{
+                    $('#port_double').append(cell_html)
+                }
+                if (n<=(portTotal/2)){
+                    $('#port_desc').append(
+                        '<td><i class="layui-icon layui-icon-up"></i>'+(n*2-1)+
+                        '<i class="layui-icon layui-icon-down"></i>'+n*2+'</td>'
+                    )
+                }
+                n++;
+            }
+            port_click_event()
+        }
+
+        update_port_desc_table = function(){
+            $.getJSON(
+                '/admin/get-port-desc-list/'+$('#network_devices_id').val(),
+                function(res){
+                    if (res.code == 0){
+                        $.each(res.data,function(i,d){
+                            //console.log(i,d)
+                            $('#'+d.index).val(d.desc)
+                            $('#'+d.index).attr('data-id', d.id)
+                        })
+                    }
+                }
+            )
+        }
+
+        form.on('select(portNum)',function(data){
+            build_port_desc_talbe(data.value)
+            update_port_desc_table()
+        })
 
         form.verify({
             ip: function (value, item) {
@@ -162,6 +295,16 @@
                 }
             }
         });
+
+        url = '/admin/create-or-update/net_devices/?log=no'
+        
+        id = $('#network_devices_id').val()
+        portNum=$('#portNum').val()
+        build_port_desc_talbe(portNum)
+        if (id > 0){
+            update_port_desc_table()
+        }
+        
     });
 </script>
 {% endblock %}

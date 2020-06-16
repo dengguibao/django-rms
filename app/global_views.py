@@ -11,7 +11,7 @@ from django.contrib.admin.options import get_content_type_for_model
 from django.conf import settings
 from .models import(
     VmInfo, HostInfo, ClusterInfo, TroubleReport, DailyReport,
-    Branch, NetworkDevices, WanNetworks, LanNetworks
+    Branch, NetworkDevices, WanNetworks, LanNetworks, PortDesc
 )
 
 models = {
@@ -342,11 +342,22 @@ def create_or_update(request, form_name):
             del post_data['password']
         else:
             post_data['password'] = make_password(post_data['password'])
+    elif form_name == 'net_devices':
+        port_data = []
+        for k in list(post_data.keys()):
+            if 'port_index' in k:
+                port_data.append(
+                    (k,post_data[k])
+                )
+                del post_data[k]
 
     # write to db
     if act == 'create':
         res = models[form_name].objects.create(**post_data)
         log_object_id = res.id
+        if form_name == "net_devices" and port_data:
+            write_port_desc(res.branch_id, res.id, port_data)
+            
     elif act == 'update':
         models[form_name].objects.filter(id=nid).update(**post_data)
         res = models[form_name].objects.get(id=nid)
@@ -495,5 +506,22 @@ def log_rollback_view(request, log_id):
         'msg': 'rollback failed'
     })
 
+
 def navigation(request):
     return render(request, 'admin/navigation.html')
+
+
+def write_port_desc(branch_id, device_id, data):
+    branch_obj = Branch.objects.get(id=branch_id)
+    device_obj = NetworkDevices.objects.get(id=device_id)
+    d = []
+    for k,v in data:
+        d.append(
+            PortDesc(
+                branch=branch_obj,
+                device=device_obj,
+                index=k,
+                desc=v
+            )
+        )
+    PortDesc.objects.bulk_create(d)

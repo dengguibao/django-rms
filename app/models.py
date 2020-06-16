@@ -185,6 +185,7 @@ class NetworkDevices(models.Model):
     device_model = models.CharField(max_length=50)   # 设备型号
     version = models.CharField(max_length=50)   # 软件版本号
     ip = models.CharField(max_length=20)   # 管理IP
+    port_num = models.IntegerField(default=8, null=False) # 端口数量
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)   # 地区
 
 
@@ -206,3 +207,11 @@ class LanNetworks(models.Model):
     gateway = models.CharField(max_length=20)   # 网关
     vlanid = models.IntegerField()  # vlan id
     function = models.CharField(max_length=20)   # 用途
+
+
+class PortDesc(models.Model):
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)   # 地区
+    device = models.ForeignKey(NetworkDevices, on_delete=models.CASCADE) # 设备ID
+    index = models.CharField(max_length=50, null=False) # 端口索引
+    desc = models.CharField(max_length=200, null=True) # 端口描述
+    
