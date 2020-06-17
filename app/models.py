@@ -212,6 +212,25 @@ class LanNetworks(models.Model):
 class PortDesc(models.Model):
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)   # 地区
     device = models.ForeignKey(NetworkDevices, on_delete=models.CASCADE) # 设备ID
-    index = models.CharField(max_length=50, null=False) # 端口索引
-    desc = models.CharField(max_length=200, null=True) # 端口描述
-    
+    index = models.CharField(max_length=50, null=False)  # 端口索引
+    desc = models.CharField(max_length=200, null=True)  # 端口描述
+
+
+class Monitor(models.Model):
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)   # 地区
+    dev_model = models.CharField(max_length=20)   # 型号
+    ip = models.CharField(max_length=20)   # IP
+    camera_nums = models.IntegerField()   # 摄像头数量
+    idle_channel = models.IntegerField()   # 剩余通道数
+    hdd = models.IntegerField()   # 硬盘容量
+    idle_slot = models.IntegerField()   # 剩余硬盘槽位
+    storage = models.IntegerField()   # 存储时间是否满足3个月
+    desc = models.TextField(null=True)   # 备注
+
+
+class MonitorAccount(models.Model):
+    monitor = models.ForeignKey(Monitor, on_delete=models.CASCADE)   # 授权监控主机IP
+    username = models.CharField(max_length=20)   # 授权账号
+    password = models.CharField(max_length=20)   # 密码
+    channel = models.CharField(max_length=50)   # 授权通道号
+    desc = models.TextField(null=True)   # 授权描述

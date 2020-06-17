@@ -1,31 +1,25 @@
-from io import BytesIO
-import xlwt
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-from django.db.models import Q
-from django.core.paginator import Paginator
-from django.http import HttpResponse, JsonResponse
-from django.conf import settings
-from .models import NetworkDevices, Branch, PortDesc
+from .models import MonitorAccount, Monitor
 from .global_views import perms, models
+import xlwt
+from io import BytesIO
+from django.core.paginator import Paginator
+from django.shortcuts import render
+from django.http import JsonResponse, HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.conf import settings
+
+from django.db.models import Q
 
 
 @login_required()
-def list_device_info(request, form_name):
-    """render lannetworks list
-    
-    Arguments:
-        request {object} -- wsgi http request object
-    
-    Returns:
-        html -- render html template
-    """
+def list_monitor_info(request):
     branch_id = request.GET.get('branch_id', 0)
     keyword = request.GET.get('keyword', None)
     page_size = settings.PAGE_SIZE
     page = int(request.GET.get('page', 1))
     export = request.GET.get('export', None)
 
+    form_name = 'monitor'
     if form_name not in perms:
         return render(
             request, 'admin/error.html',
@@ -40,40 +34,15 @@ def list_device_info(request, form_name):
                 'error_msg': 'permission denied'
             }
         )
-    if form_name == 'branch':
-        res_list = models[form_name].objects.all().order_by('-id')
-    else:
-        res_list = models[form_name].objects.all().select_related('branch').order_by('-id')
 
-    if form_name == 'branch' and keyword:
-        res_list = res_list.filter(
-            Q(name__contains=keyword) |
-            Q(address__contains=keyword)
-        )
-    elif form_name == 'lan_net' and keyword:
-        res_list = res_list.filter(
-            Q(ip__contains=keyword)
-        )
-    elif form_name == 'wan_net' and keyword:
-        res_list = res_list.filter(
-            Q(ip__contains=keyword) |
-            Q(bandwidth__contains=keyword) |
-            Q(rent__contains=keyword) |
-            Q(contact__contains=keyword) |
-            Q(isp__contains=keyword)
-        )
-    elif form_name == 'net_devices' and keyword:
-        res_list = res_list.filter(
-            Q(sn__contains=keyword) |
-            Q(ip__contains=keyword) |
-            Q(device_model__contains=keyword) |
-            Q(brand__contains=keyword) |
-            Q(device_type__contains=keyword) |
-            Q(hostname__contains=keyword)
-        )
+    res_list = models[form_name].objects.all().select_related('branch').order_by('-id')
 
-    if not keyword:
-        pass
+    if keyword:
+        res_list = res_list.filter(
+            Q(dev_model__contains=keyword) |
+            Q(ip__contains=keyword) |
+            Q(desc=keyword)
+        )
 
     if int(branch_id) == 0:
         pass
@@ -105,8 +74,11 @@ def list_device_info(request, form_name):
                         column,
                         data_row_num + 1
                     )
-                elif key == 'isenable':
-                    pass
+                elif key == 'storage':
+                    if value == 1:
+                        sheet.write(data_row_num, column, '满足')
+                    else:
+                        sheet.write(data_row_num, column, '不满足')
                 else:
                     sheet.write(data_row_num, column, value)
                 column += 1
@@ -130,7 +102,7 @@ def list_device_info(request, form_name):
         'admin/list_%s.html' % form_name,
         {
             'obj': p.page(page),
-            'branch_data': Branch.objects.filter(isenable=1),
+            'branch_data': models['branch'].objects.filter(isenable=1),
             'keyword': keyword,
             'current_branch_id': int(branch_id),
             'rs_count': p.count,
@@ -139,31 +111,39 @@ def list_device_info(request, form_name):
         }
     )
 
+@login_required()
+def get_monitor_account_list(request, monitor_id):
+    res = MonitorAccount.objects.filter(monitor_id=monitor_id)
+    return JsonResponse({
+        'code': 0,
+        'data': list(res.values())
+    })
 
-def update_port_desc(request):
+
+@login_required()
+def update_monitor_account(request):
     id = request.GET.get('id', None)
-    port_index = request.GET.get('port_index', None)
-    port_desc = request.GET.get('port_desc', None)
-    branch_id = request.GET.get('branch_id', None)
-    device_id = request.GET.get('device_id', None)
-
-    branch_obj = Branch.objects.get(id=branch_id)
-    device_obj = NetworkDevices.objects.get(id=device_id)
-
+    username = request.GET.get('username', None)
+    password = request.GET.get('password', None)
+    channel = request.GET.get('channel', None)
+    desc = request.GET.get('desc', None)
+    monitor = request.GET.get('monitor_id', None)
     if id:
-        res = PortDesc.objects.filter(id=id).update(
-            branch=branch_obj,
-            device=device_obj,
-            desc=port_desc,
-            index=port_index
+        res = MonitorAccount.objects.update(
+            username=username,
+            password=password,
+            channel=channel,
+            desc=desc
         )
     else:
-        res = PortDesc.objects.create(
-            branch=branch_obj,
-            device=device_obj,
-            desc=port_desc,
-            index=port_index
+        res = MonitorAccount.objects.create(
+            monitor=Monitor.objects.get(id=monitor),
+            username=username,
+            password=password,
+            channel=channel,
+            desc=desc
         )
+
     if res:
         return JsonResponse({
             'code': 0,
@@ -173,12 +153,4 @@ def update_port_desc(request):
     return JsonResponse({
         'code': 1,
         'msg': 'failed'
-    })
-
-
-def get_port_desc_list(request, device_id):
-    res = PortDesc.objects.filter(device=device_id)
-    return JsonResponse({
-        'code': 0,
-        'data': list(res.values())
     })

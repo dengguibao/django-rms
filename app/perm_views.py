@@ -1,9 +1,9 @@
-import json
+# import json
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Permission
-from django.db.models import Q
+# from django.db.models import Q
 
 
 @login_required
@@ -57,6 +57,7 @@ def get_user_perms_list(request, nid):
         'networkdevices': '网络设备',
         'lannetworks': '网络信息',
         'wannetworks': '互联网信息',
+        'monitor': '监控主机',
     }
     if not user.is_superuser:
         del all_perms_object['user']
@@ -184,6 +185,7 @@ def init_admin_permission(request):
         'networkdevices',
         'lannetworks',
         'wannetworks',
+        'monitor'
     ]
     action_flag_array = [
         'add_',

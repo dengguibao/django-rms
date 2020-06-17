@@ -1,0 +1,299 @@
+{% extends "admin/basic.html" %}
+{% block notice%}
+视频监控 / {%if obj.id %}编辑{% else %}新建{% endif %}监控主机信息
+{% endblock %}
+{% block mainbody %}
+
+<style type="text/css">
+    #monitor_account{
+        border:1px solid #ddd;
+        width:50%
+    }
+    #monitor_account thead tr th{
+        background:#eee;
+        height:30px;
+        padding:5px;
+        border:1px solid #ddd
+    }
+    #monitor_account tbody tr td{
+        height:25px;
+        padding:5px;
+        border:1px solid #ddd
+    }
+    #monitor_account tbody tr td i{
+        margin:0 5px;
+        cursor:pointer;
+    }
+    .btn-add{
+        margin-top:10px;
+    }
+</style>
+
+<fieldset class="layui-elem-field layui-field-title">
+    <legend>基本信息</legend>
+</fieldset>
+
+<form class="layui-form">
+    {% csrf_token %}
+    <input type="hidden" id="monitor_id" name="id" value="{%if obj.id %}{{ obj.id }}{% else %}0{% endif %}" />
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">分公司名称</label>
+            <div class="layui-input-inline" style="width: 200px;">
+                <select name="branch_id" id="branch_id" lay-verify="required" lay-search="">
+                  <option></option>
+                    {% for i in branch_data %}
+                    <option {%ifequal obj.branch_id i.id %}selected=""{%endifequal%} value="{{i.id}}">{{i.name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">设备型号</label>
+            <div class="layui-input-inline" style="width: 200px;">
+                <input type="text" placeholder="DS-8616N-I8" maxlength="50" name="dev_model"  value="{{ obj.dev_model}}" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">IP</label>
+            <div class="layui-input-inline" style="width: 200px;">
+                <input type="text" placeholder="10.18.121.130" maxlength="20" name="ip" value="{{ obj.ip}}" lay-verify="required|ip" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">摄像头数量</label>
+            <div class="layui-input-inline" style="width: 40px;">
+                <input type="text" placeholder="12" maxlength="20" name="camera_nums" value="{{ obj.camera_nums}}" lay-verify="required|number" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">个</div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">剩余通道数</label>
+            <div class="layui-input-inline" style="width: 40px;">
+                <input type="text" placeholder="4" maxlength="20" name="idle_channel" value="{{ obj.idle_channel}}" lay-verify="required|number" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">个</div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">硬盘容量</label>
+            <div class="layui-input-inline" style="width: 40px;">
+                <input type="text" placeholder="8" maxlength="20" name="hdd" value="{{ obj.hdd}}" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">T</div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">闲置槽位</label>
+            <div class="layui-input-inline" style="width: 40px;">
+                <input type="text" placeholder="3" maxlength="20" name="idle_slot" value="{{ obj.idle_slot}}" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">个</div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">存储三个月</label>
+            <div class="layui-input-inline">
+                <input type="radio" name="storage" value="1" title="满足"{%ifequal obj.storage 1%} checked=""{%endifequal%}>
+                <input type="radio" name="storage" value="0" title="不满足"{%ifequal obj.storage 0%} checked=""{%endifequal%}>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-block">
+          <textarea rows="4" cols="100" style="border:1px solid #ddd" placeholder="请输入" name="desc">{{ obj.desc }}</textarea>
+        </div>
+    </div>
+
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>账号授权</legend>
+    </fieldset>
+    <div class="layui-form-item" style="margin-left:110px;">
+        <table id="monitor_account">
+            <thead>
+                <tr>
+                    <th>账号</th>
+                    <th>密码</th>
+                    <th>授权通道</th>
+                    <th>授权描述</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="tbody">
+<!--                <tr>-->
+<!--                    <td><input type="text" name="username" /></td>-->
+<!--                    <td><input type="text" name="password" /></td>-->
+<!--                    <td><input type="text" name="channel" /></td>-->
+<!--                    <td><input type="text" name="desc" /></td>-->
+<!--                    <td><i class="layui-icon layui-icon-ok"/><i class="layui-icon layui-icon-delete"/></td>-->
+<!--                </tr>-->
+            </tbody>
+        </table>
+
+        <button type="button" class="layui-btn layui-btn-sm btn-add">
+            <i class="layui-icon">&#xe654;</i>
+        </button>
+    </div>
+
+<!--    <div class="layui-form-item">-->
+<!--        <label class="layui-form-label">备注</label>-->
+<!--        <div class="layui-input-block">-->
+<!--          <textarea placeholder="请输入内容" class="layui-textarea" name="desc">{{ obj.desc }}</textarea>-->
+<!--        </div>-->
+<!--    </div>-->
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <input type="submit" class="layui-btn" lay-submit="" lay-filter="monitor_submit" value="提交">
+            <input type="reset" class="layui-btn layui-btn-primary" value="重置">
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+    layui.use(['form', 'layedit'], function () {
+        var form = layui.form
+            , layer = layui.layer;
+
+        var id = $("#monitor_id").val()
+        var account_index=0;
+
+        form.verify({
+            ip: function (value, item) {
+                function isValidIP(ip) {
+                    var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
+                    return reg.test(ip);
+                }
+                if (isValidIP(value) == false) {
+                    return '请输入正确的IP地址';
+                }
+            }
+        });
+
+        ok_or_delete_click = function(){
+            $(".layui-icon-delete").click(function(){
+                ele = $(this)
+                ele_id = ele.attr('id')
+                data_id = ele.attr('data_id')
+                if (data_id == undefined){
+                    $('#'+ele_id).remove()
+                    return
+                }
+                // ajax delete account
+                url = `/admin/delete/monitor_account/${data_id}/`
+                $.getJSON(
+                    url,
+                    function(res){
+                        console.log(res)
+                        $('#'+ele_id).remove()
+                    }
+                )
+            })
+
+            $(".layui-icon-ok").click(function(){
+                ele = $(this)
+                ele_id = ele.attr('id')
+                data_id = ele.attr('data_id')
+                if (data_id == undefined){
+                    return
+                }
+                // ajax submit
+                username=$('input[name="username_'+ele_id+'"').val()
+                password=$('input[name="password_'+ele_id+'"').val()
+                channel=$('input[name="channel_'+ele_id+'"').val()
+                desc=$('input[name="desc_'+ele_id+'"').val()
+                
+                if (data_id==0){
+                    url = `/admin/update-monitor-account?monitor_id=${id}&username=${username}&password=${password}&channel=${channel}&desc=${desc}`
+                }else{
+                    url = `/admin/update-monitor-account?id=${data_id}&username=${username}&password=${password}&channel=${channel}&desc=${desc}`
+                }
+                console.log(url)
+                $.getJSON(
+                    url,
+                    function(res){
+                        console.log(res)
+                    }
+                )
+            })
+        }
+
+        get_account_list = function(){
+            if (id==0){
+                $('.btn-add').click()
+                return
+            }
+            url = `/admin/get-monitor-account-list/${id}`
+            $.getJSON(
+                url,
+                function(res){
+                    if (res.code==0){
+                        $.each(res.data,function(i,d){
+                                        html_str = `<tr id="${d.id}">`+
+                                        `<td><input type="text" class="layui-input" lay-verify="required" name="username_${d.id}" value="${d.username}" /></td>`+
+                                        `<td><input type="text" class="layui-input" lay-verify="required" name="password_${d.id}" value="${d.password}" /></td>`+
+                                        `<td><input type="text" class="layui-input" lay-verify="required" name="channel_${d.id}" value="${d.channel}" /></td>`+
+                                        `<td><input type="text" class="layui-input" lay-verify="required" name="desc_${d.id}" value="${d.desc}" /></td>`+
+                                        `<td><i class="layui-icon layui-icon-ok" data_id="${d.id}" id="${d.id}"/>`+
+                                        `<i class="layui-icon layui-icon-delete" data_id="${d.id}" id="${d.id}"/></td></tr>`
+                            $('#tbody').append(html_str)
+                        })
+                        ok_or_delete_click()
+                    }
+                }
+            )
+        }
+
+        $(".btn-add").click(function(){
+            html_str = `<tr id="new_${account_index}">`+
+                    `<td><input type="text" class="layui-input" lay-verify="required" name="username_new_${account_index}" /></td>`+
+                    `<td><input type="text" class="layui-input" lay-verify="required" name="password_new_${account_index}" /></td>`+
+                    `<td><input type="text" class="layui-input" lay-verify="required" name="channel_new_${account_index}" /></td>`+
+                    `<td><input type="text" class="layui-input" lay-verify="required" name="desc_new_${account_index}" /></td>`+
+                    `<td>`
+            if (id>0){
+                html_str += `<i class="layui-icon layui-icon-ok" data_id="0" id="new_${account_index}"/>`
+            }
+            html_str += `<i class="layui-icon layui-icon-delete" id="new_${account_index}"/></td></tr>`
+            $('#tbody').append(html_str)
+            account_index++
+            ok_or_delete_click()
+        })
+
+        get_account_list()
+
+        form.on('submit(monitor_submit)', function (data) {
+            console.log(data)
+            url = '/admin/create-or-update/monitor/'
+            $.ajax({
+                url: url,
+                type: 'post',
+                data: data.field,
+                success: function (d) {
+                    if (d.code == 0) {
+                        layer.msg(d.msg)
+                        setTimeout(function () {
+                            window.location.href = document.referrer
+                        }, 1000);
+                        
+                    }
+                }
+            })
+            return false;
+        });
+
+    })
+</script>
+{% endblock %}

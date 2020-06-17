@@ -15,7 +15,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">IP/掩码</label>
             <div class="layui-input-inline" style="width: 200px;">
-                <input type="text" placeholder="172.31.1.0/24" maxlength="50" name="ip" value="{{obj.ip}}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" placeholder="172.31.1.0/24" maxlength="50" name="ip" value="{{obj.ip}}" lay-verify="required|subnet" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -24,7 +24,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">网关</label>
             <div class="layui-input-inline" style="width: 200px;">
-                <input type="text" maxlength="50" name="gateway" placeholder="172.31.1.1" value="{{obj.gateway}}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" maxlength="50" name="gateway" placeholder="172.31.1.1" value="{{obj.gateway}}" lay-verify="required|ip" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -33,7 +33,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">VLAN编号</label>
             <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" placeholder="1001" maxlength="50" name="vlanid" value="{{obj.vlanid}}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" placeholder="1001" maxlength="50" name="vlanid" value="{{obj.vlanid}}" lay-verify="required|vlan" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -73,6 +73,28 @@
     layui.use(['form', 'layer'], function () {
         var form = layui.form
             , layer = layui.layer;
+
+        form.verify({
+            ip: function (value, item) {
+                function isValidIP(ip) {
+                    var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
+                    return reg.test(ip);
+                }
+                if (isValidIP(value) == false) {
+                    return '请输入正确的IP地址';
+                }
+            },
+            subnet: function(value,item){
+                var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\/([0-9]|[0-2][0-9]|[0-3][0-2])$/
+                if (reg.test(value) == false){
+                    return '请输入正确的网段'
+                }
+            },
+            vlan: function (value, item) {
+                var reg = /^(\d|\d\d|\d\d\d|40\d[0-4])$/
+                if (value.length > 0 && reg.test(value) === false) return '输入正确vlan';
+            }
+        });
 
         url = '/admin/create-or-update/lan_net/?log=no'
         form.on('submit(submit)', function (data) {

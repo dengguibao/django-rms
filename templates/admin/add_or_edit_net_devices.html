@@ -47,7 +47,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">管理IP</label>
             <div class="layui-input-inline" style="width: 150px;">
-                <input type="text" placeholder="170.31.1.1" maxlength="50" name="ip" value="{{ obj.ip}}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" placeholder="170.31.1.1" maxlength="50" name="ip" value="{{ obj.ip}}" lay-verify="required|ip" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -90,11 +90,11 @@
                     {% comment %} <option value="">请选择</option> {% endcomment %}
                     <option {% ifequal obj.port_num 8 %} selected=""{%endifequal%}>8</option>
                     <option {% ifequal obj.port_num 16 %} selected=""{%endifequal%}>16</option>
-                    <option {% ifequal obj.port_num 18 %} selected=""{%endifequal%}>18</option>
+                    <option {% ifequal obj.port_num 20 %} selected=""{%endifequal%}>20</option>
                     <option {% ifequal obj.port_num 24 %} selected=""{%endifequal%}>24</option>
-                    <option {% ifequal obj.port_num 26 %} selected=""{%endifequal%}>26</option>
+                    <option {% ifequal obj.port_num 28 %} selected=""{%endifequal%}>28</option>
                     <option {% ifequal obj.port_num 48 %} selected=""{%endifequal%}>48</option>
-                    <option {% ifequal obj.port_num 50 %} selected=""{%endifequal%}>50</option>
+                    <option {% ifequal obj.port_num 52 %} selected=""{%endifequal%}>52</option>
                 </select>
             </div>
         </div>
@@ -189,6 +189,24 @@
     layui.use(['form', 'layer'], function () {
         var form = layui.form
             , layer = layui.layer;
+
+        form.verify({
+            ip: function (value, item) {
+                function isValidIP(ip) {
+                    var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
+                    return reg.test(ip);
+                }
+                if (isValidIP(value) == false) {
+                    return '请输入正确的IP地址';
+                }
+            },
+            'subnet': function(value,item){
+                var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\/([0-9]|[0-2][0-9]|[0-3][0-2])$/
+                if (reg.test(value) == false){
+                    return '请输入正确的网段'
+                }
+            }
+        });
         
         form.on('submit(submit)', function (data) {
             $.ajax({

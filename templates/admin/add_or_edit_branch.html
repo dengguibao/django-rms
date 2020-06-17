@@ -49,6 +49,7 @@
     layui.use(['form', 'layedit'], function () {
         var form = layui.form
             , layer = layui.layer;
+        
         url = '/admin/create-or-update/branch/?log=no'
         form.on('submit(submit)', function (data) {
             $.ajax({

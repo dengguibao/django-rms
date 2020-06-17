@@ -67,7 +67,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">vlan ID</label>
             <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" name="vlan_id" maxlength="4" placeholder="1000" value="{{ obj.vlan_id}}" lay-verify="required|number" autocomplete="off" class="layui-input">
+                <input type="text" name="vlan_id" maxlength="4" placeholder="1000" value="{{ obj.vlan_id}}" lay-verify="required|vlan" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -104,19 +104,19 @@
         <div class="layui-inline">
             <label class="layui-form-label">CPU</label>
             <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" name="vm_cpu" placeholder="个" value="{{ obj.vm_cpu}}" maxlength="4" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" name="vm_cpu" placeholder="个" value="{{ obj.vm_cpu}}" maxlength="4" lay-verify="required|number" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-inline">
             <label class="layui-form-label">内存</label>
             <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" name="vm_memory" maxlength="4" placeholder="G" value="{{ obj.vm_memory}}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" name="vm_memory" maxlength="4" placeholder="G" value="{{ obj.vm_memory}}" lay-verify="required|number" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-inline">
             <label class="layui-form-label">硬盘</label>
             <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" name="vm_disk" maxlength="4" placeholder="G" value="{{ obj.vm_disk}}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" name="vm_disk" maxlength="4" placeholder="G" value="{{ obj.vm_disk}}" lay-verify="required|number" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -260,6 +260,10 @@
                 if (isValidIP(value) == false) {
                     return '请输入正确的IP地址';
                 }
+            },
+            vlan: function (value, item) {
+                var reg = /^(\d|\d\d|\d\d\d|40\d[0-4])$/
+                if (value.length > 0 && reg.test(value) === false) return '输入正确vlan';
             }
         });
 

@@ -11,7 +11,8 @@ from django.contrib.admin.options import get_content_type_for_model
 from django.conf import settings
 from .models import(
     VmInfo, HostInfo, ClusterInfo, TroubleReport, DailyReport,
-    Branch, NetworkDevices, WanNetworks, LanNetworks, PortDesc
+    Branch, NetworkDevices, WanNetworks, LanNetworks, PortDesc,
+    Monitor, MonitorAccount
 )
 
 models = {
@@ -24,7 +25,9 @@ models = {
     'branch': Branch,
     'lan_net': LanNetworks,
     'wan_net': WanNetworks,
-    'net_devices': NetworkDevices
+    'net_devices': NetworkDevices,
+    'monitor': Monitor,
+    'monitor_account': MonitorAccount
 }
 
 perms = {
@@ -38,6 +41,8 @@ perms = {
     'lan_net': 'app.%s_lannetworks',
     'wan_net': 'app.%s_wannetworks',
     'net_devices': 'app.%s_networkdevices',
+    'monitor': 'app.%s_monitor',
+    'monitor_account': 'app.%s_monitor',
 }
 
 
@@ -147,7 +152,9 @@ def form_array():
         'branch', 
         'lan_net',
         'wan_net',
-        'net_devices'
+        'net_devices',
+        'monitor',
+        'monitor_account'
     ]
 
 
@@ -227,6 +234,9 @@ def render_edit_view(request, form_name, nid):
         'net_devices': {
             'branch_data': branch_data
         },
+        'monitor': {
+            'branch_data': branch_data
+        }
     }
     # append default object
     if form_name in extra_context:
@@ -262,8 +272,7 @@ def delete(request, form_name, nid):
     if form_name not in request_form_array:
         return JsonResponse(return_data)
 
-
-    perm_action_flag = 'delete'  
+    perm_action_flag = 'delete'
     # permission verify
     if not request.user.has_perm(perms[form_name] % perm_action_flag):
         return JsonResponse({
@@ -308,7 +317,7 @@ def create_or_update(request, form_name):
     if not request.user.has_perm(perms[form_name] % perm_action_flag):
         return JsonResponse({
             'code': 1,
-            'msg': 'permission error'
+            'msg': 'permission denied'
         })
 
     if request.user.is_superuser and form_name != 'user':
@@ -333,7 +342,9 @@ def create_or_update(request, form_name):
         perm_action_flag = 'change'
         log_action_flag = CHANGE
         log_object_id = nid
-    
+
+    # -------extra logic action-------
+    extra_data = []
     if form_name == 'cluster':
         if post_data['tag'] == 'none':
             post_data['tag'] = '__none__'
@@ -343,20 +354,34 @@ def create_or_update(request, form_name):
         else:
             post_data['password'] = make_password(post_data['password'])
     elif form_name == 'net_devices':
-        port_data = []
         for k in list(post_data.keys()):
             if 'port_index' in k:
-                port_data.append(
-                    (k,post_data[k])
+                extra_data.append(
+                    (k, post_data[k])
                 )
                 del post_data[k]
+    elif form_name == 'monitor':
+        tmp_data = {}
+        for k in list(post_data.keys()):
+            if 'username_' in k or 'password_' in k or 'desc_' in k or 'channel_' in k:
+                tmp_data[k.split('_')[0]] = post_data[k]
+                del post_data[k]
+                if len(tmp_data) == 4:
+                    extra_data.append(tmp_data)
+                    del tmp_data
+                    tmp_data = {}
+    # -------end extra logic-------
 
     # write to db
     if act == 'create':
         res = models[form_name].objects.create(**post_data)
         log_object_id = res.id
-        if form_name == "net_devices" and port_data:
-            write_port_desc(res.branch_id, res.id, port_data)
+        # -------extra action-------
+        if form_name == "net_devices" and extra_data:
+            write_port_desc(res.branch_id, res.id, extra_data)
+        if form_name == 'monitor' and extra_data:
+            write_monitor_account(res.id, extra_data)
+        # -------end extra action-------
             
     elif act == 'update':
         models[form_name].objects.filter(id=nid).update(**post_data)
@@ -507,6 +532,7 @@ def log_rollback_view(request, log_id):
     })
 
 
+@login_required()
 def navigation(request):
     return render(request, 'admin/navigation.html')
 
@@ -515,7 +541,7 @@ def write_port_desc(branch_id, device_id, data):
     branch_obj = Branch.objects.get(id=branch_id)
     device_obj = NetworkDevices.objects.get(id=device_id)
     d = []
-    for k,v in data:
+    for k, v in data:
         d.append(
             PortDesc(
                 branch=branch_obj,
@@ -525,3 +551,19 @@ def write_port_desc(branch_id, device_id, data):
             )
         )
     PortDesc.objects.bulk_create(d)
+
+
+def write_monitor_account(monitor_id, data):
+    monitor_obj = Monitor.objects.get(id=monitor_id)
+    d = []
+    for i in data:
+        d.append(
+            MonitorAccount(
+                monitor=monitor_obj,
+                username=i['username'],
+                password=i['password'],
+                desc=i['desc'],
+                channel=i['channel']
+            )
+        )
+    MonitorAccount.objects.bulk_create(d)
