@@ -148,10 +148,14 @@
             <ul>
                 <li><a href="#">添加</a>
                     <ul>
+                    {% if perms.app.add_monitor %}
                         <li><a href="/admin/render/add_or_edit_monitor">监控主机</a></li>
+                    {% endif %}
                     </ul>
                 </li>
+                {% if perms.app.view_monitor %}
                 <li><a href="/admin/list-monitor-info" title="list monitor host">监控主机</a></li>
+                {% endif %}
             </ul>
         </li>
         <li>
