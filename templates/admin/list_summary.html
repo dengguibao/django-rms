@@ -30,7 +30,7 @@ caption{
     <table class="layui-table">
         <thead>
             <tr>
-                <th colspan="2">服务器</th>
+                <th colspan="2">虚拟化</th>
                 <th rowspan="2">用户</th>
                 <th rowspan="2">文件</th>
                 <th rowspan="2">独立服务器</th>
@@ -40,7 +40,7 @@ caption{
                 <th colspan="2">服务器保修信息</th>
             </tr>
             <tr>
-                <th>物理机</th>
+                <th>宿主机</th>
                 <th>虚拟机</th>
                 {% for i in data.net_device_data %}
                 <th>{{ i.device_type }}</th>
@@ -51,7 +51,7 @@ caption{
         </thead>
         <tbody>
             <tr>
-                <td>{{data.hosts_count}}</td>
+                <td>{{data.esxi_count}}</td>
                 <td>{{data.vms_count}}</td>
                 <td>{{data.user_count}}</td>
                 <td>{{data.file_count}}</td>                

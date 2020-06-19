@@ -44,6 +44,7 @@ def list_summary_view(request):
     monitor_count = Monitor.objects.all().count()
     net_device_annotate = NetworkDevices.objects.values("device_type").annotate(count=Count("id"))
     esxi_none_count = HostInfo.objects.filter(cluster_tag='none').count()
+    esxi_count = hosts_count-esxi_none_count
 
     start_date = time.strftime('%Y-%m-01', time.localtime())
     end_date = time.strftime('%Y-%m-', time.localtime())
@@ -96,6 +97,7 @@ def list_summary_view(request):
             'monitor_count': monitor_count,
             'vms_count': vms_count,
             'hosts_count': hosts_count,
+            'esxi_count': esxi_count,
             'net_device_data': net_device_annotate,
             'cluster_data': res_cluster,
             'file_count': file_count,
