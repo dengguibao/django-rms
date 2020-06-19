@@ -15,7 +15,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">IP/掩码</label>
             <div class="layui-input-inline" style="width: 200px;">
-                <input type="text" placeholder="172.31.1.0/24" maxlength="50" name="ip" value="{{obj.ip}}" lay-verify="required|subnet" autocomplete="off" class="layui-input">
+                <input type="text" placeholder="172.31.1.0/24" maxlength="18" name="ip" value="{{obj.ip}}" lay-verify="required|subnet" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -24,7 +24,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">网关</label>
             <div class="layui-input-inline" style="width: 200px;">
-                <input type="text" maxlength="50" name="gateway" placeholder="172.31.1.1" value="{{obj.gateway}}" lay-verify="required|ip" autocomplete="off" class="layui-input">
+                <input type="text" maxlength="15" name="gateway" placeholder="172.31.1.1" value="{{obj.gateway}}" lay-verify="required|ip" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -33,7 +33,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">VLAN编号</label>
             <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" placeholder="1001" maxlength="50" name="vlanid" value="{{obj.vlanid}}" lay-verify="required|vlan" autocomplete="off" class="layui-input">
+                <input type="text" placeholder="1001" maxlength="4" name="vlanid" value="{{obj.vlanid}}" lay-verify="required|vlan" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>

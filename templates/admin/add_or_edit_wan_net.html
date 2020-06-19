@@ -15,7 +15,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">IP/掩码</label>
             <div class="layui-input-inline" style="width: 200px;">
-                <input type="text" placeholder="222.1.1.5/24" maxlength="50" name="ip" value="{{obj.ip}}" lay-verify="required|subnet" autocomplete="off" class="layui-input">
+                <input type="text" placeholder="222.1.1.5/24" maxlength="18" name="ip" value="{{obj.ip}}" lay-verify="required|subnet" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -24,7 +24,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">网关</label>
             <div class="layui-input-inline" style="width: 200px;">
-                <input type="text" maxlength="50" name="gateway" placeholder="222.1.1.1" value="{{obj.gateway}}" lay-verify="required|ip" autocomplete="off" class="layui-input">
+                <input type="text" maxlength="15" name="gateway" placeholder="222.1.1.1" value="{{obj.gateway}}" lay-verify="required|ip" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -32,7 +32,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">DNS1</label>
             <div class="layui-input-inline" style="width: 200px;">
-                <input type="text" maxlength="50" name="dns1" placeholder="8.8.8.8" value="{{obj.dns1}}" lay-verify="required|ip" autocomplete="off" class="layui-input">
+                <input type="text" maxlength="15" name="dns1" placeholder="8.8.8.8" value="{{obj.dns1}}" lay-verify="required|ip" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -40,7 +40,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">DNS2</label>
             <div class="layui-input-inline" style="width: 200px;">
-                <input type="text" maxlength="50" name="dns2" placeholder="8.8.4.4" value="{{obj.dns2}}" autocomplete="off" class="layui-input">
+                <input type="text" maxlength="15" name="dns2" placeholder="8.8.4.4" value="{{obj.dns2}}" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -49,7 +49,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">带宽</label>
             <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" placeholder="100M" maxlength="50" lay-verify="required" name="bandwidth" value="{{obj.bandwidth}}" autocomplete="off" class="layui-input">
+                <input type="text" placeholder="100M" maxlength="5" lay-verify="required" name="bandwidth" value="{{obj.bandwidth}}" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -58,7 +58,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">付费方式</label>
             <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" placeholder="1200/月" maxlength="50" name="rent" value="{{obj.rent}}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" placeholder="1200/月" maxlength="10" name="rent" value="{{obj.rent}}" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>

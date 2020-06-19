@@ -62,7 +62,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">IP</label>
             <div class="layui-input-inline" style="width: 200px;">
-                <input type="text" placeholder="10.18.121.130" maxlength="20" name="ip" value="{{ obj.ip}}" lay-verify="required|ip" autocomplete="off" class="layui-input">
+                <input type="text" placeholder="10.18.121.130" maxlength="15" name="ip" value="{{ obj.ip}}" lay-verify="required|ip" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -70,7 +70,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">摄像头数量</label>
             <div class="layui-input-inline" style="width: 40px;">
-                <input type="text" placeholder="12" maxlength="20" name="camera_nums" value="{{ obj.camera_nums}}" lay-verify="required|number" autocomplete="off" class="layui-input">
+                <input type="text" placeholder="12" maxlength="2" name="camera_nums" value="{{ obj.camera_nums}}" lay-verify="required|number" autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">个</div>
         </div>
@@ -79,7 +79,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">剩余通道数</label>
             <div class="layui-input-inline" style="width: 40px;">
-                <input type="text" placeholder="4" maxlength="20" name="idle_channel" value="{{ obj.idle_channel}}" lay-verify="required|number" autocomplete="off" class="layui-input">
+                <input type="text" placeholder="4" maxlength="2" name="idle_channel" value="{{ obj.idle_channel}}" lay-verify="required|number" autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">个</div>
         </div>
@@ -88,7 +88,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">硬盘容量</label>
             <div class="layui-input-inline" style="width: 40px;">
-                <input type="text" placeholder="8" maxlength="20" name="hdd" value="{{ obj.hdd}}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" placeholder="8" maxlength="2" name="hdd" value="{{ obj.hdd}}" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">T</div>
         </div>
@@ -97,7 +97,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">闲置槽位</label>
             <div class="layui-input-inline" style="width: 40px;">
-                <input type="text" placeholder="3" maxlength="20" name="idle_slot" value="{{ obj.idle_slot}}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" placeholder="3" maxlength="2" name="idle_slot" value="{{ obj.idle_slot}}" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">个</div>
         </div>
@@ -214,7 +214,7 @@
                 password=$('input[name="password_'+ele_id+'"').val()
                 channel=$('input[name="channel_'+ele_id+'"').val()
                 desc=$('input[name="desc_'+ele_id+'"').val()
-                
+                if(username.trim.length<=0 || password.trim.length<=0 || channel.trim.length<=0 || desc.trim.length<=0) return false;
                 if (data_id==0){
                     url = `/admin/update-monitor-account?monitor_id=${id}&username=${username}&password=${password}&channel=${channel}&desc=${desc}`
                 }else{
