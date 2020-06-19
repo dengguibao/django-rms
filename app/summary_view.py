@@ -7,7 +7,7 @@ from django.db.models import Count
 from .models import (
     VmInfo, HostInfo, FileInfo, 
     ClusterInfo, Branch, NetworkDevices,
-    TroubleReport, DailyReport
+    TroubleReport, DailyReport, Monitor
 )
 
 
@@ -41,6 +41,7 @@ def list_summary_view(request):
 
     # 分子公司总数减去总部
     branch_count = Branch.objects.filter(isenable=1).count()-1
+    monitor_count = Monitor.objects.all().count()
     net_device_annotate = NetworkDevices.objects.values("device_type").annotate(count=Count("id"))
     esxi_none_count = HostInfo.objects.filter(cluster_tag='none').count()
 
@@ -92,6 +93,7 @@ def list_summary_view(request):
             'trouble_count_data': trouble_annotate_count,
             'user_work_count_data': user_work_annotate_count,
             'branch_count': branch_count,
+            'monitor_count': monitor_count,
             'vms_count': vms_count,
             'hosts_count': hosts_count,
             'net_device_data': net_device_annotate,

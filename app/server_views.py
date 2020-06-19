@@ -6,12 +6,12 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.conf import settings
-from .global_views import data_struct, perms, models
-from .models import VmInfo, HostInfo, ClusterInfo
+from .global_views import data_struct, perms
+from .models import VmInfo, HostInfo, ClusterInfo, HostInterface
 
 
 @login_required()
-def get_hosts_list(request, host_type, flag):
+def list_hosts_list(request, host_type, flag):
     """get all host and virtual machine resource
     
     Arguments:
@@ -152,3 +152,42 @@ def export(request, host_type):
     output.seek(0)
     response.write(output.getvalue())
     return response
+
+
+@login_required()
+def get_host_interface_list(request, host_id):
+    res = HostInterface.objects.filter(host=host_id)
+    return JsonResponse({
+        'code': 0,
+        'data': list(res.values())
+    })
+
+
+@login_required()
+def update_host_interface(request):
+    id = request.GET.get('id', None)
+    ifname = request.GET.get('ifname', None)
+    access = request.GET.get('access', None)
+    host_id = request.GET.get('host_id', None)
+    if id:
+        res = HostInterface.objects.update(
+            ifname=ifname,
+            access=access,
+        )
+    else:
+        res = HostInterface.objects.create(
+            host=HostInfo.objects.get(id=host_id),
+            ifname=ifname,
+            access=access,
+        )
+
+    if res:
+        return JsonResponse({
+            'code': 0,
+            'msg': 'success'
+        })
+
+    return JsonResponse({
+        'code': 1,
+        'msg': 'failed'
+    })

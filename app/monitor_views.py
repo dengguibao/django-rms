@@ -111,6 +111,7 @@ def list_monitor_info(request):
         }
     )
 
+
 @login_required()
 def get_monitor_account_list(request, monitor_id):
     res = MonitorAccount.objects.filter(monitor_id=monitor_id)

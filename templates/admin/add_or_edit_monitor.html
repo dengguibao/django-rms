@@ -129,7 +129,7 @@
                     <th>密码</th>
                     <th>授权通道</th>
                     <th>授权描述</th>
-                    <th>操作</th>
+                    <th style="width:70px">操作</th>
                 </tr>
             </thead>
             <tbody id="tbody">
@@ -183,7 +183,7 @@
         });
 
         ok_or_delete_click = function(){
-            $(".layui-icon-delete").click(function(){
+            $(".layui-icon-delete").die("click").live('click',function(){
                 ele = $(this)
                 ele_id = ele.attr('id')
                 data_id = ele.attr('data_id')
@@ -202,7 +202,7 @@
                 )
             })
 
-            $(".layui-icon-ok").click(function(){
+            $(".layui-icon-ok").die("click").live('click',function(){
                 ele = $(this)
                 ele_id = ele.attr('id')
                 data_id = ele.attr('data_id')

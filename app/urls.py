@@ -17,8 +17,10 @@ urlpatterns = [
     path('create-or-update/<str:form_name>/', global_views.create_or_update),
     path('view-logs/<str:content_type>/<int:object_id>', global_views.view_log_view),
 
-    path('get-hosts-list/<str:host_type>/<str:flag>/', server_views.get_hosts_list),
+    path('get-hosts-list/<str:host_type>/<str:flag>/', server_views.list_hosts_list),
     path('export-server/<str:host_type>', server_views.export),
+    path('get-host-interface-list/<int:host_id>', server_views.get_host_interface_list),
+    path('update-host-interface', server_views.update_host_interface),
 
     path('permission-admin/<int:nid>', perm_views.permission_admin_view),
     path('get-user-perms-list/<int:nid>', perm_views.get_user_perms_list),
@@ -58,6 +60,7 @@ urlpatterns = [
     path('get-device-list/<str:form_name>', network_device_views.list_device_info),
     path('get-port-desc-list/<int:device_id>', network_device_views.get_port_desc_list),
     path('update-port-desc', network_device_views.update_port_desc),
+    path('get-device-json-list/<int:branch_id>', network_device_views.get_device_list),
 
     path('navigation/', global_views.navigation),
 

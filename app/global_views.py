@@ -12,11 +12,12 @@ from django.conf import settings
 from .models import(
     VmInfo, HostInfo, ClusterInfo, TroubleReport, DailyReport,
     Branch, NetworkDevices, WanNetworks, LanNetworks, PortDesc,
-    Monitor, MonitorAccount
+    Monitor, MonitorAccount, HostInterface
 )
 
 models = {
     'host': HostInfo,
+    'hostif': HostInterface,
     'vm': VmInfo,
     'cluster': ClusterInfo,
     'user': User,
@@ -33,6 +34,7 @@ models = {
 perms = {
     'vm': 'app.%s_vminfo',
     'host': 'app.%s_hostinfo',
+    'hostif': 'app.%s_hostinfo',
     'cluster': 'app.%s_clusterinfo',
     'user': 'auth.%s_user',
     'trouble_report': 'app.%s_troublereport',
@@ -144,7 +146,8 @@ def data_struct():
 def form_array():
     return [
         'vm', 
-        'host', 
+        'host',
+        'hostif',
         'user', 
         'cluster', 
         'trouble_report', 
@@ -212,7 +215,7 @@ def render_edit_view(request, form_name, nid):
     if form_name == 'vm':
         esxi_data = HostInfo.objects.filter(cluster_tag=edit_obj.host.cluster_tag)
 
-    context={
+    context = {
         'obj': edit_obj
     }
 
@@ -223,7 +226,8 @@ def render_edit_view(request, form_name, nid):
             'cluster_data': cluster_data
         },
         'host': {
-            'cluster_data': cluster_data
+            'cluster_data': cluster_data,
+            'branch_data': branch_data
         },
         'lan_net': {
             'branch_data': branch_data
@@ -370,6 +374,16 @@ def create_or_update(request, form_name):
                     extra_data.append(tmp_data)
                     del tmp_data
                     tmp_data = {}
+    elif form_name == 'host':
+        tmp_data = {}
+        for k in list(post_data.keys()):
+            if 'ifname_' in k or 'access_' in k:
+                tmp_data[k.split('_')[0]] = post_data[k]
+                del post_data[k]
+                if len(tmp_data) == 2:
+                    extra_data.append(tmp_data)
+                    del tmp_data
+                    tmp_data = {}
     # -------end extra logic-------
 
     # write to db
@@ -381,6 +395,8 @@ def create_or_update(request, form_name):
             write_port_desc(res.branch_id, res.id, extra_data)
         if form_name == 'monitor' and extra_data:
             write_monitor_account(res.id, extra_data)
+        if form_name == 'host' and extra_data:
+            write_host_interface(res.id, extra_data)
         # -------end extra action-------
             
     elif act == 'update':
@@ -567,3 +583,17 @@ def write_monitor_account(monitor_id, data):
             )
         )
     MonitorAccount.objects.bulk_create(d)
+
+
+def write_host_interface(host_id, data):
+    host_obj = HostInfo.objects.get(id=host_id)
+    d = []
+    for i in data:
+        d.append(
+            HostInterface(
+                host=host_obj,
+                ifname=i['ifname'],
+                access=i['access'],
+            )
+        )
+    HostInterface.objects.bulk_create(d)

@@ -3,54 +3,84 @@
 服务器 / {%if obj.id %}编辑{% else %}新建{% endif %}服务器
 {% endblock %}
 {% block mainbody %}
+<style type="text/css">
+    #network-interface{
+        border:1px solid #ddd;
+        width:50%
+    }
+    #network-interface thead tr th{
+        background:#eee;
+        height:30px;
+        padding:5px;
+        border:1px solid #ddd
+    }
+    #network-interface tbody tr td{
+        height:25px;
+        padding:5px;
+        border:1px solid #ddd
+    }
+    #network-interface tbody tr td i{
+        margin:0 5px;
+        cursor:pointer;
+    }
+    .btn-add{
+        margin-top:10px;
+    }
+    .if-access{
+        cursor:pointer;
+    }
+    .layui-layer-page .layui-layer-content {overflow: inherit !important;}
+</style>
 
 <fieldset class="layui-elem-field layui-field-title">
     <legend>系统信息</legend>
 </fieldset>
 
-<form class="layui-form" action="">
+<form class="layui-form basicForm" action="">
     {% csrf_token %}
     <input type="hidden" name="id" id="host_id" value="{%if obj.id %}{{ obj.id }}{% else %}0{% endif %}"/>
     <div class="layui-form-item">
         <div class="layui-inline">
             <label class="layui-form-label">主机名</label>
             <div class="layui-input-inline" style="width: 300px;">
-                <input type="text" maxlength="80" placeholder="esxi88.cs.hnyongxiong.com" name="hostname" value="{{ obj.hostname }}" lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" maxlength="80" placeholder="esxi88.cs.hnyongxiong.com" name="hostname"
+                       value="{{ obj.hostname }}" lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
 
     <div class="layui-form-item">
         <div class="layui-inline">
-          <label class="layui-form-label">操作系统</label>
-          <div class="layui-input-inline" style="width: 100px;">
-            <select name="os" lay-verify="required">
-                <option value="">请选择</option>
-                <option {% ifequal obj.os 'CentOS' %}selected=""{% endifequal %} value="CentOS">CentOS</option>
-                <option {% ifequal obj.os 'Ubuntu' %}selected=""{% endifequal %} value="Ubuntu">Ubuntu</option>
-                <option {% ifequal obj.os 'Windows' %}selected=""{% endifequal %} value="Windows">Windows</option>
-                <option {% ifequal obj.os 'ESXi' %}selected=""{% endifequal %} value="ESXi">ESXi</option>
-                <option {% ifequal obj.os 'general linux' %}selected=""{% endifequal %} value="general linux">General Linux</option>
-                
-            </select>
-          </div>
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">iDRAC ip</label>
-            <div class="layui-input-inline">
-                <input type="text" name="idrac_ip" placeholder="1.2.3.4" maxlength="15" value="{{ obj.idrac_ip }}" lay-verify="required|ip" autocomplete="off" class="layui-input">
+            <label class="layui-form-label">操作系统</label>
+            <div class="layui-input-inline" style="width: 100px;">
+                <select name="os" lay-verify="required">
+                    <option value="">请选择</option>
+                    <option {% ifequal obj.os 'CentOS' %}selected=""{% endifequal %} value="CentOS">CentOS</option>
+                    <option {% ifequal obj.os 'Ubuntu' %}selected=""{% endifequal %} value="Ubuntu">Ubuntu</option>
+                    <option {% ifequal obj.os 'Windows' %}selected=""{% endifequal %} value="Windows">Windows</option>
+                    <option {% ifequal obj.os 'ESXi' %}selected=""{% endifequal %} value="ESXi">ESXi</option>
+                    <option {% ifequal obj.os 'general linux' %}selected=""{% endifequal %} value="general linux">General Linux</option>
+                </select>
             </div>
         </div>
     </div>
 
     <div class="layui-form-item">
         <div class="layui-inline">
-            <label class="layui-form-label">主机ip</label>
+            <label class="layui-form-label">iDRAC IP</label>
             <div class="layui-input-inline">
-                <input type="text" name="host_ip" maxlength="15" placeholder="1.2.3.4" value="{{ obj.host_ip }}" lay-verify="required|ip" autocomplete="off" class="layui-input">
+                <input type="text" name="idrac_ip" placeholder="1.2.3.4" maxlength="15" value="{{ obj.idrac_ip }}"
+                       lay-verify="required|ip" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">主机IP</label>
+            <div class="layui-input-inline">
+                <input type="text" name="host_ip" maxlength="15" placeholder="1.2.3.4" value="{{ obj.host_ip }}"
+                       lay-verify="required|ip" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -59,7 +89,8 @@
         <div class="layui-inline">
             <label class="layui-form-label">用途</label>
             <div class="layui-input-inline" style="width: 400px;">
-                <input type="text" name="intention" maxlength="150" placeholder="vmware虚拟化服务器" value="{{ obj.intention }}" autocomplete="off" class="layui-input">
+                <input type="text" name="intention" maxlength="150" placeholder="vmware虚拟化服务器"
+                       value="{{ obj.intention }}" autocomplete="off" class="layui-input">
             </div>
         </div>
     </div>
@@ -67,22 +98,24 @@
         <div class="layui-inline">
             <label class="layui-form-label">状态</label>
             <div class="layui-input-block">
-                <input type="radio" name="dev_status" value="0" title="开机"{%ifequal obj.dev_status 0%} checked=""{%endifequal%}>
-                <input type="radio" name="dev_status" value="1" title="关机"{%ifequal obj.dev_status 1%} checked=""{%endifequal%}>
+                <input type="radio" name="dev_status" value="0" title="开机" {%ifequal obj.dev_status 0%} checked=""
+                       {%endifequal%}>
+                <input type="radio" name="dev_status" value="1" title="关机" {%ifequal obj.dev_status 1%} checked=""
+                       {%endifequal%}>
             </div>
         </div>
     </div>
-<fieldset class="layui-elem-field layui-field-title">
-    <legend>基础信息</legend>
-</fieldset>
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>基础信息</legend>
+    </fieldset>
     <div class="layui-form-item">
         <div class="layui-inline">
             <label class="layui-form-label">集群</label>
             <div class="layui-input-inline" style="width: 100px;">
                 <select name="cluster_tag" lay-verify="required">
-                    <option value="">请选择</option>
+                    <option></option>
                     {% for i in cluster_data %}
-                    <option {% ifequal obj.cluster_tag i.tag %}selected="" {% endifequal %} value="{{i.tag}}">{{i.name}}</option>
+                    <option {% ifequal obj.cluster_tag i.tag %} selected="" {%endifequal%} value="{{i.tag}}">{{i.name}}</option>
                     {% endfor %}
                     <option {% ifequal obj.cluster_tag 'none' %}selected=""{% endifequal %} value="none">独立服务器</option>
                 </select>
@@ -94,14 +127,14 @@
         <div class="layui-inline">
             <label class="layui-form-label">位置</label>
             <div class="layui-input-inline" style="width: 100px;">
-                <select name="dc_name" lay-verify="required" lay-search="">
-                    <option value="">直接选择或搜索选择</option>
-                    <option{% ifequal obj.dc_name '总部6F' %} selected=""{% endifequal %} value="总部6F">总部6F</option>
-                    <option{% ifequal obj.dc_name '总部7F' %} selected=""{% endifequal %} value="总部7F">总部7F</option>
-                    <option{% ifequal obj.dc_name '新化机房' %} selected=""{% endifequal %} value="新化机房">新化机房</option>
-                    <option{% ifequal obj.dc_name '日业机房' %} selected=""{% endifequal %} value="日业机房">日业机房</option>
-                    <option{% ifequal obj.dc_name '鑫远机房' %} selected=""{% endifequal %} value="鑫远机房">鑫远机房</option>
-                    <option{% ifequal obj.dc_name '公园道机房' %} selected=""{% endifequal %} value="公园道机房">公园道机房</option>
+                <select name="dc_name" lay-verify="required">
+                    <option></option>
+                    <option {% ifequal obj.dc_name '总部6F' %} selected=""{% endifequal %} value="总部6F">总部6F</option>
+                    <option {% ifequal obj.dc_name '总部7F' %} selected=""{% endifequal %} value="总部7F">总部7F</option>
+                    <option {% ifequal obj.dc_name '新化机房' %} selected=""{% endifequal %} value="新化机房">新化机房</option>
+                    <option {% ifequal obj.dc_name '日业机房' %} selected=""{% endifequal %} value="日业机房">日业机房</option>
+                    <option {% ifequal obj.dc_name '鑫远机房' %} selected=""{% endifequal %} value="鑫远机房">鑫远机房</option>
+                    <option {% ifequal obj.dc_name '公园道机房' %} selected=""{% endifequal %} value="公园道机房">公园道机房</option>
                 </select>
             </div>
         </div>
@@ -113,20 +146,20 @@
             <div class="layui-input-inline" style="width:100px">
                 <select name="rack_num" lay-search="">
                     <option value="">请选择</option>
-                    <option{% ifequal obj.rack_num 'A' %} selected=""{% endifequal %} value="A">A</option>
-                    <option{% ifequal obj.rack_num 'B' %} selected=""{% endifequal %} value="B">B</option>
-                    <option{% ifequal obj.rack_num 'C' %} selected=""{% endifequal %} value="C">C</option>
-                    <option{% ifequal obj.rack_num 'D' %} selected=""{% endifequal %} value="D">D</option>
-                    <option{% ifequal obj.rack_num 'E' %} selected=""{% endifequal %} value="E">E</option>
-                    <option{% ifequal obj.rack_num 'F' %} selected=""{% endifequal %} value="F">F</option>
-                    <option{% ifequal obj.rack_num 'G' %} selected=""{% endifequal %} value="G">G</option>
-                    <option{% ifequal obj.rack_num 'H' %} selected=""{% endifequal %} value="H">H</option>
-                    <option{% ifequal obj.rack_num 'I' %} selected=""{% endifequal %} value="I">I</option>
-                    <option{% ifequal obj.rack_num 'J' %} selected=""{% endifequal %} value="J">J</option>
-                    <option{% ifequal obj.rack_num 'K' %} selected=""{% endifequal %} value="K">K</option>
-                    <option{% ifequal obj.rack_num 'L' %} selected=""{% endifequal %} value="L">L</option>
-                    <option{% ifequal obj.rack_num 'M' %} selected=""{% endifequal %} value="M">M</option>
-                    <option{% ifequal obj.rack_num 'N' %} selected=""{% endifequal %} value="N">N</option>
+                    <option {% ifequal obj.rack_num 'A' %} selected=""{% endifequal %} value="A">A</option>
+                    <option {% ifequal obj.rack_num 'B' %} selected=""{% endifequal %} value="B">B</option>
+                    <option {% ifequal obj.rack_num 'C' %} selected=""{% endifequal %} value="C">C</option>
+                    <option {% ifequal obj.rack_num 'D' %} selected=""{% endifequal %} value="D">D</option>
+                    <option {% ifequal obj.rack_num 'E' %} selected=""{% endifequal %} value="E">E</option>
+                    <option {% ifequal obj.rack_num 'F' %} selected=""{% endifequal %} value="F">F</option>
+                    <option {% ifequal obj.rack_num 'G' %} selected=""{% endifequal %} value="G">G</option>
+                    <option {% ifequal obj.rack_num 'H' %} selected=""{% endifequal %} value="H">H</option>
+                    <option {% ifequal obj.rack_num 'I' %} selected=""{% endifequal %} value="I">I</option>
+                    <option {% ifequal obj.rack_num 'J' %} selected=""{% endifequal %} value="J">J</option>
+                    <option {% ifequal obj.rack_num 'K' %} selected=""{% endifequal %} value="K">K</option>
+                    <option {% ifequal obj.rack_num 'L' %} selected=""{% endifequal %} value="L">L</option>
+                    <option {% ifequal obj.rack_num 'M' %} selected=""{% endifequal %} value="M">M</option>
+                    <option {% ifequal obj.rack_num 'N' %} selected=""{% endifequal %} value="N">N</option>
                 </select>
             </div>
         </div>
@@ -134,43 +167,50 @@
         <div class="layui-inline">
             <label class="layui-form-label">机架号</label>
             <div class="layui-input-inline">
-                <input type="text" name="slot_num" placeholder="1-2" value="{{obj.slot_num}}" autocomplete="off" class="layui-input">
+                <input type="text" name="slot_num" placeholder="1-2" value="{{obj.slot_num}}" autocomplete="off"
+                       class="layui-input">
             </div>
-        </div>    
+        </div>
     </div>
 
     <div class="layui-form-item">
         <div class="layui-inline">
             <label class="layui-form-label">购买日期</label>
             <div class="layui-input-inline">
-                <input type="text" name="buy_date" id="buy_date" placeholder="2018-03-18" value="{{obj.buy_date}}" lay-verify="buy_date" placeholder="{{ obj.buy_date }}" autocomplete="off" class="layui-input">
+                <input type="text" name="buy_date" id="buy_date" placeholder="2018-03-18" value="{{obj.buy_date}}"
+                       lay-verify="buy_date" placeholder="{{ obj.buy_date }}" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-inline">
             <label class="layui-form-label">过保日期</label>
             <div class="layui-input-inline">
-                <input type="text" name="end_svc_date" id="end_svc_date" placeholder="2024-03-18" value="{{obj.end_svc_date}}" lay-verify="end_svc_date" placeholder="{{ obj.end_svc_date }}" autocomplete="off" class="layui-input">
+                <input type="text" name="end_svc_date" id="end_svc_date" placeholder="2024-03-18"
+                       value="{{obj.end_svc_date}}" lay-verify="end_svc_date" placeholder="{{ obj.end_svc_date }}"
+                       autocomplete="off" class="layui-input">
             </div>
-        </div>    
+        </div>
     </div>
 
     <div class="layui-form-item">
         <div class="layui-inline">
             <label class="layui-form-label">供应商</label>
             <div class="layui-input-inline">
-                <input type="text" name="supply_name" placeholder="惠捷电子科技" maxlength="15" value="{{ obj.supply_name }}" class="layui-input">
+                <input type="text" name="supply_name" placeholder="惠捷电子科技" maxlength="15" value="{{ obj.supply_name }}"
+                       class="layui-input">
             </div>
         </div>
         <div class="layui-inline">
             <label class="layui-form-label">联系人</label>
             <div class="layui-input-inline">
-                <input type="text" name="supply_contact_name" placeholder="张三" maxlength="15" value="{{ obj.supply_contact_name }}" class="layui-input">
+                <input type="text" name="supply_contact_name" placeholder="张三" maxlength="15"
+                       value="{{ obj.supply_contact_name }}" class="layui-input">
             </div>
         </div>
         <div class="layui-inline">
             <label class="layui-form-label">联系号码</label>
             <div class="layui-input-inline">
-                <input type="text" name="supply_phone" maxlength="15" placeholder="13807361234" value="{{ obj.supply_phone }}" class="layui-input">
+                <input type="text" name="supply_phone" maxlength="15" placeholder="13807361234"
+                       value="{{ obj.supply_phone }}" class="layui-input">
             </div>
         </div>
     </div>
@@ -180,152 +220,198 @@
     </fieldset>
     <div class="layui-form-item">
         <div class="layui-inline">
-          <label class="layui-form-label">CPU数量</label>
-          <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="cpu_nums" value="{{ obj.cpu_nums }}" maxlength="30" lay-verify="required" placeholder="个" autocomplete="off" class="layui-input">
-          </div>
+            <label class="layui-form-label">CPU数量</label>
+            <div class="layui-input-inline" style="width: 40px;">
+                <input type="text" name="cpu_nums" value="{{ obj.cpu_nums }}" maxlength="30" lay-verify="required"
+                       placeholder="4" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">个</div>
         </div>
 
         <div class="layui-inline">
-          <label class="layui-form-label">CPU内核</label>
-          <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="cpu_core" value="{{ obj.cpu_core }}" maxlength="30" lay-verify="required" placeholder="核" autocomplete="off" class="layui-input">
-          </div>
+            <label class="layui-form-label">CPU内核</label>
+            <div class="layui-input-inline" style="width: 40px;">
+                <input type="text" name="cpu_core" value="{{ obj.cpu_core }}" maxlength="30" lay-verify="required"
+                       placeholder="8" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">核</div>
         </div>
 
         <div class="layui-inline">
-          <label class="layui-form-label">CPU频率</label>
-          <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="cpu_rate" maxlength="30" value="{{ obj.cpu_rate }}" lay-verify="required" placeholder="G/Hz" autocomplete="off" class="layui-input">
-          </div>
+            <label class="layui-form-label">CPU频率</label>
+            <div class="layui-input-inline" style="width: 40px;">
+                <input type="text" name="cpu_rate" maxlength="30" value="{{ obj.cpu_rate }}" lay-verify="required"
+                       placeholder="1.2" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">G/Hz</div>
         </div>
 
         <div class="layui-inline">
-          <label class="layui-form-label">CPU总频率</label>
-          <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="cpu_total_rate" maxlength="30" value="{{ obj.cpu_total_rate }}" placeholder="G/Hz" lay-verify="required" autocomplete="off" class="layui-input">
-          </div>
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <div class="layui-inline">
-          <label class="layui-form-label">内存数量</label>
-          <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="memory_nums" value="{{ obj.memory_nums }}" maxlength="30" lay-verify="required" placeholder="条" autocomplete="off" class="layui-input">
-          </div>
-        </div>
-
-        <div class="layui-inline">
-          <label class="layui-form-label">内存容量</label>
-          <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="memory_size" maxlength="30" value="{{ obj.memory_size }}" placeholder="G" lay-verify="required" autocomplete="off" class="layui-input">
-          </div>
-        </div>
-
-        <div class="layui-inline">
-          <label class="layui-form-label">内存总容量</label>
-          <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="memory_total_size" maxlength="30" value="{{ obj.memory_total_size }}" placeholder="G" lay-verify="required" autocomplete="off" class="layui-input">
-          </div>
+            <label class="layui-form-label">CPU总频率</label>
+            <div class="layui-input-inline" style="width: 50px;">
+                <input type="text" name="cpu_total_rate" maxlength="30" value="{{ obj.cpu_total_rate }}"
+                       placeholder="27.2" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">G/Hz</div>
         </div>
     </div>
 
     <div class="layui-form-item">
         <div class="layui-inline">
-          <label class="layui-form-label">硬盘数量</label>
-          <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="sd_nums" value="{{ obj.sd_nums }}" maxlength="30" lay-verify="required" placeholder="块" autocomplete="off" class="layui-input">
-          </div>
+            <label class="layui-form-label">内存数量</label>
+            <div class="layui-input-inline" style="width: 40px;">
+                <input type="text" name="memory_nums" value="{{ obj.memory_nums }}" maxlength="30" lay-verify="required"
+                       placeholder="4" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">条</div>
         </div>
 
         <div class="layui-inline">
-          <label class="layui-form-label">硬盘容量</label>
-          <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="sd_size" maxlength="30" value="{{ obj.sd_size }}" lay-verify="required" placeholder="T" autocomplete="off" class="layui-input">
-          </div>
+            <label class="layui-form-label">内存容量</label>
+            <div class="layui-input-inline" style="width: 40px;">
+                <input type="text" name="memory_size" maxlength="30" value="{{ obj.memory_size }}" placeholder="8"
+                       lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">G</div>
         </div>
 
         <div class="layui-inline">
-          <label class="layui-form-label">硬盘总容量</label>
-          <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="sd_total_size" maxlength="30" value="{{ obj.sd_total_size }}" lay-verify="required" placeholder="T" autocomplete="off" class="layui-input">
-          </div>
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <div class="layui-inline">
-          <label class="layui-form-label">SSD数量</label>
-          <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="ssd_nums" value="{{ obj.ssd_nums }}" maxlength="30" lay-verify="required" placeholder="块" autocomplete="off" class="layui-input">
-          </div>
-        </div>
-
-        <div class="layui-inline">
-          <label class="layui-form-label">SSD容量</label>
-          <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="ssd_size" maxlength="30" value="{{ obj.ssd_size }}" lay-verify="required" placeholder="T" autocomplete="off" class="layui-input">
-          </div>
-        </div>
-
-        <div class="layui-inline">
-          <label class="layui-form-label">SSD总容量</label>
-          <div class="layui-input-inline" style="width: 100px;">
-            <input type="text" name="ssd_total_size" maxlength="30" value="{{ obj.ssd_total_size }}" placeholder="T" lay-verify="required" autocomplete="off" class="layui-input">
-          </div>
+            <label class="layui-form-label">内存总容量</label>
+            <div class="layui-input-inline" style="width: 40px;">
+                <input type="text" name="memory_total_size" maxlength="30" value="{{ obj.memory_total_size }}"
+                       placeholder="32" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">G</div>
         </div>
     </div>
 
     <div class="layui-form-item">
         <div class="layui-inline">
-          <label class="layui-form-label">RAID</label>
-          <div class="layui-input-inline">
-            <input type="text" name="raid" placeholder="RAID5" value="{{ obj.raid }}" autocomplete="off" class="layui-input">
-          </div>
+            <label class="layui-form-label">硬盘数量</label>
+            <div class="layui-input-inline" style="width: 40px;">
+                <input type="text" name="sd_nums" value="{{ obj.sd_nums }}" maxlength="30" lay-verify="required"
+                       placeholder="2" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">块</div>
+        </div>
+
+        <div class="layui-inline">
+            <label class="layui-form-label">硬盘容量</label>
+            <div class="layui-input-inline" style="width: 40px;">
+                <input type="text" name="sd_size" maxlength="30" value="{{ obj.sd_size }}" lay-verify="required"
+                       placeholder="1.2" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">T</div>
+        </div>
+
+        <div class="layui-inline">
+            <label class="layui-form-label">硬盘总容量</label>
+            <div class="layui-input-inline" style="width: 40px;">
+                <input type="text" name="sd_total_size" maxlength="30" value="{{ obj.sd_total_size }}"
+                       lay-verify="required" placeholder="2.4" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">T</div>
         </div>
     </div>
 
     <div class="layui-form-item">
         <div class="layui-inline">
-          <label class="layui-form-label">设备型号</label>
-          <div class="layui-input-inline">
-            <input type="text" name="dev_model" placeholder="Dell R740" maxlength="50" value="{{ obj.dev_model }}" lay-verify="required" autocomplete="off" class="layui-input">
-          </div>
+            <label class="layui-form-label">SSD数量</label>
+            <div class="layui-input-inline" style="width: 40px;">
+                <input type="text" name="ssd_nums" value="{{ obj.ssd_nums }}" maxlength="30" lay-verify="required"
+                       placeholder="1" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">块</div>
         </div>
 
         <div class="layui-inline">
-            <label class="layui-form-label">序列号</label>
-            <div class="layui-input-inline" style="width: 250px;">
-                <input type="text" maxlength="50" name="sn" placeholder="ZXD9ASFL0" value="{{ obj.sn }}"  autocomplete="off" class="layui-input">
+            <label class="layui-form-label">SSD容量</label>
+            <div class="layui-input-inline" style="width: 40px;">
+                <input type="text" name="ssd_size" maxlength="30" value="{{ obj.ssd_size }}" lay-verify="required"
+                       placeholder="1" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">T</div>
+        </div>
+
+        <div class="layui-inline">
+            <label class="layui-form-label">SSD总容量</label>
+            <div class="layui-input-inline" style="width: 40px;">
+                <input type="text" name="ssd_total_size" maxlength="30" value="{{ obj.ssd_total_size }}" placeholder="1"
+                       lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">T</div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">RAID</label>
+            <div class="layui-input-inline">
+                <input type="text" name="raid" placeholder="RAID5" value="{{ obj.raid }}" autocomplete="off"
+                       class="layui-input">
             </div>
         </div>
     </div>
 
     <div class="layui-form-item">
         <div class="layui-inline">
-          <label class="layui-form-label">网络接入</label>
-          <div class="layui-input-inline" style="width:300px">
-            <input type="text" name="svc_net_in" value="{{ obj.svc_net_in }}" autocomplete="off" class="layui-input">
-          </div>
+            <label class="layui-form-label">设备型号</label>
+            <div class="layui-input-inline">
+                <input type="text" name="dev_model" placeholder="Dell R740" maxlength="50" value="{{ obj.dev_model }}"
+                       lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
         </div>
 
         <div class="layui-inline">
-          <label class="layui-form-label">iDRAC接入</label>
-          <div class="layui-input-inline" style="width:300px">
-            <input type="text" name="idrac_net_in" value="{{ obj.idrac_net_in }}" autocomplete="off" class="layui-input">
-          </div>
+            <label class="layui-form-label">序列号</label>
+            <div class="layui-input-inline" style="width: 250px;">
+                <input type="text" maxlength="50" name="sn" placeholder="ZXD9ASFL0" value="{{ obj.sn }}"
+                       autocomplete="off" class="layui-input">
+            </div>
         </div>
     </div>
 
-    <div class="layui-form-item layui-form-text">
-        <label class="layui-form-label">备注</label>
-        <div class="layui-input-block">
-          <textarea placeholder="请输入内容" class="layui-textarea" name="desc">{{ obj.desc }}</textarea>
-        </div>
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>网络接口</legend>
+    </fieldset>
+    <div class="layui-form-item" style="margin-left:110px;">
+        <table id="network-interface">
+            <thead>
+            <tr>
+                <th style="width:150px">接口名称</th>
+                <th>网络连接</th>
+                <th style="width:70px">操作</th>
+            </tr>
+            </thead>
+            <tbody id="tbody">
+            </tbody>
+        </table>
+        <button type="button" class="layui-btn layui-btn-sm btn-add">
+            <i class="layui-icon">&#xe654;</i>
+        </button>
     </div>
+    <!--    <div class="layui-form-item">-->
+    <!--        <div class="layui-inline">-->
+    <!--          <label class="layui-form-label">网络接入</label>-->
+    <!--          <div class="layui-input-inline" style="width:300px">-->
+    <!--            <input type="text" name="svc_net_in" value="{{ obj.svc_net_in }}" autocomplete="off" class="layui-input">-->
+    <!--          </div>-->
+    <!--        </div>-->
 
+    <!--        <div class="layui-inline">-->
+    <!--          <label class="layui-form-label">iDRAC接入</label>-->
+    <!--          <div class="layui-input-inline" style="width:300px">-->
+    <!--            <input type="text" name="idrac_net_in" value="{{ obj.idrac_net_in }}" autocomplete="off" class="layui-input">-->
+    <!--          </div>-->
+    <!--        </div>-->
+    <!--    </div>-->
 
+    <!--    <div class="layui-form-item layui-form-text">-->
+    <!--        <label class="layui-form-label">备注</label>-->
+    <!--        <div class="layui-input-block">-->
+    <!--          <textarea placeholder="请输入内容" class="layui-textarea" name="desc">{{ obj.desc }}</textarea>-->
+    <!--        </div>-->
+    <!--    </div>-->
     <div class="layui-form-item">
         <div class="layui-input-block">
             <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
@@ -333,6 +419,39 @@
         </div>
     </div>
 </form>
+<div class="interface-selector" style="text-align:center;display:none">
+    <form class="layui-form">
+        <table style="margin:0 50px;">
+            <tr style="height:50px">
+                <td>地区</td>
+                <td style="padding-left:10px">
+                    <select name="branch" lay-filter="branch" lay-search="">
+                        <option></option>
+                        {% for i in branch_data %}
+                        <option value="{{i.id}}">{{i.name}}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+
+            <tr style="height:50px">
+                <td>设备</td>
+                <td style="padding-left:10px">
+                    <select name="device" class="device-list" lay-filter="device" lay-search="">
+                    </select>
+                </td>
+            </tr>
+
+            <tr style="height:50px">
+                <td>端口</td>
+                <td style="padding-left:10px">
+                    <select name="interface" class="port-list" lay-search="">
+                    </select>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
 <script type="text/javascript">
     layui.use(['form', 'layer', 'laydate'], function(){
       var form = layui.form
@@ -347,14 +466,148 @@
         elem: '#end_svc_date'
       });
 
-      var host_id = $('#host_id').val()
+      host_id = $('#host_id').val()
+      interface_index=0
 
-      if (host_id != 0){
-          var init_form_data = $("form").serializeArray();
+      ok_or_delete_click = function(){
+            $('.if-access').die('click').live('click',function(){
+                ele_obj=$(this)
+                layer.open({
+                    title: "接口选择",
+                    shade: 0,
+                    type:1,
+                    content: $('.interface-selector'),
+                    btn: ['确定', '关闭'],
+                    yes:(index)=>{
+                        device_text = $('.device-list').find("option:selected").text()
+                        port_desc = $('.port-list').val()
+                        ele_obj.val(`${device_text} | ${port_desc}`)
+                        layer.close(index)
+                    },
+                    end: ()=>{
+                        $('.interface-selector').hide()
+                    }
+                })
+                form.render('select');
+            })
+
+            $(".layui-icon-delete").die('click').live('click',function(){
+                ele = $(this)
+                console.log(ele.attr('id'))
+                ele_id = ele.attr('id')
+                data_id = ele.attr('data_id')
+                if (data_id == undefined){
+                    $('#'+ele_id).remove()
+                    return
+                }
+                // ajax delete account
+                url = `/admin/delete/hostif/${data_id}/`
+                $.getJSON(
+                    url,
+                    function(res){
+                        console.log(res)
+                        $('#'+ele_id).remove()
+                    }
+                )
+            })
+
+            $(".layui-icon-ok").die("click").live('click',function(){
+                ele = $(this)
+                ele_id = ele.attr('id')
+                data_id = ele.attr('data_id')
+                if (data_id == undefined){
+                    return
+                }
+                // ajax submit
+                ifname=$('input[name="ifname_'+ele_id+'"').val()
+                access=$('input[name="access_'+ele_id+'"').val()
+
+                if (data_id==0){
+                    url = `/admin/update-host-interface?host_id=${host_id}&ifname=${ifname}&access=${access}`
+                }else{
+                    url = `/admin/update-host-interface?id=${data_id}&ifname=${ifname}&access=${access}`
+                }
+                console.log(url)
+                $.getJSON(
+                    url,
+                    function(res){
+                        console.log(res)
+                    }
+                )
+            })
       }
+
+      get_host_interface_list = function(){
+            url = `/admin/get-host-interface-list/${host_id}`
+            $.getJSON(
+                url,
+                function(res){
+                    if (res.code==0){
+                        $.each(res.data,function(i,d){
+                            html_str = `<tr id="${d.id}">`+
+                            `<td><input type="text" class="layui-input" lay-verify="required" name="ifname_${d.id}" value="${d.ifname}" /></td>`+
+                            `<td><input type="text" class="layui-input" lay-verify="required" name="access_${d.id}" readonly="" value="${d.access}" /></td>`+
+                            `<td><i class="layui-icon layui-icon-ok" data_id="${d.id}" id="${d.id}"/>`+
+                            `<i class="layui-icon layui-icon-delete" data_id="${d.id}" id="${d.id}"/></td></tr>`
+                            $('#tbody').append(html_str)
+                        })
+                        ok_or_delete_click()
+                    }
+                }
+            )
+      }
+
+      $('.btn-add').click(function(){
+        html_str=`<tr id="new_${interface_index}">`+
+        `<td><input class="layui-input" lay-verify="required" type="text" name="ifname_new_${interface_index}"/></td>`+
+        `<td><input class="layui-input if-access" lay-verify="required" readonly="readonly" type="text" name="access_new_${interface_index}"/></td>`+
+        `<td>`
+
+        if (host_id>0){
+          html_str += `<i class="layui-icon layui-icon-ok" data_id="0" id="new_${interface_index}"/>`
+        }
+        html_str += `<i class="layui-icon layui-icon-delete" id="new_${interface_index}"/></td></tr>`
+        $('#tbody').append(html_str)
+        interface_index ++
+        ok_or_delete_click()
+      })
+
+      form.on('select(branch)', (data)=>{
+        let branch_id = data.value;
+        $.getJSON(
+            '/admin/get-device-json-list/'+branch_id,
+            (res)=>{
+                if (res.code == 0 && res.data.length>0){
+                    $('.device-list').empty()
+                    $.each(res.data,(i,d)=>{
+                        $('.device-list').append(`<option value="${d.id}">${d.hostname}</option>`)
+                    })
+                    form.render('select');
+                }
+            }
+        )
+      })
+
+      form.on('select(device)', (data)=>{
+        let device_id = data.value;
+        $.getJSON(
+            '/admin/get-port-desc-list/'+device_id,
+            (res)=>{
+                if (res.code == 0 && res.data.length>0){
+                    $('.port-list').empty()
+                    $.each(res.data,(i,d)=>{
+                        $('.port-list').append(`<option value="${d.desc}">${d.desc}</option>`)
+                    })
+                    form.render('select');
+                }
+            }
+        )
+      })
+
       //监听提交
       form.on('submit(demo1)', function(data){
-        var submit_form_data = $("form").serializeArray();
+
+        var submit_form_data = $(".basicForm").serializeArray();
         if (init_form_data != undefined && JSON.stringify(init_form_data) == JSON.stringify(submit_form_data)){
             layer.msg('表单无修改，无须提交')
             return false;
@@ -364,6 +617,7 @@
 
         if (init_form_data != undefined){
             $.each(submit_form_data,function(index,i){
+                if (i.name.indexOf('ifname') != -1) return false
                 if (submit_form_data[index]['value'] != init_form_data[index]['value']){
                     change_field.push(submit_form_data[index]['name'])
                 }
@@ -391,6 +645,7 @@
         });
         return false;
       });
+
       form.verify({
             ip: function (value, item) {
                 function isValidIP(ip) {
@@ -402,6 +657,16 @@
                 }
             }
         });
+
+      if (host_id != 0){
+          var init_form_data = $(".basicForm").serializeArray();
+          get_host_interface_list();
+      }else{
+          $('.btn-add').click()
+      }
+      
+
     });
+
 </script>
 {% endblock %}

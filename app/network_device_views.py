@@ -176,8 +176,18 @@ def update_port_desc(request):
     })
 
 
+@login_required()
 def get_port_desc_list(request, device_id):
     res = PortDesc.objects.filter(device=device_id)
+    return JsonResponse({
+        'code': 0,
+        'data': list(res.values())
+    })
+
+
+@login_required()
+def get_device_list(request, branch_id):
+    res = NetworkDevices.objects.filter(branch_id=branch_id)
     return JsonResponse({
         'code': 0,
         'data': list(res.values())

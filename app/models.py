@@ -129,6 +129,12 @@ class HostInfo(models.Model):
         )
 
 
+class HostInterface(models.Model):
+    host = models.ForeignKey(HostInfo,on_delete=models.CASCADE)
+    ifname = models.CharField(max_length=100,null=False)
+    access = models.CharField(max_length=100, null=False)
+
+
 class VmInfo(models.Model):
     """virtual machine info
 
