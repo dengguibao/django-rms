@@ -173,34 +173,6 @@ def init_admin_permission(request):
     """
     user = request.user
     User.objects.filter(pk=user.id).update(is_superuser=1)
-    model_array = [
-        'clusterinfo',
-        # 'fileinfo',
-        'hostinfo',
-        'vminfo',
-        'user',
-        'dailyreport',
-        'troublereport',
-        'branch',
-        'networkdevices',
-        'lannetworks',
-        'wannetworks',
-        'monitor'
-    ]
-    action_flag_array = [
-        'add_',
-        'change_',
-        'delete_',
-        'view_'
-    ]
-    for m in model_array:
-        for a in action_flag_array:
-            if user.has_perm(a+m):
-                continue
-            else:
-                perm = Permission.objects.get(codename=a+m)
-                user.user_permissions.add(perm)
-
     return HttpResponse('success,please comment this entry on urls.py file')
 
 
@@ -218,28 +190,30 @@ def init_user_permission(request, user_id):
             'code': 1,
             'msg': 'not found this user.'
         })
-    user_perms_list = [
-        'add_vminfo',
-        'change_vminfo',
-        'view_vminfo',
-        'add_hostinfo',
-        'change_hostinfo',
-        'view_hostinfo',
-        'view_dailyreport',
-        'add_dailyreport',
-        'view_troublereport',
-        'add_troublereport',
-        'view_branch',
-        'view_networkdevices',
-        'view_lannetworks',
-        'view_wannetworks',
+    model_array = [
+        'hostinfo',
+        'vminfo',
+        'dailyreport',
+        'troublereport',
+        'branch',
+        'networkdevices',
+        'lannetworks',
+        'wannetworks',
+        'monitor'
     ]
-    for perm in user_perms_list:
-        if user.has_perm(perm):
-            continue
-        else:
-            p = Permission.objects.get(codename=perm)
-            user.user_permissions.add(p)
+    action_flag_array = [
+        'add_',
+        'view_'
+    ]
+    user_all_perms = user.get_all_permissions()
+    print(user_all_perms)
+    for m in model_array:
+        for a in action_flag_array:
+            if a+m in user_all_perms:
+                continue
+            else:
+                perm = Permission.objects.get(codename=a+m)
+                user.user_permissions.add(perm)
     return JsonResponse({
         'code': 0,
         'msg': 'success'

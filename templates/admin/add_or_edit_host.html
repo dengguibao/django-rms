@@ -597,7 +597,7 @@
                 if (res.code == 0 && res.data.length>0){
                     $('.port-list').empty()
                     $.each(res.data,(i,d)=>{
-                        $('.port-list').append(`<option value="${d.desc}">${d.desc}</option>`)
+                        $('.port-list').append(`<option value="${d.index}">${d.desc}</option>`)
                     })
                     form.render('select');
                 }
