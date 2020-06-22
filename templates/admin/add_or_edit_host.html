@@ -424,9 +424,9 @@
     <form class="layui-form">
         <table style="margin:0 50px;">
             <tr style="height:50px">
-                <td>地区</td>
+                <td style="width:40px">地区</td>
                 <td style="padding-left:10px">
-                    <select name="branch" lay-filter="branch" lay-search="">
+                    <select name="branch" class="branch" lay-filter="branch" lay-search="">
                         <option></option>
                         {% for i in branch_data %}
                         <option value="{{i.id}}">{{i.name}}</option>
@@ -480,9 +480,10 @@
                     content: $('.interface-selector'),
                     btn: ['确定', '关闭'],
                     yes:(index)=>{
+                        branch_text = $('.branch').find("option:selected").text()
                         device_text = $('.device-list').find("option:selected").text()
                         port_desc = $('.port-list').val()
-                        ele_obj.val(`${device_text} | ${port_desc}`)
+                        ele_obj.val(`${branch_text} | ${device_text} | ${port_desc}`)
                         layer.close(index)
                     },
                     end: ()=>{

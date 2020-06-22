@@ -181,8 +181,7 @@ def file_rename(request):
     })
 
 
-
-@login_required
+@login_required()
 def create_folder(request):
     """create folder action
 

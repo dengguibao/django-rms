@@ -6,8 +6,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.http import HttpResponse, JsonResponse
 from django.conf import settings
-from .models import NetworkDevices, Branch, PortDesc
-from .global_views import perms, models
+from .common import *
 
 
 @login_required()

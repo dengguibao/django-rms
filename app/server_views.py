@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.conf import settings
-from .global_views import data_struct, perms
+from .common import *
 from .models import VmInfo, HostInfo, ClusterInfo, HostInterface
 
 

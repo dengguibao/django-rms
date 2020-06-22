@@ -1,10 +1,12 @@
 import xlwt
-import time, datetime, calendar
+import time
+import datetime
+import calendar
 import re
 import os
 from io import BytesIO
-from .models import TroubleReport, DailyReport
-from .global_views import data_struct
+
+from .common import *
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required

@@ -1,5 +1,4 @@
-from .models import MonitorAccount, Monitor
-from .global_views import perms, models
+from .common import *
 import xlwt
 from io import BytesIO
 from django.core.paginator import Paginator

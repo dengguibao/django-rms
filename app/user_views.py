@@ -32,7 +32,7 @@ def user_change_password(request):
         json -- json object
     """
     user = request.user
-    if request.method != 'POST':
+    if request.method != 'POST' or not request.is_ajax():
         return JsonResponse({
             'code': 1,
             'msg': 'illegal request'
@@ -85,3 +85,37 @@ def get_user_list_view(request):
         temp_name,
         context=context
     )
+
+
+@login_required()
+def set_user_password(request):
+    if not request.user.is_superuser:
+        return JsonResponse({
+            'code': 1,
+            'msg': 'permission denied'
+        })
+    if not request.is_ajax():
+        return JsonResponse({
+            'code': 1,
+            'msg': 'illegal request'
+        })
+    user_id = request.POST.get('user_id', None)
+    password = request.POST.get('password', None)
+    if not user_id or not password:
+        return JsonResponse({
+            'code': 1,
+            'msg': 'not get user_id or password'
+        })
+    user_obj = User.objects.get(id=user_id)
+
+    if not user_obj:
+        return JsonResponse({
+            'code': 1,
+            'msg': 'not found user object'
+        })
+    user_obj.set_password(password)
+    user_obj.save()
+    return JsonResponse({
+        'cod': 0,
+        'msg': '修改密码成功'
+    })

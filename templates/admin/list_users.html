@@ -10,6 +10,7 @@
 
 <div class="layui-form">
     <table class="layui-table" lay-size="sm">
+        {% csrf_token %}
         <thead>
         <tr>
             <th>序号</th>
@@ -36,6 +37,12 @@
                 <a href="/admin/edit/user/{{i.id}}" title="edit" class="layui-btn layui-btn-primary layui-btn-xs">
                     <i class="layui-icon layui-icon-edit"></i>
                 </a>
+                {%ifequal request.user.is_superuser True%}
+                <a flag="{{i.id}}" title="set password"
+                   class="layui-btn layui-btn-primary layui-btn-xs btn-set-password">
+                    <i flag="{{i.id}}" class="layui-icon layui-icon-password"></i>
+                </a>
+                {%endifequal%}
                 <a flag="{{ i.id }}" title="delete" class="layui-btn layui-btn-primary layui-btn-xs btn-delete">
                     <i class="layui-icon layui-icon-delete"></i>
                 </a>
@@ -43,9 +50,9 @@
                    class="layui-btn layui-btn-primary layui-btn-xs">
                     <i class="layui-icon layui-icon-auz"></i>
                 </a>
-                <a flag="{{ i.id }}" title="init user permission"
+                <a flag="{{ i.id }}" title="init user role"
                    class="layui-btn layui-btn-primary layui-btn-xs init-user-perm">
-                    <i class="layui-icon layui-icon-group"></i>
+                    <i class="layui-icon layui-icon-user"></i>
                 </a>
                 <a href="/admin/view-logs/user/{{ i.id }}" target="_blank" title="logs"
                    class="layui-btn layui-btn-primary layui-btn-xs">
@@ -72,6 +79,37 @@
                 }
             );
         });
+
+        $('.btn-set-password').bind('click', (e)=>{
+            let user_id=$(e.target).attr('flag')
+            console.log(user_id)
+            layer.prompt({
+                title: '设置密码',
+                formType: 1
+            },(val,index)=>{
+                console.log(val,user_id)
+                $.ajax({
+                    url: '/admin/set-user-password/',
+                    data: {
+                        'user_id': user_id,
+                        'password': val,
+                        'csrfmiddlewaretoken': $('[name="csrfmiddlewaretoken"]').val()
+                    },
+                    type: 'post',
+                    success:(res)=>{
+                        if (res.code == 0){
+                            layer.msg(res.msg)
+                        }else{
+                            layer.alert(res.msg)
+                        }
+                        layer.close(index)
+                    },
+                    error: (e)=>{
+                        console.log(e.status)
+                    }
+                })
+            })
+        })
 
         $('.btn-delete').bind('click', function () {
             var id = $(this).attr('flag')

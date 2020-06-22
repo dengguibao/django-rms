@@ -1,14 +1,11 @@
-import datetime, time, calendar
+import datetime
+import time
+import calendar
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.db.models import Count
-from .models import (
-    VmInfo, HostInfo, FileInfo, 
-    ClusterInfo, Branch, NetworkDevices,
-    TroubleReport, DailyReport, Monitor
-)
+from .common import *
 
 
 @login_required()

@@ -58,12 +58,12 @@
         </div>
     </div>
 
-    <div class="layui-form-item" style="display:{%if obj.id%}block;{%else%}none{%endif%}">
-        <label class="layui-form-label">设置密码</label>
-        <div class="layui-input-block">
-            <input type="checkbox" id="set_password" lay-skin="switch" lay-filter="set_password" lay-text="ON|OFF">
-        </div>
-    </div>
+<!--    <div class="layui-form-item" style="display:{%if obj.id%}block;{%else%}none{%endif%}">-->
+<!--        <label class="layui-form-label">设置密码</label>-->
+<!--        <div class="layui-input-block">-->
+<!--            <input type="checkbox" id="set_password" lay-skin="switch" lay-filter="set_password" lay-text="ON|OFF">-->
+<!--        </div>-->
+<!--    </div>-->
 
     <div class="layui-form-item">
         <div class="layui-input-block">
@@ -126,23 +126,6 @@
             });
             return false;
         });
-
-        form.on('switch(set_password)',function(d){
-            if(d.elem.checked){
-                layer.prompt({title: '输入密码，并确认', formType: 1}, function(pass, index){
-                    if (pass.trim().length <= 0){
-                        layer.alert('密码不能为空');
-                        //$('#set_password').prop("checked", false)
-                        return false;
-                    }
-                    let pwd = pass.trim()
-                    layer.close(index)
-                    $('#password').val(pwd);
-                });
-            }else{
-                $('#password').val('');
-            }            
-        })
 
         form.verify({
             username: function (value, item) { 
