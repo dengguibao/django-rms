@@ -3,9 +3,8 @@ import time
 from django.http import JsonResponse, FileResponse, Http404
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.conf import settings
-from .models import FileInfo
+from .common import *
 
 TODAY = time.strftime('%Y%m%d', time.localtime())
 UPLOAD_PATH = 'uploads'
@@ -191,6 +190,7 @@ def create_folder(request):
     Returns:
         html -- html response view
     """
+    user = request.user
     folder_name = request.POST.get('name', '')
     p_path = request.POST.get('path', '/')
     if '/' in folder_name:
@@ -205,7 +205,7 @@ def create_folder(request):
     res = FileInfo.objects.create(**{
         'name': folder_name,
         'type': 0,
-        'owner': User.objects.get(id=request.user.id),
+        'owner': user,
         'path': p_path
     })
     if not res:
@@ -220,7 +220,8 @@ def create_folder(request):
             'id': res.id,
             'path': res.path,
             'name': res.name,
-            'pub_date': res.pub_date
+            'username': user.first_name,
+            'pub_date': res.pub_date,
         }
     })
 
@@ -237,7 +238,7 @@ def file_edit(request, fid):
         html -- online edit file of the html response view
     """
     res = FileInfo.objects.get(id=fid)
-    if res and res.owner != request.user:
+    if res and res.owner != request.user or not request.user.is_superuser:
         return render(request, 'admin/error.html')
     file_path = '/'.join([settings.BASE_DIR, res.real_path, res.real_name])
     txt_file_type = [

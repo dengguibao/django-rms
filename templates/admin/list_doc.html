@@ -28,7 +28,7 @@
                 <th>名称</th>
                 <th>归属</th>
                 <th>文件大小</th>
-                <th>上传时间</th>
+                <th>日期时间</th>
             </tr>
             </thead>
             <tbody id="folder_list"></tbody>
@@ -135,9 +135,12 @@
                     success: function (d) {
                         if (d.code == 0) {
                             $('#folder_list').append('<tr id="tr' + d.data.id + '">' +
-                                '<td colspan="4">' +
+                                '<td>' +
                                 '<a tag="' + d.data.id + '" class="folder mr">' + d.data.name + '</a>' +
                                 '</td>' +
+                                '<td>'+d.data.username+'</td>' +
+                                '<td>0B</td>' +
+                                '<td>'+d.data.pub_date+'</td>' +
                                 '</tr>')
                             refresh_folder_click_event();
                             refresh_right_click_menu();
@@ -165,7 +168,7 @@
         })
 
         function refresh_folder_click_event() {
-            $('.folder').on('click', function () {
+            $('.folder').off('click').on('click', function () {
                 //alert($(this).text())
                 folder_name = $(this).text()
                 path = $('#path').val()
@@ -192,7 +195,7 @@
 
         function refresh_right_click_menu() {
             //右键监听
-            $('.mr').bind("contextmenu", function (e) {
+            $('.mr').unbind('contextmenu').bind("contextmenu", function (e) {
                 let data = {id: $(this).attr('tag'), class: $(this).attr('class'), text: $(this).text()}
                 //console.log(data)
                 let menu_data = [
@@ -364,9 +367,12 @@
                     if (d.code == 0) {
                         $.each(d.data, function (i, field) {
                             let append_str = '<tr id="tr' + field.id + '">' +
-                                '<td colspan="4">' +
+                                '<td>' +
                                 '<a tag="' + field.id + '" class="mr folder">' + field.name + '</a>' +
                                 '</td>' +
+                                '<td>'+field.username+'</td>' +
+                                '<td>0B</td>' +
+                                '<td>'+field.pub_date+'</td>' +
                                 '</tr>'
                             $('#folder_list').append(append_str);
                         })

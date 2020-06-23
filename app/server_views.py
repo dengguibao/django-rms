@@ -7,7 +7,6 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.conf import settings
 from .common import *
-from .models import VmInfo, HostInfo, ClusterInfo, HostInterface
 
 
 @login_required()

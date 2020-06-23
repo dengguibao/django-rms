@@ -8,7 +8,6 @@ from io import BytesIO
 
 from .common import *
 from django.db.models import Q
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http.response import HttpResponse, JsonResponse, Http404
