@@ -4,7 +4,7 @@ import calendar
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count
+from django.db.models import Count, Sum
 from .common import *
 
 
@@ -39,6 +39,8 @@ def list_summary_view(request):
     # 分子公司总数减去总部
     branch_count = Branch.objects.filter(isenable=1).count()-1
     monitor_count = Monitor.objects.all().count()
+    camera_count = Monitor.objects.aggregate(Sum('camera_nums'))
+    print(camera_count)
     net_device_annotate = NetworkDevices.objects.values("device_type").annotate(count=Count("id"))
     esxi_none_count = HostInfo.objects.filter(cluster_tag='none').count()
     esxi_count = hosts_count-esxi_none_count
@@ -92,6 +94,7 @@ def list_summary_view(request):
             'user_work_count_data': user_work_annotate_count,
             'branch_count': branch_count,
             'monitor_count': monitor_count,
+            'camera_count': camera_count['camera_nums__sum'],
             'vms_count': vms_count,
             'hosts_count': hosts_count,
             'esxi_count': esxi_count,

@@ -35,13 +35,15 @@ caption{
                 <th rowspan="2">文件</th>
                 <th rowspan="2">独立服务器</th>
                 <th rowspan="2">分子公司</th>
-                <th rowspan="2">监控主机</th>
+                <th colspan="2">视频监控</th>
                 <th colspan="{{data.net_device_data|length}}">网络设备</th>
                 <th colspan="2">服务器保修信息</th>
             </tr>
             <tr>
                 <th>宿主机</th>
                 <th>虚拟机</th>
+                <th>监控主机</th>
+                <th>摄像头</th>
                 {% for i in data.net_device_data %}
                 <th>{{ i.device_type }}</th>
                 {% endfor %}
@@ -58,6 +60,7 @@ caption{
                 <td>{{data.esxi_none_count}}</td>
                 <td>{{data.branch_count}}</td>
                 <td>{{data.monitor_count}}</td>
+                <td>{{data.camera_count}}</td>
                 {% for i in data.net_device_data %}
                 <td>{{i.count}}</td>
                 {% endfor %}
