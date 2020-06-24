@@ -123,6 +123,7 @@ caption{
     <li tag="{{i.tag}}">{{i.name}}</li>
     {% endfor %}
     <li tag="none">独立服务器</li>
+    <li tag="camera">视频监控</li>
   </ul>
   <div class="layui-tab-content" style="height: 400px;text-align:center">
     <div id="chart_pie" style="width:49.5%;float:left;border-right:1px solid #f9f9f9"></div>
@@ -140,18 +141,21 @@ layui.use(['element', 'layer'], function(){
     $('.layui-tab-title li').first().addClass('layui-this')
     var chart = null;
 
-    ajax_rend_chart('bar', 'cs');
-    ajax_rend_chart('pie', 'cs');
+     ajax_rend_chart('bar', '/admin/get-cluster-count-info/cs');
+     ajax_rend_chart('pie', '/admin/get-guarantee-info/cs');
 
     element.on('tab(tab_cluster)', function (data) {
         tag = $(this).attr('tag');
         if (tag == 'none'){
             $('#chart_bar').css('display','none')
-            ajax_rend_chart('pie', tag);
+            ajax_rend_chart('pie', '/admin/get-guarantee-info/'+tag);
+        }else if (tag == "camera"){
+            $('#chart_bar').css('display','none')
+            ajax_rend_chart('pie', '/admin/get-camera-info/'+tag);
         }else{
             $('#chart_bar').css('display','block')
-            ajax_rend_chart('bar', tag);
-            ajax_rend_chart('pie', tag);
+            ajax_rend_chart('bar', '/admin/get-cluster-count-info/'+tag);
+            ajax_rend_chart('pie', '/admin/get-guarantee-info/'+tag);
         }
         
     })
@@ -166,13 +170,7 @@ layui.use(['element', 'layer'], function(){
         })
     })
 
-    function ajax_rend_chart(t, cluster_name) {
-        var url = '/admin/'
-        if (t == 'bar'){
-            url += 'get-cluster-count-info/'+cluster_name
-        }else{
-            url += 'get-guarantee-info/'+cluster_name
-        }
+    function ajax_rend_chart(t, url) {
         $.getJSON(
            url,
            function(d){
@@ -204,7 +202,7 @@ layui.use(['element', 'layer'], function(){
                     backgroundColor: 'rgba(0,0,0,0)'
                 },
                 title: {
-                    text: data.name+' - 保修信息'
+                    text: data.name
                 },
                 tooltip: {
                     //pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -217,9 +215,9 @@ layui.use(['element', 'layer'], function(){
                         pie: {
                             allowPointSelect: true,
                             cursor: 'pointer',
-                            showInLegend: true, // 显示图例
+                            showInLegend: false, // 显示图例
                             dataLabels: {
-                                enabled: false, // 图表标签
+                                enabled: true, // 图表标签
                                 format: '<b>{point.name}</b>: {point.y}',
                                 style: {
                                     color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'

@@ -70,7 +70,9 @@ def list_summary_view(request):
 
     user_work_annotate_count = User.objects.filter(
         dailyreport__pub_date__range=(s_date, e_date)
-    ).annotate(count=Count('dailyreport__owner_id')).values('first_name','count')
+    ).annotate(count=Count('dailyreport__owner_id')).values('first_name', 'count')
+
+    # camera_sumary=Branch.objects.annotate(sum=Sum('monitor__camera_nums')).values('name','sum')
 
     # print(user_work_annotate_count.query)
 
@@ -138,6 +140,27 @@ def get_cluster_count_info(request, cluster_name):
         'name': cluster_array[cluster_name],
         'msg': 'success',
         'data': list(res)
+    })
+
+
+@login_required
+def get_camera_info(request, dev_type):
+    if dev_type == 'camera':
+        res = Branch.objects.annotate(y=Sum('monitor__camera_nums')).values('name', 'y')
+    elif dev_type == 'recorder':
+        res = Branch.objects.annotate(y=Count('monitor__camera_nums')).values('name', 'y')
+
+    if not res:
+        return JsonResponse({
+            'code': 1,
+            'msg': 'failed'
+        })
+
+    return JsonResponse({
+        'code': 0,
+        'msg': 'success',
+        'name': '视频监控',
+        'data': list(res.values())
     })
 
 

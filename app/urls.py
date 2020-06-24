@@ -10,6 +10,7 @@ urlpatterns = [
     path('', summary_view.list_summary_view, name='list_summary'),
     path('get-cluster-count-info/<str:cluster_name>', summary_view.get_cluster_count_info),
     path('get-guarantee-info/<str:cluster_name>', summary_view.get_guarantee_info),
+    path('get-camera-info/<str:dev_type>', summary_view.get_camera_info),
 
     path('render/<str:temp_name>/', global_views.render_static_temp_view),
     path('edit/<str:form_name>/<int:nid>/', global_views.render_edit_view),
