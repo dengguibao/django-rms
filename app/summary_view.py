@@ -137,7 +137,7 @@ def get_cluster_count_info(request, cluster_name):
         values_list("hostname", "count")
     return JsonResponse({
         'code': 0,
-        'name': cluster_array[cluster_name],
+        'name': '%s - 虚拟机分布' % cluster_array[cluster_name],
         'msg': 'success',
         'data': list(res)
     })
@@ -146,9 +146,11 @@ def get_cluster_count_info(request, cluster_name):
 @login_required
 def get_camera_info(request, dev_type):
     if dev_type == 'camera':
-        res = Branch.objects.annotate(y=Sum('monitor__camera_nums')).values('name', 'y')
+        name = "视频监控 - 摄像头"
+        res = Branch.objects.annotate(y=Sum('monitor__camera_nums'))
     elif dev_type == 'recorder':
-        res = Branch.objects.annotate(y=Count('monitor__camera_nums')).values('name', 'y')
+        name = "视频监控 - 监控主机"
+        res = Branch.objects.annotate(y=Count('monitor__camera_nums'))
 
     if not res:
         return JsonResponse({
@@ -159,8 +161,9 @@ def get_camera_info(request, dev_type):
     return JsonResponse({
         'code': 0,
         'msg': 'success',
-        'name': '视频监控',
-        'data': list(res.values())
+        'name': name,
+        'data': list(res.values('name', 'y'))  # pie
+        #'data': list(res.values_list('name', 'y'))
     })
 
 
@@ -194,7 +197,7 @@ def get_guarantee_info(request, cluster_name):
     all_res = HostInfo.objects.filter(cluster_tag=cluster_name).count()
     return JsonResponse({
         'code': 0,
-        'name': cluster_array[cluster_name],
+        'name': '%s' % cluster_array[cluster_name],
         'msg': 'success',
         'data': [
             {

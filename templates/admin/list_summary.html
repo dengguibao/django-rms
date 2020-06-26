@@ -80,7 +80,7 @@ caption{
         <thead>
             <tr>
                 <th colspan="{{data.user_work_count_data|length}}">工作日报（本月）</th>
-                <th class="bg1" colspan="{{data.trouble_count_data|length}}">故障报告（本月）</th>
+                <th colspan="{{data.trouble_count_data|length}}">故障报告（本月）</th>
             </tr>
             <tr>
                 {% for i in data.user_work_count_data %}
@@ -89,7 +89,7 @@ caption{
                 <th>暂无数据</th>
                 {% endfor %}
                 {% for i in data.trouble_count_data %}
-                <th class="bg1">{{i.type}}</th>
+                <th>{{i.type}}</th>
                 {% empty %}
                 <th>暂无数据</th>
                 {% endfor %}
@@ -115,7 +115,7 @@ caption{
 </div>
 
 <fieldset class="layui-elem-field layui-field-title">
-    <legend>服务器分布</legend>
+    <legend>资源分布</legend>
 </fieldset>
 <div class="layui-tab layui-tab-card" lay-filter="tab_cluster">
   <ul class="layui-tab-title">
@@ -150,8 +150,9 @@ layui.use(['element', 'layer'], function(){
             $('#chart_bar').css('display','none')
             ajax_rend_chart('pie', '/admin/get-guarantee-info/'+tag);
         }else if (tag == "camera"){
-            $('#chart_bar').css('display','none')
-            ajax_rend_chart('pie', '/admin/get-camera-info/'+tag);
+            $('#chart_bar').css('display','block')
+            ajax_rend_chart('pie', '/admin/get-camera-info/camera', 'chart_pie');
+            ajax_rend_chart('pie', '/admin/get-camera-info/recorder', 'chart_bar');
         }else{
             $('#chart_bar').css('display','block')
             ajax_rend_chart('bar', '/admin/get-cluster-count-info/'+tag);
@@ -170,7 +171,7 @@ layui.use(['element', 'layer'], function(){
         })
     })
 
-    function ajax_rend_chart(t, url) {
+    function ajax_rend_chart(t, url, ele=undefined) {
         $.getJSON(
            url,
            function(d){
@@ -179,9 +180,9 @@ layui.use(['element', 'layer'], function(){
                        layer.msg('no data')
                    }else{
                        if (t == 'bar'){
-                           render_bar_chart(d)
+                           render_bar_chart(d, ele)
                        }else{
-                           render_pie_chart(d)
+                           render_pie_chart(d, ele)
                        }                       
                     }
                }else{
@@ -191,8 +192,11 @@ layui.use(['element', 'layer'], function(){
         )
     }
 
-    function render_pie_chart(data){
-        Highcharts.chart('chart_pie', {
+    function render_pie_chart(data, ele=undefined){
+        if (ele==undefined){
+            ele = 'chart_pie'
+        }
+        Highcharts.chart(ele, {
                 chart: {
                     plotBackgroundColor: null,
                     plotBorderWidth: null,
@@ -233,8 +237,11 @@ layui.use(['element', 'layer'], function(){
         });
     }
 
-    function render_bar_chart(data){
-        chart = Highcharts.chart('chart_bar', {
+    function render_bar_chart(data, ele=undefined){
+        if (ele==undefined){
+            ele = 'chart_bar'
+        }
+        chart = Highcharts.chart(ele, {
             chart: {
                 type: 'column',
                 marginLeft: 150,
@@ -242,7 +249,7 @@ layui.use(['element', 'layer'], function(){
                 backgroundColor: 'rgba(0,0,0,0)',
             },
             title: {
-                text: data.name+' - ESXi虚拟机分布'
+                text: data.name
             },
             credits: {
                 enabled: false//不显示LOGO

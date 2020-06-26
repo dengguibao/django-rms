@@ -224,7 +224,7 @@
             <label class="layui-form-label">CPU数量</label>
             <div class="layui-input-inline" style="width: 50px;">
                 <input type="text" name="cpu_nums" value="{{ obj.cpu_nums }}" maxlength="4" lay-verify="required"
-                       placeholder="2" autocomplete="off" class="layui-input">
+                       placeholder="2" autocomplete="off" class="layui-input cpu">
             </div>
             <div class="layui-form-mid layui-word-aux">个</div>
         </div>
@@ -233,7 +233,7 @@
             <label class="layui-form-label">CPU内核</label>
             <div class="layui-input-inline" style="width: 50px;">
                 <input type="text" name="cpu_core" value="{{ obj.cpu_core }}" maxlength="4" lay-verify="required"
-                       placeholder="4" autocomplete="off" class="layui-input">
+                       placeholder="4" autocomplete="off" class="layui-input cpu">
             </div>
             <div class="layui-form-mid layui-word-aux">核</div>
         </div>
@@ -242,7 +242,7 @@
             <label class="layui-form-label">CPU频率</label>
             <div class="layui-input-inline" style="width: 50px;">
                 <input type="text" name="cpu_rate" maxlength="4" value="{{ obj.cpu_rate }}" lay-verify="required"
-                       placeholder="1.2" autocomplete="off" class="layui-input">
+                       placeholder="1.2" autocomplete="off" class="layui-input cpu">
             </div>
             <div class="layui-form-mid layui-word-aux">G/Hz</div>
         </div>
@@ -251,7 +251,7 @@
             <label class="layui-form-label">CPU总频率</label>
             <div class="layui-input-inline" style="width: 50px;">
                 <input type="text" name="cpu_total_rate" maxlength="4" value="{{ obj.cpu_total_rate }}"
-                       placeholder="27.2" lay-verify="required" autocomplete="off" class="layui-input">
+                       placeholder="27.2" lay-verify="required" autocomplete="off" class="layui-input automatic">
             </div>
             <div class="layui-form-mid layui-word-aux">G/Hz</div>
         </div>
@@ -262,7 +262,7 @@
             <label class="layui-form-label">内存数量</label>
             <div class="layui-input-inline" style="width: 50px;">
                 <input type="text" name="memory_nums" value="{{ obj.memory_nums }}" maxlength="2" lay-verify="required"
-                       placeholder="4" autocomplete="off" class="layui-input">
+                       placeholder="4" autocomplete="off" class="layui-input memory">
             </div>
             <div class="layui-form-mid layui-word-aux">条</div>
         </div>
@@ -271,7 +271,7 @@
             <label class="layui-form-label">内存容量</label>
             <div class="layui-input-inline" style="width: 50px;">
                 <input type="text" name="memory_size" maxlength="2" value="{{ obj.memory_size }}" placeholder="8"
-                       lay-verify="required" autocomplete="off" class="layui-input">
+                       lay-verify="required" autocomplete="off" class="layui-input memory">
             </div>
             <div class="layui-form-mid layui-word-aux">G</div>
         </div>
@@ -280,7 +280,7 @@
             <label class="layui-form-label">内存总容量</label>
             <div class="layui-input-inline" style="width: 50px;">
                 <input type="text" name="memory_total_size" maxlength="4" value="{{ obj.memory_total_size }}"
-                       placeholder="32" lay-verify="required" autocomplete="off" class="layui-input">
+                       placeholder="32" lay-verify="required" autocomplete="off" class="layui-input automatic">
             </div>
             <div class="layui-form-mid layui-word-aux">G</div>
         </div>
@@ -291,7 +291,7 @@
             <label class="layui-form-label">硬盘数量</label>
             <div class="layui-input-inline" style="width: 50px;">
                 <input type="text" name="sd_nums" value="{{ obj.sd_nums }}" maxlength="2" lay-verify="required"
-                       placeholder="2" autocomplete="off" class="layui-input">
+                       placeholder="2" autocomplete="off" class="layui-input sd">
             </div>
             <div class="layui-form-mid layui-word-aux">块</div>
         </div>
@@ -300,7 +300,7 @@
             <label class="layui-form-label">硬盘容量</label>
             <div class="layui-input-inline" style="width: 50px;">
                 <input type="text" name="sd_size" maxlength="4" value="{{ obj.sd_size }}" lay-verify="required"
-                       placeholder="1.2" autocomplete="off" class="layui-input">
+                       placeholder="1.2" autocomplete="off" class="layui-input sd">
             </div>
             <div class="layui-form-mid layui-word-aux">T</div>
         </div>
@@ -309,7 +309,7 @@
             <label class="layui-form-label">硬盘总容量</label>
             <div class="layui-input-inline" style="width: 50px;">
                 <input type="text" name="sd_total_size" maxlength="4" value="{{ obj.sd_total_size }}"
-                       lay-verify="required" placeholder="2.4" autocomplete="off" class="layui-input">
+                       lay-verify="required" placeholder="2.4" autocomplete="off" class="layui-input automatic">
             </div>
             <div class="layui-form-mid layui-word-aux">T</div>
         </div>
@@ -320,7 +320,7 @@
             <label class="layui-form-label">SSD数量</label>
             <div class="layui-input-inline" style="width: 50px;">
                 <input type="text" name="ssd_nums" value="{{ obj.ssd_nums }}" maxlength="2" lay-verify="required"
-                       placeholder="2" autocomplete="off" class="layui-input">
+                       placeholder="2" autocomplete="off" class="layui-input ssd">
             </div>
             <div class="layui-form-mid layui-word-aux">块</div>
         </div>
@@ -329,7 +329,7 @@
             <label class="layui-form-label">SSD容量</label>
             <div class="layui-input-inline" style="width: 50px;">
                 <input type="text" name="ssd_size" maxlength="3" value="{{ obj.ssd_size }}" lay-verify="required"
-                       placeholder="1" autocomplete="off" class="layui-input">
+                       placeholder="1" autocomplete="off" class="layui-input ssd">
             </div>
             <div class="layui-form-mid layui-word-aux">T</div>
         </div>
@@ -338,7 +338,7 @@
             <label class="layui-form-label">SSD总容量</label>
             <div class="layui-input-inline" style="width: 50px;">
                 <input type="text" name="ssd_total_size" maxlength="4" value="{{ obj.ssd_total_size }}" placeholder="1"
-                       lay-verify="required" autocomplete="off" class="layui-input">
+                       lay-verify="required" autocomplete="off" class="layui-input automatic">
             </div>
             <div class="layui-form-mid layui-word-aux">T</div>
         </div>
@@ -455,7 +455,7 @@
 </div>
 <script type="text/javascript">
     layui.use(['form', 'layer', 'laydate'], function(){
-        var form = layui.form，
+        var form = layui.form,
             laydate = layui.laydate,
             layer = layui.layer;
 
@@ -572,6 +572,17 @@
             $('#tbody').append(html_str)
             interface_index ++
             ok_or_delete_click()
+        })
+
+        $('.automatic').focus((e)=>{
+            let ele = $(e.target)
+            let ele_type = ele.attr('name').split('_')[0]
+            let c=1
+            $('.'+ele_type).each((i,d)=>{
+                //console.log(i, d.value)
+                c *= parseFloat(d.value)
+            })
+            ele.val(c.toFixed(1))
         })
 
         form.on('select(branch)', (data)=>{
