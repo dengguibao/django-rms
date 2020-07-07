@@ -145,6 +145,7 @@ def get_cluster_count_info(request, cluster_name):
 
 @login_required
 def get_camera_info(request, dev_type):
+    res=name=None
     if dev_type == 'camera':
         name = "视频监控 - 摄像头"
         res = Branch.objects.annotate(y=Sum('monitor__camera_nums'))

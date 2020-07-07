@@ -39,6 +39,7 @@ def list_hosts_list(request, host_type, flag):
     page_size = request.GET.get('page_size', settings.PAGE_SIZE)
     keyword = request.GET.get('keyword', None)
     page = int(request.GET.get('page', 1))
+    rs = None
 
     if host_type == 'host':
         if flag == 'all':

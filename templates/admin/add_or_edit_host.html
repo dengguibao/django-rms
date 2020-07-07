@@ -582,7 +582,11 @@
                 //console.log(i, d.value)
                 c *= parseFloat(d.value)
             })
-            ele.val(c.toFixed(1))
+            if (ele_type == 'memory'){
+                ele.val(c.toFixed(0))
+            }else{
+                ele.val(c.toFixed(1))
+            }
         })
 
         form.on('select(branch)', (data)=>{

@@ -269,8 +269,8 @@
                 }
             },
             vlan: function (value, item) {
-                var reg = /^(\d|\d\d|\d\d\d|40\d[0-4])$/
-                if (value.length > 0 && reg.test(value) === false) return '输入正确vlan';
+                let vlan_id = parseInt(value)
+                if (vlan_id == NaN || vlan_id > 4096 || vlan_id < 0) return '输入正确vlan';
             }
         });
 

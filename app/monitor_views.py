@@ -1,4 +1,3 @@
-from .common import *
 import xlwt
 from io import BytesIO
 from django.core.paginator import Paginator
@@ -6,6 +5,7 @@ from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from .common import *
 
 from django.db.models import Q
 

@@ -79,8 +79,8 @@ class HostInfo(models.Model):
     """
     hostname = models.CharField(max_length=100, unique=True)  # 主机名
     sn = models.CharField(max_length=80)  # SN序列号
-    idrac_ip = models.GenericIPAddressField(max_length=15)  # 远程管理卡IP
-    host_ip = models.GenericIPAddressField(max_length=15)  # 主机IP
+    idrac_ip = models.GenericIPAddressField()  # 远程管理卡IP
+    host_ip = models.GenericIPAddressField()  # 主机IP
     cluster_tag = models.CharField(max_length=20)  # 所属集群标签
     cpu_nums = models.IntegerField(default=0)  # cpu总数
     cpu_core = models.IntegerField(default=0)  # cpu总数
@@ -145,7 +145,7 @@ class VmInfo(models.Model):
     vm_intention = models.CharField(max_length=100, null=True)  # 用途
     vm_register = models.CharField(max_length=10, null=True)  # 申请人
     vm_monitor = models.CharField(max_length=5, null=True)  # zabbix监控
-    vm_ip = models.GenericIPAddressField(max_length=15)  # 系统IP
+    vm_ip = models.GenericIPAddressField()  # 系统IP
     vlan_tag = models.CharField(max_length=30)  # vlan标签
     vlan_id = models.IntegerField()  # vlan id
     host = models.ForeignKey(HostInfo, on_delete=models.CASCADE)  # 宿主机外键
