@@ -95,8 +95,10 @@ spec:
           serviceName: ops-svc
           servicePort: 8080
       - path: /webssh
+        backend:
           serviceName: ops-svc
           servicePort: 8081
       - path: /webtelnet
+        backend:
           serviceName: ops-svc
           servicePort: 8081
