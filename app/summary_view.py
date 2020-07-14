@@ -40,7 +40,6 @@ def list_summary_view(request):
     branch_count = Branch.objects.filter(isenable=1).count()-1
     monitor_count = Monitor.objects.all().count()
     camera_count = Monitor.objects.aggregate(Sum('camera_nums'))
-    print(camera_count)
     net_device_annotate = NetworkDevices.objects.values("device_type").annotate(count=Count("id"))
     esxi_none_count = HostInfo.objects.filter(cluster_tag='none').count()
     esxi_count = hosts_count-esxi_none_count
