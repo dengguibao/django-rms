@@ -100,11 +100,11 @@ class HostInfo(models.Model):
     desc = models.TextField(null=True)  # 备注
     buy_date = models.CharField("购买日期", max_length=50, null=True)
     end_svc_date = models.CharField("过保时间", max_length=50, null=True)
-    svc_net_in = models.CharField("业务网络", max_length=50, null=True)
+    svc_net_in = models.CharField("业务网络", max_length=100, null=True)
     idrac_net_in = models.CharField("远程管理卡网络", max_length=50, null=True)
     supply_name = models.CharField("供应商名称", max_length=50, null=True)
     supply_contact_name = models.CharField("供应商联系人", max_length=50, null=True)
-    supply_phone = models.IntegerField("供应商联系号码", default=0)
+    supply_phone = models.CharField("供应商联系号码",max_length=20, default=0)
     rack_num = models.CharField("机柜号", max_length=10, null=True)
     slot_num = models.CharField("槽位号", max_length=50, null=True)
     dc_name = models.CharField("机房名称", max_length=50, null=True)
