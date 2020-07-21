@@ -11,6 +11,7 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http.response import HttpResponse, JsonResponse, Http404
+from django.conf import settings
 
 
 @login_required
@@ -196,7 +197,8 @@ def create_inspect(request):
     # print(content)
 
     file_name = "inspect_order_%s.txt" % time.strftime('%Y-%m', time.localtime())
-    with open(file_name, 'w+', encoding='utf-8', errors="ignore") as f:
+    file_path = os.path.join(settings.BASE_DIR,'uploads',file_name)
+    with open(file_path, 'w+', encoding='utf-8', errors="ignore") as f:
         f.write(content)
 
     return JsonResponse({
@@ -208,10 +210,11 @@ def create_inspect(request):
 @login_required
 def list_inspect(request):
     file_name = "inspect_order_%s.txt" % time.strftime('%Y-%m', time.localtime())
-    if not os.path.exists(file_name):
+    file_path = os.path.join(settings.BASE_DIR,'uploads',file_name)
+    if not os.path.exists(file_path):
         return render(request,'admin/error.html',{'error_msg': '本月暂无巡检值班安排'})
 
-    with open(file_name, 'r', encoding='utf-8', errors="ignore") as f:
+    with open(file_path, 'r', encoding='utf-8', errors="ignore") as f:
         lines=f.read().replace('	',' ')
     
     lines = re.sub(' +', ' ', lines)
