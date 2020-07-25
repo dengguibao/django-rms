@@ -51,11 +51,15 @@ spec:
     spec:
       containers:
         - name: ops
-          image: k8s-repo.io/dms
+          image: k8s-repo.io/dms:0725
           imagePullPolicy: Always
           command:
             - "/bin/sh"
             - "docker-run.sh"
+          readinessProbe:
+            httpGet:
+              port: http
+              path: /index
           volumeMounts:
             - name: upload
               mountPath: /django-home/uploads
