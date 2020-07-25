@@ -14,33 +14,33 @@ spec:
   selector:
     app: yx-ops
     
-# ---
+---
 
-# kind: PersistentVolumeClaim
-# apiVersion: v1
-# metadata:
-#   name: ops-pvc
-#   annotations:
-#     volume.beta.kubernetes.io/storage-class: "managed-nfs-storage"
-# spec:
-#   accessModes:
-#     - ReadWriteOnce
-#   resources:
-#     requests:
-#       storage: 1Gi
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: ops-pvc
+  annotations:
+    volume.beta.kubernetes.io/storage-class: "managed-nfs-storage"
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
 
 ---
 
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: yx-ops
   labels:
     app: yx-ops
   namespace: default
 spec:
-  serviceName: ops-svc
-  replicas: 1
+  # serviceName: ops-svc
+  replicas: 3
   selector:
     matchLabels:
       app: yx-ops
@@ -64,17 +64,21 @@ spec:
               containerPort: 8080
             - name: websocket
               containerPort: 8081
-  volumeClaimTemplates:
-    - metadata:
-        name: upload
-        annotations:
-          volume.beta.kubernetes.io/storage-class: "managed-nfs-storage"
-      spec:
-        accessModes:
-          - ReadWriteMany
-        resources:
-          requests:
-            storage: 1Gi
+      volumes:
+        - name: upload
+          persistentVolumeClaim:
+            claimName: ops-pvc 
+  # volumeClaimTemplates:
+  #   - metadata:
+  #       name: upload
+  #       annotations:
+  #         volume.beta.kubernetes.io/storage-class: "managed-nfs-storage"
+  #     spec:
+  #       accessModes:
+  #         - ReadWriteMany
+  #       resources:
+  #         requests:
+  #           storage: 1Gi
 
 ---
 
@@ -85,9 +89,12 @@ metadata:
   annotations:
     # use the shared ingress-nginx
     kubernetes.io/ingress.class: "nginx"
+    # change upload request max body size
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    # config websocket
     nginx.ingress.kubernetes.io/configuration-snippet: |
-       proxy_set_header Upgrade "websocket";
-       proxy_set_header Connection "Upgrade";
+      proxy_set_header Upgrade "websocket";
+      proxy_set_header Connection "Upgrade";
 spec:
   rules:
   - host: ops.cs.hnyongxiong.com
