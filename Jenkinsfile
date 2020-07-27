@@ -20,7 +20,7 @@ pipeline {
             agent {
                 docker{
                     image "django-ops:latest"
-                    args "-v ${env.WORKSPACE}/dms:/django-home"
+                    args "-v ${env.WORKSPACE}:/django-home"
                 }
             }
             steps {
@@ -34,7 +34,7 @@ pipeline {
         stage ('build'){
             steps{
                 sh '''
-                ver=`grep 'image:' ./dms/k8s-deploy.yaml | cut -d ':' -f3`
+                ver=`grep 'image:' k8s-deploy.yaml | cut -d ':' -f3`
                 docker build -t k8s-repo.io/dms:$ver ./dms/
                 docker push k8s-repo.io/dms:$ver
                 '''
@@ -44,7 +44,7 @@ pipeline {
         stage ('deploy'){
             steps{
                 sh '''
-                kubectl apply -f ./dms/k8s-deploy.yaml
+                kubectl apply -f k8s-deploy.yaml
                 '''
             }
         }
