@@ -6,12 +6,6 @@ pipeline {
     stages {
         stage ('pull code') {
             steps{
-                // sh '''
-                //     if [ -d ./dms ]; then
-                //         rm -rf dms/
-                //     fi
-                //     git clone root@172.31.12.254:/django/dms.git
-                //     '''
                 checkout scm
             }
         }
