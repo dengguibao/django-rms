@@ -12,7 +12,7 @@ pipeline {
                 //     fi
                 //     git clone root@172.31.12.254:/django/dms.git
                 //     '''
-                checkout
+                checkout scm
             }
         }
         
