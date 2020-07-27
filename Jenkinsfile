@@ -35,7 +35,7 @@ pipeline {
             steps{
                 sh '''
                 ver=`grep 'image:' k8s-deploy.yaml | cut -d ':' -f3`
-                docker build -t k8s-repo.io/dms:$ver ./dms/
+                docker build -t k8s-repo.io/dms:$ver .
                 docker push k8s-repo.io/dms:$ver
                 '''
             }
