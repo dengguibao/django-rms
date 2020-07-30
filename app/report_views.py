@@ -229,7 +229,7 @@ def list_inspect(request):
         })
     edit = request.GET.get('edit',None)
     if edit:
-        print(lines)
+        # print(lines)
         return render(request, 'admin/add_or_edit_inspection_order.html',{'content': lines})
 
     return render(request, 'admin/list_inspect.html',{'obj': data})
