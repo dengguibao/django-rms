@@ -4,86 +4,129 @@
 {% endblock %}
 {% block mainbody %}
 <div>
-    <ul class="test">
-        <li>
-            <a href="http://zabbix.cs.hnyongxiong.com" target="_blank">
-                <img src="/static/admin/img/zabbix.png">
-                <p style="height:16px;line-height:16px;">Zabbix</p>
-            </a>
-        </li>
-        <li>
-            <a href="http://email.yubang168.cn:8080/yxemail/security/login.do" target="_blank">
-                <img src="/static/admin/img/email.png">
-                <p style="height:16px;line-height:16px;">永雄邮箱</p>
-            </a>
-        </li>
-        <li>
-            <a href="http://172.31.19.254:3000" target="_blank">
-                <img src="/static/admin/img/grafana.png">
-                <p style="height:16px;line-height:16px;">Grafana</p>
-            </a>
-        </li>
-        <li>
-            <a href="http://elk.cs.hnyongxiong.com" target="_blank">
-                <img src="/static/admin/img/kibana.png">
-                <p style="height:16px;line-height:16px;">ELK</p>
-            </a>
-        </li>
-        <li>
-            <a href="https://pldsec.cs.hnyongxiong.com" target="_blank">
-                <img src="/static/admin/img/pldsec.png">
-                <p style="height:16px;line-height:16px;">帕拉迪</p>
-            </a>
-        </li>
-        <li>
-           <a href="http://10.7.252.66:8899/" target="_blank">
-                <img src="/static/admin/img/smartping.png">
-                <p style="height:16px;line-height:16px;">SmartPing</p>
-            </a>
-        </li>
-        <li>
-           <a href="https://vcsa01.cs.hnyongxiong.com/" target="_blank">
-                <img src="/static/admin/img/vsphere.png">
-                <p style="height:16px;line-height:16px;">vSphere</p>
-            </a>
-        </li>
-         <li>
-           <a href="https://10.0.88.122" target="_blank">
-                <img src="/static/admin/img/cacti.png">
-                <p style="height:16px;line-height:16px;">Cacti</p>
-            </a>
-        </li>
-         <li>
-           <a href="https://10.0.88.125" target="_blank">
-                <img src="/static/admin/img/ACS.png">
-                <p style="height:16px;line-height:16px;">Cisco Secure ACS</p>
-            </a>
-        </li>
-         <li>
-           <a href="http://172.31.11.252/SITE/Pages/Common/Main.aspx" target="_blank">
-                <img src="/static/admin/img/donghuan.png">
-                <p style="height:16px;line-height:16px;">机房动环</p>
-            </a>
-        </li>
-         <li>
-           <a href="https://172.31.19.2:8443" target="_blank">
-                <img src="/static/admin/img/360.png">
-                <p style="height:16px;line-height:16px;">360天擎</p>
-            </a>
-        </li>
-        <li>
-           <a href="https://172.31.11.174:8443" target="_blank">
-                <img src="/static/admin/img/huishi.png">
-                <p style="height:16px;line-height:16px;">会议管理</p>
-            </a>
-        </li>
-        <li>
-           <a href="http://haproxy01.cs.hnyongxiong.com:1080/stats" target="_blank">
-                <img src="/static/admin/img/haproxy.png">
-                <p style="height:16px;line-height:16px;">HAProxy</p>
-            </a>
-        </li>
-    </ul>
+    <fieldset class="layui-elem-field">
+        <legend>应用导航</legend>
+        <ul class="test layui-field-box">
+            <li>
+                <a href="http://zabbix.cs.hnyongxiong.com" target="_blank">
+                    <img src="/static/admin/img/zabbix.png">
+                    <p style="height:16px;line-height:16px;">Zabbix</p>
+                </a>
+            </li>
+            <li>
+                <a href="http://email.yubang168.cn:8080/yxemail/security/login.do" target="_blank">
+                    <img src="/static/admin/img/email.png">
+                    <p style="height:16px;line-height:16px;">永雄邮箱</p>
+                </a>
+            </li>
+            <li>
+                <a href="http://172.31.19.254:3000" target="_blank">
+                    <img src="/static/admin/img/grafana.png">
+                    <p style="height:16px;line-height:16px;">Grafana</p>
+                </a>
+            </li>
+            <li>
+                <a href="http://elk.cs.hnyongxiong.com" target="_blank">
+                    <img src="/static/admin/img/kibana.png">
+                    <p style="height:16px;line-height:16px;">ELK</p>
+                </a>
+            </li>
+            <li>
+                <a href="https://pldsec.cs.hnyongxiong.com" target="_blank">
+                    <img src="/static/admin/img/pldsec.png">
+                    <p style="height:16px;line-height:16px;">帕拉迪</p>
+                </a>
+            </li>
+            <li>
+            <a href="http://10.7.252.66:8899/" target="_blank">
+                    <img src="/static/admin/img/smartping.png">
+                    <p style="height:16px;line-height:16px;">SmartPing</p>
+                </a>
+            </li>
+            <li>
+            <a href="https://vcsa01.cs.hnyongxiong.com/" target="_blank">
+                    <img src="/static/admin/img/vsphere.png">
+                    <p style="height:16px;line-height:16px;">vSphere</p>
+                </a>
+            </li>
+            <li>
+            <a href="https://10.0.88.122" target="_blank">
+                    <img src="/static/admin/img/cacti.png">
+                    <p style="height:16px;line-height:16px;">Cacti</p>
+                </a>
+            </li>
+            <li>
+            <a href="https://10.0.88.125" target="_blank">
+                    <img src="/static/admin/img/ACS.png">
+                    <p style="height:16px;line-height:16px;">Cisco Secure ACS</p>
+                </a>
+            </li>
+            <li>
+            <a href="http://172.31.11.252/SITE/Pages/Common/Main.aspx" target="_blank">
+                    <img src="/static/admin/img/donghuan.png">
+                    <p style="height:16px;line-height:16px;">机房动环</p>
+                </a>
+            </li>
+            <li>
+            <a href="https://172.31.19.2:8443" target="_blank">
+                    <img src="/static/admin/img/360.png">
+                    <p style="height:16px;line-height:16px;">360天擎</p>
+                </a>
+            </li>
+            <li>
+            <a href="https://172.31.11.174:8443" target="_blank">
+                    <img src="/static/admin/img/huishi.png">
+                    <p style="height:16px;line-height:16px;">会议管理</p>
+                </a>
+            </li>
+            <li>
+            <a href="http://haproxy01.cs.hnyongxiong.com:1080/stats" target="_blank">
+                    <img src="/static/admin/img/haproxy.png">
+                    <p style="height:16px;line-height:16px;">HAProxy</p>
+                </a>
+            </li>
+        </ul>
+    </fieldset>
+    <fieldset class="layui-elem-field">
+        <legend>防火墙网关</legend>
+        <ul class="test2 layui-field-box">
+            <li><a href="https://61.161.239.222:4433" target="_blank">沈阳</a></li>
+            <li><a href="https://113.4.12.163:4433" target="_blank">哈尔滨</a></li>
+            <li><a href="https://110.16.89.118:4433" target="_blank">呼和浩特</a></li>
+            <li><a href="https://219.159.152.134:4433" target="_blank">南宁</a></li>
+            <li><a href="https://111.85.152.249:4433" target="_blank">贵阳</a></li>
+            <li><a href="https://171.34.206.41:8443" target="_blank">南昌</a></li>
+            <li><a href="https://218.106.124.130:4433" target="_blank">武汉</a></li>
+            <li><a href="https://36.33.16.173:4433" target="_blank">合肥</a></li>
+            <li><a href="https://119.39.96.93:4433" target="_blank">青竹湖</a></li>
+            <li><a href="https://58.20.40.135:4433" target="_blank">开福</a></li>
+            <li><a href="https://119.39.242.94:8443" target="_blank">娄底</a></li>
+            <li><a href="https://220.250.13.147:8443" target="_blank">福州高新区</a></li>
+            <li><a href="https://121.31.125.58:8443" target="_blank">桂林</a></li>
+            <li><a href="https://60.12.33.138:8443" target="_blank">温州</a></li>
+            <li><a href="https://112.91.177.178:8443" target="_blank">中山</a></li>
+            <li><a href="https://220.248.173.203:8443" target="_blank">常德</a></li>
+            <li><a href="https://58.20.230.11:8443" target="_blank">湘潭</a></li>
+            <li><a href="https://110.52.93.144:8443" target="_blank">邵阳</a></li>
+            <li><a href="https://58.20.249.98:8443" target="_blank">郴州</a></li>
+            <li><a href="https://220.202.105.153:8443" target="_blank">怀化</a></li>
+            <li><a href="https://58.20.184.62:8443" target="_blank">衡阳</a></li>
+            <li><a href="https://58.20.246.195:8443" target="_blank">益阳</a></li>
+            <li><a href="https://58.20.153.69:8443" target="_blank">岳阳</a></li>
+            <li><a href="https://119.39.134.17:8443" target="_blank">株洲</a></li>
+            <li><a href="https://119.39.165.130:8443" target="_blank">永州</a></li>
+            <li><a href="https://110.53.52.176:8443" target="_blank">张家界</a></li>
+            <li><a href="https://210.22.54.62:8443" target="_blank">吉首</a></li>
+            <li><a href="https://220.248.178.110:8443" target="_blank">新化联通</a></li>
+            <li><a href="https://183.215.211.78:8443" target="_blank">新化移动</a></li>
+            <li><a href="https://121.31.110.112:8443" target="_blank">百色</a></li>
+            <li><a href="https://118.212.38.4:8443" target="_blank">九江</a></li>
+            <li><a href="https://113.195.134.192:8443" target="_blank">上饶</a></li>
+            <li><a href="https://111.85.213.44:8443" target="_blank">遵义</a></li>
+            <li><a href="https://221.7.165.7:8443" target="_blank">钦州</a></li>
+            <li><a href="https://221.7.135.145:8443" target="_blank">广西</a></li>
+        </ul>
+    </fieldset>
 </div>
 <style>
     .test {
@@ -110,6 +153,35 @@
         margin:10px 0;
         width: 60px;
         height: 60px;
+    }
+
+
+
+    .test2 {
+        display:block;
+        float:left;
+        padding:10px;
+    }
+    .test2 li{
+        margin-right:10px;
+        float:left;
+        display:block;
+    }
+    .test2 li a {
+        display: block;
+        font-size:14px;
+        height:35px;
+        {% comment %} border:1px solid #ddd; {% endcomment %}
+        {% comment %} background:#eee; {% endcomment %}
+        width:100px;
+        text-align:center;
+    }
+    .test2 li a:hover{
+        text-decoration:underline;
+        color:#c00
+    }
+    .layui-elem-field{
+        border-style:dashed;
     }
 </style>
 {% endblock %}
