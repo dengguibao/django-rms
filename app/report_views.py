@@ -146,7 +146,7 @@ def report_manage(request):
         response.write(output.getvalue())
         return response
 
-    user_data = User.objects.all()
+    user_data = User.objects.filter(is_active=1)
     return render(request, 'admin/list_%s_report.html' % t, {
         'users': user_data,
         'data': res.order_by('-id'),
