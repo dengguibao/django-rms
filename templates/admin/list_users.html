@@ -31,7 +31,7 @@
             <td>{{i.first_name}}</td>
             <td>{{i.email}}</td>
             <td>{%ifequal i.is_superuser True%}管理员{%else%}普通用户{%endifequal%}</td>
-            <td>{%ifequal i.is_active True%}启用{%else%}禁用{%endifequal%}</td>
+            <td>{%ifequal i.is_active True%}启用{%else%}<span style="color:#f00">禁用</span>{%endifequal%}</td>
             <td>{{i.date_joined|date:'Y-m-d H:i:s'}}</td>
             <td>
                 <a href="/admin/edit/user/{{i.id}}" title="edit" class="layui-btn layui-btn-primary layui-btn-xs">

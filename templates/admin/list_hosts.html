@@ -135,7 +135,7 @@
                         , {
                         rowspan: 2, field: 'dev_status', title: '设备状态', width: 80, templet: function (d) {
                             if (d.dev_status == '1') {
-                                return '关机'
+                                return '<span style="color:#ff0000">关机</span>'
                             } else {
                                 return '开机'
                             }
