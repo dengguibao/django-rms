@@ -1,6 +1,6 @@
 import os
 import time
-from django.http import JsonResponse, FileResponse, Http404
+from django.http import JsonResponse, FileResponse, Http404, StreamingHttpResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
@@ -381,6 +381,15 @@ def file_delete(request, fid):
         'msg': 'fail'
     })
 
+def file_iterator(filename,chunk_size=512):  
+    '''read file'''
+    with open(filename,'rb') as f:  
+        while True:  
+            c=f.read(chunk_size)  
+            if c:  
+                yield c  
+            else:  
+                break
 
 # @login_required
 def file_download(request, fid):
@@ -439,8 +448,9 @@ def file_download(request, fid):
             'content': content
         })
 
-    file = open(file_path, 'rb')
-    response = FileResponse(file)
+    # file = open(file_path, 'rb')
+    # response = FileResponse(file)
+    response = StreamingHttpResponse(file_iterator(file_path))
     response['Content-Type'] = 'application/octet-stream'
     response['Content-Disposition'] = 'attachment;filename="{}"'.format(
         res.name.encode('utf-8').decode('ISO-8859-1'))
