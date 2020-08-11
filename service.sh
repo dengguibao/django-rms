@@ -46,7 +46,7 @@ case "$1" in
 	;;
 	"restart")
 		stop
-	sleep 2
+		sleep 2
 		start
 		echo "*** restart service ***"
 	;;

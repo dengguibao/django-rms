@@ -1,3 +1,4 @@
+from app.file_view import file_download
 from django.urls import path
 from . import (
     global_views, user_views, server_views, perm_views, file_view,
@@ -42,6 +43,7 @@ urlpatterns = [
     path('file-rename', file_view.file_rename),
     path('create-folder', file_view.create_folder),
     path('media/<int:fid>', file_view.file_download),
+    path('wopi/files/<int:fid>/contents', file_view.file_download),
     path('edit/<int:fid>', file_view.file_edit),
     path('save/', file_view.file_save),
 

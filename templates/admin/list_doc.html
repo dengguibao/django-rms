@@ -337,9 +337,24 @@
                 success: function (d) {
                     if (d.code == 0) {
                         $.each(d.data, function (i, field) {
+                            let office_ext = ['xls', 'xlsx', 'doc', 'docx']
+                            if (office_ext.indexOf(field.file_type) >=0){
+                                
+                                doc_url = 'http://ops.cs.hnyongxiong.com/admin/wopi/files/'+field.id+'/contents'
+                                if (['doc', 'docx'].indexOf(field.file_type) >=0 ){
+                                    url = 'http://172.30.16.8/wv/wordviewerframe.aspx?WOPISrc='+encodeURIComponent(doc_url)
+                                }
+
+                                if (['xls', 'xlsx'].indexOf(field.file_type) >=0 ){
+                                    url = 'http://172.30.16.8/x/_layouts/xlviewerinternal.aspx?ui=zh-CN&rs=zh-CN&WOPISrc='+encodeURIComponent(doc_url)
+                                }
+                                
+                            }else{
+                                url = '/admin/media/'+field.id
+                            }
                             let append_str = '<tr id="tr' + field.id + '">' +
                                 '<td>' +
-                                '<a tag="' + field.id + '" class="mr" target="_blank" href="/admin/media/' + field.id + '">' +
+                                '<a tag="' + field.id + '" class="mr" target="_blank" href="' + url + '">' +
                                 '<i class="layui-icon layui-icon-file"></i>' + field.name +
                                 '</a>' +
                                 '</td>' +
