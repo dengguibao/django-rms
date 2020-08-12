@@ -341,7 +341,7 @@
                             if (office_ext.indexOf(field.file_type) >=0){
                                 oos_server = 'http://172.30.16.8'
                                 
-                                doc_url = encodeURIComponent('http://ops.cs.hnyongxiong.com/admin/wopi/files/'+field.id+'/contents')
+                                doc_url = encodeURIComponent('http://ops.cs.hnyongxiong.com/admin/wopi/files/'+field.id)
                                 if (['doc', 'docx'].indexOf(field.file_type) >=0 ){
                                     url = `${oos_server}/wv/wordviewerframe.aspx?WOPISrc=${doc_url}`
                                 }
