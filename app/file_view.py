@@ -397,8 +397,6 @@ def file_delete(request, fid):
 
 @method_decorator(csrf_exempt, name='dispatch')
 def wopi_file_info(request, fid):
-    if request.method == 'POST':
-        pass
     res = FileInfo.objects.get(id=fid)
     if not res:
         return JsonResponse({
@@ -416,21 +414,28 @@ def wopi_file_info(request, fid):
     if not os.path.exists(file_path):
         raise Http404()
 
-    with open(file_path, 'rb') as fo:
-        f = fo.read()
+    if request.method == 'GET':
+        with open(file_path, 'rb') as fo:
+            f = fo.read()
 
-    dig = hashlib.sha256(f).digest()
+        dig = hashlib.sha256(f).digest()
 
-    return  JsonResponse({
-        'BaseFileName': res.name,
-        'OwnerId': res.owner.username,
-        'Size': len(f),
-        'SHA256': base64.b64encode(dig).decode(),
-        'Version': '1',
-        'SupportsUpdate': True,
-        'UserCanWrite': True,
-        'SupportsLocks': True,
-    })
+        return  JsonResponse({
+            'BaseFileName': res.name,
+            'OwnerId': res.owner.username,
+            'Size': len(f),
+            'SHA256': base64.b64encode(dig).decode(),
+            'Version': '1',
+            'SupportsUpdate': True,
+            'UserCanWrite': True,
+            'SupportsLocks': True,
+        })
+    if request.method == 'POST':
+        if request.body == b'':
+            return
+        else:
+            with open(file_path, 'wb+') as fo:
+                fo.write(request.body)
 
     
 # @login_required
