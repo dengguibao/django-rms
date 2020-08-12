@@ -398,16 +398,7 @@ def file_delete(request, fid):
 @method_decorator(csrf_exempt, name='dispatch')
 def wopi_file_info(request, fid):
     if request.method == 'POST':
-        if request.body == b'':
-            return
-        else:
-            print(request)
-            response = FileResponse(request.body)
-            # response = StreamingHttpResponse(file_iterator(file_path))
-            response['Content-Type'] = 'application/octet-stream'
-            response['Content-Disposition'] = 'attachment;filename="{}"'.format('11111111')
-            return response
-
+        pass
     res = FileInfo.objects.get(id=fid)
     if not res:
         return JsonResponse({
