@@ -75,7 +75,8 @@ def upload_file(request):
                     'real_name': real_name,
                     'real_path': real_path,
                     'pub_date': res.pub_date,
-                    'owner': user_obj.first_name
+                    'owner': user_obj.first_name,
+                    'file_type': file_ext,
                 }
             })
 

@@ -72,6 +72,35 @@
             , mouseRightMenu = layui.mouseRightMenu
             , upload = layui.upload;
 
+        let build_href_link = function(obj){
+            let office_ext = ['xls', 'xlsx', 'doc', 'docx', 'pdf', 'ppt', 'pptx']
+            var url = ''
+            if (office_ext.indexOf(obj.file_type) >=0){
+                oos_server = 'http://172.30.16.8'
+                
+                doc_url = encodeURIComponent('http://ops.cs.hnyongxiong.com/admin/wopi/files/'+obj.id)
+                if (['doc', 'docx'].indexOf(obj.file_type) >=0 ){
+                    url = `${oos_server}/we/wordeditorframe.aspx?WOPISrc=${doc_url}`
+                }
+
+                if (['pdf'].indexOf(obj.file_type) >=0 ){
+                    url = `${oos_server}/wv/WordViewer/request.pdf?type=accesspdf&WOPISrc=${doc_url}`
+                }
+
+                if (['xls', 'xlsx'].indexOf(obj.file_type) >=0 ){
+                    url = `${oos_server}/x/_layouts/xlviewerinternal.aspx?edit=1&WOPISrc=${doc_url}`
+                }
+
+                if (['ppt', 'pptx'].indexOf(obj.file_type) >=0 ){
+                    url = `${oos_server}/p/PowerPointFrame.aspx?PowerPointView=EditView&WOPISrc=${doc_url}`
+                }
+
+            }else{
+                url = '/admin/media/'+obj.id
+            }
+            return url
+        }
+
         upload.render({ //允许上传的文件后缀
             elem: '#btn_upload'
             //,url: 'https://httpbin.org/post' //改成您自己的上传接口
@@ -96,9 +125,10 @@
                     element.progress('upload_percent', '0%');
                     layer.msg('上传成功');
                     container = $('#file_list')
+                    url = build_href_link(res.data)
                     append_str = '<tr id="tr' + res.data.id + '">' +
                         '<td>' +
-                        '<a class="mr" tag="' + res.data.id + '" target="_blank" href="/admin/media/' + res.data.id + '">' +
+                        '<a class="mr" tag="' + res.data.id + '" target="_blank" href="' + url + '">' +
                         '<i class="layui-icon layui-icon-file"></i>' + res.data.name + '</a>' +
                         '</td>' +
                         '<td>' + res.data.owner + '</td>' +
@@ -345,30 +375,7 @@
                 success: function (d) {
                     if (d.code == 0) {
                         $.each(d.data, function (i, field) {
-                            let office_ext = ['xls', 'xlsx', 'doc', 'docx', 'pdf', 'ppt', 'pptx']
-                            if (office_ext.indexOf(field.file_type) >=0){
-                                oos_server = 'http://172.30.16.8'
-                                
-                                doc_url = encodeURIComponent('http://ops.cs.hnyongxiong.com/admin/wopi/files/'+field.id)
-                                if (['doc', 'docx'].indexOf(field.file_type) >=0 ){
-                                    url = `${oos_server}/we/wordeditorframe.aspx?WOPISrc=${doc_url}`
-                                }
-
-                                if (['pdf'].indexOf(field.file_type) >=0 ){
-                                    url = `${oos_server}/wv/WordViewer/request.pdf?type=accesspdf&WOPISrc=${doc_url}`
-                                }
-
-                                if (['xls', 'xlsx'].indexOf(field.file_type) >=0 ){
-                                    url = `${oos_server}/x/_layouts/xlviewerinternal.aspx?edit=1&WOPISrc=${doc_url}`
-                                }
-
-                                if (['ppt', 'pptx'].indexOf(field.file_type) >=0 ){
-                                    url = `${oos_server}/p/PowerPointFrame.aspx?PowerPointView=EditView&WOPISrc=${doc_url}`
-                                }
-
-                            }else{
-                                url = '/admin/media/'+field.id
-                            }
+                            let url = build_href_link(field)
                             let append_str = '<tr id="tr' + field.id + '">' +
                                 '<td>' +
                                 '<a tag="' + field.id + '" class="mr" target="_blank" href="' + url + '">' +
