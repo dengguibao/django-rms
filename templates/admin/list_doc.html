@@ -337,7 +337,7 @@
                 success: function (d) {
                     if (d.code == 0) {
                         $.each(d.data, function (i, field) {
-                            let office_ext = ['xls', 'xlsx', 'doc', 'docx', 'ppt', 'pptx']
+                            let office_ext = ['xls', 'xlsx', 'doc', 'docx', 'pdf', 'ppt', 'pptx']
                             if (office_ext.indexOf(field.file_type) >=0){
                                 oos_server = 'http://172.30.16.8'
                                 
