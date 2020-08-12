@@ -343,15 +343,15 @@
                                 
                                 doc_url = encodeURIComponent('http://ops.cs.hnyongxiong.com/admin/wopi/files/'+field.id)
                                 if (['doc', 'docx'].indexOf(field.file_type) >=0 ){
-                                    url = `${oos_server}/wv/wordviewerframe.aspx?ui=zh-CN&rs=zh-CN&WOPISrc=${doc_url}`
+                                    url = `${oos_server}/wv/wordviewerframe.aspx?WOPISrc=${doc_url}`
                                 }
 
                                 if (['pdf'].indexOf(field.file_type) >=0 ){
-                                    url = `${oos_server}/wv/WordViewer/request.pdf?ui=zh-CN&rs=zh-CN&WOPISrc=${doc_url}`
+                                    url = `${oos_server}/wv/WordViewer/request.pdf?WOPISrc=${doc_url}`
                                 }
 
                                 if (['xls', 'xlsx'].indexOf(field.file_type) >=0 ){
-                                    url = `${oos_server}/x/_layouts/xlviewerinternal.aspx?ui=zh-CN&rs=zh-CN&WOPISrc=${doc_url}`
+                                    url = `${oos_server}/x/_layouts/xlviewerinternal.aspx?WOPISrc=${doc_url}`
                                 }
 
                                 if (['ppt', 'pptx'].indexOf(field.file_type) >=0 ){

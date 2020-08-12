@@ -407,13 +407,19 @@ def wopi_file_info(request, fid):
     #     'msg': 'permission denied'
     # })
 
-    file_size = res.file_size
-    dig = hashlib.sha256(file_size.encode()).digest()
+    file_path = '/'.join([settings.BASE_DIR, res.real_path, res.real_name])
+    if not os.path.exists(file_path):
+        raise Http404()
+
+    with open(file_path, 'rb') as fo:
+        f = fo.read()
+
+    dig = hashlib.sha256(f).digest()
 
     return  JsonResponse({
         'BaseFileName': res.name,
         'OwnerId': res.owner.username,
-        'Size': int(convert_file_size_to_num(res.file_size)),
+        'Size': len(f),
         'SHA256': base64.b64encode(dig).decode(),
         'Version': '1',
         'SupportsUpdate': True,
