@@ -1,5 +1,7 @@
 import os
 import time
+import hashlib
+import base64
 from django.http import JsonResponse, FileResponse, Http404, StreamingHttpResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -381,16 +383,45 @@ def file_delete(request, fid):
         'msg': 'fail'
     })
 
-def file_iterator(filename,chunk_size=512):  
-    '''read file'''
-    with open(filename,'rb') as f:  
-        while True:  
-            c=f.read(chunk_size)  
-            if c:  
-                yield c  
-            else:  
-                break
+# def file_iterator(filename,chunk_size=512):  
+#     '''read file'''
+#     with open(filename,'rb') as f:  
+#         while True:  
+#             c=f.read(chunk_size)  
+#             if c:  
+#                 yield c  
+#             else:  
+#                 break
 
+def wopi_file_info(request, fid):
+    res = FileInfo.objects.get(id=fid)
+    if not res:
+        return JsonResponse({
+            'code': '1',
+            'msg': 'not found this file'
+        })
+
+    # if res.owner_id != request.user.id and not request.user.is_superuser:
+    #     return JsonResponse({
+    #     'code': 1,
+    #     'msg': 'permission denied'
+    # })
+
+    file_size = res.file_size
+    dig = hashlib.sha256(file_size.encode()).digest()
+
+    return  JsonResponse({
+        'BaseFileName': res.name,
+        'OwnerId': res.owner.username,
+        'Size': convert_file_size_to_num(res.file_size),
+        'SHA256': base64.b64encode(dig).decode(),
+        'Version': '1',
+        'SupportsUpdate': True,
+        'UserCanWrite': True,
+        'SupportsLocks': True,
+    })
+
+    
 # @login_required
 def file_download(request, fid):
     """according fid(fileinfo talbe id field) download or view file
@@ -448,9 +479,9 @@ def file_download(request, fid):
             'content': content
         })
 
-    # file = open(file_path, 'rb')
-    # response = FileResponse(file)
-    response = StreamingHttpResponse(file_iterator(file_path))
+    file = open(file_path, 'rb')
+    response = FileResponse(file)
+    # response = StreamingHttpResponse(file_iterator(file_path))
     response['Content-Type'] = 'application/octet-stream'
     response['Content-Disposition'] = 'attachment;filename="{}"'.format(
         res.name.encode('utf-8').decode('ISO-8859-1'))
@@ -475,3 +506,19 @@ def format_file_size(size):
     if 1024 ** 3 <= size < 1024 ** 4:
         return '%.1f' % float(size / 1024 ** 3) + 'G'
     return 'n/a'
+
+def convert_file_size_to_num(file_size):
+    if file_size == '0':
+        return
+    unit = file_size[-1]
+    size = float(file_size[0:-1])
+    if unit in ['b','B']:
+        return size
+    if unit in ['k', 'K']:
+        return size * 1024
+    if unit in ['m', 'M']:
+        return size * 1024 ** 2
+    if unit in ['g', 'G']:
+        return size * 1024 ** 3
+    else:
+        return

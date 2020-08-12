@@ -44,6 +44,7 @@ urlpatterns = [
     path('create-folder', file_view.create_folder),
     path('media/<int:fid>', file_view.file_download),
     path('wopi/files/<int:fid>/contents', file_view.file_download),
+    path('wopi/files/<int:fid>', file_view.wopi_file_info),
     path('edit/<int:fid>', file_view.file_edit),
     path('save/', file_view.file_save),
 

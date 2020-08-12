@@ -337,18 +337,23 @@
                 success: function (d) {
                     if (d.code == 0) {
                         $.each(d.data, function (i, field) {
-                            let office_ext = ['xls', 'xlsx', 'doc', 'docx']
+                            let office_ext = ['xls', 'xlsx', 'doc', 'docx', 'ppt', 'pptx']
                             if (office_ext.indexOf(field.file_type) >=0){
+                                oos_server = 'http://172.30.16.8'
                                 
-                                doc_url = 'http://ops.cs.hnyongxiong.com/admin/wopi/files/'+field.id+'/contents'
+                                doc_url = encodeURIComponent('http://ops.cs.hnyongxiong.com/admin/wopi/files/'+field.id+'/contents')
                                 if (['doc', 'docx'].indexOf(field.file_type) >=0 ){
-                                    url = 'http://172.30.16.8/wv/wordviewerframe.aspx?WOPISrc='+encodeURIComponent(doc_url)
+                                    url = `${oos_server}/wv/wordviewerframe.aspx?WOPISrc=${doc_url}`
                                 }
 
                                 if (['xls', 'xlsx'].indexOf(field.file_type) >=0 ){
-                                    url = 'http://172.30.16.8/x/_layouts/xlviewerinternal.aspx?ui=zh-CN&rs=zh-CN&WOPISrc='+encodeURIComponent(doc_url)
+                                    url = `${oos_server}/x/_layouts/xlviewerinternal.aspx?ui=zh-CN&rs=zh-CN&WOPISrc=${doc_url}`
                                 }
-                                
+
+                                if (['ppt', 'pptx'].indexOf(field.file_type) >=0 ){
+                                    url = `${oos_server}/p/PowerPointFrame.aspx?PowerPointView=ReadingView&WOPISrc=${doc_url}`
+                                }
+
                             }else{
                                 url = '/admin/media/'+field.id
                             }
