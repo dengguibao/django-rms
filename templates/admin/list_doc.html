@@ -199,13 +199,24 @@
                 let data = {id: $(this).attr('tag'), class: $(this).attr('class'), text: $(this).text()}
                 //console.log(data)
                 let menu_data = [
-                    {'data': data, 'type': 4, 'title': '重命名'},
+                    
                     {'data': data, 'type': 2, 'title': '删除'},
                     //{'data': data, 'type': 5, 'title': '共享'},
                 ]
 
+                txt_file_type = [
+                    'md', 'yaml', 'yam', 'conf', 'log', 'txt', 'desktop', 'sh', 'py',
+                    'php', 'js', 'css', 'html', 'htm', 'go', 'json', 'xml'
+                ]
+
                 if (data.class.indexOf('folder') == -1) {
-                    menu_data.unshift({'data': data, 'type': 3, 'title': '编辑'})
+                    a = data.text.split('.')
+                    file_ext = a[a.length-1]
+                    if (txt_file_type.indexOf(file_ext) >= 0){
+                        menu_data.unshift({'data': data, 'type': 3, 'title': '编辑'})
+                    }
+                    menu_data.unshift({'data': data, 'type': 4, 'title': '重命名'})
+                    
                     menu_data.unshift({'data': data, 'type': 1, 'title': '下载'})
                 }
 
@@ -277,15 +288,12 @@
                                     },
                                     success: function (response) {
                                         if (response.code == 0) {
-                                            html_element = $('#tr' + d.data.id + ' td').first()
+                                            html_element = $('#tr' + d.data.id + ' td a')
                                             if (response.type == 0) {
                                                 $('#path').val(response.path)
-                                                html_element.html('<a tag="'+response.id+'" class="folder mr">'+response.name+'</a>')
+                                                html_element.text(response.name)
                                             } else {
-                                                html_element.html('<a tag="' + response.id + '" class="mr" target="_blank" href="/admin/media/' + response.id + '">' +
-                                                    '<i class="layui-icon layui-icon-file"></i>' +
-                                                    response.name +
-                                                    '</a>');
+                                                html_element.html('<i class="layui-icon layui-icon-file"></i>'+response.name +'</a>');
                                             }
                                             refresh_folder_click_event();
                                             refresh_right_click_menu();
@@ -343,7 +351,7 @@
                                 
                                 doc_url = encodeURIComponent('http://ops.cs.hnyongxiong.com/admin/wopi/files/'+field.id)
                                 if (['doc', 'docx'].indexOf(field.file_type) >=0 ){
-                                    url = `${oos_server}/wv/wordviewerframe.aspx?WOPISrc=${doc_url}`
+                                    url = `${oos_server}/we/wordeditorframe.aspx?WOPISrc=${doc_url}`
                                 }
 
                                 if (['pdf'].indexOf(field.file_type) >=0 ){
@@ -351,11 +359,11 @@
                                 }
 
                                 if (['xls', 'xlsx'].indexOf(field.file_type) >=0 ){
-                                    url = `${oos_server}/x/_layouts/xlviewerinternal.aspx?WOPISrc=${doc_url}`
+                                    url = `${oos_server}/x/_layouts/xlviewerinternal.aspx?edit=1&WOPISrc=${doc_url}`
                                 }
 
                                 if (['ppt', 'pptx'].indexOf(field.file_type) >=0 ){
-                                    url = `${oos_server}/p/PowerPointFrame.aspx?PowerPointView=ReadingView&WOPISrc=${doc_url}`
+                                    url = `${oos_server}/p/PowerPointFrame.aspx?PowerPointView=EditView&WOPISrc=${doc_url}`
                                 }
 
                             }else{
