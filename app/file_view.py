@@ -501,8 +501,10 @@ def file_download(request, fid):
     
     # office online server post content
     elif request.method == 'POST':
-        with open(file_path, 'wb') as fo:
+        print(file_path)
+        with open(file_path, 'wb+') as fo:
             fo.write(request.body)
+        print('----end-----')
         return JsonResponse({
             'code': 0,
             'msg': 'success'
