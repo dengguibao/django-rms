@@ -2,7 +2,9 @@ import os
 import time
 import hashlib
 import base64
-from django.http import JsonResponse, FileResponse, Http404, StreamingHttpResponse
+from django.http import JsonResponse, FileResponse, Http404
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
@@ -429,6 +431,7 @@ def wopi_file_info(request, fid):
 
     
 # @login_required
+@method_decorator(csrf_exempt, name='dispatch')
 def file_download(request, fid):
     """according fid(fileinfo talbe id field) download or view file
 
@@ -498,10 +501,8 @@ def file_download(request, fid):
     
     # office online server post content
     elif request.method == 'POST':
-        print('-------')
         with open(file_path, 'wb') as fo:
             fo.write(request.body)
-            print('1111111111111111')
         return JsonResponse({
             'code': 0,
             'msg': 'success'

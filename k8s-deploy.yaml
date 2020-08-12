@@ -51,7 +51,7 @@ spec:
     spec:
       containers:
         - name: ops
-          image: k8s-repo.io/dms:0812.8
+          image: k8s-repo.io/dms:0812.9
           imagePullPolicy: Always
           command:
             - "/bin/sh"
