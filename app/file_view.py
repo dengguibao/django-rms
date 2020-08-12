@@ -477,21 +477,33 @@ def file_download(request, fid):
     if not os.path.exists(file_path):
         raise Http404()
 
-    if res.file_type in txt_file_type and down == 0:
-        with open(file_path, 'r', encoding='utf-8', errors="ignore") as f:
-            content = f.read()
-        return render(request, 'admin/%s' % temp_name, {
-            'filename': res.name,
-            'content': content
-        })
+    if request.method == 'GET':   
+        # text file
+        if res.file_type in txt_file_type and down == 0:
+            with open(file_path, 'r', encoding='utf-8', errors="ignore") as f:
+                content = f.read()
+            return render(request, 'admin/%s' % temp_name, {
+                'filename': res.name,
+                'content': content
+            })
 
-    file = open(file_path, 'rb')
-    response = FileResponse(file)
-    # response = StreamingHttpResponse(file_iterator(file_path))
-    response['Content-Type'] = 'application/octet-stream'
-    response['Content-Disposition'] = 'attachment;filename="{}"'.format(
-        res.name.encode('utf-8').decode('ISO-8859-1'))
-    return response
+        # none text file
+        file = open(file_path, 'rb')
+        response = FileResponse(file)
+        # response = StreamingHttpResponse(file_iterator(file_path))
+        response['Content-Type'] = 'application/octet-stream'
+        response['Content-Disposition'] = 'attachment;filename="{}"'.format(
+            res.name.encode('utf-8').decode('ISO-8859-1'))
+        return response
+    
+    # office online server post content
+    elif request.method == 'POST':
+        with open(file_path, 'wb') as fo:
+            fo.write(request.body)
+        return JsonResponse({
+            'code': 0,
+            'msg': 'success'
+        })
 
 
 def format_file_size(size):
