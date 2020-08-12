@@ -413,7 +413,7 @@ def wopi_file_info(request, fid):
     return  JsonResponse({
         'BaseFileName': res.name,
         'OwnerId': res.owner.username,
-        'Size': convert_file_size_to_num(res.file_size),
+        'Size': int(convert_file_size_to_num(res.file_size)),
         'SHA256': base64.b64encode(dig).decode(),
         'Version': '1',
         'SupportsUpdate': True,
