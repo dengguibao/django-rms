@@ -432,10 +432,14 @@ def wopi_file_info(request, fid):
         })
     if request.method == 'POST':
         if request.body == b'':
-            return
+            pass
         else:
             with open(file_path, 'wb+') as fo:
                 fo.write(request.body)
+        return JsonResponse({
+            'code': 0,
+            'msg': 'ok'
+        })
 
     
 # @login_required
