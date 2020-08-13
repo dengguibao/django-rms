@@ -211,25 +211,24 @@ def create_inspect(request):
 def list_inspect(request):
     file_name = "inspect_order_%s.txt" % time.strftime('%Y-%m', time.localtime())
     file_path = os.path.join(settings.BASE_DIR,'uploads',file_name)
-    if not os.path.exists(file_path):
-        return render(request,'admin/error.html',{'error_msg': '本月暂无巡检值班安排'})
-
-    with open(file_path, 'r', encoding='utf-8', errors="ignore") as f:
-        lines=f.read().replace('	',' ')
-    
-    lines = re.sub(' +', ' ', lines)
     data=[]
-    for line in lines.split('\n'):
-        if line.strip() == '':
-            continue
-        x = line.split(' ')
-        data.append({
-            'date': x[0],
-            'person': x[1]
-        })
+    lines = None
+    if os.path.exists(file_path):
+        with open(file_path, 'r', encoding='utf-8', errors="ignore") as f:
+            lines=f.read().replace('	',' ')
+        
+        lines = re.sub(' +', ' ', lines)        
+        for line in lines.split('\n'):
+            if line.strip() == '':
+                continue
+            x = line.split(' ')
+            data.append({
+                'date': x[0],
+                'person': x[1]
+            })
     edit = request.GET.get('edit',None)
     if edit:
         # print(lines)
-        return render(request, 'admin/add_or_edit_inspection_order.html',{'content': lines})
+        return render(request, 'admin/add_or_edit_inspection_order.html', {'content': lines})
 
     return render(request, 'admin/list_inspect.html',{'obj': data})

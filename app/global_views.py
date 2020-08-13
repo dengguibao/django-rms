@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.admin.models import LogEntry, ADDITION, CHANGE
 from django.contrib.admin.options import get_content_type_for_model
 from django.conf import settings
@@ -270,6 +271,8 @@ def create_or_update(request, form_name):
                     v = '******'
                 elif form_name == 'cluster' and f == 'is_active':
                     v = '启用' if post_data[f] == '0' else '禁用'
+                elif f == 'branch_id':
+                    v = res.branch.name
                 else:
                     v = post_data[f]
                 log_change_data.append('%s: %s' % (field_explain[form_name][f], v))
@@ -311,13 +314,6 @@ def view_log_view(request, content_type, object_id):
     if content_type not in models:
         return render(request, 'admin/error.html', {'error_msg': 'illegal request!'})
 
-    act_flag_exp = [
-        ('none', 0),
-        ('创建', 1),
-        ('修改', 2),
-        ('删除', 3)
-    ]
-
     res = get_object_or_404(models[content_type], pk=object_id)
     
     log_entries = LogEntry.objects.filter(
@@ -325,7 +321,6 @@ def view_log_view(request, content_type, object_id):
         object_id=res.id
     )
     return render(request, 'admin/view_log.html', {
-        'action_flag': act_flag_exp,
         'log_data': log_entries
     })
 
@@ -347,7 +342,6 @@ def log_rollback_view(request, log_id):
             'code': 1,
             'msg': 'not found this log resource!'
         })
-
     # user_id = request.user.id
     # if user_id != log_res.user_id:
     #     return JsonResponse({
@@ -362,19 +356,19 @@ def log_rollback_view(request, log_id):
         })
 
     post_data = json.loads(log_res.change_message)
-    content_type = log_res.content_type.model
-    origin_res = models[content_type].objects.get(id=log_res.object_id)
+    model_name = log_res.content_type.model
+    model = ContentType.objects.get(app_label="app", model=model_name).model_class()
+    origin_res = model.objects.get(id=log_res.object_id)
     if not origin_res:
-        res = models[content_type].objects.create(**post_data)
+        res = model.objects.create(**post_data)
     else:
-        models[content_type].objects.filter(id=log_res.object_id).update(**post_data)
-        res = models[content_type].objects.get(id=log_res.object_id)
+        model.objects.filter(id=log_res.object_id).update(**post_data)
+        res = model.objects.get(id=log_res.object_id)
 
     if res:
         return JsonResponse({
             'code': 0,
-            'msg': 'rollback success',
-            'jumpurl': '/admin/edit/%s/%s' % (content_type.replace('info', ''), res.id)
+            'msg': 'rollback success'
         })
     # else action
     return JsonResponse({

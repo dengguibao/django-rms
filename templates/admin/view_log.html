@@ -30,7 +30,7 @@
         <th>用户</th>
         <th>操作</th>
         <th>日志</th>
-        <th>操作</th>
+        {% comment %} <th>操作</th> {% endcomment %}
     </tr>
     </thead>
     <tbody id="list">
@@ -42,15 +42,13 @@
         {{i.user.first_name}}
         </td>
         <td>
-            {% for a in action_flag %}
-            {% if a.1 == i.action_flag %}{{a.0}}{% endif %}
-            {% endfor %}
+            {{ i.get_action_flag_display}}
         </td>
         <td>{{i.object_repr}}</td>
-        <td><a title="rollback" flag="{{i.id}}" class="layui-btn layui-btn-primary layui-btn-xs btn-rollback">
+        {% comment %} <td><a title="rollback" flag="{{i.id}}" class="layui-btn layui-btn-primary layui-btn-xs btn-rollback">
             <i class="layui-icon layui-icon-refresh"></i>
         </a>
-        </td>
+        </td> {% endcomment %}
     </tr>
     {% endfor %}
     </tbody>
@@ -66,9 +64,9 @@
                     url,
                     function (d) {
                         layer.alert(d.msg);
-                        if (d.code == 0){
-                            window.location.href = d.jumpurl;
-                        }
+                        //if (d.code == 0){
+                        //    window.location.href = d.jumpurl;
+                        //}
                     });
             });
         });

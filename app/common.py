@@ -140,5 +140,16 @@ def data_struct():
             'resolv_method': '解决方法',
             'owner': '值班人员',
             'pub_date': '报告时间',
+        },
+        'wan_net':{
+            'branch_id': '分公司',
+            'isp': '运营商',
+            'ip': 'IP',
+            'gateway': '网关',
+            'bandwidth': '带宽',
+            'rent': '付费方式',
+            'dns1': 'DNS1',
+            'dns2': 'DNS2',
+            'contact': '联系人',
         }
     }

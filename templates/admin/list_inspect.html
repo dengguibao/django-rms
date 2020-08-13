@@ -32,8 +32,10 @@
         {%endfor%}
         </tbody>
     </table>
+    {% if obj %}
     <a href="/admin/list-inspect/?edit=1" class="layui-btn">
         <i class="layui-icon layui-icon-edit"></i>修改
     </a>
+    {% endif %}
 </div>
 {% endblock %}

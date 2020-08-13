@@ -437,7 +437,7 @@ def wopi_file_info(request, fid):
         else:
             with open(file_path, 'wb+') as fo:
                 fo.write(request.body)
-                print('--------end----------')
+                # print('--------end----------')
         return JsonResponse({
             'code': 0,
             'msg': 'ok'

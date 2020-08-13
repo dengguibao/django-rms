@@ -88,6 +88,10 @@
                     <i class="layui-icon layui-icon-delete"></i>
                 </a>
                 {% endif %}
+
+                <a title="logs" target="_blank" href="/admin/view-logs/wan_net/{{ i.id }}" class='layui-btn layui-btn-primary layui-btn-xs'>
+                    <i class='layui-icon layui-icon-log'></i>
+                </a>
             </td>
         </tr>
         {%endfor%}
