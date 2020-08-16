@@ -31,6 +31,7 @@
 <fieldset class="layui-elem-field layui-field-title">
     <legend>虚拟机列表</legend>
 </fieldset>
+<input type="hidden" id="args" value="{{args}}"/>
 <div class="layui-row">
     <div class="layui-form-item" style="text-align: center;">
         <div class="layui-inline">
@@ -43,6 +44,9 @@
             <a target="_blank" href="/admin/export-server/vm" class="layui-btn">
                 <i class="layui-icon layui-icon-download-circle"></i>全部导出
             </a>
+<!--            <a href="/admin/render/add_or_edit_vm/" class="layui-btn layui-btn-normal">-->
+<!--                <i class="layui-icon layui-icon-add-circle"></i>添加-->
+<!--            </a>-->
         </div>
     </div>
 </div>
@@ -113,16 +117,24 @@
             form = layui.form,
             element = layui.element;
 
-        var flag = "cs";
-        var tab_act = '_all';
+        var flag = $('.layui-tab-title li').first().attr('flag');
+        var tab_act = flag + '_all';
+
+        url_args = $('#args').val()
+        if (url_args != "None" && url_args != undefined){
+            a = url_args.split(',')
+            flag = a[0]
+            tab_act = a[1]
+        }
 
         $('#keyword').on('keydown',function(event){
             if(event.keyCode==13){
                 $('#search').click();
             }
         })
-        
-        $('.layui-tab-title li').first().addClass('layui-this')
+
+        $('li[flag='+flag+']').addClass('layui-this')
+
         $('#search').on('click',function () {
             var keyword=$('#keyword').val()
             if (keyword.trim().length == 0){
@@ -142,20 +154,22 @@
 
 
         //初始化加载
-        refresh_esxi_table("/admin/get-hosts-list/host/cs");
-        refresh_vms_table("/admin/get-hosts-list/vm/cs_all");
+        refresh_esxi_table("/admin/get-hosts-list/host/" + flag);
+        refresh_vms_table("/admin/get-hosts-list/vm/" + tab_act);
 
         // listen tab click event
         element.on('tab(tab_cluster)', function (data) {
             // dev_type = "vm"
             tab_act = '_all'
             flag = $(this).attr('flag');
+            console.log(flag)
             $('#page').empty()
             $('#page').show()
             $('#host_list').show()
             $('#vms_list').removeAttr('style')
-            refresh_esxi_table("/admin/get-hosts-list/host/" + flag);
-            refresh_vms_table("/admin/get-hosts-list/vm/" + flag + "_all");
+            //refresh_esxi_table("/admin/get-hosts-list/host/" + flag);
+            //refresh_vms_table("/admin/get-hosts-list/vm/" + flag + "_all");
+            window.location.href=`/admin/render/list_vms/?args=${flag},${flag}_all`
         })
 
         table.on('tool(dt)',function(obj){
@@ -308,7 +322,7 @@
                         jump: function (obj, first) {
                             //首次不执行
                             if (!first) {
-                                refresh_vms_table("/admin/get-hosts-list/vm/" + flag + tab_act + "/?page=" + obj.curr)
+                                refresh_vms_table(`/admin/get-hosts-list/vm/${tab_act}/?page=` + obj.curr)
                             } 
                         }
                     });
@@ -418,8 +432,8 @@
 
         // ajax refresh vm by spcific esxi hosts
         window.refresh_vms_of_esxi = function (s) {
-            flag = s
-            tab_act = ''
+            flag = ''
+            tab_act = s
             refresh_vms_table("/admin/get-hosts-list/vm/" + flag + tab_act)
         }
     });

@@ -19,6 +19,7 @@
 <fieldset class="layui-elem-field layui-field-title">
     <legend>服务器列表</legend>
 </fieldset>
+<input type="hidden" id="args" value="{{args}}"/>
 <div class="layui-row">
     <div class="layui-form-item" style="text-align: center;">
         <div class="layui-inline">
@@ -31,6 +32,9 @@
             <a target="_blank" href="/admin/export-server/host" class="layui-btn">
                 <i class="layui-icon layui-icon-download-circle"></i>全部导出
             </a>
+<!--            <a href="/admin/render/add_or_edit_host/" class="layui-btn layui-btn-normal">-->
+<!--                <i class="layui-icon layui-icon-add-circle"></i>添加-->
+<!--            </a>-->
         </div>
     </div>
 </div>
@@ -79,15 +83,25 @@
                 $('#search').click();
             }
         })
-        
-        $('.layui-tab-title li').first().addClass('layui-this')
-        refresh_table("/admin/get-hosts-list/host/cs", 'cs');
+
+        args = $('#args').val()
+
+        if (args != 'None' && args != undefined){
+            $('li[flag='+args+']').addClass('layui-this')
+            refresh_table("/admin/get-hosts-list/host/"+args, args);
+        }else{
+            first_ele_flag = $('.layui-tab-title li').first().attr('flag')
+            refresh_table("/admin/get-hosts-list/host/"+first_ele_flag, first_ele_flag);
+            $('.layui-tab-title li').first().addClass('layui-this')
+        }
+
 
         element.on('tab(tab_cluster)', function (data) {
             $('#page').empty()
             var flag = $(this).attr('flag');
             var url = "/admin/get-hosts-list/host/" + flag;
-            refresh_table(url, flag);
+            //refresh_table(url, flag);
+            window.location.href=`/admin/render/list_hosts/?args=${flag}`
         })
 
 

@@ -57,8 +57,14 @@ class FileInfo(models.Model):
     Arguments:
         models {object} -- django Model
     """
+
+    UPLOAD_DOC_TYPE = (
+        (0,'文件夹'),
+        (1,'文件')
+    )
+
     path = models.CharField(max_length=200, null=False)  # 路径
-    type = models.IntegerField(null=False)  # 类型 0文件夹 1文件
+    type = models.IntegerField(null=False, default=0, choices=UPLOAD_DOC_TYPE)  # 类型 0文件夹 1文件
     name = models.CharField(max_length=100, null=False)  # 名称
     file_size = models.CharField(max_length=10, null=True, default=0)  # 文件大小
     real_path = models.CharField(max_length=200, null=True)  # 真实路径
@@ -77,6 +83,11 @@ class HostInfo(models.Model):
     Arguments:
         models {object} -- django Model
     """
+    HOST_STATUS = (
+        (0,'开机'),
+        (1,'关机')
+    )
+
     hostname = models.CharField(max_length=100, unique=True)  # 主机名
     sn = models.CharField(max_length=80)  # SN序列号
     idrac_ip = models.GenericIPAddressField()  # 远程管理卡IP
@@ -110,22 +121,12 @@ class HostInfo(models.Model):
     dc_name = models.CharField("机房名称", max_length=50, null=True)
     intention = models.CharField("用途", max_length=100, null=True)
     raid = models.CharField("raid", max_length=50, null=True)
-    dev_status = models.IntegerField("设备状态", default=0)  # 0开机 1关机
+    dev_status = models.IntegerField("设备状态", default=0, choices=HOST_STATUS)  # 0开机 1关机
     pub_date = models.DateTimeField(auto_now_add=True)  # 添加时间
 
     def __str__(self):
-        return "主机名:{} ip:{} 集群:{} idrac ip:{} " \
-               "CPU颗数:{} CPU频率:{} CPU核心数:{} CPU总频率:{} " \
-               "内存数量:{} 内存容量:{} 内存总容量:{} " \
-               "SSD数量:{} SSD容量:{} SSD总容量:{} " \
-               "硬盘数量:{} 硬盘容量:{} 硬盘总容量:{} " \
-               "设备状态:{} 描述:{} 操作系统:{}".format(
-            self.hostname, self.host_ip, self.cluster_tag, self.idrac_ip,
-            self.cpu_nums, self.cpu_rate, self.cpu_core, self.cpu_total_rate,
-            self.memory_nums, self.memory_size, self.memory_total_size,
-            self.ssd_nums, self.ssd_size, self.ssd_total_size,
-            self.sd_nums, self.sd_size, self.sd_total_size,
-            '开机' if self.dev_status == 0 else '关机', self.desc, self.os
+        return "主机名:{} ip:{} 集群:{} idrac ip:{}".format(
+            self.hostname, self.host_ip, self.cluster_tag, self.idrac_ip
         )
 
 
@@ -141,6 +142,12 @@ class VmInfo(models.Model):
     Arguments:
         models {object} -- django Model
     """
+
+    HOST_STATUS = (
+        (0,'开机'),
+        (1,'关机')
+    )
+
     vm_hostname = models.CharField(max_length=100, )  # 主机名
     vm_intention = models.CharField(max_length=100, null=True)  # 用途
     vm_register = models.CharField(max_length=10, null=True)  # 申请人
@@ -154,26 +161,16 @@ class VmInfo(models.Model):
     vm_memory = models.IntegerField(default=0)  # 内存
     vm_os = models.CharField(max_length=20)  # 操作系统
     vm_desc = models.TextField(null=True)  # 备注
-    vm_status = models.IntegerField('虚拟机状态', default=0)  # 虚拟机状态 0开机 1关机
+    vm_status = models.IntegerField('虚拟机状态', default=0, choices=HOST_STATUS)  # 虚拟机状态 0开机 1关机
     pub_date = models.DateTimeField(auto_now_add=True)  # 添加时间
 
     def __str__(self):
-        return "主机名:{} 申请人:{} 用途:{} ZABBIX监控:{} IP:{} VLAN ID:{} VLAN标签:{} " \
-               "宿主机:{} CPU:{} 磁盘:{} 内存:{} 操作系统:{} 状态:{} 备注:{}".format(
+        return "主机名:{} 申请人:{} IP:{} VLAN ID:{} VLAN标签:{} ".format(
             self.vm_hostname,
             self.vm_register,
-            self.vm_intention,
-            self.vm_monitor,
             self.vm_ip,
             self.vlan_id,
-            self.vlan_tag,
-            self.host.hostname,
-            self.vm_cpu,
-            self.vm_disk,
-            self.vm_memory,
-            self.vm_os,
-            '开机' if self.vm_status == 0 else '关机',
-            self.vm_desc
+            self.vlan_tag
         )
 
 

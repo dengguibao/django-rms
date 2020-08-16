@@ -24,7 +24,8 @@ def render_static_temp_view(request, temp_name):
     res_cluster = ClusterInfo.objects.filter(is_active=0)
     context = {
         'cluster_data': res_cluster,
-        'branch_data': Branch.objects.filter(isenable=1)
+        'branch_data': Branch.objects.filter(isenable=1),
+        'args': request.GET.get('args', None)
     }
     return render(request, 'admin/%s.html' % temp_name, context)
 

@@ -78,7 +78,7 @@
         <div class="layui-inline">
             <label class="layui-form-label">集群</label>
             <div class="layui-input-inline" style="width: 100px;">
-                <select lay-filter="cluster_tag" lay-verify="required">
+                <select lay-filter="cluster_tag" id="cluster_tag" lay-verify="required">
                     <option value="">请选择</option>
                     {% for i in cluster_data %}
                     <option {% ifequal obj.host.cluster_tag i.tag %}selected="" {% endifequal %} value="{{i.tag}}">{{i.name}}</option>
@@ -206,6 +206,7 @@
             if (change_field.length != 0){
                 url = url+'?change_field='+change_field.join(',')
             }
+            args = $('#cluster_tag').val()+','+$('#host_id option:selected').text()
             $.ajax({
                 url: url,
                 type: 'post',
@@ -214,7 +215,7 @@
                     layer.msg(d.msg)
                     if (d.code == 0) {
                         setTimeout(function () {
-                            window.location.href = '/admin/render/list_vms/';
+                            window.location.href = '/admin/render/list_vms/?args='+args;
                         }, 1000);
                     }
                 },
