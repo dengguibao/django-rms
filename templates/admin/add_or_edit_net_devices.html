@@ -219,7 +219,7 @@
                     layer.msg(d.msg)
                     if (d.code == 0) {
                         setTimeout(function () {
-                            window.location.href = '/admin/get-device-list/net_devices'
+                            window.location.href = '/admin/get-device-list/net_devices?branch_id='+$('#branch_id').val()
                         }, 1000);
                     }
                 },
