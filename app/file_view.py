@@ -119,6 +119,7 @@ def get_user_file_list(request, t):
     n = 0
     for i in res:
         list_res[n]['username'] = i.owner.first_name
+        list_res[n]['pub_date'] = i.pub_date.strftime('%Y-%m-%d %H:%M:%S')
         n += 1
 
     if res:
