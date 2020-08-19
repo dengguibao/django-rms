@@ -299,7 +299,7 @@ def file_save(request):
     content = request.POST.get('content', None)
     res = FileInfo.objects.get(id=fid)
 
-    if res and res.owner != request.user:
+    if (res and res.owner != request.user) and not request.user.is_superuser:
         return render(request, 'admin/error.html')
 
     file_path = '/'.join([settings.BASE_DIR, res.real_path, res.real_name])
