@@ -244,7 +244,7 @@ def file_edit(request, fid):
         html -- online edit file of the html response view
     """
     res = FileInfo.objects.get(id=fid)
-    if res and res.owner != request.user or not request.user.is_superuser:
+    if (res and res.owner != request.user) and not request.user.is_superuser:
         return render(request, 'admin/error.html')
     file_path = '/'.join([settings.BASE_DIR, res.real_path, res.real_name])
     txt_file_type = [

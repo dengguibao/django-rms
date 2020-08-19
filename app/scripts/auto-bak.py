@@ -56,7 +56,7 @@ class ConfigBackup:
         try:
             self.exec_cmd(b'display current-configuration')
         except Exception as e:
-            print self._ip
+            print (self._ip)
 
         time.sleep(.8)
         data = []
@@ -70,7 +70,7 @@ class ConfigBackup:
             try:
                 cache = format_data(tn.read_very_eager())
             except Exception as e:
-                print self._ip
+                print (self._ip)
             
         else:
            data.append(cache)
