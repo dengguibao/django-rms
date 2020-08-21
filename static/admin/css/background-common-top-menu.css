@@ -30,3 +30,9 @@ a:hover{text-decoration: underline} */
 	/*color: #fff;*/
 	padding-left: 10px;
 }
+.back-btn{
+    position:absolute;
+    top:86px;
+    right:20px;
+    text-align:right;
+}

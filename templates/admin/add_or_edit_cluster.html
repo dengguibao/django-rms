@@ -3,6 +3,11 @@
 服务器 / {%if obj.id %}编辑{% else %}新建{% endif %}集群
 {% endblock %}
 {% block mainbody %}
+<p class="back-btn">
+    <a href="/admin/get-cluster-list" class="layui-btn layui-btn-sm layui-btn-danger">
+        <i class="layui-icon layui-btn-sm layui-icon-return" style="padding:0 2px 0 0"></i>返回
+    </a>
+</p>
 
 <fieldset class="layui-elem-field layui-field-title">
     <legend>集群信息</legend>
