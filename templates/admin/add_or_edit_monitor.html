@@ -216,11 +216,11 @@
                     return
                 }
                 // ajax submit
-                username=$('input[name="username_'+ele_id+'"').val()
-                password=$('input[name="password_'+ele_id+'"').val()
-                channel=$('input[name="channel_'+ele_id+'"').val()
-                desc=$('input[name="desc_'+ele_id+'"').val()
-                if(username.trim.length<=0 || password.trim.length<=0 || channel.trim.length<=0 || desc.trim.length<=0) return false;
+                username=$('input[name="username_'+ele_id+'"').val().trim()
+                password=$('input[name="password_'+ele_id+'"').val().trim()
+                channel=$('input[name="channel_'+ele_id+'"').val().trim()
+                desc=$('input[name="desc_'+ele_id+'"').val().trim()
+                if(username.length<=0 || password.length<=0 || channel.length<=0 || desc.length<=0) return false;
                 if (data_id==0){
                     url = `/admin/update-monitor-account?monitor_id=${id}&username=${username}&password=${password}&channel=${channel}&desc=${desc}`
                 }else{
