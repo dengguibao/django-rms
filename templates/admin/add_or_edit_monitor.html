@@ -217,7 +217,7 @@
                 }
                 // ajax submit
                 username=$('input[name="username_'+ele_id+'"').val().trim()
-                password=$('input[name="password_'+ele_id+'"').val().trim()
+                password=encodeURIComponent($('input[name="password_'+ele_id+'"').val().trim())
                 channel=$('input[name="channel_'+ele_id+'"').val().trim()
                 desc=$('input[name="desc_'+ele_id+'"').val().trim()
                 if(username.length<=0 || password.length<=0 || channel.length<=0 || desc.length<=0) return false;
@@ -230,6 +230,9 @@
                 $.getJSON(
                     url,
                     function(res){
+                        if (res.code == 0){
+                            layer.msg(res.msg)
+                        }
                         console.log(res)
                     }
                 )
