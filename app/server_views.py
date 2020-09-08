@@ -60,7 +60,8 @@ def list_hosts_list(request, host_type, flag):
             rs = rs.filter(
                 Q(host_ip__contains=keyword) |
                 Q(hostname__contains=keyword) |
-                Q(idrac_ip__contains=keyword)
+                Q(idrac_ip__contains=keyword) |
+                Q(sn__contains=keyword)
             )
         if host_type == 'vm':
             rs = rs.filter(
@@ -85,7 +86,7 @@ def list_hosts_list(request, host_type, flag):
     p = Paginator(data, page_size)
     query_set = p.page(page)
 
-    context={
+    context = {
         'data': list(query_set),
         'code': 0,
         'msg': 'ok',

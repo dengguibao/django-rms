@@ -84,8 +84,8 @@ class HostInfo(models.Model):
         models {object} -- django Model
     """
     HOST_STATUS = (
-        (0,'开机'),
-        (1,'关机')
+        (0, '开机'),
+        (1, '关机')
     )
 
     hostname = models.CharField(max_length=100, unique=True)  # 主机名
@@ -144,8 +144,8 @@ class VmInfo(models.Model):
     """
 
     HOST_STATUS = (
-        (0,'开机'),
-        (1,'关机')
+        (0, '开机'),
+        (1, '关机')
     )
 
     vm_hostname = models.CharField(max_length=100, )  # 主机名
