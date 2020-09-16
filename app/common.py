@@ -114,7 +114,8 @@ def data_struct():
         'cluster': {
             'name': '集群名称',
             'tag': '集群标记',
-            'is_active': '是否激活'
+            'is_active': '是否激活',
+            'is_virt': '类别'
         },
         'user': {
             'username': '用户名',

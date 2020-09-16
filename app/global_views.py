@@ -263,16 +263,14 @@ def create_or_update(request, form_name):
                     v = '开机' if post_data[f] == '0' else '关机'
                 elif form_name == 'user' and f == 'is_active':
                     v = '启用' if post_data[f] == '1' else '禁用'
-                elif form_name == 'host' and f == 'cluster_tag':
-                    if post_data[f] == 'none':
-                        v = '独立服务器'
-                    else:
-                        x = ClusterInfo.objects.filter(tag=post_data[f])
-                        v = x[0].name
+                elif form_name == 'host' and f == 'cluster_tag_id':
+                    v = res.cluster_tag.name
                 elif form_name == 'user' and f == 'password':
                     v = '******'
                 elif form_name == 'cluster' and f == 'is_active':
                     v = '启用' if post_data[f] == '0' else '禁用'
+                elif form_name == 'cluster' and f == 'is_virt':
+                    v = '虚拟化服务器' if post_data[f] == '1' else '普通服务器'
                 elif f == 'branch_id':
                     v = res.branch.name
                 else:

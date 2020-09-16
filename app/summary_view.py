@@ -22,7 +22,7 @@ def list_summary_view(request):
     vms_count = VmInfo.objects.all().count()
     hosts_count = HostInfo.objects.all().count()
 
-    res_cluster = ClusterInfo.objects.filter(is_active=0)
+    res_cluster = ClusterInfo.objects.filter(is_active=0, is_virt=1)
     # 分子公司总数减去总部
     branch_count = Branch.objects.filter(isenable=1).count()-1
     monitor_count = Monitor.objects.all().count()
@@ -168,7 +168,6 @@ def get_guarantee_info(request, cluster_name):
     """
     res_cluster = ClusterInfo.objects.filter(is_active=0).values('name', 'tag')
     cluster_array = {i['tag']: i['name'] for i in res_cluster}
-    cluster_array['none'] = '独立服务器'
     if cluster_name not in cluster_array:
         return JsonResponse({
             'code': 1,

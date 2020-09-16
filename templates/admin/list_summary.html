@@ -141,8 +141,10 @@ layui.use(['element', 'layer'], function(){
     $('.layui-tab-title li').first().addClass('layui-this')
     var chart = null;
 
-     ajax_rend_chart('bar', '/admin/get-cluster-count-info/cs');
-     ajax_rend_chart('pie', '/admin/get-guarantee-info/cs');
+    let first_item = $('.layui-tab-title li').first().attr('tag');
+
+    ajax_rend_chart('bar', '/admin/get-cluster-count-info/'+first_item);
+    ajax_rend_chart('pie', '/admin/get-guarantee-info/'+first_item);
 
     element.on('tab(tab_cluster)', function (data) {
         tag = $(this).attr('tag');
