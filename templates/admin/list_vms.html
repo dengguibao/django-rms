@@ -167,9 +167,7 @@
             $('#page').show()
             $('#host_list').show()
             $('#vms_list').removeAttr('style')
-            //refresh_esxi_table("/admin/get-hosts-list/host/" + flag);
-            //refresh_vms_table("/admin/get-hosts-list/vm/" + flag + "_all");
-            window.location.href=`/admin/render/list_vms/?args=${flag},${flag}_all`
+            window.location.href=`/admin/render/list_vms/?is_virt=1&args=${flag},${flag}_all`
         })
 
         table.on('tool(dt)',function(obj){

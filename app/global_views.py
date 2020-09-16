@@ -22,8 +22,9 @@ def render_static_temp_view(request, temp_name):
         html -- html template
     """
     res_cluster = ClusterInfo.objects.filter(is_active=0)
+    is_virt = request.GET.get('is_virt', 0)
     context = {
-        'cluster_data': res_cluster,
+        'cluster_data': res_cluster.filter(is_virt=is_virt),
         'branch_data': Branch.objects.filter(isenable=1),
         'args': request.GET.get('args', None)
     }

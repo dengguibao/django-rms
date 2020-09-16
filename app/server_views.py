@@ -118,10 +118,6 @@ def export(request, host_type):
         export_file_name = 'vms_info.xls'
         res = VmInfo.objects.all().select_related('host')
 
-    res_cluster = ClusterInfo.objects.filter(is_active=0).values('name', 'tag')
-    cluster_tag = {i['tag']: i['name'] for i in res_cluster}
-    cluster_tag['none'] = '独立服务器'
-    status = ['开机', '关机']
     if res:
         column = 0
         for title in backup_data_struct[host_type]:
@@ -133,12 +129,14 @@ def export(request, host_type):
         for res_row in res:
             for key in backup_data_struct[host_type]:
                 field_value = eval('res_row.%s' % key)
-                if key == 'cluster_tag':
-                    sheet.write(data_row_num, column, cluster_tag[field_value])
+                if key == 'cluster_tag_id':
+                    sheet.write(data_row_num, column, res_row.cluster_tag.name)
                 elif key == 'host_id':
-                    sheet.write(data_row_num, column, eval('res_row.host.hostname'))
-                elif key == 'vm_status' or key == 'dev_status':
-                    sheet.write(data_row_num, column, status[field_value])
+                    sheet.write(data_row_num, column, res_row.host.hostname)
+                elif key == 'vm_status':
+                    sheet.write(data_row_num, column, res_row.get_vm_status_display())
+                elif key == 'dev_status':
+                    sheet.write(data_row_num, column, res_row.get_dev_status_display())
                 else:
                     sheet.write(data_row_num, column, field_value)
                 column += 1

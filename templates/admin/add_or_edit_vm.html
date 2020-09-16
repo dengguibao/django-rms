@@ -87,11 +87,8 @@
                 <select lay-filter="cluster_tag" id="cluster_tag" lay-verify="required">
                     <option value="">请选择</option>
                     {% for i in cluster_data %}
-                    <option {% ifequal obj.host.cluster_tag i.tag %}selected="" {% endifequal %} value="{{i.tag}}">{{i.name}}</option>
+                    <option {% ifequal obj.host.cluster_tag_id i.tag %}selected="" {% endifequal %} value="{{i.tag}}">{{i.name}}</option>
                     {% endfor %}
-                    {% comment %} <option {% ifequal cluster_tag 'cs' %}selected="" {% endifequal %} value="cs">长沙</option>
-                    <option {% ifequal cluster_tag 'xh' %}selected="" {% endifequal %} value="xh">新化</option>
-                    <option {% ifequal cluster_tag 'test' %}selected="" {% endifequal %} value="test">开发测试</option> {% endcomment %}
                 </select>
             </div>
         </div>

@@ -41,9 +41,8 @@
 <div class="layui-tab layui-tab-brief" lay-filter="tab_cluster">
     <ul class="layui-tab-title">
         {% for i in cluster_data %}
-        <li flag="{{i.tag}}">{{i.name}}</li>
+        <li flag="{{i.tag}}" tag="{{i.is_virt}}">{{i.name}}</li>
         {% endfor %}
-        <li flag="none">独立服务器</li>
     </ul>
     <div class="layui-form">
         <table id="dt" lay-filter="dt"></table>
@@ -99,9 +98,10 @@
         element.on('tab(tab_cluster)', function (data) {
             $('#page').empty()
             var flag = $(this).attr('flag');
+            var is_virt = $(this).attr('tag');
             var url = "/admin/get-hosts-list/host/" + flag;
             //refresh_table(url, flag);
-            window.location.href=`/admin/render/list_hosts/?args=${flag}`
+            window.location.href=`/admin/render/list_hosts?is_virt=${is_virt}&args=${flag}`
         })
 
 

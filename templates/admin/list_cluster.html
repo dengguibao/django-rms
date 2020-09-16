@@ -15,6 +15,7 @@
             <th>序号</th>
             <th>集群名称</th>
             <th>集群标记</th>
+            <th>类别</th>
             <th>状态</th>
             <th>创建时间</th>
             <th>操作</th>
@@ -26,6 +27,7 @@
             <td>{{ forloop.counter }}</td>
             <td>{{i.name}}</td>
             <td>{{i.tag}}</td>
+            <td>{{i.get_is_virt_display}}</td>
             <!-- <td>{%ifequal i.is_staff True%}管理员{%else%}普通用户{%endifequal%}</td> -->
             <td>{%ifequal i.is_active 0%}启用{%else%}<span style="color:#f00">禁用</span>{%endifequal%}</td>
             <td>{{i.pub_date|date:'Y-m-d H:i:s'}}</td>

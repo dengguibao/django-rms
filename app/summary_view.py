@@ -23,25 +23,12 @@ def list_summary_view(request):
     hosts_count = HostInfo.objects.all().count()
 
     res_cluster = ClusterInfo.objects.filter(is_active=0)
-    # cluster_array = {i['tag']: i['name'] for i in res_cluster}
-
-    # cluster_count = ClusterInfo.objects.all().count()
-    # vms_count_data = []
-    # for i in cluster_array:
-    #     d = VmInfo.objects.filter(host__cluster_tag=i.tag).count()
-    #     vms_count_data.append(d)
-
-    # esxi_count_data = []
-    # for i in cluster_array:
-    #     d = HostInfo.objects.filter(cluster_tag=i.tag).count()
-    #     esxi_count_data.append(d)
-
     # 分子公司总数减去总部
     branch_count = Branch.objects.filter(isenable=1).count()-1
     monitor_count = Monitor.objects.all().count()
     camera_count = Monitor.objects.aggregate(Sum('camera_nums'))
     net_device_annotate = NetworkDevices.objects.values("device_type").annotate(count=Count("id"))
-    esxi_none_count = HostInfo.objects.filter(cluster_tag='none').count()
+    esxi_none_count = HostInfo.objects.filter(cluster_tag__is_virt=0).count()
     esxi_count = hosts_count-esxi_none_count
 
     start_date = time.strftime('%Y-%m-01', time.localtime())

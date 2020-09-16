@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class DailyReport(models.Model):
     """daily report
 
@@ -13,7 +14,7 @@ class DailyReport(models.Model):
     pub_date = models.DateField(null=False, auto_now=True)
 
     def __str__(self):
-        return '%s %s'% (self.owner.first_name, self.type)
+        return '%s %s' % (self.owner.first_name, self.type)
 
 
 class TroubleReport(models.Model):
@@ -27,13 +28,13 @@ class TroubleReport(models.Model):
     start_date = models.DateTimeField(null=False, verbose_name="开始时间")
     end_date = models.DateTimeField(null=True, verbose_name="结束时间")
     device = models.CharField(verbose_name="故障设备", null=True, max_length=100)
-    info = models.TextField(null=True) # 故障现象
-    reason = models.TextField(null=True) # 故障原因
-    resolv_method = models.TextField(null=True) # 解决方法
-    repairer =  models.CharField(null=True,max_length=100) # 处理人
-    prevent = models.TextField(null=True) # 预防措施
-    owner = models.ForeignKey(User, on_delete=models.CASCADE) # 报告人
-    pub_date = models.DateTimeField(auto_now=True) # 报告时间
+    info = models.TextField(null=True)  # 故障现象
+    reason = models.TextField(null=True)  # 故障原因
+    resolv_method = models.TextField(null=True)  # 解决方法
+    repairer = models.CharField(null=True, max_length=100)  # 处理人
+    prevent = models.TextField(null=True)  # 预防措施
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)  # 报告人
+    pub_date = models.DateTimeField(auto_now=True)  # 报告时间
 
 
 class ClusterInfo(models.Model):
@@ -42,9 +43,14 @@ class ClusterInfo(models.Model):
     Arguments:
         models {object} -- django Model
     """
+    IS_VIRT = (
+        (0, '普通服务器'),
+        (1, '虚拟化集群')
+    )
     name = models.CharField('集群名称', unique=True, max_length=50)
     tag = models.CharField('集群标记', unique=True, max_length=50)
     is_active = models.IntegerField('是否激活', default=0)
+    is_virt = models.IntegerField(choices=IS_VIRT, default=0, null=False)
     pub_date = models.DateTimeField(auto_now_add=True)  # 添加时间
 
     def __str__(self):
@@ -59,8 +65,8 @@ class FileInfo(models.Model):
     """
 
     UPLOAD_DOC_TYPE = (
-        (0,'文件夹'),
-        (1,'文件')
+        (0, '文件夹'),
+        (1, '文件')
     )
 
     path = models.CharField(max_length=200, null=False)  # 路径
@@ -92,7 +98,7 @@ class HostInfo(models.Model):
     sn = models.CharField(max_length=80)  # SN序列号
     idrac_ip = models.GenericIPAddressField()  # 远程管理卡IP
     host_ip = models.GenericIPAddressField()  # 主机IP
-    cluster_tag = models.CharField(max_length=20)  # 所属集群标签
+    cluster_tag = models.ForeignKey(ClusterInfo, on_delete=models.CASCADE, to_field="tag", null=True, blank=True)  # 所属集群标签
     cpu_nums = models.IntegerField(default=0)  # cpu总数
     cpu_core = models.IntegerField(default=0)  # cpu总数
     cpu_rate = models.FloatField(default=0)  # 单颗频率
@@ -115,7 +121,7 @@ class HostInfo(models.Model):
     idrac_net_in = models.CharField("远程管理卡网络", max_length=50, null=True)
     supply_name = models.CharField("供应商名称", max_length=50, null=True)
     supply_contact_name = models.CharField("供应商联系人", max_length=50, null=True)
-    supply_phone = models.CharField("供应商联系号码",max_length=20, default=0)
+    supply_phone = models.CharField("供应商联系号码", max_length=20, default=0)
     rack_num = models.CharField("机柜号", max_length=10, null=True)
     slot_num = models.CharField("槽位号", max_length=50, null=True)
     dc_name = models.CharField("机房名称", max_length=50, null=True)
@@ -131,8 +137,8 @@ class HostInfo(models.Model):
 
 
 class HostInterface(models.Model):
-    host = models.ForeignKey(HostInfo,on_delete=models.CASCADE)
-    ifname = models.CharField(max_length=100,null=False)
+    host = models.ForeignKey(HostInfo, on_delete=models.CASCADE)
+    ifname = models.CharField(max_length=100, null=False)
     access = models.CharField(max_length=100, null=False)
 
 
@@ -175,65 +181,65 @@ class VmInfo(models.Model):
 
 
 class Branch(models.Model):
-    name = models.CharField(max_length=20)   # 分公司名称
-    address = models.CharField(max_length=100)   # 分公司地址
-    isenable = models.IntegerField(default=1, null=False) # 是否启用
+    name = models.CharField(max_length=20)  # 分公司名称
+    address = models.CharField(max_length=100)  # 分公司地址
+    isenable = models.IntegerField(default=1, null=False)  # 是否启用
 
 
 class NetworkDevices(models.Model):
-    hostname = models.CharField(max_length=50)   # 设备名称
-    device_type = models.CharField(max_length=20)   # 设备类型
-    brand = models.CharField(max_length=20)   # 设备品牌
-    sn = models.CharField(max_length=50)   # 设备序列号
-    device_model = models.CharField(max_length=50)   # 设备型号
-    version = models.CharField(max_length=50)   # 软件版本号
-    ip = models.CharField(max_length=20)   # 管理IP
-    port_num = models.IntegerField(default=8, null=False) # 端口数量
-    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)   # 地区
+    hostname = models.CharField(max_length=50)  # 设备名称
+    device_type = models.CharField(max_length=20)  # 设备类型
+    brand = models.CharField(max_length=20)  # 设备品牌
+    sn = models.CharField(max_length=50)  # 设备序列号
+    device_model = models.CharField(max_length=50)  # 设备型号
+    version = models.CharField(max_length=50)  # 软件版本号
+    ip = models.CharField(max_length=20)  # 管理IP
+    port_num = models.IntegerField(default=8, null=False)  # 端口数量
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)  # 地区
 
 
 class WanNetworks(models.Model):
-    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)   # 地区
-    isp = models.CharField(max_length=20)   # 运营商
-    ip = models.CharField(max_length=50)   # IP/掩码
-    gateway = models.CharField(max_length=20)   # 网关
-    bandwidth = models.CharField(max_length=10)   # 带宽
-    rent = models.CharField(max_length=20)   # 付费方式/金额
-    dns1 = models.CharField(max_length=20, null=True)   # dns1
-    dns2 = models.CharField(max_length=20, null=True)   # dns2
-    contact = models.CharField(max_length=50)   # 运营商联系人
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)  # 地区
+    isp = models.CharField(max_length=20)  # 运营商
+    ip = models.CharField(max_length=50)  # IP/掩码
+    gateway = models.CharField(max_length=20)  # 网关
+    bandwidth = models.CharField(max_length=10)  # 带宽
+    rent = models.CharField(max_length=20)  # 付费方式/金额
+    dns1 = models.CharField(max_length=20, null=True)  # dns1
+    dns2 = models.CharField(max_length=20, null=True)  # dns2
+    contact = models.CharField(max_length=50)  # 运营商联系人
 
 
 class LanNetworks(models.Model):
-    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)   # 地区
-    ip = models.CharField(max_length=50)   # IP/掩码
-    gateway = models.CharField(max_length=20)   # 网关
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)  # 地区
+    ip = models.CharField(max_length=50)  # IP/掩码
+    gateway = models.CharField(max_length=20)  # 网关
     vlanid = models.IntegerField()  # vlan id
-    function = models.CharField(max_length=20)   # 用途
+    function = models.CharField(max_length=20)  # 用途
 
 
 class PortDesc(models.Model):
-    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)   # 地区
-    device = models.ForeignKey(NetworkDevices, on_delete=models.CASCADE) # 设备ID
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)  # 地区
+    device = models.ForeignKey(NetworkDevices, on_delete=models.CASCADE)  # 设备ID
     index = models.CharField(max_length=50, null=False)  # 端口索引
     desc = models.CharField(max_length=200, null=True)  # 端口描述
 
 
 class Monitor(models.Model):
-    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)   # 地区
-    dev_model = models.CharField(max_length=20)   # 型号
-    ip = models.CharField(max_length=20)   # IP
-    camera_nums = models.IntegerField()   # 摄像头数量
-    idle_channel = models.IntegerField()   # 剩余通道数
-    hdd = models.IntegerField()   # 硬盘容量
-    idle_slot = models.IntegerField()   # 剩余硬盘槽位
-    storage = models.IntegerField()   # 存储时间是否满足3个月
-    desc = models.TextField(null=True)   # 备注
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)  # 地区
+    dev_model = models.CharField(max_length=20)  # 型号
+    ip = models.CharField(max_length=20)  # IP
+    camera_nums = models.IntegerField()  # 摄像头数量
+    idle_channel = models.IntegerField()  # 剩余通道数
+    hdd = models.IntegerField()  # 硬盘容量
+    idle_slot = models.IntegerField()  # 剩余硬盘槽位
+    storage = models.IntegerField()  # 存储时间是否满足3个月
+    desc = models.TextField(null=True)  # 备注
 
 
 class MonitorAccount(models.Model):
-    monitor = models.ForeignKey(Monitor, on_delete=models.CASCADE)   # 授权监控主机IP
-    username = models.CharField(max_length=20)   # 授权账号
-    password = models.CharField(max_length=20)   # 密码
-    channel = models.CharField(max_length=50)   # 授权通道号
-    desc = models.TextField(null=True)   # 授权描述
+    monitor = models.ForeignKey(Monitor, on_delete=models.CASCADE)  # 授权监控主机IP
+    username = models.CharField(max_length=20)  # 授权账号
+    password = models.CharField(max_length=20)  # 密码
+    channel = models.CharField(max_length=50)  # 授权通道号
+    desc = models.TextField(null=True)  # 授权描述

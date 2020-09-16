@@ -115,14 +115,23 @@
     </fieldset>
     <div class="layui-form-item">
         <div class="layui-inline">
-            <label class="layui-form-label">集群</label>
-            <div class="layui-input-inline" style="width: 100px;">
-                <select name="cluster_tag" id="cluster_tag" lay-verify="required">
+            <label class="layui-form-label">类别</label>
+            <div class="layui-input-inline" style="width: 200px;">
+                <select name="cluster_tag_id" id="cluster_tag" lay-verify="required">
                     <option></option>
+                    <option disabled>虚拟化服务器</option>
                     {% for i in cluster_data %}
-                    <option {% ifequal obj.cluster_tag i.tag %} selected="" {%endifequal%} value="{{i.tag}}">{{i.name}}</option>
+                        {% ifequal i.is_virt 1 %}
+                            <option {% ifequal obj.cluster_tag_id i.tag %} selected="" {%endifequal%} value="{{i.tag}}">{{i.name}}</option>
+                        {% endifequal %}
                     {% endfor %}
-                    <option {% ifequal obj.cluster_tag 'none' %}selected=""{% endifequal %} value="none">独立服务器</option>
+
+                    <option disabled>普通服务器</option>
+                    {% for i in cluster_data %}
+                        {% ifequal i.is_virt 0 %}
+                            <option {% ifequal obj.cluster_tag_id i.tag %} selected="" {%endifequal%} value="{{i.tag}}">{{i.name}}</option>
+                        {% endifequal %}
+                    {% endfor %}
                 </select>
             </div>
         </div>

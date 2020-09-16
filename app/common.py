@@ -80,7 +80,7 @@ def data_struct():
             'idrac_ip': 'iDRAC ip',
             'host_ip': '主机IP',
             'dev_status': '状态',
-            'cluster_tag': '集群信息',
+            'cluster_tag_id': '集群信息',
             'cpu_nums': 'CPU数量',
             'cpu_core': 'CPU核心数',
             'cpu_rate': 'CPU频率',

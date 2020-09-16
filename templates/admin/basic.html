@@ -77,30 +77,46 @@
         <li>
             <a href="javascript:;">服务器</a>
             <ul>
-                <li><a href="javascript:;">添加</a>
-                    <ul>
-                        {% if perms.app.add_clusterinfo %}
-                        <li><a href="/admin/render/add_or_edit_cluster" title="add cluster">ESXi集群</a></li>
-                        {% endif %}
-                        <!--<li><a href="/admin/render/shell' %}" title="shell">shell</a></li>-->
-                        {% if perms.app.add_hostinfo %}
-                        <li><a href="/admin/render/add_or_edit_host" title="add new host">服务器</a></li>
-                        {% endif %}
-                        {% if perms.app.add_vminfo %}
-                        <li><a href="/admin/render/add_or_edit_vm" title="add new virtual mechine">虚拟机</a></li>
-                        {% endif %}
-                    </ul>
+                <li>
+                    <a href="javascript:;">添加</a>
+                        <ul>
+                            <li>
+                                <a href="javascript:;">虚拟化</a>
+                                <ul>
+                                   <!--<li><a href="/admin/render/shell' %}" title="shell">shell</a></li>-->
+                                    {% if perms.app.add_hostinfo %}
+                                    <li><a href="/admin/render/add_or_edit_host?is_virt=1" title="add new host">宿主机</a></li>
+                                    {% endif %}
+                                    {% if perms.app.add_vminfo %}
+                                    <li><a href="/admin/render/add_or_edit_vm?is_virt=1" title="add new virtual mechine">虚拟机</a></li>
+                                    {% endif %}
+                                </ul>
+                            </li>
+                            {% if perms.app.add_clusterinfo %}
+                                <li><a href="/admin/render/add_or_edit_cluster" title="add cluster">集群</a></li>
+                            {% endif %}
+                            {% if perms.app.add_hostinfo %}
+                                <li><a href="/admin/render/add_or_edit_host?is_virt=0" title="add new host">普通服务器</a></li>
+                            {% endif %}
+                        </ul>
                 </li>
                 {% if perms.app.view_clusterinfo %}
-                <li><a href="/admin/get-cluster-list" title="list cluster">ESXi集群</a></li>
+                <li><a href="/admin/get-cluster-list" title="list cluster">集群</a></li>
                 {% endif %}
 
                 {% if perms.app.view_hostinfo %}
-                <li><a href="/admin/render/list_hosts" title="list hosts">服务器</a></li>
+                <li>
+                    <a href="javascript:;">服务器</a>
+                    <ul>
+                        <li><a href="/admin/render/list_hosts?is_virt=0" title="list hosts">普通服务器</a></li>
+                        <li><a href="/admin/render/list_hosts?is_virt=1" title="list hosts">虚拟化宿主机</a></li>
+                    </ul>
+
+                </li>
                 {% endif %}
 
                 {% if perms.app.view_vminfo %}
-                <li><a href="/admin/render/list_vms" title="list vms">虚拟机</a></li>
+                <li><a href="/admin/render/list_vms?is_virt=1" title="list vms">虚拟机</a></li>
                 {% endif %}
             </ul>
         </li>
