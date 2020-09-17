@@ -40,6 +40,7 @@
 <fieldset class="layui-elem-field layui-field-title">
     <legend>系统信息</legend>
 </fieldset>
+<input type="hidden" id="is_virt" value="{{ obj.cluster_tag.is_virt }}"/>
 
 <form class="layui-form basicForm" action="">
     {% csrf_token %}
@@ -688,12 +689,26 @@
             }
         });
 
+        var is_virt = undefined
+        if (window.location.search.indexOf('is_virt=0') == 1){
+            is_virt=0
+        }else{
+            is_virt=1
+        }
+        var back_btn_url = $('.back-btn a').attr('href');
+        var jump_url = `${back_btn_url}?is_virt=${is_virt}`
+
         if (host_id != 0){
             var init_form_data = $(".basicForm").serializeArray();
             get_host_interface_list();
+            var cluster_tag = $('#cluster_tag').val();
+            is_virt = $('#is_virt').val()
+            jump_url = `${back_btn_url}?is_virt=${is_virt}&args=${cluster_tag}`
         }else{
             $('.btn-add').click()
         }
+        $('.back-btn a').attr('href', jump_url);
+        console.log(jump_url)
     });
 </script>
 {% endblock %}
