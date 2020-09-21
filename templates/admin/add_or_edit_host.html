@@ -537,7 +537,7 @@
                 // ajax submit
                 ifname=$('input[name="ifname_'+ele_id+'"').val()
                 access=$('input[name="access_'+ele_id+'"').val()
-                if (ifname.trim.length<=0 || access.trim.length<=0) return false;
+                if (ifname.trim().length<=0 || access.trim().length<=0) return false;
                 if (data_id==0){
                     url = `/admin/update-host-interface?host_id=${host_id}&ifname=${ifname}&access=${access}`
                 }else{
