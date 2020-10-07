@@ -77,6 +77,12 @@
             laypage = layui.laypage,
             element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
 
+        if (window.location.search.indexOf('is_virt=0')>0){
+            $('legend').html('普通服务器')
+        }else{
+            $('legend').html('虚拟化服务器')
+        }
+
         $('#keyword').on('keydown',function(event){
             if(event.keyCode==13){
                 $('#search').click();
