@@ -133,10 +133,10 @@ def get_cluster_count_info(request, cluster_name):
 def get_camera_info(request, dev_type):
     res=name=None
     if dev_type == 'camera':
-        name = "视频监控 - 摄像头"
+        name = "摄像头"
         res = Branch.objects.annotate(y=Sum('monitor__camera_nums'))
     elif dev_type == 'recorder':
-        name = "视频监控 - 监控主机"
+        name = "监控主机"
         res = Branch.objects.annotate(y=Count('monitor__camera_nums'))
 
     if not res:
@@ -168,7 +168,7 @@ def get_guarantee_info(request, cluster_name):
     """
     res_cluster = ClusterInfo.objects.filter(is_active=0).values('name', 'tag')
     cluster_array = {i['tag']: i['name'] for i in res_cluster}
-    if cluster_name not in cluster_array:
+    if cluster_name not in cluster_array and cluster_name != "__OTHER__":
         return JsonResponse({
             'code': 1,
             'msg': 'cluster name error'
@@ -176,14 +176,24 @@ def get_guarantee_info(request, cluster_name):
 
     now = datetime.datetime.now()
     start = now - datetime.timedelta(hours=23, minutes=59, seconds=59)
-    in_guarantee_count = HostInfo.objects.filter(
-        end_svc_date__gte=start,
-        cluster_tag=cluster_name
-    ).count()
-    all_res = HostInfo.objects.filter(cluster_tag=cluster_name).count()
+    in_guarantee_obj = HostInfo.objects.filter(
+        end_svc_date__gte=start
+    )
+    if cluster_name == '__OTHER__':
+        server_name = '服务器'
+        in_guarantee_obj = in_guarantee_obj.filter(cluster_tag__is_virt=0)
+        all_res = HostInfo.objects.filter(cluster_tag__is_virt=0)
+    else:
+        server_name = '%s虚拟化服务器' %cluster_array[cluster_name]
+        in_guarantee_obj = in_guarantee_obj.filter(cluster_tag=cluster_name)
+        all_res = HostInfo.objects.filter(cluster_tag=cluster_name)
+
+    in_guarantee_count = in_guarantee_obj.count()
+    all_res_count = all_res.count()
+
     return JsonResponse({
         'code': 0,
-        'name': '%s' % cluster_array[cluster_name],
+        'name': '%s - 维保信息' % server_name,
         'msg': 'success',
         'data': [
             {
@@ -191,7 +201,7 @@ def get_guarantee_info(request, cluster_name):
                 'y': in_guarantee_count
             }, {
                 'name': '过保',
-                'y': all_res - in_guarantee_count
+                'y': all_res_count - in_guarantee_count
             }
         ]
     })

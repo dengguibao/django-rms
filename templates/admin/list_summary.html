@@ -17,6 +17,10 @@ caption{
 .layui-col-md4{
     padding:0 5px
 }
+.half{
+    float: left;
+    width: 49.5%
+}
 .bg1{background:#eee}
 .bg2{background:#e2e2e2}
 .bg3{background:#ddd}
@@ -117,18 +121,41 @@ caption{
 <fieldset class="layui-elem-field layui-field-title">
     <legend>资源分布</legend>
 </fieldset>
-<div class="layui-tab layui-tab-card" lay-filter="tab_cluster">
-  <ul class="layui-tab-title">
-    {% for i in data.cluster_data %}
-    <li tag="{{i.tag}}">{{i.name}}</li>
-    {% endfor %}
-    <li tag="none">独立服务器</li>
-    <li tag="camera">视频监控</li>
-  </ul>
-  <div class="layui-tab-content" style="height: 400px;text-align:center">
-    <div id="chart_pie" style="width:49.5%;float:left;border-right:1px solid #f9f9f9"></div>
-    <div id="chart_bar" style="width:50%;float:left"></div>
-  </div>
+
+<div id="res_div">
+    <div class="half">
+        <div class="layui-tab layui-tab-card" lay-filter="tab_virtual_server">
+          <ul class="layui-tab-title tab_virtual_server">
+            {% for i in data.cluster_data %}
+            <li tag="{{i.tag}}">{{i.name}}</li>
+            {% endfor %}
+          </ul>
+          <div class="layui-tab-content" style="height: 500px;text-align:center">
+              <div class="layui-tab layui-tab-brief" lay-filter="chart_type">
+                  <ul class="layui-tab-title tab_virtual_server_chart_type">
+                      <li tag="vhost" class="layui-this">虚拟机分布</li>
+                      <li tag="guar">维保信息</li>
+                  </ul>
+                  <div class="layui-tab-content">
+                      <div id="chart_left"></div>
+                  </div>
+              </div>
+          </div>
+        </div>
+    </div>
+
+    <div class="half" style="float:right">
+        <div class="layui-tab layui-tab-card" lay-filter="tab_other">
+          <ul class="layui-tab-title tab_other">
+              <li tag="__OTHER__">服务器</li>
+              <li tag="recorder">监控主机</li>
+              <li tag="camera">摄像头</li>
+          </ul>
+          <div class="layui-tab-content" style="height: 500px;text-align:center">
+              <div id="chart_right" style="margin-top: 60px"></div>
+          </div>
+        </div>
+    </div>
 </div>
 
 
@@ -137,30 +164,48 @@ layui.use(['element', 'layer'], function(){
   var $ = layui.jquery
   ,layer = layui.layer
   ,element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
-  
-    $('.layui-tab-title li').first().addClass('layui-this')
+
     var chart = null;
 
-    let first_item = $('.layui-tab-title li').first().attr('tag');
 
-    ajax_rend_chart('bar', '/admin/get-cluster-count-info/'+first_item);
-    ajax_rend_chart('pie', '/admin/get-guarantee-info/'+first_item);
+    $('.tab_virtual_server li').first().addClass('layui-this')
+    $('.tab_other li').first().addClass('layui-this')
 
-    element.on('tab(tab_cluster)', function (data) {
-        tag = $(this).attr('tag');
-        if (tag == 'none'){
-            $('#chart_bar').css('display','none')
-            ajax_rend_chart('pie', '/admin/get-guarantee-info/'+tag);
-        }else if (tag == "camera"){
-            $('#chart_bar').css('display','block')
-            ajax_rend_chart('pie', '/admin/get-camera-info/camera', 'chart_pie');
-            ajax_rend_chart('pie', '/admin/get-camera-info/recorder', 'chart_bar');
+    let first_item = $('.tab_virtual_server li').first().attr('tag');
+    ajax_rend_chart('bar', '/admin/get-cluster-count-info/'+first_item, 'chart_left');
+    ajax_rend_chart('pie', '/admin/get-guarantee-info/__OTHER__','chart_right');
+
+
+    element.on('tab(chart_type)', function (data) {
+        let chart_tag = $('.tab_virtual_server li.layui-this').attr('tag')
+        let chart_type = $(this).attr('tag');
+        if (chart_type == 'vhost'){
+            ajax_rend_chart('bar', '/admin/get-cluster-count-info/'+chart_tag, 'chart_left');
         }else{
-            $('#chart_bar').css('display','block')
-            ajax_rend_chart('bar', '/admin/get-cluster-count-info/'+tag);
-            ajax_rend_chart('pie', '/admin/get-guarantee-info/'+tag);
+            ajax_rend_chart('pie', '/admin/get-guarantee-info/'+chart_tag, 'chart_left');
         }
-        
+    })
+
+    element.on('tab(tab_other)', function (data) {
+        let char_tag = $(this).attr('tag');
+
+        if (char_tag == '__OTHER__'){
+            ajax_rend_chart('pie', '/admin/get-guarantee-info/__OTHER__','chart_right');
+        }
+        if (char_tag == "camera"){
+            ajax_rend_chart('pie', '/admin/get-camera-info/camera', 'chart_right');
+        }
+        if (char_tag == "recorder"){
+            ajax_rend_chart('pie', '/admin/get-camera-info/recorder', 'chart_right');
+        }
+
+    })
+
+    element.on('tab(tab_virtual_server)', function (data) {
+        let char_tag = $(this).attr('tag');
+        $('.tab_virtual_server_chart_type li').first().click()
+        ajax_rend_chart('bar', '/admin/get-cluster-count-info/'+char_tag, 'chart_left');
+
     })
 
     char=[$('#chart_pie'),$('#chart_bar')]
@@ -173,7 +218,7 @@ layui.use(['element', 'layer'], function(){
         })
     })
 
-    function ajax_rend_chart(t, url, ele=undefined) {
+    function ajax_rend_chart(t, url, ele) {
         $.getJSON(
            url,
            function(d){
@@ -194,10 +239,7 @@ layui.use(['element', 'layer'], function(){
         )
     }
 
-    function render_pie_chart(data, ele=undefined){
-        if (ele==undefined){
-            ele = 'chart_pie'
-        }
+    function render_pie_chart(data, ele){
         Highcharts.chart(ele, {
                 chart: {
                     plotBackgroundColor: null,
@@ -239,10 +281,7 @@ layui.use(['element', 'layer'], function(){
         });
     }
 
-    function render_bar_chart(data, ele=undefined){
-        if (ele==undefined){
-            ele = 'chart_bar'
-        }
+    function render_bar_chart(data, ele){
         chart = Highcharts.chart(ele, {
             chart: {
                 type: 'column',
@@ -287,6 +326,7 @@ layui.use(['element', 'layer'], function(){
             ]
         });
     }
+
 });
 </script>
 
