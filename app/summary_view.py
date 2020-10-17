@@ -77,23 +77,33 @@ def list_summary_view(request):
         request, 
         'admin/list_summary.html', 
         {
-        'data': {
-            'trouble_count_data': trouble_annotate_count,
-            'user_work_count_data': user_work_annotate_count,
-            'branch_count': branch_count,
-            'monitor_count': monitor_count,
-            'camera_count': camera_count['camera_nums__sum'],
-            'vms_count': vms_count,
-            'hosts_count': hosts_count,
-            'esxi_count': esxi_count,
-            'net_device_data': net_device_annotate,
-            'cluster_data': res_cluster,
-            'file_count': file_count,
-            'user_count': user_count,
-            'esxi_none_count': esxi_none_count,
-            'in_guarantee_count': in_guarantee_count,
-            'out_guarantee_count': hosts_count - in_guarantee_count
+            'data': {
+                'trouble_count_data': trouble_annotate_count,
+                'user_work_count_data': user_work_annotate_count,
+                'branch_count': branch_count,
+                'monitor_count': monitor_count,
+                'camera_count': camera_count['camera_nums__sum'],
+                'vms_count': vms_count,
+                'hosts_count': hosts_count,
+                'esxi_count': esxi_count,
+                'net_device_data': net_device_annotate,
+                'cluster_data': res_cluster,
+                'file_count': file_count,
+                'user_count': user_count,
+                'esxi_none_count': esxi_none_count,
+                'in_guarantee_count': in_guarantee_count,
+                'out_guarantee_count': hosts_count - in_guarantee_count
+            }
         }
+    )
+
+
+def get_none_virt_server_count_info(request):
+    obj = ClusterInfo.objects.filter(is_virt=0, is_active=0).annotate(count=Count('hostinfo__id')).values_list('name', 'count')
+    return JsonResponse({
+        'code': 0,
+        'msg': 'success',
+        'data': list(obj)
     })
 
 
@@ -131,7 +141,7 @@ def get_cluster_count_info(request, cluster_name):
 
 @login_required
 def get_camera_info(request, dev_type):
-    res=name=None
+    res = name = None
     if dev_type == 'camera':
         name = "摄像头"
         res = Branch.objects.annotate(y=Sum('monitor__camera_nums'))
@@ -150,7 +160,6 @@ def get_camera_info(request, dev_type):
         'msg': 'success',
         'name': name,
         'data': list(res.values('name', 'y'))  # pie
-        #'data': list(res.values_list('name', 'y'))
     })
 
 

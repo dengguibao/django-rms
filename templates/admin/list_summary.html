@@ -147,12 +147,13 @@ caption{
     <div class="half" style="float:right">
         <div class="layui-tab layui-tab-card" lay-filter="tab_other">
           <ul class="layui-tab-title tab_other">
-              <li tag="__OTHER__">服务器</li>
+              <li tag="__OTHER__">服务器维保</li>
+              <li tag="NONE_VIRT_SERVER_COUNT">服务器数量</li>
               <li tag="recorder">监控主机</li>
               <li tag="camera">摄像头</li>
           </ul>
           <div class="layui-tab-content" style="height: 500px;text-align:center">
-              <div id="chart_right" style="margin-top: 60px"></div>
+              <div id="chart_right" style="margin-top: 40px"></div>
           </div>
         </div>
     </div>
@@ -187,15 +188,20 @@ layui.use(['element', 'layer'], function(){
     })
 
     element.on('tab(tab_other)', function (data) {
-        let char_tag = $(this).attr('tag');
+        let chart_tag = $(this).attr('tag');
+        if (chart_tag == 'NONE_VIRT_SERVER_COUNT'){
+            ajax_rend_chart('bar', '/admin/get-none-virt-server-count-info','chart_right');
+        }
 
-        if (char_tag == '__OTHER__'){
+        if (chart_tag == '__OTHER__'){
             ajax_rend_chart('pie', '/admin/get-guarantee-info/__OTHER__','chart_right');
         }
-        if (char_tag == "camera"){
+
+        if (chart_tag == "camera"){
             ajax_rend_chart('pie', '/admin/get-camera-info/camera', 'chart_right');
         }
-        if (char_tag == "recorder"){
+
+        if (chart_tag == "recorder"){
             ajax_rend_chart('pie', '/admin/get-camera-info/recorder', 'chart_right');
         }
 
