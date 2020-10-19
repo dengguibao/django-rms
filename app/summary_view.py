@@ -100,10 +100,16 @@ def list_summary_view(request):
 
 def get_none_virt_server_count_info(request):
     obj = ClusterInfo.objects.filter(is_virt=0, is_active=0).annotate(count=Count('hostinfo__id')).values_list('name', 'count')
+    esxi_obj_count = HostInfo.objects.filter(cluster_tag__is_virt=1).count()
+    data = list(obj)
+    data.append(
+        ('esxi虚拟化', esxi_obj_count)
+    )
     return JsonResponse({
         'code': 0,
         'msg': 'success',
-        'data': list(obj)
+        'name': '所有服务器',
+        'data': data
     })
 
 
@@ -189,9 +195,10 @@ def get_guarantee_info(request, cluster_name):
         end_svc_date__gte=start
     )
     if cluster_name == '__OTHER__':
-        server_name = '服务器'
-        in_guarantee_obj = in_guarantee_obj.filter(cluster_tag__is_virt=0)
-        all_res = HostInfo.objects.filter(cluster_tag__is_virt=0)
+        server_name = '所有服务器'
+        # in_guarantee_obj = in_guarantee_obj.filter(cluster_tag__is_virt=0)
+        # all_res = HostInfo.objects.filter(cluster_tag__is_virt=0)
+        all_res = HostInfo.objects.all()
     else:
         server_name = '%s虚拟化服务器' %cluster_array[cluster_name]
         in_guarantee_obj = in_guarantee_obj.filter(cluster_tag=cluster_name)
