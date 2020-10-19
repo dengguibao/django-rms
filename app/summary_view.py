@@ -136,7 +136,7 @@ def get_cluster_count_info(request, cluster_name):
     res = HostInfo.objects. \
         filter(cluster_tag=cluster_name). \
         annotate(count=Count("vminfo__vm_hostname")). \
-        values_list("hostname", "count")
+        values_list("hostname", "count").order_by('hostname')
     return JsonResponse({
         'code': 0,
         'name': '%s - 虚拟机分布' % cluster_array[cluster_name],
