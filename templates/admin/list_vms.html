@@ -154,7 +154,7 @@
 
 
         //初始化加载
-        refresh_esxi_table("/admin/get-hosts-list/host/" + flag);
+        refresh_esxi_table("/admin/get-hosts-list/host/" + flag + "?page_size=50");
         refresh_vms_table("/admin/get-hosts-list/vm/" + tab_act);
 
         // listen tab click event
