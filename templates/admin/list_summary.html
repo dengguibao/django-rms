@@ -210,7 +210,7 @@ layui.use(['element', 'layer'], function(){
     element.on('tab(tab_virtual_server)', function (data) {
         let char_tag = $(this).attr('tag');
         $('.tab_virtual_server_chart_type li').first().click()
-        ajax_rend_chart('bar', '/admin/get-cluster-count-info/'+char_tag, 'chart_left');
+        //ajax_rend_chart('bar', '/admin/get-cluster-count-info/'+char_tag, 'chart_left');
 
     })
 
