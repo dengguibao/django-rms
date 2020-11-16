@@ -77,7 +77,7 @@ layui.use('layer', function(){
     $('#file_list').empty();
     $('#folder_list').empty();
     if($('#path').val()!=default_path){
-      $('#folder_list').append('<tr><td colspan="3"><a class="folder">..</a></td></tr>');
+      $('#folder_list').append('<tr><td colspan="3"><a class="folder" style="padding-right: 200px">..</a></td></tr>');
     }
     file=$.getJSON(
       '/admin/list-scripts/'+$('#path').val(),
