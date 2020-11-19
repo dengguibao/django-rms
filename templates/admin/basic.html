@@ -126,8 +126,9 @@
             <ul>
                 <li><a href="javascript:;">添加</a>
                     <ul>
+                        {% if perms.app.add_bankprivate %}
                         <li><a href="/admin/render/add_or_edit_bank_private" title="add branch">银行专线</a></li>
-
+                        {% endif %}
                         {% if perms.app.add_networkdevices %}
                         <li><a href="/admin/render/add_or_edit_net_devices" title="add devices">网络设备</a></li>
                         {% endif %}
