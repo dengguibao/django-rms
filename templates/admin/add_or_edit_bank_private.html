@@ -28,16 +28,13 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">访问方式</label>
                     <div class="layui-input-inline">
-                        <select name="access_type" lay-verify="required">
-                            <option value="">请选择</option>
-                            <option value="web" {% ifequal obj.access_type 'web' %}selected="" {% endifequal %}>web
-                            </option>
-                        </select>
+                        <input type="text" placeholder="web" maxlength="50" name="access_type" value="{{ obj.access_type }}"
+                               lay-verify="required" autocomplete="off" class="layui-input">
                     </div>
                 </div>
 
                 <div class="layui-form-item layui-form-text">
-                    <label class="layui-form-label">要求授权网站及地址</label>
+                    <label class="layui-form-label">银行要求授权网站及地址</label>
                     <div class="layui-input-block">
                         <textarea placeholder="请输入内容" class="layui-textarea"
                                   name="require_authorize_addr">{{ obj.require_authorize_addr }}</textarea>
@@ -54,7 +51,7 @@
 
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label class="layui-form-label">业务对接人</label>
+                        <label class="layui-form-label">市场对接人</label>
                         <div class="layui-input-inline">
                             <input type="text" placeholder="徐莲" maxlength="50" name="service_leader"
                                    value="{{ obj.service_leader }}" lay-verify="required" autocomplete="off"
@@ -78,8 +75,8 @@
                     </div>
                 </div>
 
-                <div class="layui-form-item">
-                    <label class="layui-form-label">防火墙策略</label>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">防火墙 - NAT策略</label>
                     <div class="layui-input-block">
                         <input type="text" placeholder="中信抢案" maxlength="50" name="firewall_policy_name"
                                value="{{ obj.firewall_policy_name }}" lay-verify="required" autocomplete="off"
@@ -88,7 +85,7 @@
                 </div>
 
                 <div class="layui-form-item layui-form-text">
-                    <label class="layui-form-label">NAT源地址池</label>
+                    <label class="layui-form-label">防火墙 - NAT源地址池</label>
                     <div class="layui-input-block">
                         <textarea placeholder="请输入内容" class="layui-textarea"
                                   name="nat_src_addr_pool">{{ obj.nat_src_addr_pool }}</textarea>
@@ -96,7 +93,7 @@
                 </div>
 
                 <div class="layui-form-item layui-form-text">
-                    <label class="layui-form-label">NAT目标地址池</label>
+                    <label class="layui-form-label">防火墙 - NAT目标地址池</label>
                     <div class="layui-input-block">
                         <textarea placeholder="请输入内容" class="layui-textarea"
                                   name="nat_dest_addr_pool">{{ obj.nat_dest_addr_pool }}</textarea>
@@ -104,7 +101,7 @@
                 </div>
 
                 <div class="layui-form-item layui-form-text">
-                    <label class="layui-form-label">上网行为控制策略</label>
+                    <label class="layui-form-label">上网行为管理 - 应用控制策略</label>
                     <div class="layui-input-block">
                         <input type="text" placeholder="中信抢案" maxlength="50" name="int_behave_control_policy"
                                value="{{ obj.int_behave_control_policy }}" lay-verify="required" autocomplete="off"
@@ -113,7 +110,7 @@
                 </div>
 
                 <div class="layui-form-item layui-form-text">
-                    <label class="layui-form-label">上网行为审计策略</label>
+                    <label class="layui-form-label">上网行为管理 - 上网审计策略</label>
                     <div class="layui-input-block">
                         <input type="text" placeholder="中信抢案" maxlength="50" name="int_behave_audit_policy"
                                value="{{ obj.int_behave_audit_policy }}" lay-verify="required" autocomplete="off"
@@ -123,7 +120,7 @@
 
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label class="layui-form-label">公网IP</label>
+                        <label class="layui-form-label">备案公网IP</label>
                         <div class="layui-input-inline">
                             <input type="text" placeholder="58.20.18.138" maxlength="50" name="global_ip"
                                    value="{{ obj.global_ip }}" lay-verify="required|ip" autocomplete="off"
