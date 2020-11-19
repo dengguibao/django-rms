@@ -1,0 +1,146 @@
+{% extends "admin/basic.html" %}
+{% block notice%}
+网络 / 银行专线
+{% endblock %}
+{% block mainbody %}
+
+<fieldset class="layui-elem-field layui-field-title">
+    <legend>业务列表</legend>
+</fieldset>
+<div class="layui-row">
+    <form class="layui-form" method="GET" action="/admin/get-device-list/bank_private">
+    {% comment %} {% csrf_token %} {% endcomment %}
+        <div class="layui-form-item" style="text-align: center;">
+            <div class="layui-inline">
+                <div class="layui-input-inline" style="width: 300px;">
+                    <input type="text" id="keyword" name="keyword" value="{%ifnotequal keyword None%}{{keyword}}{%endifnotequal%}" placeholder="请输入查询关键字" class="layui-input">
+                </div>
+                <button type="button" onclick="$(form).submit();" class="layui-btn" id="search" >
+                    <i class="layui-icon layui-icon-search"></i>查找
+                </button>
+                <a href="javascript:;" class="layui-btn btn-export">
+                    <i class="layui-icon layui-icon-download-circle"></i>导出
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="layui-form">
+    <table class="layui-table" lay-size="sm">
+        <colgroup>
+            <col width="80">
+            <col width="240">
+            <col width="80">
+            <col width="180">
+            <col>
+            <col>
+            <col>
+            <col width="80">
+            <col width="200">
+            <col width="150">
+        </colgroup>
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th>业务名称</th>
+            <th>代理</th>
+            <th>访问方式</th>
+            <th>公网IP</th>
+            <th>防火墙策略</th>
+            <th>业务对接人</th>
+            <th>状态</th>
+            <th>创建时间</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody id="tbody">
+        {%for i in obj%}
+        <tr id="id_{{i.id}}">
+            <td>{{ forloop.counter }}</td>
+            <td>{{ i.name }}</td>
+            <td>{% ifequal i.is_proxy 'y' %}是{% else %}否{% endifequal %}</td>
+            <td>{{ i.access_type }}</td>
+            <td>{{ i.global_ip }}</td>
+            <td>{{ i.firewall_policy_name }}</td>
+            <td>{{ i.service_leader }}</td>
+            <td>{% ifequal i.is_active 'y' %}启用{% else %}<span style="color: red">停用</span>{% endifequal %}</td>
+            <td>{{ i.pub_date|date:'Y-m-d H:i:s' }}</td>
+            <td>
+                {% if perms.app.change_bankprivate %}
+                <a href="/admin/edit/bank_private/{{i.id}}" title="edit" class="layui-btn layui-btn-primary layui-btn-xs">
+                    <i class="layui-icon layui-icon-edit"></i>
+                </a>
+                {% endif %}
+                {% if perms.app.delete_bankprivate %}
+                <a flag="{{i.id}}" title="delete" class="layui-btn layui-btn-primary layui-btn-xs btn-delete">
+                    <i class="layui-icon layui-icon-delete"></i>
+                </a>
+                {% endif %}
+                <a href="/admin/view-logs/bank_private/{{i.id}}" lay-event='logs' title="logs" class='layui-btn layui-btn-primary layui-btn-xs'>
+                    <i class='layui-icon layui-icon-log'></i>
+                </a>
+            </td>
+        </tr>
+        {%endfor%}
+        </tbody>
+    </table>
+    <div id="page"></div>
+</div>
+<script type="text/javascript">
+    layui.use(['layer', 'form', 'laypage'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            laypage = layui.laypage,
+            layer = layui.layer;
+        
+        $('#keyword').on('keydown',function(event){
+            if(event.keyCode==13){
+                $('#search').click();
+            }
+        })
+
+        $('.btn-export').click(function(){
+            let action_url = $('form').attr('action');
+            let branch_id = $('select[name="branch_id"]').val();
+            let keyword = $('input[name="keyword"]').val();
+            let new_url = action_url+'?branch_id=0&keyword='+keyword+'&export=t';
+            window.open(new_url);
+        })
+
+        laypage.render({
+            elem: 'page',
+            count: {{rs_count}},
+            limit: {{page_size}},
+            curr: {{curr_page}},
+            layout: ['count','prev', 'page', 'next'],
+            jump: function(obj, first){
+                //console.log(obj.curr);
+                //console.log(obj.limit);
+                if(!first){
+                    let keyword = $('input[name="keyword"]').val()
+                    window.location.href='/admin/get-device-list/lan_net?branch_id=0&keyword='+keyword+'&page='+obj.curr
+                
+                }
+            }
+        });
+
+        $('.btn-delete').bind('click', function () {
+            var id = $(this).attr('flag')
+            layer.confirm('真的要删除该项', function (index) {
+                var url = "/admin/delete/bank_private/" + id
+                $.getJSON(
+                    url,
+                    function (d) {
+                        if (d.code == 0) {
+                            $('#id_' + id).empty();
+                        } else {
+                            layer.alert(d.msg);
+                        }
+                    }
+                );
+                layer.close(index)
+            });
+        });
+    })
+</script>
+{% endblock %}

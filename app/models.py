@@ -2,6 +2,39 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+class BankPrivate(models.Model):
+    IS_PROXY = (
+        ('y', 'Yes'),
+        ('n', 'No')
+    )
+
+    IS_ACTIVE = (
+        ('y', 'Yes'),
+        ('n', 'No'),
+    )
+
+    name = models.CharField(verbose_name="name", max_length=50, null=False)
+    access_type = models.CharField(verbose_name="connection type", max_length=10, null=False)
+    require_authorize_addr = models.TextField(verbose_name="all_authorize_address", null=False)
+    real_authorize_addr = models.TextField(verbose_name="real_authorize_address", null=False)
+    is_proxy = models.CharField(max_length=1, choices=IS_PROXY)
+    firewall_policy_name = models.CharField(null=False, max_length=50)
+    nat_src_addr_pool = models.TextField(null=False)
+    nat_dest_addr_pool = models.TextField()
+    int_behave_control_policy = models.TextField(verbose_name='internet_behave_policy_name')
+    int_behave_audit_policy = models.TextField()
+    global_ip = models.CharField(max_length=15,null=False)
+    service_leader = models.CharField(max_length=10,null=False)
+    user_ip_addr = models.TextField()
+    user_permission = models.TextField()
+    desc = models.TextField()
+    is_active = models.CharField(max_length=1, null=False, choices=IS_ACTIVE)
+    pub_date = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return '%s' % self.name
+
+
 class DailyReport(models.Model):
     """daily report
 

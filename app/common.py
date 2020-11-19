@@ -14,7 +14,8 @@ models = {
     'wan_net': WanNetworks,
     'net_devices': NetworkDevices,
     'monitor': Monitor,
-    'monitor_account': MonitorAccount
+    'monitor_account': MonitorAccount,
+    'bank_private': BankPrivate,
 }
 
 perms = {
@@ -31,23 +32,25 @@ perms = {
     'net_devices': 'app.%s_networkdevices',
     'monitor': 'app.%s_monitor',
     'monitor_account': 'app.%s_monitor',
+    'bank_private': 'app.%s_bankprivate'
 }
 
 form_name_list = [
-        'vm',
-        'host',
-        'hostif',
-        'user',
-        'cluster',
-        'trouble_report',
-        'daily_report',
-        'branch',
-        'lan_net',
-        'wan_net',
-        'net_devices',
-        'monitor',
-        'monitor_account'
-    ]
+    'vm',
+    'host',
+    'hostif',
+    'user',
+    'cluster',
+    'trouble_report',
+    'daily_report',
+    'branch',
+    'lan_net',
+    'wan_net',
+    'net_devices',
+    'monitor',
+    'monitor_account',
+    'bank_private'
+]
 
 
 def data_struct():
@@ -142,7 +145,7 @@ def data_struct():
             'owner': '值班人员',
             'pub_date': '报告时间',
         },
-        'wan_net':{
+        'wan_net': {
             'branch_id': '分公司',
             'isp': '运营商',
             'ip': 'IP',
@@ -152,5 +155,23 @@ def data_struct():
             'dns1': 'DNS1',
             'dns2': 'DNS2',
             'contact': '联系人',
+        },
+        'bank_private': {
+            'name': '业务名称',
+            'access_type': '访问方式',
+            'require_authorize_addr': '需要授权网址',
+            'real_authorize_addr': '实际授权网址',
+            'is_proxy': '是否代理',
+            'firewall_policy_name': '防火墙策略名称',
+            'nat_src_addr_pool': 'NAT源地址',
+            'nat_dest_addr_pool': 'NAT目标地址',
+            'int_behave_control_policy': '上网行为控制策略',
+            'int_behave_audit_policy': '上网行业审计策略',
+            'global_ip': '公网IP',
+            'service_leader': '对接人',
+            'user_ip_add': '授权用户IP',
+            'user_permission': '授权用户及权限',
+            'is_active': '状态',
+            'desc': '备注',
         }
     }

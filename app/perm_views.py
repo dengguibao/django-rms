@@ -58,6 +58,7 @@ def get_user_perms_list(request, nid):
         'lannetworks': '网络信息',
         'wannetworks': '互联网信息',
         'monitor': '监控主机',
+        'bankprivate':'银行专线',
     }
     if not user.is_superuser:
         del all_perms_object['user']

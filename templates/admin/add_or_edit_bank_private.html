@@ -1,0 +1,257 @@
+{% extends "admin/basic.html" %}
+{% block notice %}
+    网络 / {% if obj.id %}编辑{% else %}新建{% endif %}银行专线
+{% endblock %}
+{% block mainbody %}
+
+    <p class="back-btn">
+        <a href="/admin/get-device-list/bank_private" class="layui-btn layui-btn-sm layui-btn-danger">
+            <i class="layui-icon layui-btn-sm layui-icon-return" style="padding:0 2px 0 0"></i>返回
+        </a>
+    </p>
+
+
+    <form class="layui-form layui-form-pane">
+        {% csrf_token %}
+        <fieldset class="layui-elem-field">
+            <legend>业务基本信息</legend>
+            <div class="layui-field-box">
+                <input type="hidden" id="obj_id" name="id" value="{% if obj.id %}{{ obj.id }}{% else %}0{% endif %}"/>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">业务名称</label>
+                    <div class="layui-input-inline" style="width: 300px">
+                        <input type="text" placeholder="中信抢案" maxlength="50" name="name" value="{{ obj.name }}"
+                               lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">访问方式</label>
+                    <div class="layui-input-inline">
+                        <select name="access_type" lay-verify="required">
+                            <option value="">请选择</option>
+                            <option value="web" {% ifequal obj.access_type 'web' %}selected="" {% endifequal %}>web
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">要求授权网站及地址</label>
+                    <div class="layui-input-block">
+                        <textarea placeholder="请输入内容" class="layui-textarea"
+                                  name="require_authorize_addr">{{ obj.require_authorize_addr }}</textarea>
+                    </div>
+                </div>
+
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">实际开通网站及地址</label>
+                    <div class="layui-input-block">
+                        <textarea placeholder="请输入内容" class="layui-textarea"
+                                  name="real_authorize_addr">{{ obj.real_authorize_addr }}</textarea>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">业务对接人</label>
+                        <div class="layui-input-inline">
+                            <input type="text" placeholder="徐莲" maxlength="50" name="service_leader"
+                                   value="{{ obj.service_leader }}" lay-verify="required" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="layui-elem-field">
+            <legend>网络配置信息</legend>
+            <div class="layui-field-box">
+                <div class="layui-form-item" pane="">
+                    <label class="layui-form-label">是否代理</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="is_proxy" value="y" title="是"{% ifequal obj.is_proxy 'y' %}
+                               checked=""{% endifequal %}>
+                        <input type="radio" name="is_proxy" value="n" title="否"{% ifequal obj.is_proxy 'n' %}
+                               checked=""{% endifequal %}>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">防火墙策略</label>
+                    <div class="layui-input-block">
+                        <input type="text" placeholder="中信抢案" maxlength="50" name="firewall_policy_name"
+                               value="{{ obj.firewall_policy_name }}" lay-verify="required" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">NAT源地址池</label>
+                    <div class="layui-input-block">
+                        <textarea placeholder="请输入内容" class="layui-textarea"
+                                  name="nat_src_addr_pool">{{ obj.nat_src_addr_pool }}</textarea>
+                    </div>
+                </div>
+
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">NAT目标地址池</label>
+                    <div class="layui-input-block">
+                        <textarea placeholder="请输入内容" class="layui-textarea"
+                                  name="nat_dest_addr_pool">{{ obj.nat_dest_addr_pool }}</textarea>
+                    </div>
+                </div>
+
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">上网行为控制策略</label>
+                    <div class="layui-input-block">
+                        <input type="text" placeholder="中信抢案" maxlength="50" name="int_behave_control_policy"
+                               value="{{ obj.int_behave_control_policy }}" lay-verify="required" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">上网行为审计策略</label>
+                    <div class="layui-input-block">
+                        <input type="text" placeholder="中信抢案" maxlength="50" name="int_behave_audit_policy"
+                               value="{{ obj.int_behave_audit_policy }}" lay-verify="required" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">公网IP</label>
+                        <div class="layui-input-inline">
+                            <input type="text" placeholder="58.20.18.138" maxlength="50" name="global_ip"
+                                   value="{{ obj.global_ip }}" lay-verify="required|ip" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+
+        <fieldset class="layui-elem-field">
+            <legend>授权信息</legend>
+            <div class="layui-field-box">
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">授权电脑IP</label>
+                    <div class="layui-input-block">
+                        <textarea placeholder="请输入内容" class="layui-textarea"
+                                  name="user_ip_addr">{{ obj.user_ip_addr }}</textarea>
+                    </div>
+                </div>
+
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">授权说明</label>
+                    <div class="layui-input-block">
+                        <textarea placeholder="请输入内容" class="layui-textarea"
+                                  name="user_permission">{{ obj.user_permission }}</textarea>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="layui-elem-field">
+            <legend>其它信息</legend>
+            <div class="layui-field-box">
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">备注</label>
+                    <div class="layui-input-block">
+                        <textarea placeholder="请输入内容" class="layui-textarea" name="desc">{{ obj.desc }}</textarea>
+                    </div>
+                </div>
+
+                <div class="layui-form-item" pane="">
+                    <label class="layui-form-label">状态</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="is_active" value="y" title="启用"{% ifequal obj.is_active 'y' %}
+                               checked=""{% endifequal %}>
+                        <input type="radio" name="is_active" value="n" title="停用"{% ifequal obj.is_active 'n' %}
+                               checked=""{% endifequal %}>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn" lay-submit="" lay-filter="submit">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+
+    <script type="text/javascript">
+        layui.use(['form'], function () {
+            var form = layui.form
+                , layer = layui.layer;
+
+            url = '/admin/create-or-update/bank_private'
+
+            let obj_id = $('#obj_id').val()
+
+            if (obj_id != 0) {
+                var init_form_data = $("form").serializeArray();
+                {#var cluster_tag = $('#cluster_tag').val();#}
+                {#var host_name = $('#host_id').find("option:selected").text();#}
+                {#jump_url = `${jump_url}&args=${cluster_tag},${host_name}`#}
+            }
+
+            form.verify({
+                ip: function (value, item) {
+                    let reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
+                    let reg_result = reg.test(value);
+                    if (reg_result == false) {
+                        return '请输入正确的IP地址';
+                    }
+                }
+            });
+
+            form.on('submit(submit)', function (data) {
+                let submit_form_data = $("form").serializeArray();
+                if (init_form_data != undefined && JSON.stringify(init_form_data) == JSON.stringify(submit_form_data)) {
+                    layer.msg('表单无修改，无须提交')
+                    return false;
+                }
+                let change_field = []
+                let url = '/admin/create-or-update/bank_private/'
+
+                if (init_form_data != undefined) {
+                    $.each(submit_form_data, function (index, i) {
+                        if (submit_form_data[index]['value'] != init_form_data[index]['value']) {
+                            change_field.push(submit_form_data[index]['name'])
+                        }
+                    })
+                }
+
+                if (change_field.length != 0) {
+                    url = url + '?change_field=' + change_field.join(',')
+                }
+
+
+                $.ajax({
+                    url: url,
+                    type: 'post',
+                    data: data.field,
+                    success: function (d) {
+                        layer.msg(d.msg)
+                        if (d.code == 0) {
+                            setTimeout(function () {
+                                window.location.href = '/admin/get-device-list/bank_private';
+                            }, 1000);
+                        }
+                    },
+                    error: function () {
+                        layer.msg(d.Status)
+                    }
+                })
+                return false;
+            })
+        });
+    </script>
+{% endblock %}

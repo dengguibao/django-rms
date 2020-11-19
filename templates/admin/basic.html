@@ -126,9 +126,7 @@
             <ul>
                 <li><a href="javascript:;">添加</a>
                     <ul>
-                        {% comment %} {% if perms.app.add_branch %}
-                        <li><a href="/admin/render/add_or_edit_branch" title="add branch">办公组织</a></li>
-                        {% endif %} {% endcomment %}
+                        <li><a href="/admin/render/add_or_edit_bank_private" title="add branch">银行专线</a></li>
 
                         {% if perms.app.add_networkdevices %}
                         <li><a href="/admin/render/add_or_edit_net_devices" title="add devices">网络设备</a></li>
@@ -147,6 +145,9 @@
                 {% comment %} {% if perms.app.view_branch %}
                 <li><a href="/admin/get-device-list/branch" title="list branch">办公组织</a></li>
                 {% endif %} {% endcomment %}
+                {% if perms.app.view_bankprivate %}
+                <li><a href="/admin/get-device-list/bank_private" title="list bank private">银行专线</a></li>
+                {% endif %}
                 {% if perms.app.view_networkdevices %}
                 <li><a href="/admin/get-device-list/net_devices" title="list network_devices">设备信息</a></li>
                 {% endif %}

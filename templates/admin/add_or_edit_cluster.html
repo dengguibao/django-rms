@@ -9,54 +9,51 @@
     </a>
 </p>
 
-<fieldset class="layui-elem-field layui-field-title">
-    <legend>集群信息</legend>
-</fieldset>
 
-<form class="layui-form" action="">
+
+<form class="layui-form layui-form-pane" action="">
     {% csrf_token %}
     <input type="hidden" name="id" id="cluster_id" value="{%if obj.id %}{{ obj.id }}{% else %}0{% endif %}" />
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">集群名称</label>
-            <div class="layui-input-inline" style="width: 300px;">
-                <input type="text" placeholder="集群名称" maxlength="50" name="name"  value="{{ obj.name}}" lay-verify="required" autocomplete="off" class="layui-input">
+    <fieldset class="layui-elem-field">
+        <legend>集群信息</legend>
+        <div class="layui-field-box">
+            <div class="layui-form-item">
+                <label class="layui-form-label">集群名称</label>
+                <div class="layui-input-inline" style="width: 300px;">
+                    <input type="text" placeholder="集群名称" maxlength="50" name="name"  value="{{ obj.name}}" lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
             </div>
-        </div>
-    </div>
 
-    <div class="layui-form-item" style="display:{%if obj.id %}none{% else %}block{% endif %}">
-        <div class="layui-inline">
-            <label class="layui-form-label">集群标记</label>
-            <div class="layui-input-inline">
-                <input type="text" maxlength="20" placeholder="cluster tag" name="tag" value="{{ obj.tag}}" lay-verify="required" autocomplete="off" class="layui-input">
+            <div class="layui-form-item" style="display:{%if obj.id %}none{% else %}block{% endif %}">
+                <div class="layui-inline">
+                    <label class="layui-form-label">集群标记</label>
+                    <div class="layui-input-inline">
+                        <input type="text" maxlength="20" placeholder="cluster tag" name="tag" value="{{ obj.tag}}" lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">建议为名称首字母，不可更改</div>
+                </div>
             </div>
-            <div class="layui-form-mid layui-word-aux">建议为名称首字母，不可更改</div>
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">类别</label>
-            <div class="layui-input-block">
-                <input type="radio" name="is_virt" value="1" title="虚拟化集群"{%ifequal obj.is_virt 1%} checked=""{%endifequal%}>
-                <input type="radio" name="is_virt" value="0" title="普通服务器"{%ifequal obj.is_virt 0%} checked=""{%endifequal%}>
+            <div class="layui-form-item" pane="">
+                <label class="layui-form-label">类别</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="is_virt" value="1" title="虚拟化集群"{%ifequal obj.is_virt 1%} checked=""{%endifequal%}>
+                    <input type="radio" name="is_virt" value="0" title="普通服务器"{%ifequal obj.is_virt 0%} checked=""{%endifequal%}>
+                </div>
             </div>
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">状态</label>
-            <div class="layui-input-block">
-                <input type="radio" name="is_active" value="0" title="启用"{%ifequal obj.is_active 0%} checked=""{%endifequal%}>
-                <input type="radio" name="is_active" value="1" title="禁用"{%ifequal obj.is_active 1%} checked=""{%endifequal%}>
+            <div class="layui-form-item" pane="">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="is_active" value="0" title="启用"{%ifequal obj.is_active 0%} checked=""{%endifequal%}>
+                    <input type="radio" name="is_active" value="1" title="禁用"{%ifequal obj.is_active 1%} checked=""{%endifequal%}>
+                </div>
             </div>
         </div>
-    </div>
+    </fieldset>
     <div class="layui-form-item">
-    <div class="layui-input-block">
-        <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
-        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-    </div>
+        <div class="layui-input-block">
+            <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
     </div>
 </form>
 <script type="text/javascript">

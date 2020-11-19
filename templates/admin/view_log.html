@@ -37,7 +37,7 @@
     {% for i in log_data %}
     <tr>
         <td>{{forloop.counter}}</td>
-        <td>{{i.action_time}}</td>
+        <td>{{i.action_time|date:'Y-m-d H:i:s'}}</td>
         <td>
         {{i.user.first_name}}
         </td>

@@ -1,424 +1,454 @@
 {% extends "admin/basic.html" %}
-{% block notice%}
-服务器 / {%if obj.id %}编辑{% else %}新建{% endif %}虚拟机
+{% block notice %}
+    服务器 / {% if obj.id %}编辑{% else %}新建{% endif %}虚拟机
 {% endblock %}
 {% block mainbody %}
 
-<p class="back-btn">
-    <a href="/admin/render/list_vms" class="layui-btn layui-btn-sm layui-btn-danger">
-        <i class="layui-icon layui-btn-sm layui-icon-return" style="padding:0 2px 0 0"></i>返回
-    </a>
-</p>
-
-<fieldset class="layui-elem-field layui-field-title">
-    <legend>基本信息</legend>
-</fieldset>
-<input type="hidden" id="auth" value="{{settings.ZABBIX_API.AUTH}}" />
-<input type="hidden" id="url" value="{{settings.ZABBIX_API.URL}}" />
-<input type="hidden" id="temp_id" value="{{settings.ZABBIX_API.TEMPLATE_ID}}" />
-<input type="hidden" id="group_id" value="{{settings.ZABBIX_API.GROUP_ID}}" />
-<input type="hidden" id="zabbix_status" value="{{settings.ZABBIX_API.STATUS}}" />
-<input type="hidden" id="vm_hostid" value="" />
+    <p class="back-btn">
+        <a href="/admin/render/list_vms" class="layui-btn layui-btn-sm layui-btn-danger">
+            <i class="layui-icon layui-btn-sm layui-icon-return" style="padding:0 2px 0 0"></i>返回
+        </a>
+    </p>
 
 
-<form class="layui-form">
-    {% csrf_token %}
-    <input type="hidden" id="vm_id" name="id" value="{%if obj.id %}{{ obj.id }}{% else %}0{% endif %}" />
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">主机名</label>
-            <div class="layui-input-inline" style="width: 300px;">
-                <input type="text" placeholder="vm host name" maxlength="50" name="vm_hostname" id="vm_hostname" value="{{ obj.vm_hostname}}" lay-verify="required" autocomplete="off" class="layui-input">
+    <input type="hidden" id="auth" value="{{ settings.ZABBIX_API.AUTH }}"/>
+    <input type="hidden" id="url" value="{{ settings.ZABBIX_API.URL }}"/>
+    <input type="hidden" id="temp_id" value="{{ settings.ZABBIX_API.TEMPLATE_ID }}"/>
+    <input type="hidden" id="group_id" value="{{ settings.ZABBIX_API.GROUP_ID }}"/>
+    <input type="hidden" id="zabbix_status" value="{{ settings.ZABBIX_API.STATUS }}"/>
+    <input type="hidden" id="vm_hostid" value=""/>
+
+
+    <form class="layui-form layui-form-pane">
+        {% csrf_token %}
+        <fieldset class="layui-elem-field">
+            <legend>基本信息</legend>
+            <div class="layui-field-box">
+                <input type="hidden" id="vm_id" name="id" value="{% if obj.id %}{{ obj.id }}{% else %}0{% endif %}"/>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">主机名</label>
+                    <div class="layui-input-block">
+                        <input type="text" placeholder="vm host name" maxlength="50" name="vm_hostname"
+                               id="vm_hostname" value="{{ obj.vm_hostname }}" lay-verify="required"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用途</label>
+                    <div class="layui-input-block">
+                        <input type="text" maxlength="100" placeholder="视频转码服务器" name="vm_intention"
+                               value="{{ obj.vm_intention }}" lay-verify="required" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">申请人</label>
+                    <div class="layui-input-inline" style="width:200px">
+                        <input type="text" maxlength="5" placeholder="张三" name="vm_register"
+                               value="{{ obj.vm_register }}" lay-verify="required" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item" pane="">
+                    <label class="layui-form-label">状态</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="vm_status" value="0" title="开机"{% ifequal obj.vm_status 0 %}
+                               checked=""{% endifequal %}>
+                        <input type="radio" name="vm_status" value="1" title="关机"{% ifequal obj.vm_status 1 %}
+                               checked=""{% endifequal %}>
+                    </div>
+                </div>
+
             </div>
-        </div>
-    </div>
+        </fieldset>
 
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">用途</label>
-            <div class="layui-input-inline" style="width:500px">
-                <input type="text" maxlength="100" placeholder="视频转码服务器" name="vm_intention" value="{{ obj.vm_intention}}" lay-verify="required" autocomplete="off" class="layui-input">
+
+        <fieldset class="layui-elem-field">
+            <legend>宿主机信息</legend>
+            <div class="layui-field-box">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">vlan标签</label>
+                        <div class="layui-input-inline" style="width: 100px;">
+                            <input type="text" name="vlan_tag" placeholder="capture" maxlength="50"
+                                   value="{{ obj.vlan_tag }}" lay-verify="required" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">vlan ID</label>
+                        <div class="layui-input-inline" style="width: 100px;">
+                            <input type="text" name="vlan_id" maxlength="4" placeholder="1000" value="{{ obj.vlan_id }}"
+                                   lay-verify="required|vlan" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">集群</label>
+                        <div class="layui-input-inline" style="width: 100px;">
+                            <select lay-filter="cluster_tag" id="cluster_tag" lay-verify="required">
+                                <option value="">请选择</option>
+                                {% for i in cluster_data %}
+                                    <option {% ifequal obj.host.cluster_tag_id i.tag %}selected="" {% endifequal %}
+                                            value="{{ i.tag }}">{{ i.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">服务器</label>
+                        <div class="layui-input-inline" style="width: 220px;">
+                            <select id="host_id" name="host_id" lay-verify="required">
+                                {% for i in esxi_list %}
+                                    <option {% ifequal obj.host_id i.id %}selected="" {% endifequal %}
+                                            value="{{ i.id }}">{{ i.hostname }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
+        </fieldset>
 
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">申请人</label>
-            <div class="layui-input-inline" style="width:80px">
-                <input type="text" maxlength="5" placeholder="张三" name="vm_register" value="{{ obj.vm_register}}" lay-verify="required" autocomplete="off" class="layui-input">
+        <fieldset class="layui-elem-field">
+            <legend>虚拟机配置</legend>
+            <div class="layui-field-box">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">CPU</label>
+                        <div class="layui-input-inline" style="width: 50px;">
+                            <input type="text" name="vm_cpu" placeholder="1" value="{{ obj.vm_cpu }}" maxlength="2"
+                                   lay-verify="required|number" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">个</div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">内存</label>
+                        <div class="layui-input-inline" style="width: 50px;">
+                            <input type="text" name="vm_memory" maxlength="2" placeholder="8"
+                                   value="{{ obj.vm_memory }}" lay-verify="required|number" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">G</div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">硬盘</label>
+                        <div class="layui-input-inline" style="width: 50px;">
+                            <input type="text" name="vm_disk" maxlength="4" placeholder="80" value="{{ obj.vm_disk }}"
+                                   lay-verify="required|number" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">G</div>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">操作系统</label>
+                        <div class="layui-input-inline" style="width: 130px;">
+                            <select name="vm_os" lay-verify="required">
+                                <option value="">请选择</option>
+                                <option {% ifequal obj.vm_os 'CentOS' %}selected="" {% endifequal %} value="CentOS">CentOS</option>
+                                <option {% ifequal obj.vm_os 'Ubuntu' %}selected="" {% endifequal %} value="Ubuntu">Ubuntu</option>
+                                <option {% ifequal obj.vm_os 'Slackware' %}selected="" {% endifequal %} value="Slackware">Slackware </option>
+                                <option {% ifequal obj.vm_os 'General Linux' %}selected="" {% endifequal %} value="General Linux">General Linux </option>
+                                <option {% ifequal obj.vm_os 'Windows' %}selected="" {% endifequal %} value="Windows">Windows</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">管理IP</label>
+                        <div class="layui-input-inline" style="width: 200px;">
+                            <input type="text" maxlength="15" name="vm_ip" placeholder="1.2.3.4" id="vm_ip"
+                                   value="{{ obj.vm_ip }}" lay-verify="required|ip" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-form-item" pane="">
+                    <label class="layui-form-label">Zabbix监控</label>
+                    <div class="layui-input-block">
+                        <input type="checkbox" id="vm_monitor_switch" {% ifequal obj.vm_monitor 'on' %}
+                               checked="" {% endifequal %} lay-skin="switch" lay-filter="vm_monitor" lay-text="ON|OFF">
+                        <input type="hidden" id="vm_monitor"
+                               value="{% ifequal obj.vm_monitor 'on' %}on{% else %}off{% endifequal %}"
+                               name="vm_monitor">
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
+        </fieldset>
 
 
+        <fieldset class="layui-elem-field">
+            <legend>其它</legend>
+            <div class="layui-field-box">
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">备注</label>
+                    <div class="layui-input-block">
+                        <textarea placeholder="请输入内容" class="layui-textarea" name="vm_desc">{{ obj.vm_desc }}</textarea>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
 
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">状态</label>
+
+        <div class="layui-form-item">
             <div class="layui-input-block">
-                <input type="radio" name="vm_status" value="0" title="开机"{%ifequal obj.vm_status 0%} checked=""{%endifequal%}>
-                <input type="radio" name="vm_status" value="1" title="关机"{%ifequal obj.vm_status 1%} checked=""{%endifequal%}>
+                <button type="submit" class="layui-btn" lay-submit="" lay-filter="submit">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
             </div>
         </div>
-    </div>
-<fieldset class="layui-elem-field layui-field-title">
-    <legend>宿主机</legend>
-</fieldset>
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">vlan标签</label>
-            <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" name="vlan_tag" placeholder="capture" maxlength="50" value="{{ obj.vlan_tag}}" lay-verify="required" autocomplete="off" class="layui-input">
-            </div>
-        </div>
-        <div class="layui-inline">
-            <label class="layui-form-label">vlan ID</label>
-            <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" name="vlan_id" maxlength="4" placeholder="1000" value="{{ obj.vlan_id}}" lay-verify="required|vlan" autocomplete="off" class="layui-input">
-            </div>
-        </div>
-    </div>
+    </form>
+    <script type="text/javascript">
+        layui.use(['form', 'layer'], function () {
+            var form = layui.form
+                , layer = layui.layer;
 
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">集群</label>
-            <div class="layui-input-inline" style="width: 100px;">
-                <select lay-filter="cluster_tag" id="cluster_tag" lay-verify="required">
-                    <option value="">请选择</option>
-                    {% for i in cluster_data %}
-                    <option {% ifequal obj.host.cluster_tag_id i.tag %}selected="" {% endifequal %} value="{{i.tag}}">{{i.name}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
+            var vm_id = $('#vm_id').val()
+            var back_btn_url = $('.back-btn a').attr('href');
+            var jump_url = `${back_btn_url}?is_virt=1`
 
-        <div class="layui-inline">
-            <label class="layui-form-label">服务器</label>
-            <div class="layui-input-inline" style="width: 220px;">
-                <select id="host_id" name="host_id" lay-verify="required">
-                    {% for i in esxi_list %}
-                    <option {% ifequal obj.host_id i.id %}selected="" {% endifequal %} value="{{ i.id }}">{{ i.hostname }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
-    </div>
-<fieldset class="layui-elem-field layui-field-title">
-    <legend>硬件配置</legend>
-</fieldset>
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">CPU</label>
-            <div class="layui-input-inline" style="width: 50px;">
-                <input type="text" name="vm_cpu" placeholder="1" value="{{ obj.vm_cpu}}" maxlength="2" lay-verify="required|number" autocomplete="off" class="layui-input">
-            </div>
-            <div class="layui-form-mid layui-word-aux">个</div>
-        </div>
-        <div class="layui-inline">
-            <label class="layui-form-label">内存</label>
-            <div class="layui-input-inline" style="width: 50px;">
-                <input type="text" name="vm_memory" maxlength="2" placeholder="8" value="{{ obj.vm_memory}}" lay-verify="required|number" autocomplete="off" class="layui-input">
-            </div>
-            <div class="layui-form-mid layui-word-aux">G</div>
-        </div>
-        <div class="layui-inline">
-            <label class="layui-form-label">硬盘</label>
-            <div class="layui-input-inline" style="width: 50px;">
-                <input type="text" name="vm_disk" maxlength="4" placeholder="80" value="{{ obj.vm_disk}}" lay-verify="required|number" autocomplete="off" class="layui-input">
-            </div>
-            <div class="layui-form-mid layui-word-aux">G</div>
-        </div>
-    </div>
-<fieldset class="layui-elem-field layui-field-title">
-    <legend>系统配置</legend>
-</fieldset>
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">操作系统</label>
-            <div class="layui-input-inline" style="width: 100px;">
-                <select name="vm_os" lay-verify="required">
-                    <option value="">请选择</option>
-                    <option {% ifequal obj.vm_os 'CentOS' %}selected="" {% endifequal %} value="CentOS">CentOS</option>
-                    <option {% ifequal obj.vm_os 'Ubuntu' %}selected="" {% endifequal %} value="Ubuntu">Ubuntu</option>
-                    <option {% ifequal obj.vm_os 'Slackware' %}selected="" {% endifequal %} value="Slackware">Slackware</option>
-                    <option {% ifequal obj.vm_os 'General Linux' %}selected="" {% endifequal %} value="General Linux">General Linux</option>
-                    <option {% ifequal obj.vm_os 'Windows' %}selected="" {% endifequal %} value="Windows">Windows</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="layui-inline">
-            <label class="layui-form-label">管理IP</label>
-            <div class="layui-input-inline" style="width: 200px;">
-                <input type="text" maxlength="15" name="vm_ip" placeholder="1.2.3.4" id="vm_ip" value="{{ obj.vm_ip}}" lay-verify="required|ip" autocomplete="off" class="layui-input">
-            </div>
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <label class="layui-form-label">Zabbix监控</label>
-        <div class="layui-input-block">
-            <input type="checkbox" id="vm_monitor_switch" {% ifequal obj.vm_monitor 'on' %} checked="" {% endifequal %} lay-skin="switch" lay-filter="vm_monitor" lay-text="ON|OFF">
-            <input type="hidden" id="vm_monitor" value="{% ifequal obj.vm_monitor 'on' %}on{%else%}off{% endifequal %}" name="vm_monitor">
-        </div>
-    </div>
-
-    <div class="layui-form-item layui-form-text">
-        <label class="layui-form-label">备注</label>
-        <div class="layui-input-block">
-            <textarea placeholder="请输入内容" class="layui-textarea" name="vm_desc">{{ obj.vm_desc }}</textarea>
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <div class="layui-input-block">
-            <button type="submit" class="layui-btn" lay-submit="" lay-filter="submit">立即提交</button>
-            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-        </div>
-    </div>
-</form>
-<script type="text/javascript">
-    layui.use(['form', 'layer'], function () {
-        var form = layui.form
-            , layer = layui.layer;
-
-        var vm_id = $('#vm_id').val()
-        var back_btn_url = $('.back-btn a').attr('href');
-        var jump_url = `${back_btn_url}?is_virt=1`
-
-        if (vm_id != 0){
-            var init_form_data = $("form").serializeArray();
-            var cluster_tag = $('#cluster_tag').val();
-            var host_name = $('#host_id').find("option:selected").text();
-            jump_url = `${jump_url}&args=${cluster_tag},${host_name}`
-        }
-        $('.back-btn a').attr('href', jump_url)
-
-        form.on('submit(submit)', function (data) {
-            var submit_form_data = $("form").serializeArray();
-            if (init_form_data != undefined && JSON.stringify(init_form_data) == JSON.stringify(submit_form_data)){
-                layer.msg('表单无修改，无须提交')
-                return false;
+            if (vm_id != 0) {
+                var init_form_data = $("form").serializeArray();
+                var cluster_tag = $('#cluster_tag').val();
+                var host_name = $('#host_id').find("option:selected").text();
+                jump_url = `${jump_url}&args=${cluster_tag},${host_name}`
             }
+            $('.back-btn a').attr('href', jump_url)
 
-            var change_field = []
-            var url = '/admin/create-or-update/vm/'
-
-            if (init_form_data != undefined){
-                $.each(submit_form_data,function(index,i){
-                    if (submit_form_data[index]['value'] != init_form_data[index]['value']){
-                        change_field.push(submit_form_data[index]['name'])
-                    }
-                })
-            }
-
-            if (change_field.length != 0){
-                url = url+'?change_field='+change_field.join(',')
-            }
-
-            $.ajax({
-                url: url,
-                type: 'post',
-                data: data.field,
-                success: function (d) {
-                    layer.msg(d.msg)
-                    if (d.code == 0) {
-                        setTimeout(function () {
-                            window.location.href = jump_url;
-                        }, 1000);
-                    }
-                },
-                error: function () {
-                    layer.msg(d.Status)
-                }
-            })
-            return false;
-        });
-
-        form.on('select(cluster_tag)', function (data) {
-            var cluster_tag = data.value;
-            var url = "/admin/get-hosts-list/host/" + cluster_tag + '?page_size=30';
-            var device_list_control = $("#host_id");
-            device_list_control.empty();
-            $.getJSON(
-                url,
-                function (result) {
-                    device_list_control.html("<option value=''>请选择</option>");
-                    $.each(result.data, function (i, item) {
-                        var opt_value = "<option value='" + item.id + "'>" + item.hostname + "</option>";
-                        device_list_control.append(opt_value);
-                    })
-                    form.render('select');
-                })
-        });
-
-        form.on('switch(vm_monitor)',function(d){
-            if($('#zabbix_status').val() != 'enable'){
-                layer.msg('zabbix功能未启用')
-                return
-            }
-            if($('#vm_ip').val().trim().length == 0 || $('#vm_hostname').val().trim().length == 0 ){
-                    layer.msg('请先填写管理IP和主机名');
+            form.on('submit(submit)', function (data) {
+                var submit_form_data = $("form").serializeArray();
+                if (init_form_data != undefined && JSON.stringify(init_form_data) == JSON.stringify(submit_form_data)) {
+                    layer.msg('表单无修改，无须提交')
                     return false;
-            }
-            if(d.elem.checked){
-                add_host_to_zabbix();
-            }else{
-               delete_host_from_zabbix();
-            }            
-        })
+                }
 
-        form.verify({
-            ip: function (value, item) {
-                function isValidIP(ip) {
-                    var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
-                    return reg.test(ip);
-                }
-                if (isValidIP(value) == false) {
-                    return '请输入正确的IP地址';
-                }
-            },
-            vlan: function (value, item) {
-                let vlan_id = parseInt(value)
-                if (vlan_id == NaN || vlan_id > 4096 || vlan_id < 0) return '输入正确vlan';
-            }
-        });
+                var change_field = []
+                var url = '/admin/create-or-update/vm/'
 
-        function get_post_data(type){
-            if (type == 'join_zabbix'){
-                return {
-                    "jsonrpc": "2.0",
-                    "method": "host.create",
-                    "params": {
-                        "host": $('#vm_hostname').val(),
-                        "tags": [{
-                            "tag":"宿主机",
-                            "value": $('#host_id').find("option:selected").text()
-                        }],
-                        "interfaces": [
-                            {
-                                "type": 1,
-                                "main": 1,
-                                "useip": 1,
-                                "ip": $('#vm_ip').val(),
-                                "dns": "",
-                                "port": "10050"
-                            }
-                        ],
-                        "groups": [
-                            {
-                                "groupid": $('#group_id').val()
-                            }
-                        ],
-                        "templates": [
-                            {
-                                "templateid": $('#temp_id').val()
-                            }
-                        ],
-                    },
-                    "auth": $('#auth').val(),
-                    "id": 1
+                if (init_form_data != undefined) {
+                    $.each(submit_form_data, function (index, i) {
+                        if (submit_form_data[index]['value'] != init_form_data[index]['value']) {
+                            change_field.push(submit_form_data[index]['name'])
+                        }
+                    })
                 }
-            }
-            if (type == 'query_hostid'){
-                return {
-                    "jsonrpc": "2.0",
-                    "method": "host.get",
-                    "params": {
-                        "output": [
-                            "hostid",
-                            "host"
-                        ],
-                        "selectInterfaces": [
-                            "interfaceid",
-                            "ip"
-                        ],
-                        "filter": {
-                                "ip": $('#vm_ip').val()
+
+                if (change_field.length != 0) {
+                    url = url + '?change_field=' + change_field.join(',')
+                }
+
+                $.ajax({
+                    url: url,
+                    type: 'post',
+                    data: data.field,
+                    success: function (d) {
+                        layer.msg(d.msg)
+                        if (d.code == 0) {
+                            setTimeout(function () {
+                                window.location.href = jump_url;
+                            }, 1000);
                         }
                     },
-                    "auth": $('#auth').val(),
-                    "id": 1
-                }
-            }
-            if (type == 'delete'){
-                return {
-                    "jsonrpc": "2.0",
-                    "method": "host.delete",
-                    "params": [$('#vm_hostid').val()],
-                    "auth": $('#auth').val(),
-                    "id": 1
-                }
-            }
-
-        }
-
-        function add_host_to_zabbix(){
-            $.ajax({
-                url:$('#url').val(),
-                type:'POST',
-                dataType:'json', //返回类型
-                contentType: "application/json", //必须有
-                data:JSON.stringify(get_post_data('join_zabbix')),
-                success:function(d){
-                    if(d.result && d.result.hostids[0]>0){
-                        $('#vm_monitor').val('on');
-                        layer.msg('加入成功');
-                    }else{
-                        layer.msg(d.error.message)
+                    error: function () {
+                        layer.msg(d.Status)
                     }
-                },
-                error:function(e){
-                    alert(JSON.stringify(e));
+                })
+                return false;
+            });
+
+            form.on('select(cluster_tag)', function (data) {
+                var cluster_tag = data.value;
+                var url = "/admin/get-hosts-list/host/" + cluster_tag + '?page_size=30';
+                var device_list_control = $("#host_id");
+                device_list_control.empty();
+                $.getJSON(
+                    url,
+                    function (result) {
+                        device_list_control.html("<option value=''>请选择</option>");
+                        $.each(result.data, function (i, item) {
+                            var opt_value = "<option value='" + item.id + "'>" + item.hostname + "</option>";
+                            device_list_control.append(opt_value);
+                        })
+                        form.render('select');
+                    })
+            });
+
+            form.on('switch(vm_monitor)', function (d) {
+                if ($('#zabbix_status').val() != 'enable') {
+                    layer.msg('zabbix功能未启用')
+                    return
+                }
+                if ($('#vm_ip').val().trim().length == 0 || $('#vm_hostname').val().trim().length == 0) {
+                    layer.msg('请先填写管理IP和主机名');
+                    return false;
+                }
+                if (d.elem.checked) {
+                    add_host_to_zabbix();
+                } else {
+                    delete_host_from_zabbix();
                 }
             })
-        }
 
-        function delete_host_from_zabbix(){
-            query_hostid=$.ajax({
-                url:$('#url').val(),
-                type:'POST',
-                dataType:'json', //返回类型
-                contentType: "application/json", //必须有
-                data:JSON.stringify(get_post_data('query_hostid')),
-                success:function(d){
-                    if(d.result && d.result[0].hostid>0){
-                        $('#vm_hostid').val(d.result[0].hostid);
-                    }else{
-                        layer.msg(d.error.message)
+            form.verify({
+                ip: function (value, item) {
+                    function isValidIP(ip) {
+                        var reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
+                        return reg.test(ip);
+                    }
+
+                    if (isValidIP(value) == false) {
+                        return '请输入正确的IP地址';
                     }
                 },
-                error:function(e){
-                    alert(JSON.stringify(e));
+                vlan: function (value, item) {
+                    let vlan_id = parseInt(value)
+                    if (vlan_id == NaN || vlan_id > 4096 || vlan_id < 0) return '输入正确vlan';
                 }
-            })
-            
-            $.when(query_hostid).done(function(){
-                if($('#vm_hostid').val().trim().length == 0){
-                    layer.msg('未查询到该zabbix主机')
-                    return false
+            });
+
+            function get_post_data(type) {
+                if (type == 'join_zabbix') {
+                    return {
+                        "jsonrpc": "2.0",
+                        "method": "host.create",
+                        "params": {
+                            "host": $('#vm_hostname').val(),
+                            "tags": [{
+                                "tag": "宿主机",
+                                "value": $('#host_id').find("option:selected").text()
+                            }],
+                            "interfaces": [
+                                {
+                                    "type": 1,
+                                    "main": 1,
+                                    "useip": 1,
+                                    "ip": $('#vm_ip').val(),
+                                    "dns": "",
+                                    "port": "10050"
+                                }
+                            ],
+                            "groups": [
+                                {
+                                    "groupid": $('#group_id').val()
+                                }
+                            ],
+                            "templates": [
+                                {
+                                    "templateid": $('#temp_id').val()
+                                }
+                            ],
+                        },
+                        "auth": $('#auth').val(),
+                        "id": 1
+                    }
                 }
+                if (type == 'query_hostid') {
+                    return {
+                        "jsonrpc": "2.0",
+                        "method": "host.get",
+                        "params": {
+                            "output": [
+                                "hostid",
+                                "host"
+                            ],
+                            "selectInterfaces": [
+                                "interfaceid",
+                                "ip"
+                            ],
+                            "filter": {
+                                "ip": $('#vm_ip').val()
+                            }
+                        },
+                        "auth": $('#auth').val(),
+                        "id": 1
+                    }
+                }
+                if (type == 'delete') {
+                    return {
+                        "jsonrpc": "2.0",
+                        "method": "host.delete",
+                        "params": [$('#vm_hostid').val()],
+                        "auth": $('#auth').val(),
+                        "id": 1
+                    }
+                }
+
+            }
+
+            function add_host_to_zabbix() {
                 $.ajax({
-                    url:$('#url').val(),
-                    type:'POST',
-                    dataType:'json', //返回类型
+                    url: $('#url').val(),
+                    type: 'POST',
+                    dataType: 'json', //返回类型
                     contentType: "application/json", //必须有
-                    data:JSON.stringify(get_post_data('delete')),
-                    success:function(d){
-                        if(d.result && d.result.hostids[0]>0){
-                            $('#vm_monitor').val('off');
-                            layer.msg('关闭成功');
-                        }else{
+                    data: JSON.stringify(get_post_data('join_zabbix')),
+                    success: function (d) {
+                        if (d.result && d.result.hostids[0] > 0) {
+                            $('#vm_monitor').val('on');
+                            layer.msg('加入成功');
+                        } else {
                             layer.msg(d.error.message)
                         }
                     },
-                    error:function(e){
+                    error: function (e) {
                         alert(JSON.stringify(e));
                     }
                 })
-            })
-        }
-    });
-</script>
+            }
+
+            function delete_host_from_zabbix() {
+                query_hostid = $.ajax({
+                    url: $('#url').val(),
+                    type: 'POST',
+                    dataType: 'json', //返回类型
+                    contentType: "application/json", //必须有
+                    data: JSON.stringify(get_post_data('query_hostid')),
+                    success: function (d) {
+                        if (d.result && d.result[0].hostid > 0) {
+                            $('#vm_hostid').val(d.result[0].hostid);
+                        } else {
+                            layer.msg(d.error.message)
+                        }
+                    },
+                    error: function (e) {
+                        alert(JSON.stringify(e));
+                    }
+                })
+
+                $.when(query_hostid).done(function () {
+                    if ($('#vm_hostid').val().trim().length == 0) {
+                        layer.msg('未查询到该zabbix主机')
+                        return false
+                    }
+                    $.ajax({
+                        url: $('#url').val(),
+                        type: 'POST',
+                        dataType: 'json', //返回类型
+                        contentType: "application/json", //必须有
+                        data: JSON.stringify(get_post_data('delete')),
+                        success: function (d) {
+                            if (d.result && d.result.hostids[0] > 0) {
+                                $('#vm_monitor').val('off');
+                                layer.msg('关闭成功');
+                            } else {
+                                layer.msg(d.error.message)
+                            }
+                        },
+                        error: function (e) {
+                            alert(JSON.stringify(e));
+                        }
+                    })
+                })
+            }
+        });
+    </script>
 {% endblock %}

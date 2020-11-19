@@ -39,7 +39,7 @@ def list_device_info(request, form_name):
                 'error_msg': 'permission denied'
             }
         )
-    if form_name == 'branch':
+    if form_name in ['branch', 'bank_private']:
         res_list = models[form_name].objects.all().order_by('-id')
     else:
         res_list = models[form_name].objects.all().select_related('branch').order_by('-id')
@@ -49,11 +49,17 @@ def list_device_info(request, form_name):
             Q(name__contains=keyword) |
             Q(address__contains=keyword)
         )
-    elif form_name == 'lan_net' and keyword:
+    if form_name == 'bank_private' and keyword:
+        res_list = res_list.filter(
+            Q(name__contains=keyword) |
+            Q(user_ip_addr__contains=keyword) |
+            Q(global_ip__contains=keyword)
+        )
+    if form_name == 'lan_net' and keyword:
         res_list = res_list.filter(
             Q(ip__contains=keyword)
         )
-    elif form_name == 'wan_net' and keyword:
+    if form_name == 'wan_net' and keyword:
         res_list = res_list.filter(
             Q(ip__contains=keyword) |
             Q(bandwidth__contains=keyword) |
@@ -61,7 +67,7 @@ def list_device_info(request, form_name):
             Q(contact__contains=keyword) |
             Q(isp__contains=keyword)
         )
-    elif form_name == 'net_devices' and keyword:
+    if form_name == 'net_devices' and keyword:
         res_list = res_list.filter(
             Q(sn__contains=keyword) |
             Q(ip__contains=keyword) |

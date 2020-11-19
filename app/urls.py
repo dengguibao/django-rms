@@ -3,7 +3,7 @@ from django.urls import path
 from . import (
     global_views, user_views, server_views, perm_views, file_view,
     script_views, zabbix_info_view, cluster_view, summary_view, webshell_views,
-    report_views, network_device_views, monitor_views
+    report_views, network_views, monitor_views
 )
 
 urlpatterns = [
@@ -63,10 +63,10 @@ urlpatterns = [
     path('create-inspect/', report_views.create_inspect),
     path('list-inspect/', report_views.list_inspect),
 
-    path('get-device-list/<str:form_name>', network_device_views.list_device_info),
-    path('get-port-desc-list/<int:device_id>', network_device_views.get_port_desc_list),
-    path('update-port-desc', network_device_views.update_port_desc),
-    path('get-device-json-list/<int:branch_id>', network_device_views.get_device_list),
+    path('get-device-list/<str:form_name>', network_views.list_device_info),
+    path('get-port-desc-list/<int:device_id>', network_views.get_port_desc_list),
+    path('update-port-desc', network_views.update_port_desc),
+    path('get-device-json-list/<int:branch_id>', network_views.get_device_list),
 
     path('navigation/', global_views.navigation),
 
