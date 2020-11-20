@@ -4,39 +4,40 @@
 {% endblock %}
 {% block mainbody %}
 
-<fieldset class="layui-elem-field layui-field-title">
-    <legend>工作日报</legend>
-</fieldset>
 
-<form class="layui-form" action="">
+
+<form class="layui-form layui-form-pane" action="">
     {% csrf_token %}
     <input type="hidden" name="id" value="0" />
     <input type="hidden" name="owner_id" value="{{ request.user.id}}" />
-    <div class="layui-form-item layui-form-text">
-        <label class="layui-form-label">工作内容</label>
-        <div class="layui-input-block">
-            <textarea maxlength="200" lay-verify="required" placeholder="请输入工作内容，按回车键直接提交" class="layui-textarea" name="content"></textarea>
-        </div>
-    </div>
+    <fieldset class="layui-elem-field">
+        <legend>工作日报</legend>
+        <div class="layui-field-box">
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">工作内容</label>
+                <div class="layui-input-block">
+                    <textarea maxlength="200" lay-verify="required" placeholder="请输入工作内容，按回车键直接提交" class="layui-textarea" name="content"></textarea>
+                </div>
+            </div>
 
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">工作类别</label>
-            <div class="layui-input-inline" style="width: 150px;">
-                <select name="type" lay-verify="required">
-                    <option value="">请选择</option>
-                    <option value="桌面维护">桌面维护</option>
-                    <option value="系统维护">系统维护</option>
-                    <option value="服务器维护">服务器维护</option>
-                    <option value="网络维护">网络维护</option>
-                    <option value="视频广播">视频广播</option>
-                    <option value="重点工作">重点工作</option>
-                    <option value="其它工作">其它工作</option>
-                     <option value="工单处理">工单处理</option>
-                </select>
+            <div class="layui-form-item">
+                <label class="layui-form-label">工作类别</label>
+                <div class="layui-input-inline" style="width: 150px;">
+                    <select name="type" lay-verify="required">
+                        <option value="">请选择</option>
+                        <option value="桌面维护">桌面维护</option>
+                        <option value="系统维护">系统维护</option>
+                        <option value="服务器维护">服务器维护</option>
+                        <option value="网络维护">网络维护</option>
+                        <option value="视频广播">视频广播</option>
+                        <option value="重点工作">重点工作</option>
+                        <option value="其它工作">其它工作</option>
+                         <option value="工单处理">工单处理</option>
+                    </select>
+                </div>
             </div>
         </div>
-    </div>
+    </fieldset>
 
     <div class="layui-form-item">
         <div class="layui-input-block">

@@ -17,6 +17,9 @@
 ### 安装依懒  
 > pip install -r requirements.txt -i http://mirrors.163.com/pypi/simple --trusted-host mirrors.163.com  
 
+username:admin
+password:cmdadmin
+
 ### 安装uwsgi  
 > pip install uwsgi
 

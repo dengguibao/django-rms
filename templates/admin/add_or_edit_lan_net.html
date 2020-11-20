@@ -10,63 +10,53 @@
     </a>
 </p>
 
-<fieldset class="layui-elem-field layui-field-title">
-    <legend>内网信息</legend>
-</fieldset>
-
-<form class="layui-form">
+<form class="layui-form layui-form-pane">
     {% csrf_token %}
     <input type="hidden" id="id" name="id" value="{%if obj.id %}{{ obj.id }}{% else %}0{% endif %}" />
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">IP/掩码</label>
-            <div class="layui-input-inline" style="width: 200px;">
-                <input type="text" placeholder="172.31.1.0/24" maxlength="18" name="ip" value="{{obj.ip}}" lay-verify="required|subnet" autocomplete="off" class="layui-input">
+    <fieldset class="layui-elem-field">
+        <legend>内网信息</legend>
+        <div class="layui-field-box">
+            <div class="layui-form-item">
+                <label class="layui-form-label">IP/掩码</label>
+                <div class="layui-input-block">
+                    <input type="text" placeholder="172.31.1.0/24" maxlength="18" name="ip" value="{{obj.ip}}" lay-verify="required|subnet" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">网关</label>
+                <div class="layui-input-block">
+                    <input type="text" maxlength="15" name="gateway" placeholder="172.31.1.1" value="{{obj.gateway}}" lay-verify="required|ip" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">VLAN编号</label>
+                <div class="layui-input-inline" style="width: 100px;">
+                    <input type="text" placeholder="1001" maxlength="4" name="vlanid" value="{{obj.vlanid}}" lay-verify="required|vlan" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">用途</label>
+                <div class="layui-input-block">
+                    <input type="text" placeholder="办公" maxlength="50" name="function" value="{{obj.function}}" lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">地区</label>
+                <div class="layui-input-inline" style="width: 150px;">
+                    <select name="branch_id" id="branch_id" lay-verify="required" lay-search="">
+                      <option>直接选择或搜索</option>
+                        {% for i in branch_data %}
+                        <option {%ifequal obj.branch_id i.id %}selected=""{%endifequal%} value="{{i.id}}">{{i.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
         </div>
-    </div>
-
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">网关</label>
-            <div class="layui-input-inline" style="width: 200px;">
-                <input type="text" maxlength="15" name="gateway" placeholder="172.31.1.1" value="{{obj.gateway}}" lay-verify="required|ip" autocomplete="off" class="layui-input">
-            </div>
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">VLAN编号</label>
-            <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" placeholder="1001" maxlength="4" name="vlanid" value="{{obj.vlanid}}" lay-verify="required|vlan" autocomplete="off" class="layui-input">
-            </div>
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">用途</label>
-            <div class="layui-input-inline" style="width: 300px;">
-                <input type="text" placeholder="办公" maxlength="50" name="function" value="{{obj.function}}" lay-verify="required" autocomplete="off" class="layui-input">
-            </div>
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">地区</label>
-            <div class="layui-input-inline" style="width: 150px;">
-                <select name="branch_id" id="branch_id" lay-verify="required" lay-search="">
-                  <option>直接选择或搜索</option>
-                    {% for i in branch_data %}
-                    <option {%ifequal obj.branch_id i.id %}selected=""{%endifequal%} value="{{i.id}}">{{i.name}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
-    </div>
-
+    </fieldset>
     <br>
     <div class="layui-form-item">
         <div class="layui-input-block">

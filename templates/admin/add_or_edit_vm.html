@@ -28,7 +28,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">主机名</label>
                     <div class="layui-input-block">
-                        <input type="text" placeholder="vm host name" maxlength="50" name="vm_hostname"
+                        <input type="text" placeholder="Video-convert-01" maxlength="50" name="vm_hostname"
                                id="vm_hostname" value="{{ obj.vm_hostname }}" lay-verify="required"
                                autocomplete="off" class="layui-input">
                     </div>
@@ -151,7 +151,7 @@
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">操作系统</label>
-                        <div class="layui-input-inline" style="width: 130px;">
+                        <div class="layui-input-inline" style="width: 128px;">
                             <select name="vm_os" lay-verify="required">
                                 <option value="">请选择</option>
                                 <option {% ifequal obj.vm_os 'CentOS' %}selected="" {% endifequal %} value="CentOS">CentOS</option>

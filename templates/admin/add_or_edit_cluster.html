@@ -18,15 +18,15 @@
         <legend>集群信息</legend>
         <div class="layui-field-box">
             <div class="layui-form-item">
-                <label class="layui-form-label">集群名称</label>
+                <label class="layui-form-label">名称</label>
                 <div class="layui-input-inline" style="width: 300px;">
-                    <input type="text" placeholder="集群名称" maxlength="50" name="name"  value="{{ obj.name}}" lay-verify="required" autocomplete="off" class="layui-input">
+                    <input type="text" placeholder="名称" maxlength="50" name="name"  value="{{ obj.name}}" lay-verify="required" autocomplete="off" class="layui-input">
                 </div>
             </div>
 
             <div class="layui-form-item" style="display:{%if obj.id %}none{% else %}block{% endif %}">
                 <div class="layui-inline">
-                    <label class="layui-form-label">集群标记</label>
+                    <label class="layui-form-label">标签</label>
                     <div class="layui-input-inline">
                         <input type="text" maxlength="20" placeholder="cluster tag" name="tag" value="{{ obj.tag}}" lay-verify="required" autocomplete="off" class="layui-input">
                     </div>

@@ -10,101 +10,88 @@
     </a>
 </p>
 
-<fieldset class="layui-elem-field layui-field-title">
-    <legend>互联网信息</legend>
-</fieldset>
-
-<form class="layui-form">
+<form class="layui-form layui-form-pane">
     {% csrf_token %}
     <input type="hidden" id="id" name="id" value="{%if obj.id %}{{ obj.id }}{% else %}0{% endif %}" />
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">IP/掩码</label>
-            <div class="layui-input-inline" style="width: 200px;">
-                <input type="text" placeholder="222.1.1.5/24" maxlength="18" name="ip" value="{{obj.ip}}" lay-verify="required|subnet" autocomplete="off" class="layui-input">
+    <fieldset class="layui-elem-field">
+        <legend>互联网信息</legend>
+        <div class="layui-field-box">
+            <div class="layui-form-item">
+                <label class="layui-form-label">IP/掩码</label>
+                <div class="layui-input-block">
+                    <input type="text" placeholder="222.1.1.5/24" maxlength="18" name="ip"
+                           value="{{obj.ip}}" lay-verify="required|subnet" autocomplete="off" class="layui-input">
+                </div>
             </div>
-        </div>
-    </div>
 
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">网关</label>
-            <div class="layui-input-inline" style="width: 200px;">
-                <input type="text" maxlength="15" name="gateway" placeholder="222.1.1.1" value="{{obj.gateway}}" lay-verify="required|ip" autocomplete="off" class="layui-input">
+            <div class="layui-form-item">
+                <label class="layui-form-label">网关</label>
+                <div class="layui-input-block">
+                    <input type="text" maxlength="15" name="gateway" placeholder="222.1.1.1"
+                           value="{{obj.gateway}}" lay-verify="required|ip" autocomplete="off" class="layui-input">
+                </div>
             </div>
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">DNS1</label>
-            <div class="layui-input-inline" style="width: 200px;">
-                <input type="text" maxlength="15" name="dns1" placeholder="8.8.8.8" value="{{obj.dns1}}" lay-verify="required|ip" autocomplete="off" class="layui-input">
+            <div class="layui-form-item">
+                <label class="layui-form-label">DNS1</label>
+                <div class="layui-input-block">
+                    <input type="text" maxlength="15" name="dns1" placeholder="8.8.8.8"
+                           value="{{obj.dns1}}" lay-verify="required|ip" autocomplete="off" class="layui-input">
+                </div>
             </div>
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">DNS2</label>
-            <div class="layui-input-inline" style="width: 200px;">
-                <input type="text" maxlength="15" name="dns2" placeholder="8.8.4.4" value="{{obj.dns2}}" autocomplete="off" class="layui-input">
+            <div class="layui-form-item">
+                <label class="layui-form-label">DNS2</label>
+                <div class="layui-input-block">
+                    <input type="text" maxlength="15" name="dns2" placeholder="8.8.4.4"
+                           value="{{obj.dns2}}" autocomplete="off" class="layui-input">
+                </div>
             </div>
-        </div>
-    </div>
 
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">带宽</label>
-            <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" placeholder="100M" maxlength="5" lay-verify="required" name="bandwidth" value="{{obj.bandwidth}}" autocomplete="off" class="layui-input">
+            <div class="layui-form-item">
+                <label class="layui-form-label">带宽</label>
+                <div class="layui-input-inline">
+                    <input type="text" placeholder="100M" maxlength="5" lay-verify="required" name="bandwidth"
+                           value="{{obj.bandwidth}}" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">付费方式</label>
+                <div class="layui-input-inline">
+                    <input type="text" placeholder="1200/月" maxlength="10" name="rent"
+                           value="{{obj.rent}}" lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item" pane="">
+                <label class="layui-form-label">运营商</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="isp" value="移动" title="移动"{%ifequal obj.isp '移动'%} checked=""{%endifequal%}>
+                    <input type="radio" name="isp" value="联通" title="联通"{%ifequal obj.isp '联通'%} checked=""{%endifequal%}>
+                    <input type="radio" name="isp" value="电信" title="电信"{%ifequal obj.isp '电信'%} checked=""{%endifequal%}>
+                    <input type="radio" name="isp" value="网通" title="网通"{%ifequal obj.isp '网通'%} checked=""{%endifequal%}>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">联系人</label>
+                <div class="layui-input-inline" style="width: 300px;">
+                    <input type="text" placeholder="张三 15607830768" maxlength="50" name="contact" value="{{obj.contact}}" lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">地区</label>
+                <div class="layui-input-inline" style="width: 150px;">
+                    <select name="branch_id" lay-verify="required" id="branch_id" lay-search="">
+                      <option>直接选择或搜索</option>
+                        {% for i in branch_data %}
+                        <option {%ifequal obj.branch_id i.id %}selected=""{%endifequal%} value="{{i.id}}">{{i.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
         </div>
-    </div>
-
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">付费方式</label>
-            <div class="layui-input-inline" style="width: 100px;">
-                <input type="text" placeholder="1200/月" maxlength="10" name="rent" value="{{obj.rent}}" lay-verify="required" autocomplete="off" class="layui-input">
-            </div>
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">运营商</label>
-            <div class="layui-input-inline">
-                <input type="radio" name="isp" value="移动" title="移动"{%ifequal obj.isp '移动'%} checked=""{%endifequal%}>
-                <input type="radio" name="isp" value="联通" title="联通"{%ifequal obj.isp '联通'%} checked=""{%endifequal%}>
-                <input type="radio" name="isp" value="电信" title="电信"{%ifequal obj.isp '电信'%} checked=""{%endifequal%}>
-                <input type="radio" name="isp" value="网通" title="网通"{%ifequal obj.isp '网通'%} checked=""{%endifequal%}>
-            </div>
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">联系人</label>
-            <div class="layui-input-inline" style="width: 200px;">
-                <input type="text" placeholder="张三 15607830768" maxlength="50" name="contact" value="{{obj.contact}}" lay-verify="required" autocomplete="off" class="layui-input">
-            </div>
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">地区</label>
-            <div class="layui-input-inline" style="width: 150px;">
-                <select name="branch_id" lay-verify="required" id="branch_id" lay-search="">
-                  <option>直接选择或搜索</option>
-                    {% for i in branch_data %}
-                    <option {%ifequal obj.branch_id i.id %}selected=""{%endifequal%} value="{{i.id}}">{{i.name}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
-    </div>
-
-    <br>
+    </fieldset>
     <div class="layui-form-item">
         <div class="layui-input-block">
             <button type="submit" class="layui-btn" lay-submit="" lay-filter="submit">立即提交</button>

@@ -14,7 +14,7 @@
     <form class="layui-form layui-form-pane">
         {% csrf_token %}
         <fieldset class="layui-elem-field">
-            <legend>业务基本信息</legend>
+            <legend>业务基础信息</legend>
             <div class="layui-field-box">
                 <input type="hidden" id="obj_id" name="id" value="{% if obj.id %}{{ obj.id }}{% else %}0{% endif %}"/>
                 <div class="layui-form-item">

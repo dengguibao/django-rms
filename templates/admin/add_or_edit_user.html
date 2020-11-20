@@ -10,66 +10,48 @@
     </a>
 </p>
 
-<fieldset class="layui-elem-field layui-field-title">
-    <legend>用户</legend>
-</fieldset>
-
-<form class="layui-form" action="">
+<form class="layui-form layui-form-pane" action="">
     {% csrf_token %}
     <input type="hidden" name="id" id="user_id" value="{% if obj.id%}{{obj.id}}{%else%}0{% endif %}" />
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">用户名</label>
-            <div class="layui-input-inline">
-                <input type="text" maxlength="20" {%if obj.id %}disabled readonly{%endif%} value="{{obj.username}}" name="username" lay-verify="required|username" autocomplete="off"
-                    class="layui-input{%if obj.id %} layui-disabled{%endif%}">
+    <fieldset class="layui-elem-field">
+        <legend>用户信息</legend>
+        <div class="layui-field-box">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">用户名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" maxlength="20" {%if obj.id %}disabled readonly{%endif%}
+                               value="{{obj.username}}" name="username" lay-verify="required|username"
+                               autocomplete="off" class="layui-input{%if obj.id %} layui-disabled{%endif%}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">姓名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="first_name" value="{{obj.first_name}}" maxlength="15"
+                           lay-verify="required|username" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">邮箱</label>
+                <div class="layui-input-block">
+                    <input type="text" maxlength="80" value="{{obj.email}}" name="email"
+                           lay-verify="required|email" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item" pane="">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="is_active" value="1" {% ifequal obj.is_active 1%}checked{%endifequal%} title="启用">
+                    <input type="radio" name="is_active" value="0" {% ifequal obj.is_active 0%}checked{%endifequal%} title="禁用">
+                </div>
             </div>
         </div>
-    </div>
-
-<!--    <div class="layui-form-item" id="pwd_area">-->
-<!--        <div class="layui-inline">-->
-<!--            <label class="layui-form-label">密码</label>-->
-<!--            <div class="layui-input-inline">-->
-                <input type="hidden" id="password" name="password" value="">
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">姓名</label>
-            <div class="layui-input-inline">
-                <input type="text" name="first_name" value="{{obj.first_name}}" maxlength="15" lay-verify="required|username" autocomplete="off"
-                    class="layui-input">
-            </div>
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">邮箱</label>
-            <div class="layui-input-inline" style="width: 300px;">
-                <input type="text" maxlength="80" value="{{obj.email}}" name="email" lay-verify="required|email" autocomplete="off"
-                    class="layui-input">
-            </div>
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <label class="layui-form-label">状态</label>
-        <div class="layui-input-block">
-            <input type="radio" name="is_active" value="1" {% ifequal obj.is_active 1%}checked{%endifequal%} title="启用">
-            <input type="radio" name="is_active" value="0" {% ifequal obj.is_active 0%}checked{%endifequal%} title="禁用">
-        </div>
-    </div>
-
-<!--    <div class="layui-form-item" style="display:{%if obj.id%}block;{%else%}none{%endif%}">-->
-<!--        <label class="layui-form-label">设置密码</label>-->
-<!--        <div class="layui-input-block">-->
-<!--            <input type="checkbox" id="set_password" lay-skin="switch" lay-filter="set_password" lay-text="ON|OFF">-->
-<!--        </div>-->
-<!--    </div>-->
+    </fieldset>
 
     <div class="layui-form-item">
         <div class="layui-input-block">
