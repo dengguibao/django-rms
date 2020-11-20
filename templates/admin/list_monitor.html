@@ -40,16 +40,17 @@
 <div class="layui-form">
     <table class="layui-table" lay-size="sm">
         <colgroup>
+            <col width="60">
             <col width="80">
-            <col width="100">
-            <col width="200">
-            <col>
-            <col width="200">
-            <col width="100">
-            <col width="100">
-            <col width="100">
+            <col width="120">
             <col width="130">
-            <col width="120">            
+            <col>
+            <col width="90">
+            <col width="80">
+            <col width="80">
+            <col width="80">
+            <col width="90">
+
             <col width="150">
         </colgroup>
         <thead>
@@ -57,8 +58,8 @@
             <th>序号</th>
             <th>地区</th>
             <th>设备型号</th>
-            <th>备注（楼层信息）</th>
             <th>IP</th>
+            <th>备注（楼层信息）</th>
             <th>摄像头数量</th>
             <th>空闲通道</th>
             <th>剩余槽位</th>
@@ -73,8 +74,8 @@
             <td>{{ forloop.counter }}</td>
             <td>{{i.branch.name}}</td>
             <td>{{i.dev_model}}</td>
-            <td>{{i.desc}}</td>
             <td>{{i.ip}}</td>
+            <td>{{i.desc}}</td>
             <td>{{ i.camera_nums }}个</td>
             <td>{{ i.idle_channel }}个</td>
             <td>{{i.idle_slot}}个</td>

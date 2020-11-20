@@ -35,131 +35,113 @@
     </a>
 </p>
 
-<fieldset class="layui-elem-field layui-field-title">
-    <legend>基本信息</legend>
-</fieldset>
 
-<form class="layui-form">
+
+<form class="layui-form layui-form-pane">
     {% csrf_token %}
     <input type="hidden" id="monitor_id" name="id" value="{%if obj.id %}{{ obj.id }}{% else %}0{% endif %}" />
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">分公司名称</label>
-            <div class="layui-input-inline" style="width: 200px;">
-                <select name="branch_id" id="branch_id" lay-verify="required" lay-search="">
-                  <option></option>
-                    {% for i in branch_data %}
-                    <option {%ifequal obj.branch_id i.id %}selected=""{%endifequal%} value="{{i.id}}">{{i.name}}</option>
-                    {% endfor %}
-                </select>
+    <fieldset class="layui-elem-field">
+        <legend>基本信息</legend>
+        <div class="layui-field-box">
+            <div class="layui-form-item">
+                <label class="layui-form-label">分公司名称</label>
+                <div class="layui-input-inline" style="width: 200px;">
+                    <select name="branch_id" id="branch_id" lay-verify="required" lay-search="">
+                      <option></option>
+                        {% for i in branch_data %}
+                        <option {%ifequal obj.branch_id i.id %}selected=""{%endifequal%} value="{{i.id}}">{{i.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
-        </div>
-    </div>
 
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">设备型号</label>
-            <div class="layui-input-inline" style="width: 200px;">
-                <input type="text" placeholder="DS-8616N-I8" maxlength="50" name="dev_model"  value="{{ obj.dev_model}}" lay-verify="required" autocomplete="off" class="layui-input">
+            <div class="layui-form-item">
+                <label class="layui-form-label">设备型号</label>
+                <div class="layui-input-inline" style="width: 200px;">
+                    <input type="text" placeholder="DS-8616N-I8" maxlength="50" name="dev_model"
+                           value="{{ obj.dev_model}}" lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">IP</label>
+                <div class="layui-input-inline" style="width: 200px;">
+                    <input type="text" placeholder="10.18.121.130" maxlength="15" name="ip"
+                           value="{{ obj.ip}}" lay-verify="required|ip" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">摄像头数量</label>
+                <div class="layui-input-inline" style="width: 40px;">
+                    <input type="text" placeholder="12" maxlength="2" name="camera_nums"
+                           value="{{ obj.camera_nums}}" lay-verify="required|number" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">个</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">剩余通道数</label>
+                <div class="layui-input-inline" style="width: 40px;">
+                    <input type="text" placeholder="4" maxlength="2" name="idle_channel"
+                           value="{{ obj.idle_channel}}" lay-verify="required|number" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">个</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">硬盘容量</label>
+                <div class="layui-input-inline" style="width: 40px;">
+                    <input type="text" placeholder="8" maxlength="2" name="hdd"
+                           value="{{ obj.hdd}}" lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">T</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">闲置槽位</label>
+                <div class="layui-input-inline" style="width: 40px;">
+                    <input type="text" placeholder="3" maxlength="2" name="idle_slot"
+                           value="{{ obj.idle_slot}}" lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">个</div>
+            </div>
+            <div class="layui-form-item" pane="">
+                <label class="layui-form-label">存储三个月</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="storage" value="1" title="满足"{%ifequal obj.storage 1%} checked=""{%endifequal%}>
+                    <input type="radio" name="storage" value="0" title="不满足"{%ifequal obj.storage 0%} checked=""{%endifequal%}>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">备注</label>
+                <div class="layui-input-block">
+                    <input type="text" placeholder="备注" name="desc"
+                           value="{{ obj.desc}}" lay-verify="required" autocomplete="off" class="layui-input">
+{#                  <textarea class="layui-textarea" placeholder="请输入" name="desc">{{ obj.desc }}</textarea>#}
+                </div>
             </div>
         </div>
-    </div>
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">IP</label>
-            <div class="layui-input-inline" style="width: 200px;">
-                <input type="text" placeholder="10.18.121.130" maxlength="15" name="ip" value="{{ obj.ip}}" lay-verify="required|ip" autocomplete="off" class="layui-input">
-            </div>
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">摄像头数量</label>
-            <div class="layui-input-inline" style="width: 40px;">
-                <input type="text" placeholder="12" maxlength="2" name="camera_nums" value="{{ obj.camera_nums}}" lay-verify="required|number" autocomplete="off" class="layui-input">
-            </div>
-            <div class="layui-form-mid layui-word-aux">个</div>
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">剩余通道数</label>
-            <div class="layui-input-inline" style="width: 40px;">
-                <input type="text" placeholder="4" maxlength="2" name="idle_channel" value="{{ obj.idle_channel}}" lay-verify="required|number" autocomplete="off" class="layui-input">
-            </div>
-            <div class="layui-form-mid layui-word-aux">个</div>
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">硬盘容量</label>
-            <div class="layui-input-inline" style="width: 40px;">
-                <input type="text" placeholder="8" maxlength="2" name="hdd" value="{{ obj.hdd}}" lay-verify="required" autocomplete="off" class="layui-input">
-            </div>
-            <div class="layui-form-mid layui-word-aux">T</div>
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">闲置槽位</label>
-            <div class="layui-input-inline" style="width: 40px;">
-                <input type="text" placeholder="3" maxlength="2" name="idle_slot" value="{{ obj.idle_slot}}" lay-verify="required" autocomplete="off" class="layui-input">
-            </div>
-            <div class="layui-form-mid layui-word-aux">个</div>
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <div class="layui-inline">
-            <label class="layui-form-label">存储三个月</label>
-            <div class="layui-input-inline">
-                <input type="radio" name="storage" value="1" title="满足"{%ifequal obj.storage 1%} checked=""{%endifequal%}>
-                <input type="radio" name="storage" value="0" title="不满足"{%ifequal obj.storage 0%} checked=""{%endifequal%}>
-            </div>
-        </div>
-    </div>
-    <div class="layui-form-item layui-form-text">
-        <label class="layui-form-label">备注</label>
-        <div class="layui-input-block">
-          <textarea rows="4" cols="100" style="border:1px solid #ddd" placeholder="请输入" name="desc">{{ obj.desc }}</textarea>
-        </div>
-    </div>
-
-    <fieldset class="layui-elem-field layui-field-title">
-        <legend>账号授权</legend>
     </fieldset>
-    <div class="layui-form-item" style="margin-left:110px;">
-        <table id="monitor_account">
-            <thead>
-                <tr>
-                    <th>账号</th>
-                    <th>密码</th>
-                    <th>授权通道</th>
-                    <th>授权描述</th>
-                    <th style="width:70px">操作</th>
-                </tr>
-            </thead>
-            <tbody id="tbody">
-<!--                <tr>-->
-<!--                    <td><input type="text" name="username" /></td>-->
-<!--                    <td><input type="text" name="password" /></td>-->
-<!--                    <td><input type="text" name="channel" /></td>-->
-<!--                    <td><input type="text" name="desc" /></td>-->
-<!--                    <td><i class="layui-icon layui-icon-ok"/><i class="layui-icon layui-icon-delete"/></td>-->
-<!--                </tr>-->
-            </tbody>
-        </table>
 
-        <button type="button" class="layui-btn layui-btn-sm btn-add">
-            <i class="layui-icon">&#xe654;</i>
-        </button>
-    </div>
-
-<!--    <div class="layui-form-item">-->
-<!--        <label class="layui-form-label">备注</label>-->
-<!--        <div class="layui-input-block">-->
-<!--          <textarea placeholder="请输入内容" class="layui-textarea" name="desc">{{ obj.desc }}</textarea>-->
-<!--        </div>-->
-<!--    </div>-->
+    <fieldset class="layui-elem-field">
+        <legend>账号授权</legend>
+        <div class="layui-field-box">
+            <div class="layui-form-item">
+                <table id="monitor_account">
+                    <thead>
+                        <tr>
+                            <th>账号</th>
+                            <th>密码</th>
+                            <th>授权通道</th>
+                            <th>授权描述</th>
+                            <th style="width:70px">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    </tbody>
+                </table>
+                <button type="button" class="layui-btn layui-btn-sm btn-add">
+                    <i class="layui-icon">&#xe654;</i>
+                </button>
+            </div>
+        </div>
+    </fieldset>
     <div class="layui-form-item">
         <div class="layui-input-block">
             <input type="submit" class="layui-btn" lay-submit="" lay-filter="monitor_submit" value="提交">
