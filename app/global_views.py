@@ -21,12 +21,14 @@ def render_static_temp_view(request, temp_name):
     Returns:
         html -- html template
     """
+    view_subject = request.GET.get('view', 0)
     res_cluster = ClusterInfo.objects.filter(is_active=0)
     is_virt = request.GET.get('is_virt', 0)
     context = {
         'cluster_data': res_cluster.filter(is_virt=is_virt),
         'branch_data': Branch.objects.filter(isenable=1),
-        'args': request.GET.get('args', None)
+        'args': request.GET.get('args', None),
+        'view': view_subject
     }
     return render(request, 'admin/%s.html' % temp_name, context)
 
@@ -54,6 +56,8 @@ def render_edit_view(request, form_name, nid):
 
     temp_name = 'admin/add_or_edit_%s.html' % form_name
 
+    view_subject = request.GET.get('view', 0)
+
     edit_obj = get_object_or_404(models[form_name], id=nid)
 
     # get all foreigenkey data
@@ -64,7 +68,8 @@ def render_edit_view(request, form_name, nid):
         esxi_data = HostInfo.objects.filter(cluster_tag=edit_obj.host.cluster_tag)
 
     context = {
-        'obj': edit_obj
+        'obj': edit_obj,
+        'view': view_subject
     }
 
     extra_context = {

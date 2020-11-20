@@ -54,6 +54,11 @@
             <td>{%ifequal i.isenable 1%}启用{%else%}<span style="color:#f00">停用</span>{%endifequal%}</td>
             <td>
                 {% if perms.app.change_branch %}
+                <a href="/admin/edit/branch/{{i.id}}/?view=1" title="view" class="layui-btn layui-btn-primary layui-btn-xs">
+                    <i class="layui-icon layui-icon-list"></i>
+                </a>
+                {% endif %}
+                {% if perms.app.change_branch %}
                 <a href="/admin/edit/branch/{{i.id}}" title="edit" class="layui-btn layui-btn-primary layui-btn-xs">
                     <i class="layui-icon layui-icon-edit"></i>
                 </a>

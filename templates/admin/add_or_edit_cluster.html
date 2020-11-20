@@ -8,7 +8,7 @@
         <i class="layui-icon layui-btn-sm layui-icon-return" style="padding:0 2px 0 0"></i>返回
     </a>
 </p>
-
+<input type="hidden" id="view" value="{{ view }}">
 
 
 <form class="layui-form layui-form-pane" action="">
@@ -49,7 +49,7 @@
             </div>
         </div>
     </fieldset>
-    <div class="layui-form-item">
+    <div class="layui-form-item" {% ifnotequal view 0 %}style="display: none"{% endifnotequal %}>
         <div class="layui-input-block">
             <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
             <button type="reset" class="layui-btn layui-btn-primary">重置</button>
@@ -60,6 +60,10 @@
     layui.use(['form', 'layedit', 'laydate'], function () {
         var form = layui.form
             , layer = layui.layer;
+
+        if($('#view').val()!=0){
+            read_only()
+        }
 
         var cluster_id = $('#cluster_id').val()
         if (cluster_id != 0){

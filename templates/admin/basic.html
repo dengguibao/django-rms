@@ -209,7 +209,21 @@
         你好,{{request.user.first_name}},欢迎登陆
     </div>
 </div>
+<script type="application/x-javascript">
+    $("#menu").easymenu();
 
+    function read_only(){
+    $('input').each(function (i,ele) {
+        $(this).attr('disabled','')
+    })
+    $('select').each(function (i,ele) {
+        $(this).attr('disabled','')
+    })
+    $('textarea').each(function (i,ele) {
+        $(this).attr('disabled','')
+    })
+}
+</script>
 <div id="contentContainer">
     <blockquote class="layui-elem-quote layui-text" style="font-weight:bold;margin:15px 0px">
         {% block notice %}
@@ -218,8 +232,5 @@
     {% block mainbody %}
     {% endblock %}
 </div>
-<script type="application/x-javascript">
-    $("#menu").easymenu();
-</script>
 </body>
 </html>

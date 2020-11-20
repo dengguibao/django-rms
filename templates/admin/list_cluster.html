@@ -19,9 +19,9 @@
         <table class="layui-table" lay-size="sm">
             <colgroup>
 <!--                <col width="100">-->
+                <col width="150">
                 <col width="200">
-                <col width="300">
-                <col>
+                <col width="80">
                 <col>
                 <col width="200">
             </colgroup>
@@ -39,13 +39,16 @@
             {%for i in obj%}
             {%if i.is_virt == 1%}
             <tr id="id_{{i.id}}">
-<!--                <td>{{ forloop.counter }}</td>-->
                 <td>{{i.name}}</td>
                 <td>{{i.tag}}</td>
-                <!--<td>{{i.get_is_virt_display}}</td>-->
                 <td>{%ifequal i.is_active 0%}启用{%else%}<span style="color:#f00">禁用</span>{%endifequal%}</td>
                 <td>{{i.pub_date|date:'Y-m-d H:i:s'}}</td>
                 <td>
+                    {% if perms.app.view_clusterinfo %}
+                    <a href="/admin/edit/cluster/{{i.id}}/?view=1" title="view" class="layui-btn layui-btn-primary layui-btn-xs">
+                        <i class="layui-icon layui-icon-list"></i>
+                    </a>
+                    {% endif %}
                     {% if perms.app.change_clusterinfo %}
                     <a href="/admin/edit/cluster/{{i.id}}" title="edit" class="layui-btn layui-btn-primary layui-btn-xs">
                         <i class="layui-icon layui-icon-edit"></i>
@@ -71,9 +74,9 @@
         <table class="layui-table" lay-size="sm">
             <colgroup>
 <!--                <col width="100">-->
+                <col width="150">
                 <col width="200">
-                <col width="300">
-                <col>
+                <col width="80">
                 <col>
                 <col width="200">
             </colgroup>
@@ -81,10 +84,10 @@
         <tr>
 <!--            <th>序号</th>-->
             <th>集群名称</th>
-            <th>集群标记</th>
-            <th>状态</th>
-            <th>创建时间</th>
-            <th>操作</th>
+                <th>集群标记</th>
+                <th>状态</th>
+                <th>创建时间</th>
+                <th>操作</th>
         </tr>
         </thead>
         <tbody>

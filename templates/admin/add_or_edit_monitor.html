@@ -34,7 +34,7 @@
         <i class="layui-icon layui-btn-sm layui-icon-return" style="padding:0 2px 0 0"></i>返回
     </a>
 </p>
-
+<input type="hidden" id="view" value="{{ view }}"/>
 
 
 <form class="layui-form layui-form-pane">
@@ -142,7 +142,7 @@
             </div>
         </div>
     </fieldset>
-    <div class="layui-form-item">
+    <div class="layui-form-item" {% ifnotequal view 0 %}style="display: none"{% endifnotequal %}>
         <div class="layui-input-block">
             <input type="submit" class="layui-btn" lay-submit="" lay-filter="monitor_submit" value="提交">
             <input type="reset" class="layui-btn layui-btn-primary" value="重置">
@@ -157,6 +157,10 @@
 
         var id = $("#monitor_id").val()
         var account_index=0;
+
+        if($('#view').val()!=0){
+            read_only()
+        }
 
         form.verify({
             ip: function (value, item) {

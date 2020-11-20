@@ -49,7 +49,7 @@
             <col>
             <col>
             <col>
-            <col width="150">
+            <col width="180">
         </colgroup>
         <thead>
         <tr>
@@ -78,6 +78,11 @@
             <td>{{ i.isp }}</td>
             <td>{{ i.contact }}</td>
             <td>
+                {% if perms.app.view_wannetworks %}
+                <a href="/admin/edit/wan_net/{{i.id}}/?view=1" title="view" class="layui-btn layui-btn-primary layui-btn-xs">
+                    <i class="layui-icon layui-icon-list"></i>
+                </a>
+                {% endif %}
                 {% if perms.app.change_wannetworks %}
                 <a href="/admin/edit/wan_net/{{i.id}}" title="edit" class="layui-btn layui-btn-primary layui-btn-xs">
                     <i class="layui-icon layui-icon-edit"></i>

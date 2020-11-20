@@ -37,7 +37,7 @@
             <col>
             <col width="80">
             <col width="200">
-            <col width="150">
+            <col width="180">
         </colgroup>
         <thead>
         <tr>
@@ -66,6 +66,11 @@
             <td>{% ifequal i.is_active 'y' %}启用{% else %}<span style="color: red">停用</span>{% endifequal %}</td>
             <td>{{ i.pub_date|date:'Y-m-d H:i:s' }}</td>
             <td>
+                {% if perms.app.view_bankprivate %}
+                <a href="/admin/edit/bank_private/{{i.id}}/?view=1" title="view" class="layui-btn layui-btn-primary layui-btn-xs">
+                    <i class="layui-icon layui-icon-list"></i>
+                </a>
+                {% endif %}
                 {% if perms.app.change_bankprivate %}
                 <a href="/admin/edit/bank_private/{{i.id}}" title="edit" class="layui-btn layui-btn-primary layui-btn-xs">
                     <i class="layui-icon layui-icon-edit"></i>

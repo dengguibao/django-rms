@@ -10,7 +10,7 @@
         </a>
     </p>
 
-
+    <input type="hidden" id="view" value="{{ view }}"/>
     <input type="hidden" id="auth" value="{{ settings.ZABBIX_API.AUTH }}"/>
     <input type="hidden" id="url" value="{{ settings.ZABBIX_API.URL }}"/>
     <input type="hidden" id="temp_id" value="{{ settings.ZABBIX_API.TEMPLATE_ID }}"/>
@@ -200,7 +200,7 @@
         </fieldset>
 
 
-        <div class="layui-form-item">
+        <div class="layui-form-item" {% ifnotequal view 0 %}style="display: none"{% endifnotequal %}>
             <div class="layui-input-block">
                 <button type="submit" class="layui-btn" lay-submit="" lay-filter="submit">立即提交</button>
                 <button type="reset" class="layui-btn layui-btn-primary">重置</button>
@@ -223,6 +223,10 @@
                 jump_url = `${jump_url}&args=${cluster_tag},${host_name}`
             }
             $('.back-btn a').attr('href', jump_url)
+
+            if ($('#view').val() != 0){
+                read_only()
+            }
 
             form.on('submit(submit)', function (data) {
                 var submit_form_data = $("form").serializeArray();

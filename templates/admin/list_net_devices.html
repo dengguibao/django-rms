@@ -40,17 +40,17 @@
 <div class="layui-form">
     <table class="layui-table" lay-size="sm">
         <colgroup>
-            <col width="80">
+            <col width="60">
             <col width="100">
-            <col width="200">
+            <col width="180">
             <col width="80">
             <col width="80">
             <col width="80">
             <col>
-            <col width="200">
+            <col width="180">
             <col>
             <col width="120">            
-            <col width="150">
+            <col width="180">
         </colgroup>
         <thead>
         <tr>
@@ -81,6 +81,11 @@
             <td>{{i.version}}</td>
             <td>{{ i.ip }}</td>            
             <td>
+                {% if perms.app.view_networkdevices %}
+                <a href="/admin/edit/net_devices/{{i.id}}/?view=1" title="view" class="layui-btn layui-btn-primary layui-btn-xs">
+                    <i class="layui-icon layui-icon-list"></i>
+                </a>
+                {% endif %}
                 {% if perms.app.change_networkdevices %}
                 <a href="/admin/edit/net_devices/{{i.id}}" title="edit" class="layui-btn layui-btn-primary layui-btn-xs">
                     <i class="layui-icon layui-icon-edit"></i>

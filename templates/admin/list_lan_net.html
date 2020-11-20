@@ -40,9 +40,9 @@
         <colgroup>
             <col width="80">
             <col width="100">
-            <col>
-            <col>
-            <col>
+            <col width="150">
+            <col width="100">
+            <col width="80">
             <col>
             <col width="150">
         </colgroup>
@@ -67,6 +67,11 @@
             <td>{{ i.vlanid }}</td>
             <td>{{ i.function }}</td>
             <td>
+                {% if perms.app.view_lannetworks %}
+                <a href="/admin/edit/lan_net/{{i.id}}/?view=1" title="view" class="layui-btn layui-btn-primary layui-btn-xs">
+                    <i class="layui-icon layui-icon-list"></i>
+                </a>
+                {% endif %}
                 {% if perms.app.change_lannetworks %}
                 <a href="/admin/edit/lan_net/{{i.id}}" title="edit" class="layui-btn layui-btn-primary layui-btn-xs">
                     <i class="layui-icon layui-icon-edit"></i>

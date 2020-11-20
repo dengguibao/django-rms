@@ -89,6 +89,11 @@
 </script>
 <script type="text/html" id="toolbar">
   <div class="layui-btn-container">
+    {% if perms.app.view_vminfo %}
+    <a lay-event='view' title="view" class='layui-btn layui-btn-primary layui-btn-xs'>
+        <i class='layui-icon layui-icon-list'></i>
+    </a>
+    {% endif %}
     {% if perms.app.change_vminfo %}
     <a lay-event='edit' title="edit" class='layui-btn layui-btn-primary layui-btn-xs'>
         <i class='layui-icon layui-icon-edit'></i>
@@ -174,6 +179,9 @@
             var event=obj.event
             if (event == 'edit'){
                 window.location.href='/admin/edit/vm/'+obj.data.id
+            }
+            if (event == 'view'){
+                window.location.href='/admin/edit/vm/'+obj.data.id+'?view=1'
             }
             if (event == 'del'){
                 layer.confirm('真的删除行么', function(index){

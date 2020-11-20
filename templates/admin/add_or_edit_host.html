@@ -39,6 +39,7 @@
 </p>
 
 <input type="hidden" id="is_virt" value="{{ obj.cluster_tag.is_virt }}"/>
+<input type="hidden" id="view" value="{{ view }}"/>
 
 <form class="layui-form basicForm layui-form-pane" action="">
     {% csrf_token %}
@@ -113,19 +114,21 @@
                 <div class="layui-input-inline" style="width: 200px;">
                     <select name="cluster_tag_id" id="cluster_tag" lay-verify="required">
                         <option></option>
-                        <option disabled>虚拟化服务器</option>
+                        <optgroup label="虚拟化服务器">
                         {% for i in cluster_data %}
                             {% ifequal i.is_virt 1 %}
                                 <option {% ifequal obj.cluster_tag_id i.tag %} selected="" {%endifequal%} value="{{i.tag}}">{{i.name}}</option>
                             {% endifequal %}
                         {% endfor %}
+                        </optgroup>
 
-                        <option disabled>普通服务器</option>
+                        <optgroup label="普通服务器">
                         {% for i in cluster_data %}
                             {% ifequal i.is_virt 0 %}
                                 <option {% ifequal obj.cluster_tag_id i.tag %} selected="" {%endifequal%} value="{{i.tag}}">{{i.name}}</option>
                             {% endifequal %}
                         {% endfor %}
+                        </optgroup>
                     </select>
                 </div>
             </div>
@@ -402,7 +405,7 @@
             </div>
         </div>
     </fieldset>
-    <div class="layui-form-item">
+    <div class="layui-form-item" {% ifnotequal view 0 %}style="display: none"{% endifnotequal %}>
         <div class="layui-input-block">
             <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
             <button type="reset" class="layui-btn layui-btn-primary">重置</button>
@@ -455,6 +458,10 @@
         laydate.render({
             elem: '#end_svc_date'
         });
+
+        if ($('view').val() != 0){
+            read_only()
+        }
 
         host_id = $('#host_id').val()
         interface_index=0

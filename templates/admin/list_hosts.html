@@ -51,6 +51,11 @@
 </div>
 <script type="text/html" id="toolbar">
     <div class="layui-btn-container">
+        {% if perms.app.view_hostinfo %}
+        <a lay-event='view' title="view" class='layui-btn layui-btn-primary layui-btn-xs'>
+            <i class='layui-icon layui-icon-list'></i>
+        </a>
+        {% endif %}
         {% if perms.app.change_hostinfo %}
         <a lay-event='edit' title="edit" class='layui-btn layui-btn-primary layui-btn-xs'>
             <i class='layui-icon layui-icon-edit'></i>
@@ -166,7 +171,7 @@
                             return item.pub_date.substring(0, 10)
                         }
                     }
-                        , {rowspan: 2, title: '操作', align:'center', width: 150, fixed: 'right', toolbar: '#toolbar'}
+                        , {rowspan: 2, title: '操作', align:'center', width: 200, fixed: 'right', toolbar: '#toolbar'}
                     ],
                     // 二级菜单
                     [
@@ -242,6 +247,9 @@
 
         table.on('tool(dt)', function (obj) {
             var event = obj.event
+            if (event == 'view') {
+                window.location.href = '/admin/edit/host/' + obj.data.id+'?view=1'
+            }
             if (event == 'edit') {
                 window.location.href = '/admin/edit/host/' + obj.data.id
             }
