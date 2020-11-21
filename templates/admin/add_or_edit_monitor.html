@@ -46,7 +46,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">分公司名称</label>
                 <div class="layui-input-inline" style="width: 200px;">
-                    <select name="branch_id" id="branch_id" lay-verify="required" lay-search="">
+                    <select name="branch_id" id="branch_id" lay-verify="required" lay-search="" {% ifnotequal view 0 %}disabled{% endifnotequal %}>
                       <option></option>
                         {% for i in branch_data %}
                         <option {%ifequal obj.branch_id i.id %}selected=""{%endifequal%} value="{{i.id}}">{{i.name}}</option>
@@ -175,6 +175,10 @@
         });
 
         ok_or_delete_click = function(){
+            if ($('#view').val()!=0){
+                //layer.alert("查看模式，不允许修改")
+                return
+            }
             $(".layui-icon-delete").die("click").live('click',function(){
                 ele = $(this)
                 ele_id = ele.attr('id')
@@ -212,7 +216,6 @@
                 }else{
                     url = `/admin/update-monitor-account?id=${data_id}&username=${username}&password=${password}&channel=${channel}&desc=${desc}`
                 }
-                console.log(url)
                 $.getJSON(
                     url,
                     function(res){
@@ -270,7 +273,6 @@
         get_account_list()
 
         form.on('submit(monitor_submit)', function (data) {
-            console.log(data)
             url = '/admin/create-or-update/monitor/'
             $.ajax({
                 url: url,

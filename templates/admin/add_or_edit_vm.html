@@ -92,7 +92,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">集群</label>
                         <div class="layui-input-inline" style="width: 100px;">
-                            <select lay-filter="cluster_tag" id="cluster_tag" lay-verify="required">
+                            <select lay-filter="cluster_tag" id="cluster_tag" lay-verify="required" {% ifnotequal view 0 %}disabled{% endifnotequal %}>
                                 <option value="">请选择</option>
                                 {% for i in cluster_data %}
                                     <option {% ifequal obj.host.cluster_tag_id i.tag %}selected="" {% endifequal %}
@@ -105,7 +105,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">服务器</label>
                         <div class="layui-input-inline" style="width: 220px;">
-                            <select id="host_id" name="host_id" lay-verify="required">
+                            <select id="host_id" name="host_id" lay-verify="required" {% ifnotequal view 0 %}disabled{% endifnotequal %}>
                                 {% for i in esxi_list %}
                                     <option {% ifequal obj.host_id i.id %}selected="" {% endifequal %}
                                             value="{{ i.id }}">{{ i.hostname }}</option>
@@ -152,7 +152,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">操作系统</label>
                         <div class="layui-input-inline" style="width: 128px;">
-                            <select name="vm_os" lay-verify="required">
+                            <select name="vm_os" lay-verify="required" {% ifnotequal view 0 %}disabled{% endifnotequal %}>
                                 <option value="">请选择</option>
                                 <option {% ifequal obj.vm_os 'CentOS' %}selected="" {% endifequal %} value="CentOS">CentOS</option>
                                 <option {% ifequal obj.vm_os 'Ubuntu' %}selected="" {% endifequal %} value="Ubuntu">Ubuntu</option>

@@ -112,7 +112,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">类别</label>
                 <div class="layui-input-inline" style="width: 200px;">
-                    <select name="cluster_tag_id" id="cluster_tag" lay-verify="required">
+                    <select name="cluster_tag_id" id="cluster_tag" lay-verify="required" {% ifnotequal view 0 %}disabled{% endifnotequal %}>
                         <option></option>
                         <optgroup label="虚拟化服务器">
                         {% for i in cluster_data %}
@@ -136,7 +136,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">位置</label>
                 <div class="layui-input-inline" style="width: 100px;">
-                    <select name="dc_name" lay-verify="required">
+                    <select name="dc_name" lay-verify="required" {% ifnotequal view 0 %}disabled{% endifnotequal %}>
                         <option></option>
                         <option {% ifequal obj.dc_name '总部6F' %} selected=""{% endifequal %} value="总部6F">总部6F</option>
                         <option {% ifequal obj.dc_name '总部7F' %} selected=""{% endifequal %} value="总部7F">总部7F</option>
@@ -152,7 +152,7 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">机柜号</label>
                     <div class="layui-input-inline" style="width:100px">
-                        <select name="rack_num" lay-search="">
+                        <select name="rack_num" lay-search="" {% ifnotequal view 0 %}disabled{% endifnotequal %}>
                             <option value="">请选择</option>
                             <option {% ifequal obj.rack_num 'A' %} selected=""{% endifequal %} value="A">A</option>
                             <option {% ifequal obj.rack_num 'B' %} selected=""{% endifequal %} value="B">B</option>
@@ -459,7 +459,7 @@
             elem: '#end_svc_date'
         });
 
-        if ($('view').val() != 0){
+        if ($('#view').val() != 0){
             read_only()
         }
 
@@ -490,6 +490,10 @@
             })
 
             $(".layui-icon-delete").die('click').live('click',function(){
+                if ($('#view').val() != 0){
+                    return
+                }
+
                 ele = $(this)
                 console.log(ele.attr('id'))
                 ele_id = ele.attr('id')
@@ -510,6 +514,9 @@
             })
 
             $(".layui-icon-ok").die("click").live('click',function(){
+                if ($('#view').val() != 0){
+                    return
+                }
                 ele = $(this)
                 ele_id = ele.attr('id')
                 data_id = ele.attr('data_id')

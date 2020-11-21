@@ -60,7 +60,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">类型</label>
                 <div class="layui-input-inline" style="width: 100px;">
-                    <select lay-verify="required" name="device_type">
+                    <select lay-verify="required" name="device_type" {% ifnotequal view 0 %}disabled{% endifnotequal %}>
                         <option value="">请选择</option>
                         <option {% ifequal obj.device_type 'ICG'%} selected=""{%endifequal%}>ICG</option>
                         <option {% ifequal obj.device_type 'IPS'%} selected=""{%endifequal%}>IPS</option>
@@ -75,7 +75,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">品牌</label>
                 <div class="layui-input-inline" style="width: 100px;">
-                    <select lay-verify="required" name="brand">
+                    <select lay-verify="required" name="brand" {% ifnotequal view 0 %}disabled{% endifnotequal %}>
                         <option value="">请选择</option>
                         <option {% ifequal obj.brand '网康'%} selected=""{%endifequal%}>网康</option>
                         <option {% ifequal obj.brand 'H3C'%} selected=""{%endifequal%}>H3C</option>
@@ -88,7 +88,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">端口数量</label>
                 <div class="layui-input-inline" style="width: 100px;">
-                    <select lay-verify="required" id="portNum" lay-filter="portNum" name="port_num">
+                    <select lay-verify="required" id="portNum" lay-filter="portNum" name="port_num" {% ifnotequal view 0 %}disabled{% endifnotequal %}>
                         {% comment %} <option value="">请选择</option> {% endcomment %}
                         <option {% ifequal obj.port_num 8 %} selected=""{%endifequal%}>8</option>
                         <option {% ifequal obj.port_num 16 %} selected=""{%endifequal%}>16</option>
@@ -144,7 +144,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">地区</label>
                 <div class="layui-input-inline" style="width: 150px;">
-                    <select name="branch_id" id="branch_id" lay-verify="required" lay-search="">
+                    <select name="branch_id" id="branch_id" lay-verify="required" lay-search="" {% ifnotequal view 0 %}disabled{% endifnotequal %}>
                       <option>直接选择或搜索</option>
                         {% for i in branch_data %}
                         <option {%ifequal obj.branch_id i.id %}selected=""{%endifequal%} value="{{i.id}}">{{i.name}}</option>
@@ -210,6 +210,10 @@
 
         port_click_event = function(){
             $('.port').click(function(){
+                if ($('#view').val() != 0){
+                    layer.alert('查看模式不允许修改');
+                    return;
+                }
                 ele_obj=$(this)
                 layer.prompt(
                     {

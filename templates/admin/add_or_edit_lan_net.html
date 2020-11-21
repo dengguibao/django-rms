@@ -48,7 +48,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">地区</label>
                 <div class="layui-input-inline" style="width: 150px;">
-                    <select name="branch_id" id="branch_id" lay-verify="required" lay-search="">
+                    <select name="branch_id" id="branch_id" lay-verify="required" lay-search="" {% ifnotequal view 0 %}disabled{% endifnotequal %}>
                       <option>直接选择或搜索</option>
                         {% for i in branch_data %}
                         <option {%ifequal obj.branch_id i.id %}selected=""{%endifequal%} value="{{i.id}}">{{i.name}}</option>
