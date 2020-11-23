@@ -57,8 +57,8 @@
 
             <div class="layui-form-item">
                 <label class="layui-form-label">操作系统</label>
-                <div class="layui-input-inline" style="width: 100px;">
-                    <select name="os" lay-verify="required">
+                <div class="layui-input-inline">
+                    <select name="os" lay-verify="required" {% ifnotequal view 0 %}disabled{% endifnotequal %}>
                         <option value="">请选择</option>
                         <option {% ifequal obj.os 'CentOS' %}selected=""{% endifequal %} value="CentOS">CentOS</option>
                         <option {% ifequal obj.os 'Ubuntu' %}selected=""{% endifequal %} value="Ubuntu">Ubuntu</option>

@@ -1,5 +1,5 @@
 #! coding=utf-8
-#! /usr/bin/python
+# ! /usr/bin/python
 
 import telnetlib
 import time
@@ -31,7 +31,8 @@ class ConfigBackup:
         try:
             tn = telnetlib.Telnet(ipaddr, 23, 10)
         except Exception as e:
-            raise Exception('host:'+str(ipaddr)+', errorcode: '+str(e.args[0]))
+            raise Exception('host:' + str(ipaddr) + ', errorcode: ' + str(e.args[0]))
+            exit()
         if debug:
             tn.set_debuglevel(2)
         self.__tn = tn
@@ -56,12 +57,14 @@ class ConfigBackup:
         try:
             self.exec_cmd(b'display current-configuration')
         except Exception as e:
-            print (self._ip)
+            print self._ip
 
         time.sleep(.8)
         data = []
+
         def format_data(s):
             return s if sys.version[0] == '2' else s.decode('ascii')
+
         cache = format_data(tn.read_very_eager())
         while 'return' not in cache:
             tn.write(b' ')
@@ -70,11 +73,11 @@ class ConfigBackup:
             try:
                 cache = format_data(tn.read_very_eager())
             except Exception as e:
-                print (self._ip)
-            
+                print self._ip
+
         else:
-           data.append(cache)
-        tn.write(b'quit'+b'\r\n')
+            data.append(cache)
+        tn.write(b'quit' + b'\r\n')
         configData = ''.join(data)
         self._confData = configData
         return configData
@@ -106,10 +109,10 @@ class ConfigBackup:
                 '  '
             ]
             for s in ignore_str:
-                data = data.replace(s,'')
+                data = data.replace(s, '')
 
-            lines =  data.replace('\r\n','\n').split('\n')
-              
+            lines = data.replace('\r\n', '\n').split('\n')
+
             for line in lines:
                 if 'sysname' in line:
                     sysname = line.strip().split(' ')[1]
@@ -133,7 +136,7 @@ class ConfigBackup:
         if tn is None:
             return
         tn.read_until(prompt, 5)
-        tn.write(cmd+b'\r\n')
+        tn.write(cmd + b'\r\n')
         time.sleep(.2)
 
 
@@ -148,7 +151,7 @@ def AutoBackup(ip, user, pwd, debug=False):
     cb.login(user, pwd)
     # h3c device
     if user is None:
-        cb.exec_cmd(b' ',b'ENTER')
+        cb.exec_cmd(b' ', b'ENTER')
     cb.backup()
     print('%15s backup success' % ip)
     success_list.append(ip)
@@ -175,9 +178,9 @@ if __name__ == '__main__':
         exit()
 
     if '--debug' in sys.argv and '--user' in sys.argv and '--pass' in sys.argv:
-        ip = sys.argv[sys.argv.index('--debug')+1]
-        user = sys.argv[sys.argv.index('--user')+1]
-        pwd = sys.argv[sys.argv.index('--pass')+1]
+        ip = sys.argv[sys.argv.index('--debug') + 1]
+        user = sys.argv[sys.argv.index('--user') + 1]
+        pwd = sys.argv[sys.argv.index('--pass') + 1]
         debug = True
         AutoBackup(ip, user, pwd, debug)
         exit()
@@ -188,14 +191,14 @@ if __name__ == '__main__':
         for ip in i['hosts']:
             threading.Thread(target=AutoBackup, args=(ip, user, pwd,)).start()
         # th.start()
-        
-    xx=0
+
+    xx = 0
     while True:
-        if threading.activeCount() > 1:
-            # print('current running thread total is:'+str(threading.activeCount))
+        if threading.active_count() > 1:
+            print('current running thread total is: %s, running total time is %s' % (threading.active_count(), xx))
             time.sleep(.5)
-            xx =+ 1
-            if xx > 600:
+            xx += 0.5
+            if xx > 300:
                 break
         else:
             break
