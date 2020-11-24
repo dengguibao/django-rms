@@ -48,15 +48,17 @@ def render_edit_view(request, form_name, nid):
         
     if form_name not in form_name_list:
         return render(request, 'admin/error.html', {'error_msg': 'illegal request!'})
-
+    view_subject = request.GET.get('view', 0)
     perm_action_flag = 'change'
+
+    if view_subject == "1":
+        perm_action_flag = 'view'
+
     # permission verify
     if not request.user.has_perm(perms[form_name] % perm_action_flag):
         return render(request, 'admin/error.html')
 
     temp_name = 'admin/add_or_edit_%s.html' % form_name
-
-    view_subject = request.GET.get('view', 0)
 
     edit_obj = get_object_or_404(models[form_name], id=nid)
 
