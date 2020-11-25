@@ -112,7 +112,7 @@
             var is_virt = $(this).attr('tag');
             var url = "/admin/get-hosts-list/host/" + flag;
             //refresh_table(url, flag);
-            window.location.href=`/admin/render/list_hosts?is_virt=${is_virt}&args=${flag}`
+            window.location.href='/admin/render/list_hosts?is_virt='+is_virt+'&args='+flag
         })
 
 

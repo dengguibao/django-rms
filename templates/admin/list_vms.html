@@ -172,7 +172,9 @@
             $('#page').show()
             $('#host_list').show()
             $('#vms_list').removeAttr('style')
-            window.location.href=`/admin/render/list_vms/?is_virt=1&args=${flag},${flag}_all`
+            // window.location.href=`/admin/render/list_vms/?is_virt=1&args=${flag},${flag}_all`
+            window.location.href='/admin/render/list_vms/?is_virt=1&args='+flag+','+flag+'_all'
+
         })
 
         table.on('tool(dt)',function(obj){
@@ -328,7 +330,7 @@
                         jump: function (obj, first) {
                             //首次不执行
                             if (!first) {
-                                refresh_vms_table(`/admin/get-hosts-list/vm/${tab_act}/?page=` + obj.curr)
+                                refresh_vms_table('/admin/get-hosts-list/vm/'+tab_act+'/?page=' + obj.curr)
                             } 
                         }
                     });

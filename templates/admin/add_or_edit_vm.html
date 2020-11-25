@@ -214,13 +214,13 @@
 
             var vm_id = $('#vm_id').val()
             var back_btn_url = $('.back-btn a').attr('href');
-            var jump_url = `${back_btn_url}?is_virt=1`
+            var jump_url = back_btn_url+'?is_virt=1'
 
             if (vm_id != 0) {
                 var init_form_data = $("form").serializeArray();
                 var cluster_tag = $('#cluster_tag').val();
                 var host_name = $('#host_id').find("option:selected").text();
-                jump_url = `${jump_url}&args=${cluster_tag},${host_name}`
+                jump_url = jump_url+'&args='+cluster_tag+','+host_name
             }
             $('.back-btn a').attr('href', jump_url)
 

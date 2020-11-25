@@ -80,19 +80,19 @@
                 
                 doc_url = encodeURIComponent('http://ops.cs.hnyongxiong.com/admin/wopi/files/'+obj.id)
                 if (['doc', 'docx'].indexOf(obj.file_type) >=0 ){
-                    url = `${oos_server}/we/wordeditorframe.aspx?WOPISrc=${doc_url}`
+                    url = oos_server+'/we/wordeditorframe.aspx?WOPISrc='+doc_url
                 }
 
                 if (['pdf'].indexOf(obj.file_type) >=0 ){
-                    url = `${oos_server}/wv/WordViewer/request.pdf?type=accesspdf&WOPISrc=${doc_url}`
+                    url = oos_server+'/wv/WordViewer/request.pdf?type=accesspdf&WOPISrc='+doc_url
                 }
 
                 if (['xls', 'xlsx'].indexOf(obj.file_type) >=0 ){
-                    url = `${oos_server}/x/_layouts/xlviewerinternal.aspx?edit=1&WOPISrc=${doc_url}`
+                    url = oos_server+'/x/_layouts/xlviewerinternal.aspx?edit=1&WOPISrc='+doc_url
                 }
 
                 if (['ppt', 'pptx'].indexOf(obj.file_type) >=0 ){
-                    url = `${oos_server}/p/PowerPointFrame.aspx?PowerPointView=EditView&WOPISrc=${doc_url}`
+                    url = oos_server+'/p/PowerPointFrame.aspx?PowerPointView=EditView&WOPISrc='+doc_url
                 }
 
             }else{
