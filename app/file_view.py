@@ -2,7 +2,7 @@ import os
 import time
 import hashlib
 import base64
-from django.http import JsonResponse, FileResponse, Http404
+from django.http import JsonResponse, FileResponse, Http404, HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
@@ -397,6 +397,7 @@ def file_delete(request, fid):
 #             else:  
 #                 break
 
+
 @method_decorator(csrf_exempt, name='dispatch')
 def wopi_file_info(request, fid):
     res = FileInfo.objects.get(id=fid)
@@ -490,6 +491,9 @@ def file_download(request, fid):
         'json',
         'xml'
     ]
+    img_file_type = (
+        'png', 'gif', 'jpg', 'jpeg', 'bmp'
+    )
 
     file_path = '/'.join([settings.BASE_DIR, res.real_path, res.real_name])
     if not os.path.exists(file_path):
@@ -505,13 +509,14 @@ def file_download(request, fid):
                 'content': content
             })
 
-        # none text file
         file = open(file_path, 'rb')
         response = FileResponse(file)
-        # response = StreamingHttpResponse(file_iterator(file_path))
-        response['Content-Type'] = 'application/octet-stream'
-        response['Content-Disposition'] = 'attachment;filename="{}"'.format(
-            res.name.encode('utf-8').decode('ISO-8859-1'))
+        if res.file_type in img_file_type and down == 0:
+            pass
+        else:
+            response['Content-Type'] = 'application/octet-stream'
+            response['Content-Disposition'] = 'attachment;filename="{}"'.format(
+                res.name.encode('utf-8').decode('ISO-8859-1'))
         return response
     
     # office online server post content
@@ -543,12 +548,13 @@ def format_file_size(size):
         return '%.1f' % float(size / 1024 ** 3) + 'G'
     return 'n/a'
 
+
 def convert_file_size_to_num(file_size):
     if file_size == '0':
         return
     unit = file_size[-1]
     size = float(file_size[0:-1])
-    if unit in ['b','B']:
+    if unit in ['b', 'B']:
         return size
     if unit in ['k', 'K']:
         return size * 1024
