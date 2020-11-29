@@ -79,7 +79,7 @@
                 <div class="layui-form-item layui-form-text">
                     <label class="layui-form-label">防火墙 - NAT策略</label>
                     <div class="layui-input-block">
-                        <input type="text" placeholder="中信抢案" maxlength="50" name="firewall_policy_name"
+                        <input type="text" placeholder="中信抢案" name="firewall_policy_name"
                                value="{{ obj.firewall_policy_name }}" lay-verify="required" autocomplete="off"
                                class="layui-input">
                     </div>
@@ -104,7 +104,7 @@
                 <div class="layui-form-item layui-form-text">
                     <label class="layui-form-label">上网行为管理 - 应用控制策略</label>
                     <div class="layui-input-block">
-                        <input type="text" placeholder="中信抢案" maxlength="50" name="int_behave_control_policy"
+                        <input type="text" placeholder="中信抢案" name="int_behave_control_policy"
                                value="{{ obj.int_behave_control_policy }}" lay-verify="required" autocomplete="off"
                                class="layui-input">
                     </div>
@@ -113,7 +113,7 @@
                 <div class="layui-form-item layui-form-text">
                     <label class="layui-form-label">上网行为管理 - 上网审计策略</label>
                     <div class="layui-input-block">
-                        <input type="text" placeholder="中信抢案" maxlength="50" name="int_behave_audit_policy"
+                        <input type="text" placeholder="中信抢案" name="int_behave_audit_policy"
                                value="{{ obj.int_behave_audit_policy }}" lay-verify="required" autocomplete="off"
                                class="layui-input">
                     </div>
@@ -123,7 +123,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">备案公网IP</label>
                         <div class="layui-input-inline">
-                            <input type="text" placeholder="58.20.18.138" maxlength="50" name="global_ip"
+                            <input type="text" placeholder="58.20.18.138" maxlength="15" name="global_ip"
                                    value="{{ obj.global_ip }}" lay-verify="required|ip" autocomplete="off"
                                    class="layui-input">
                         </div>
