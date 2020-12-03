@@ -1,8 +1,7 @@
-from django.http import request
+# from django.http import request
 from django.shortcuts import render, HttpResponseRedirect, redirect
 from django.contrib.auth import authenticate, login
 from django.http import JsonResponse
-
 
 
 def index_view(request):
@@ -54,8 +53,8 @@ def user_login(request):
 
         if user and user.is_active:
             login(request, user)
-            request.session['username']=username
-            request.session['is_login']=True
+            request.session['username'] = username
+            request.session['is_login'] = True
             return JsonResponse({
                 'code': 0,
                 'msg': 'login success',

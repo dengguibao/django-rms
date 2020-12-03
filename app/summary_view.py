@@ -33,21 +33,24 @@ def list_summary_view(request):
 
     start_date = time.strftime('%Y-%m-01', time.localtime())
     end_date = time.strftime('%Y-%m-', time.localtime())
-    x=end_date.split('-')
+    x = end_date.split('-')
     end_date = end_date + '%s' % calendar.monthrange(
-        int(x[0]),int(x[1])
+        int(x[0]), int(x[1])
     )[1]
 
     fmt = '%Y-%m-%d'
-
     start_date_tuple = time.strptime(start_date, fmt)
     end_date_tuple = time.strptime(end_date, fmt)
 
     s_date = datetime.date(
-        start_date_tuple[0], start_date_tuple[1], start_date_tuple[2]
+        start_date_tuple[0],
+        start_date_tuple[1],
+        start_date_tuple[2]
     )
     e_date = datetime.date(
-        end_date_tuple[0], end_date_tuple[1], end_date_tuple[2]
+        end_date_tuple[0],
+        end_date_tuple[1],
+        end_date_tuple[2]
     )
 
     trouble_annotate_count = TroubleReport.objects.filter(

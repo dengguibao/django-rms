@@ -73,7 +73,7 @@ def report_manage(request):
     if end_date.strip()[-1] == '-':
         x = end_date.split('-')
         end_date = end_date + '%s' % calendar.monthrange(
-            int(x[0]),int(x[1])
+            int(x[0]), int(x[1])
         )[1]
     
     fmt = '%Y-%m-%d'
