@@ -1,11 +1,8 @@
 {% extends "admin/basic.html" %}
-{% block notice%}
-报告 / 添加 / 工作日报
-{% endblock %}
+
+{% block notice %}报告 / 添加 / 工作日报{% endblock %}
+
 {% block mainbody %}
-
-
-
 <form class="layui-form layui-form-pane" action="">
     {% csrf_token %}
     <input type="hidden" name="id" value="0" />
@@ -46,6 +43,9 @@
         </div>
     </div>
 </form>
+{% endblock %}
+
+{% block extrajs %}
 <script type="text/javascript">
     layui.use(['form', 'layer'], function () {
         var form = layui.form

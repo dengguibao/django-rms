@@ -1,16 +1,19 @@
 {% extends "admin/basic.html" %}
-{% block notice%}
-报告 / 故障报告管理
+
+{% block extrastyle %}
+    <style type="text/css">
+        .layui-form-item .layui-inline{
+            margin-right: 0;
+        }
+        .layui-form-item .layui-inline .layui-form-label{
+            padding:9px 10px;
+        }
+    </style>
 {% endblock %}
+
+{% block notice %}报告 / 故障报告管理{% endblock %}
+
 {% block mainbody %}
-<style type="text/css">
-    .layui-form-item .layui-inline{
-        margin-right: 0;
-    }
-    .layui-form-item .layui-inline .layui-form-label{
-        padding:9px 10px;
-    }
-</style>
 <fieldset class="layui-elem-field layui-field-title">
     <legend>故障报告</legend>
 </fieldset>
@@ -112,6 +115,9 @@
         </tbody>
     </table>
 </div>
+{% endblock %}
+
+{% block extrajs %}
 <script type="text/javascript">
     layui.use(['form', 'layer','laydate'], function () {
         var $ = layui.jquery,

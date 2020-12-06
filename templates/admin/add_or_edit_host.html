@@ -1,37 +1,40 @@
 {% extends "admin/basic.html" %}
-{% block notice%}
-服务器 / {%if obj.id %}编辑{% else %}新建{% endif %}服务器
+
+{% block extrastyle %}
+    <style type="text/css">
+        #network-interface{
+            border:1px solid #ddd;
+            width:50%
+        }
+        #network-interface thead tr th{
+            background:#eee;
+            height:30px;
+            padding:5px;
+            border:1px solid #ddd
+        }
+        #network-interface tbody tr td{
+            height:25px;
+            padding:5px;
+            border:1px solid #ddd
+        }
+        #network-interface tbody tr td i{
+            margin:0 5px;
+            cursor:pointer;
+        }
+        .layui-form-mid{width:10px;}
+        .btn-add{
+            margin-top:10px;
+        }
+        .if-access{
+            cursor:pointer;
+        }
+        .layui-layer-page .layui-layer-content {overflow: inherit !important;}
+    </style>
 {% endblock %}
+
+{% block notice %}服务器 / {%if obj.id %}编辑{% else %}新建{% endif %}服务器{% endblock %}
+
 {% block mainbody %}
-<style type="text/css">
-    #network-interface{
-        border:1px solid #ddd;
-        width:50%
-    }
-    #network-interface thead tr th{
-        background:#eee;
-        height:30px;
-        padding:5px;
-        border:1px solid #ddd
-    }
-    #network-interface tbody tr td{
-        height:25px;
-        padding:5px;
-        border:1px solid #ddd
-    }
-    #network-interface tbody tr td i{
-        margin:0 5px;
-        cursor:pointer;
-    }
-    .layui-form-mid{width:10px;}
-    .btn-add{
-        margin-top:10px;
-    }
-    .if-access{
-        cursor:pointer;
-    }
-    .layui-layer-page .layui-layer-content {overflow: inherit !important;}
-</style>
 <p class="back-btn">
     <a href="/admin/render/list_hosts" class="layui-btn layui-btn-sm layui-btn-danger">
         <i class="layui-icon layui-btn-sm layui-icon-return" style="padding:0 2px 0 0"></i>返回
@@ -445,6 +448,9 @@
         </table>
     </form>
 </div>
+{% endblock %}
+
+{% block extrajs %}
 <script type="text/javascript">
     layui.use(['form', 'layer', 'laydate'], function(){
         var form = layui.form,

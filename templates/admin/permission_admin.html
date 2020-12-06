@@ -1,17 +1,20 @@
-{%extends 'admin/basic.html'%}
-{% block notice%}
-用户管理 / 权限控制
+{% extends 'admin/basic.html' %}
+
+{% block extrastyle %}
+    <style>
+        ol li{
+            padding:3px 0;
+        }
+        .layui-disabled, .layui-disabled:hover{
+            color:#3e3e3e !important;
+            cursor: default !important;
+        }
+    </style>
 {% endblock %}
-{%block mainbody%}
-<style>
-    ol li{
-        padding:3px 0;
-    }
-    .layui-disabled, .layui-disabled:hover{
-        color:#3e3e3e !important;
-        cursor: default !important;
-    }    
-</style>
+
+{% block notice %}用户管理 / 权限控制{% endblock %}
+
+{% block mainbody %}
 <div style="padding: 20px; background-color: #F2F2F2;">
     <input type="hidden" id="user_id" value="{{user.id}}" />
     <div class="layui-row layui-col-space15">
@@ -38,6 +41,9 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extrajs %}
 <script type="text/javascript">
     layui.use(['tree', 'util'], function(){
     var tree = layui.tree
@@ -91,4 +97,4 @@
         )
     })
 </script>
-{%endblock%}
+{% endblock %}

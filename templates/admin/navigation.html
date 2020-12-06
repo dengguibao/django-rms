@@ -1,7 +1,65 @@
 {% extends "admin/basic.html" %}
-{% block notice%}
-网址导航
+
+{% block extrastyle %}
+    <style>
+        .test {
+            display:block;
+            float:left;
+            padding:20px;
+        }
+        .test li{
+            margin-right:40px;
+            margin-bottom:30px;
+            float:left;
+            display:block;
+        }
+        .test li a {
+            display: block;
+            font-size:14px;
+            {% comment %} border:1px solid #ddd; {% endcomment %}
+            {% comment %} background:#eee; {% endcomment %}
+            width:100px;
+            text-align:center;
+            padding-bottom:10px;
+        }
+        .test li a img{
+            margin:10px 0;
+            width: 60px;
+            height: 60px;
+        }
+
+        .test2 {
+            padding:20px;
+            padding-bottom:0px
+        }
+        .test2 li{
+            margin-right:10px;
+            float:left;
+        }
+        .test2 li a {
+            display: block;
+            font-size:14px;
+            height:35px;
+            {% comment %} border:1px solid #ddd; {% endcomment %}
+            {% comment %} background:#eee; {% endcomment %}
+            width:100px;
+            text-align:center;
+        }
+        .test2 li a:hover{
+            text-decoration:underline;
+            color:#c00
+        }
+        .layui-elem-field{
+            border-style:dashed;
+            border-left:none;
+            border-right:none;
+            border-bottom:none;
+        }
+    </style>
 {% endblock %}
+
+{% block notice%}网址导航{% endblock %}
+
 {% block mainbody %}
 <div>
     <fieldset class="layui-elem-field">
@@ -152,59 +210,4 @@
         </div>
     </fieldset>
 </div>
-<style>
-    .test {
-        display:block;
-        float:left;
-        padding:20px;
-    }
-    .test li{
-        margin-right:40px;
-        margin-bottom:30px;
-        float:left;
-        display:block;
-    }
-    .test li a {
-        display: block;
-        font-size:14px;
-        {% comment %} border:1px solid #ddd; {% endcomment %}
-        {% comment %} background:#eee; {% endcomment %}
-        width:100px;
-        text-align:center;
-        padding-bottom:10px;
-    }
-    .test li a img{
-        margin:10px 0;
-        width: 60px;
-        height: 60px;
-    }
-
-    .test2 {
-        padding:20px;
-        padding-bottom:0px
-    }
-    .test2 li{
-        margin-right:10px;
-        float:left;
-    }
-    .test2 li a {
-        display: block;
-        font-size:14px;
-        height:35px;
-        {% comment %} border:1px solid #ddd; {% endcomment %}
-        {% comment %} background:#eee; {% endcomment %}
-        width:100px;
-        text-align:center;
-    }
-    .test2 li a:hover{
-        text-decoration:underline;
-        color:#c00
-    }
-    .layui-elem-field{
-        border-style:dashed;
-        border-left:none;
-        border-right:none;
-        border-bottom:none;
-    }
-</style>
 {% endblock %}

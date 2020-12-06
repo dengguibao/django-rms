@@ -1,9 +1,8 @@
 {% extends "admin/basic.html" %}
-{% block notice%}
-网络 / 银行专线
-{% endblock %}
-{% block mainbody %}
 
+{% block notice%}网络 / 银行专线{% endblock %}
+
+{% block mainbody %}
 <fieldset class="layui-elem-field layui-field-title">
     <legend>业务列表</legend>
 </fieldset>
@@ -91,6 +90,9 @@
     </table>
     <div id="page"></div>
 </div>
+{% endblock %}
+
+{% block extrajs %}
 <script type="text/javascript">
     layui.use(['layer', 'form', 'laypage'], function () {
         var $ = layui.jquery,

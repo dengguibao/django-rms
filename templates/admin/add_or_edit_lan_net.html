@@ -1,9 +1,8 @@
 {% extends "admin/basic.html" %}
-{% block notice%}
-网络设备 / {%if branch.id %}编辑{% else %}新建{% endif %}网络信息
-{% endblock %}
-{% block mainbody %}
 
+{% block notice %}网络设备 / {%if branch.id %}编辑{% else %}新建{% endif %}网络信息{% endblock %}
+
+{% block mainbody %}
 <p class="back-btn">
     <a href="/admin/get-device-list/lan_net" class="layui-btn layui-btn-sm layui-btn-danger">
         <i class="layui-icon layui-btn-sm layui-icon-return" style="padding:0 2px 0 0"></i>返回
@@ -66,6 +65,9 @@
         </div>
     </div>
 </form>
+{% endblock %}
+
+{% block extrajs %}
 <script type="text/javascript">
     layui.use(['form', 'layer'], function () {
         var form = layui.form

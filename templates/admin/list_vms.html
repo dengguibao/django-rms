@@ -1,33 +1,36 @@
 {% extends "admin/basic.html" %}
-{% block notice%}
-服务器 / 虚拟机管理
-{% endblock %}
-{% block mainbody %}
-<style type="text/css">
-.layui-btn-xs{
-    line-height:20px;
-    height:20px;
-    padding:0 2px;
-}
-.zbx_st,.vm_host_tips{
-    {% ifequal settings.ZABBIX_API.STATUS 'enable'%}
-    cursor:pointer;
-    {%else%}
-    cursor:default;
-    {%endifequal%}
-}
 
-#vm_host_tips_content{
-    display:None
-}
-.layui-form-switch {
-    height: 18px;
-    line-height:18px;
-}
-.layui-form-switch i {
-    top:1px;
-}
-</style>
+{% block extrastyle %}
+    <style type="text/css">
+        .layui-btn-xs{
+            line-height:20px;
+            height:20px;
+            padding:0 2px;
+        }
+        .zbx_st,.vm_host_tips{
+            {% ifequal settings.ZABBIX_API.STATUS 'enable'%}
+            cursor:pointer;
+            {%else%}
+            cursor:default;
+            {%endifequal%}
+        }
+
+        #vm_host_tips_content{
+            display:None
+        }
+        .layui-form-switch {
+            height: 18px;
+            line-height:18px;
+        }
+        .layui-form-switch i {
+            top:1px;
+        }
+    </style>
+{% endblock %}
+
+{% block notice %}服务器 / 虚拟机管理{% endblock %}
+
+{% block mainbody %}
 <fieldset class="layui-elem-field layui-field-title">
     <legend>虚拟机列表</legend>
 </fieldset>
@@ -112,7 +115,9 @@
     </a>
   </div>
 </script>
+{% endblock %}
 
+{% block extrajs %}
 <script type="text/javascript">
     layui.use(['element', 'form', 'laypage', 'layer', 'table'], function () {
         var $ = layui.jquery,

@@ -12,11 +12,16 @@
     <link href="/static/admin/css/jquery.easymenu.css" rel="stylesheet"/>
     <!--fav icon-->
     <link href="/static/public/images/favicon.ico" rel="SHORTCUT ICON" type="image/x-icon">
+    {% block extrahead %}
+    {% endblock %}
     <style type="text/css">
         .layui-btn .layui-icon {
             margin-right: 0;
         }
     </style>
+    {% block extrastyle %}
+    {% endblock %}
+
 
 </head>
 
@@ -209,6 +214,14 @@
         你好,{{request.user.first_name}},欢迎登陆
     </div>
 </div>
+<div id="contentContainer">
+    <blockquote class="layui-elem-quote layui-text" style="font-weight:bold;margin:15px 0px">
+        {% block notice %}
+        {% endblock %}
+    </blockquote>
+    {% block mainbody %}
+    {% endblock %}
+</div>
 <script type="application/x-javascript">
     $("#menu").easymenu();
 
@@ -224,13 +237,7 @@
     })
 }
 </script>
-<div id="contentContainer">
-    <blockquote class="layui-elem-quote layui-text" style="font-weight:bold;margin:15px 0px">
-        {% block notice %}
-        {% endblock %}
-    </blockquote>
-    {% block mainbody %}
-    {% endblock %}
-</div>
+{% block extrajs %}
+{% endblock %}
 </body>
 </html>

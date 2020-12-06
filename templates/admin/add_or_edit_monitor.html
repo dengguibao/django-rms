@@ -1,41 +1,41 @@
 {% extends "admin/basic.html" %}
-{% block notice%}
-视频监控 / {%if obj.id %}编辑{% else %}新建{% endif %}监控主机信息
+
+{% block extrastyle %}
+    <style type="text/css">
+        #monitor_account{
+            border:1px solid #ddd;
+            width:50%
+        }
+        #monitor_account thead tr th{
+            background:#eee;
+            height:30px;
+            padding:5px;
+            border:1px solid #ddd
+        }
+        #monitor_account tbody tr td{
+            height:25px;
+            padding:5px;
+            border:1px solid #ddd
+        }
+        #monitor_account tbody tr td i{
+            margin:0 5px;
+            cursor:pointer;
+        }
+        .btn-add{
+            margin-top:10px;
+        }
+    </style>
 {% endblock %}
+
+{% block notice %}视频监控 / {%if obj.id %}编辑{% else %}新建{% endif %}监控主机信息{% endblock %}
+
 {% block mainbody %}
-
-<style type="text/css">
-    #monitor_account{
-        border:1px solid #ddd;
-        width:50%
-    }
-    #monitor_account thead tr th{
-        background:#eee;
-        height:30px;
-        padding:5px;
-        border:1px solid #ddd
-    }
-    #monitor_account tbody tr td{
-        height:25px;
-        padding:5px;
-        border:1px solid #ddd
-    }
-    #monitor_account tbody tr td i{
-        margin:0 5px;
-        cursor:pointer;
-    }
-    .btn-add{
-        margin-top:10px;
-    }
-</style>
-
 <p class="back-btn">
     <a href="/admin/list-monitor-info" class="layui-btn layui-btn-sm layui-btn-danger">
         <i class="layui-icon layui-btn-sm layui-icon-return" style="padding:0 2px 0 0"></i>返回
     </a>
 </p>
 <input type="hidden" id="view" value="{{ view }}"/>
-
 
 <form class="layui-form layui-form-pane">
     {% csrf_token %}
@@ -149,7 +149,9 @@
         </div>
     </div>
 </form>
+{% endblock %}
 
+{% block extrajs %}
 <script type="text/javascript">
     layui.use(['form', 'layedit'], function () {
         var form = layui.form

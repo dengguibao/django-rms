@@ -1,41 +1,12 @@
 {% extends "admin/basic.html" %}
-{% block notice%}
-网络设备 / 网络设备信息管理
-{% endblock %}
-{% block mainbody %}
 
+{% block notice %}网络设备 / 网络设备信息管理{% endblock %}
+
+{% block mainbody %}
 <fieldset class="layui-elem-field layui-field-title">
     <legend>网络设备列表</legend>
 </fieldset>
-
-<div class="layui-row">
-    <form class="layui-form" method="GET" action="/admin/get-device-list/net_devices">
-    {% comment %} {% csrf_token %} {% endcomment %}
-        <div class="layui-form-item" style="text-align: center;">
-            <div class="layui-inline">
-                <div class="layui-input-inline" style="width:100px">
-                    <select name="branch_id" lay-filter="branch" lay-verify="required" lay-search="">
-                        <option {% ifequal current_branch_id 0 %}selected=""{% endifequal %} value="0">全部</option>
-                        {% for i in branch_data %}
-                        <option {% ifequal current_branch_id i.id %}selected=""{% endifequal %} value="{{i.id}}">{{i.name}}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-            <div class="layui-inline">
-                <div class="layui-input-inline" style="width: 300px;">
-                    <input type="text" id="keyword" name="keyword" value="{%ifnotequal keyword None%}{{keyword}}{%endifnotequal%}" placeholder="请输入查询关键字" class="layui-input">
-                </div>
-                <button type="button" onclick="$(form).submit();" class="layui-btn" id="search" >
-                    <i class="layui-icon layui-icon-search"></i>查找
-                </button>
-                <a href="javascript:;" class="layui-btn btn-export">
-                    <i class="layui-icon layui-icon-download-circle"></i>导出
-                </a>
-            </div>
-        </div>
-    </form>
-</div>
+{% include 'admin/network_search.html' %}
 
 <div class="layui-form">
     <table class="layui-table" lay-size="sm">
@@ -108,6 +79,9 @@
     </table>
     <div id="page"></div>
 </div>
+{% endblock %}
+
+{% block extrajs %}
 <script type="text/javascript">
     layui.use(['layer', 'form', 'laypage'], function () {
         var $ = layui.jquery,

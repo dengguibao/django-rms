@@ -1,8 +1,6 @@
 {% extends "admin/basic.html" %}
-{% block notice%}
-服务器 / 服务器管理
-{% endblock %}
-{% block mainbody %}
+
+{% block extrastyle %}
 <style type="text/css">
     .layui-btn-xs {
         line-height: 20px;
@@ -16,6 +14,11 @@
         text-align: center;
     }
 </style>
+{% endblock %}
+
+{% block notice %}服务器 / 服务器管理{% endblock %}
+
+{% block mainbody %}
 <fieldset class="layui-elem-field layui-field-title">
     <legend>服务器列表</legend>
 </fieldset>
@@ -74,6 +77,9 @@
         </a>
     </div>
 </script>
+{% endblock %}
+
+{% block extrajs %}
 <script type="text/javascript">
     layui.use(['form', 'element', 'layer', 'laypage', 'table'], function () {
         var $ = layui.jquery,

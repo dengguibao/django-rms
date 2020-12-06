@@ -1,9 +1,19 @@
 {% extends "admin/basic.html" %}
-{% block notice%}
-服务器 / 配置备份
+{% block extrahead %}
+<link rel="stylesheet" href="/static/public/css/mouseRightMenu.css" />
 {% endblock %}
-{% block mainbody %}
 
+{% block extrastyle %}
+<style type="text/css">
+  .mr{cursor:pointer}
+  .folder{margin-left:10px;font-weight:bolder;cursor:pointer}
+  .file{cursor:pointer}
+</style>
+{% endblock %}
+
+{% block notice %}服务器 / 配置备份{% endblock %}
+
+{% block mainbody %}
 <fieldset class="layui-elem-field layui-field-title">
   <legend>配置备份</legend>
 </fieldset>
@@ -29,12 +39,9 @@
     </table>
   </div>
 </div>
-<link rel="stylesheet" href="/static/public/css/mouseRightMenu.css" />
-<style type="text/css">
-  .mr{cursor:pointer}
-  .folder{margin-left:10px;font-weight:bolder;cursor:pointer}
-  .file{cursor:pointer}
-</style>
+{% endblock %}
+
+{% block extrajs %}
 <script type="text/javascript">
 layui.config({base: '/static/public/layui-extends/'})
 layui.use('layer', function(){

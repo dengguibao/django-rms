@@ -1,9 +1,16 @@
 {% extends "admin/basic.html" %}
-{% block notice%}
-用户 / {% if obj.id%}编辑{%else%}新建{% endif %}用户
-{% endblock %}
-{% block mainbody %}
 
+{% block extrastyle %}
+    <style>
+        .layui-form-checkbox span {
+            height: auto;
+        }
+    </style>
+{% endblock %}
+
+{% block notice %}用户 / {% if obj.id %}编辑{% else %}新建{% endif %}用户{% endblock %}
+
+{% block mainbody %}
 <p class="back-btn">
     <a href="/admin/get-user-list" class="layui-btn layui-btn-sm layui-btn-danger">
         <i class="layui-icon layui-btn-sm layui-icon-return" style="padding:0 2px 0 0"></i>返回
@@ -60,11 +67,9 @@
         </div>
     </div>
 </form>
-<style>
-    .layui-form-checkbox span {
-    height: auto;
-    }
-</style>
+{% endblock %}
+
+{% block extrajs %}
 <script type="text/javascript">
     layui.use(['form','layer'], function () {
         var form = layui.form

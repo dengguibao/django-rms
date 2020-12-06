@@ -1,9 +1,8 @@
 {% extends "admin/basic.html" %}
-{% block notice%}
-组织架构 / 办公组织信息管理
-{% endblock %}
-{% block mainbody %}
 
+{% block notice %}组织架构 / 办公组织信息管理{% endblock %}
+
+{% block mainbody %}
 <fieldset class="layui-elem-field layui-field-title">
     <legend>办公组织信息列表</legend>
 </fieldset>
@@ -75,6 +74,9 @@
     </table>
 </div>
 <div id="page"></div>
+{% endblock %}
+
+{% block extrajs %}
 <script type="text/javascript">
     layui.use(['laypage', 'layer'], function () {
         var $ = layui.jquery,

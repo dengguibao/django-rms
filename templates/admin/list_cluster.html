@@ -1,13 +1,11 @@
 {% extends "admin/basic.html" %}
-{% block notice%}
-服务器 / 集群管理
-{% endblock %}
-{% block mainbody %}
 
+{% block notice %}服务器 / 集群管理{% endblock %}
+
+{% block mainbody %}
 <fieldset class="layui-elem-field layui-field-title">
     <legend>集群列表</legend>
 </fieldset>
-
 
 <div class="layui-tab layui-tab-brief">
   <ul class="layui-tab-title">
@@ -18,7 +16,6 @@
     <div class="layui-tab-item layui-show">
         <table class="layui-table" lay-size="sm">
             <colgroup>
-<!--                <col width="100">-->
                 <col width="150">
                 <col width="200">
                 <col width="80">
@@ -26,14 +23,13 @@
                 <col width="200">
             </colgroup>
             <thead>
-            <tr>
-<!--                <th>序号</th>-->
-                <th>集群名称</th>
-                <th>集群标记</th>
-                <th>状态</th>
-                <th>创建时间</th>
-                <th>操作</th>
-            </tr>
+                <tr>
+                    <th>集群名称</th>
+                    <th>集群标记</th>
+                    <th>状态</th>
+                    <th>创建时间</th>
+                    <th>操作</th>
+                </tr>
             </thead>
             <tbody>
             {%for i in obj%}
@@ -73,31 +69,27 @@
     <div class="layui-tab-item">
         <table class="layui-table" lay-size="sm">
             <colgroup>
-<!--                <col width="100">-->
                 <col width="150">
                 <col width="200">
                 <col width="80">
                 <col>
                 <col width="200">
             </colgroup>
-        <thead>
-        <tr>
-<!--            <th>序号</th>-->
-            <th>集群名称</th>
-                <th>集群标记</th>
-                <th>状态</th>
-                <th>创建时间</th>
-                <th>操作</th>
-        </tr>
-        </thead>
+            <thead>
+                <tr>
+                    <th>集群名称</th>
+                    <th>集群标记</th>
+                    <th>状态</th>
+                    <th>创建时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
         <tbody>
         {%for i in obj%}
         {%if i.is_virt == 0%}
         <tr id="id_{{i.id}}">
-<!--            <td>{{ forloop.counter }}</td>-->
             <td>{{i.name}}</td>
             <td>{{i.tag}}</td>
-            <!--<td>{{i.get_is_virt_display}}</td>-->
             <td>{%ifequal i.is_active 0%}启用{%else%}<span style="color:#f00">禁用</span>{%endifequal%}</td>
             <td>{{i.pub_date|date:'Y-m-d H:i:s'}}</td>
             <td>
@@ -124,7 +116,9 @@
     </div>
   </div>
 </div>
+{% endblock %}
 
+{% block extrajs %}
 <script type="text/javascript">
     layui.use(['layer', 'element'], function () {
         var $ = layui.jquery,

@@ -1,7 +1,7 @@
 {% extends "admin/basic.html" %}
-{% block notice%}
-服务器 / {%if obj.id %}编辑{% else %}新建{% endif %}集群
-{% endblock %}
+
+{% block notice%}服务器 / {%if obj.id %}编辑{% else %}新建{% endif %}集群{% endblock %}
+
 {% block mainbody %}
 <p class="back-btn">
     <a href="/admin/get-cluster-list" class="layui-btn layui-btn-sm layui-btn-danger">
@@ -56,6 +56,9 @@
         </div>
     </div>
 </form>
+{% endblock %}
+
+{% block extrajs %}
 <script type="text/javascript">
     layui.use(['form', 'layedit', 'laydate'], function () {
         var form = layui.form

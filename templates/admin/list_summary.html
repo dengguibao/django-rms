@@ -1,31 +1,37 @@
 {% extends "admin/basic.html" %}
-{% block notice%}
-首页
+
+{% block extrahead %}
+    <script src="/static/public/highcharts/highcharts.js"></script>
 {% endblock %}
+
+{% block extrastyle %}
+    <style type="text/css">
+        .layui-table th,.layui-table td {
+            text-align: center;
+         }
+        .layui-table th{
+            color:#000
+        }
+        caption{
+            text-align:left;
+            padding:20px 0;
+        }
+        .layui-col-md4{
+            padding:0 5px
+        }
+        .half{
+            float: left;
+            width: 49.5%
+        }
+        .bg1{background:#eee}
+        .bg2{background:#e2e2e2}
+        .bg3{background:#ddd}
+    </style>
+{% endblock %}
+
+{% block notice %}首页{% endblock %}
+
 {% block mainbody %}
-<style type="text/css">
-.layui-table th,.layui-table td {
-    text-align: center;
- }
-.layui-table th{
-    color:#000
-}
-caption{
-    text-align:left;
-    padding:20px 0;
-}
-.layui-col-md4{
-    padding:0 5px
-}
-.half{
-    float: left;
-    width: 49.5%
-}
-.bg1{background:#eee}
-.bg2{background:#e2e2e2}
-.bg3{background:#ddd}
-</style>
-<script src="/static/public/highcharts/highcharts.js"></script>
 <fieldset class="layui-elem-field layui-field-title">
     <legend>设备摘要</legend>
 </fieldset>
@@ -158,8 +164,9 @@ caption{
         </div>
     </div>
 </div>
+{% endblock %}
 
-
+{% block extrajs %}
 <script type="text/javascript">
 layui.use(['element', 'layer'], function(){
   var $ = layui.jquery

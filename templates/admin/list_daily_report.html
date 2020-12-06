@@ -1,8 +1,6 @@
 {% extends "admin/basic.html" %}
-{% block notice%}
-报告 / 日报管理
-{% endblock %}
-{% block mainbody %}
+
+{% block extrastyle %}
 <style type="text/css">
     .layui-form-item .layui-inline{
         margin-right: 0;
@@ -11,6 +9,11 @@
         padding:9px 10px;
     }
 </style>
+{% endblock %}
+
+{% block notice%}报告 / 日报管理{% endblock %}
+
+{% block mainbody %}
 <fieldset class="layui-elem-field layui-field-title">
     <legend>日报管理</legend>
 </fieldset>
@@ -54,21 +57,24 @@
         <div class="layui-inline">
             <label class="layui-form-label">开始时间</label>
             <div class="layui-input-inline" style="width:120px">
-                <input type="text" name="start_date" id="start_date" placeholder="2020-03-18" value="{{start_date}}" lay-verify="start_date" autocomplete="off" class="layui-input">
+                <input type="text" name="start_date" id="start_date" placeholder="2020-03-18" value="{{start_date}}"
+                       lay-verify="start_date" autocomplete="off" class="layui-input">
             </div>
         </div> 
         
         <div class="layui-inline">
             <label class="layui-form-label">结束时间</label>
             <div class="layui-input-inline" style="width:120px">
-                <input type="text" name="end_date" id="end_date" placeholder="2020-03-18" value="{{end_date}}" lay-verify="end_date" autocomplete="off" class="layui-input">
+                <input type="text" name="end_date" id="end_date" placeholder="2020-03-18" value="{{end_date}}"
+                       lay-verify="end_date" autocomplete="off" class="layui-input">
             </div>
         </div>
 
         <div class="layui-inline">
             <label class="layui-form-label">关键字</label>
             <div class="layui-input-inline">
-                <input type="text" id="keyword" name="keyword" value="{%ifnotequal keyword None%}{{keyword}}{%endifnotequal%}" placeholder="关键字" class="layui-input">
+                <input type="text" id="keyword" name="keyword" value="{%ifnotequal keyword None%}{{keyword}}{%endifnotequal%}"
+                       placeholder="关键字" class="layui-input">
             </div>
         </div>
 
@@ -114,6 +120,9 @@
         </tbody>
     </table>
 </div>
+{% endblock %}
+
+{% block extrajs %}
 <script type="text/javascript">
     layui.use(['form', 'layer','laydate'], function () {
         var $ = layui.jquery,

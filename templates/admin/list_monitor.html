@@ -1,9 +1,8 @@
 {% extends "admin/basic.html" %}
-{% block notice%}
-视频监控 / 监控主机
-{% endblock %}
-{% block mainbody %}
 
+{% block notice %}视频监控 / 监控主机{% endblock %}
+
+{% block mainbody %}
 <fieldset class="layui-elem-field layui-field-title">
     <legend>监控主机列表</legend>
 </fieldset>
@@ -108,6 +107,9 @@
     </table>
     <div id="page"></div>
 </div>
+{% endblock %}
+
+{% block extrajs %}
 <script type="text/javascript">
     layui.use(['layer', 'form', 'laypage'], function () {
         var $ = layui.jquery,

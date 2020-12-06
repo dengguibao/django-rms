@@ -1,9 +1,8 @@
 {% extends "admin/basic.html" %}
-{% block notice%}
-巡检值班 / 添加 / 巡检值班
-{% endblock %}
-{% block mainbody %}
 
+{% block notice %}巡检值班 / 添加 / 巡检值班{% endblock %}
+
+{% block mainbody %}
 <fieldset class="layui-elem-field layui-field-title">
     <legend>巡检值班</legend>
 </fieldset>
@@ -25,11 +24,13 @@
         </div>
     </div>
 </form>
+{% endblock %}
+
+{% block extrajs %}
 <script type="text/javascript">
     layui.use(['form', 'layer'], function () {
         var form = layui.form
             , layer = layui.layer;
-
 
         {% comment %} $('textarea').keypress(function (event) {
             if (event.keyCode == 13){

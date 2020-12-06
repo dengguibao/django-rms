@@ -1,4 +1,3 @@
-from app.file_view import file_download
 from django.urls import path
 from . import (
     global_views, user_views, server_views, perm_views, file_view,

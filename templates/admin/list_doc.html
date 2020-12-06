@@ -1,7 +1,33 @@
 {% extends "admin/basic.html" %}
-{% block notice%}
-文档 / 用户上传 
+
+{% block extrahead %}
+    <link rel="stylesheet" href="/static/public/css/mouseRightMenu.css"/>
 {% endblock %}
+
+{% block extrastyle %}
+    <style type="text/css">
+        .mr {
+            cursor: pointer
+        }
+
+        .layui-icon-file {
+            margin: 0 5px
+        }
+
+        .folder {
+            margin-left: 10px;
+            font-weight: bolder;
+            cursor: pointer
+        }
+
+        .upload_progress_box {
+            margin: 20px 10px
+        }
+    </style>
+{% endblock %}
+
+{% block notice %}文档 / 用户上传 {% endblock %}
+
 {% block mainbody %}
 
 <fieldset class="layui-elem-field layui-field-title">
@@ -36,26 +62,6 @@
         </table>
     </div>
 </div>
-<link rel="stylesheet" href="/static/public/css/mouseRightMenu.css"/>
-<style type="text/css">
-    .mr {
-        cursor: pointer
-    }
-
-    .layui-icon-file {
-        margin: 0 5px
-    }
-
-    .folder {
-        margin-left: 10px;
-        font-weight: bolder;
-        cursor: pointer
-    }
-
-    .upload_progress_box {
-        margin: 20px 10px
-    }
-</style>
 <!-- upload progress bar -->
 <div style="display:none" id="upload_percent_box">
     <div class="layui-progress layui-progress-big upload_progress_box" lay-showPercent="true"
@@ -63,6 +69,9 @@
         <div class="layui-progress-bar" lay-percent="0%"></div>
     </div>
 </div>
+{% endblock %}
+
+{% block extrajs %}
 <script type="text/javascript">
     layui.config({base: '/static/public/layui-extends/'})
     layui.use(['upload', 'element', 'layer', 'mouseRightMenu'], function () {

@@ -1,32 +1,34 @@
 {% extends "admin/basic.html" %}
-{% block notice%}
-网络设备 / {%if network_devices.id %}编辑{% else %}新建{% endif %}网络设备信息
-{% endblock %}
-{% block mainbody %}
 
+{% block extrastyle %}
 <style type="text/css">
-.devPort {
-    width:100%;
-}
-.devPort tr td {
-    border:1px solid #ddd;
-    height:35px;
-    text-align:center;
-}
-.devPort tr td i{
-    margin:0 4px;
-}
-.devPort tr td input{
-    border:1px solid #fff;
-    text-align:center;
-    cursor:pointer;
-    font-size:12px;
-}
-.devPort thead tr td{
-    background:#eee;
-}
+    .devPort {
+        width:100%;
+    }
+    .devPort tr td {
+        border:1px solid #ddd;
+        height:35px;
+        text-align:center;
+    }
+    .devPort tr td i{
+        margin:0 4px;
+    }
+    .devPort tr td input{
+        border:1px solid #fff;
+        text-align:center;
+        cursor:pointer;
+        font-size:12px;
+    }
+    .devPort thead tr td{
+        background:#eee;
+    }
 </style>
 
+{% endblock %}
+
+{% block notice %}网络设备 / {%if network_devices.id %}编辑{% else %}新建{% endif %}网络设备信息{% endblock %}
+
+{% block mainbody %}
 <p class="back-btn">
     <a href="/admin/get-device-list/net_devices" class="layui-btn layui-btn-sm layui-btn-danger">
         <i class="layui-icon layui-btn-sm layui-icon-return" style="padding:0 2px 0 0"></i>返回
@@ -161,6 +163,9 @@
         </div>
     </div>
 </form>
+{% endblock %}
+
+{% block extrajs %}
 <script type="text/javascript">
     layui.use(['form', 'layer'], function () {
         var form = layui.form
