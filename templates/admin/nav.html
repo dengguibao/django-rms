@@ -1,0 +1,184 @@
+<img src="/static/admin/img/logo.png" style="float:left;width:38px;height:38px;margin:12px" alt="logo"/>
+<ul id="menu">
+    <li><a href="/admin/index">首页</a></li>
+    <li>
+        <a href="javascript:;">报告</a>
+        <ul>
+            <li><a href="javascript:;">添加</a>
+                <ul>
+                    {% comment %} <li><a href="/admin/render/add_or_edit_inspection_order" title="巡检计划">巡检计划</a></li> {% endcomment %}
+                    {% if perms.app.add_dailyreport %}
+                        <li><a href="/admin/render/add_or_edit_daily_report" title="日报">工作日报</a></li>
+                    {% endif %}
+                    {% if perms.app.add_troublereport %}
+                        <li><a href="/admin/render/add_or_edit_trouble_report" title="故障报告">故障报告</a></li>
+                    {% endif %}
+                </ul>
+            </li>
+            {% comment %} <li><a href="/admin/list-inspect/" title="巡检计划">巡检计划</a></li> {% endcomment %}
+            {% if perms.app.view_dailyreport %}
+                <li><a href="/admin/list-report/?t=daily" title="list daily report">工作日报</a></li>
+            {% endif %}
+            {% if perms.app.view_troublereport %}
+                <li><a href="/admin/list-report/?t=trouble" title="list trouble report">故障报告</a></li>
+            {% endif %}
+        </ul>
+    </li>
+    <li>
+        <a href="javascript:;">组织架构</a>
+        <ul>
+            <li><a href="#">添加</a>
+                <ul>
+                    {% if perms.app.add_branch %}
+                        <li><a href="/admin/render/add_or_edit_branch" title="add branch">办公组织</a></li>
+                    {% endif %}
+
+                    {% if perms.auth.add_user %}
+                        <li><a href="/admin/render/add_or_edit_user" title="new user">新建用户</a></li>
+                    {% endif %}
+                </ul>
+            </li>
+            {% if perms.app.view_branch %}
+                <li><a href="/admin/get-device-list/branch" title="list branch">办公组织</a></li>
+            {% endif %}
+
+            {% if perms.auth.view_user %}
+                <li><a href="/admin/get-user-list" title="get user list">用户管理</a></li>
+            {% endif %}
+        </ul>
+    </li>
+    <li>
+        <a href="javascript:;">服务器</a>
+        <ul>
+            <li>
+                <a href="javascript:;">添加</a>
+                <ul>
+                    <li>
+                        <a href="javascript:;">虚拟化</a>
+                        <ul>
+                            <!--<li><a href="/admin/render/shell' %}" title="shell">shell</a></li>-->
+                            {% if perms.app.add_hostinfo %}
+                                <li><a href="/admin/render/add_or_edit_host?is_virt=1" title="add new host">宿主机</a></li>
+                            {% endif %}
+                            {% if perms.app.add_vminfo %}
+                                <li><a href="/admin/render/add_or_edit_vm?is_virt=1"
+                                       title="add new virtual mechine">虚拟机</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    {% if perms.app.add_clusterinfo %}
+                        <li><a href="/admin/render/add_or_edit_cluster" title="add cluster">集群</a></li>
+                    {% endif %}
+                    {% if perms.app.add_hostinfo %}
+                        <li><a href="/admin/render/add_or_edit_host?is_virt=0" title="add new host">普通服务器</a></li>
+                    {% endif %}
+                </ul>
+            </li>
+            {% if perms.app.view_clusterinfo %}
+                <li><a href="/admin/get-cluster-list" title="list cluster">集群</a></li>
+            {% endif %}
+
+            {% if perms.app.view_hostinfo %}
+                <li>
+                    <a href="javascript:;">服务器</a>
+                    <ul>
+                        <li><a href="/admin/render/list_hosts?is_virt=0" title="list hosts">普通服务器</a></li>
+                        <li><a href="/admin/render/list_hosts?is_virt=1" title="list hosts">虚拟化宿主机</a></li>
+                    </ul>
+
+                </li>
+            {% endif %}
+
+            {% if perms.app.view_vminfo %}
+                <li><a href="/admin/render/list_vms?is_virt=1" title="list vms">虚拟机</a></li>
+            {% endif %}
+            <li><a href="/admin/render/list_script" title="config backup">配置备份</a></li>
+        </ul>
+    </li>
+    <li>
+        <a href="javascript:;">网络</a>
+        <ul>
+            <li><a href="javascript:;">添加</a>
+                <ul>
+                    {% if perms.app.add_bankprivate %}
+                        <li><a href="/admin/render/add_or_edit_bank_private" title="add branch">银行专线</a></li>
+                    {% endif %}
+                    {% if perms.app.add_networkdevices %}
+                        <li><a href="/admin/render/add_or_edit_net_devices" title="add devices">网络设备</a></li>
+                    {% endif %}
+
+                    {% if perms.app.add_wannetworks %}
+                        <li><a href="/admin/render/add_or_edit_wan_net" title="add wan net">互联网信息</a></li>
+                    {% endif %}
+
+                    {% if perms.app.add_lannetworks %}
+                        <li><a href="/admin/render/add_or_edit_lan_net" title="add lan net">内网信息</a></li>
+                    {% endif %}
+                </ul>
+            </li>
+            {% comment %} <li><a href="/admin/render/list_script" title="list script">配置脚本</a></li> {% endcomment %}
+            {% comment %} {% if perms.app.view_branch %}
+                <li><a href="/admin/get-device-list/branch" title="list branch">办公组织</a></li>
+                {% endif %} {% endcomment %}
+            {% if perms.app.view_bankprivate %}
+                <li><a href="/admin/get-device-list/bank_private" title="list bank private">银行专线</a></li>
+            {% endif %}
+            {% if perms.app.view_networkdevices %}
+                <li><a href="/admin/get-device-list/net_devices" title="list network_devices">设备信息</a></li>
+            {% endif %}
+
+            {% if perms.app.view_wannetworks %}
+                <li><a href="/admin/get-device-list/wan_net" title="list wan net">互联网信息</a></li>
+            {% endif %}
+
+            {% if perms.app.view_lannetworks %}
+                <li><a href="/admin/get-device-list/lan_net" title="list lan net">内网信息</a></li>
+            {% endif %}
+        </ul>
+    </li>
+    <li>
+        <a href="javascript:;">视频监控</a>
+        <ul>
+            <li><a href="#">添加</a>
+                <ul>
+                    {% if perms.app.add_monitor %}
+                        <li><a href="/admin/render/add_or_edit_monitor">监控主机</a></li>
+                    {% endif %}
+                </ul>
+            </li>
+            {% if perms.app.view_monitor %}
+                <li><a href="/admin/list-monitor-info" title="list monitor host">监控主机</a></li>
+            {% endif %}
+        </ul>
+    </li>
+    <li>
+        <a href="/admin/render/list_doc">文档</a>
+        {% comment %} <ul>
+                <li><a href="/admin/render/list_doc" title="document manage">用户上传</a></li>
+            </ul> {% endcomment %}
+    </li>
+    <li>
+        <a href="/admin/list-inspect/">巡检值班</a>
+        <ul>
+            <li><a href="javascript:;">添加</a>
+                <ul>
+                    <li><a href="/admin/render/add_or_edit_inspection_order" title="巡检值班">巡检值班</a></li>
+                </ul>
+            </li>
+            <li><a href="/admin/list-inspect/" title="巡检值班">巡检值班</a></li>
+        </ul>
+    </li>
+    <li>
+        <a href="/admin/navigation/">网址导航</a>
+    </li>
+    <li>
+        <a href="javascript:;">我</a>
+        <ul>
+            <li><a href="/admin/render/user_change_password">修改密码</a></li>
+            <li><a href="/admin/user-logout">退出</a></li>
+        </ul>
+    </li>
+</ul>
+<div style="float:right;margin:20px 10px;color:#ddd">
+    你好,{{ request.user.first_name }},欢迎登陆
+</div>
