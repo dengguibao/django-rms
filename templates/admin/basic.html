@@ -26,9 +26,6 @@
 </head>
 
 <body>
-{% comment %}
-<div id="topContainer">运维信息管理平台</div>
-{% endcomment %}
 <div id="navMenu">
     <img src="/static/admin/img/logo.png" style="float:left;width:38px;height:38px;margin:12px" alt="logo"/>
     <ul id="menu">
@@ -226,16 +223,16 @@
     $("#menu").easymenu();
 
     function read_only(){
-    $('input').each(function (i,ele) {
-        $(this).attr('disabled','')
-    })
-    $('button').each(function (i,ele) {
-        $(this).attr('disabled','')
-    })
-    $('textarea').each(function (i,ele) {
-        $(this).attr('disabled','')
-    })
-}
+        $('input').each(function (i,ele) {
+            $(this).attr('disabled','')
+        })
+        $('button').each(function (i,ele) {
+            $(this).attr('disabled','')
+        })
+        $('textarea').each(function (i,ele) {
+            $(this).attr('disabled','')
+        })
+    }
 </script>
 {% block extrajs %}
 {% endblock %}

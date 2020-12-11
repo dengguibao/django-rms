@@ -192,11 +192,11 @@ def create_or_update(request, form_name):
     # according id defined action
     if nid == 0:
         act = 'create'
-        perm_action_flag = 'add'
+        # perm_action_flag = 'add'
         log_action_flag = ADDITION
     else:
         act = 'update'
-        perm_action_flag = 'change'
+        # perm_action_flag = 'change'
         log_action_flag = CHANGE
         log_object_id = nid
 

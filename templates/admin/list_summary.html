@@ -167,180 +167,217 @@
 {% endblock %}
 
 {% block extrajs %}
-<script type="text/javascript">
-layui.use(['element', 'layer'], function(){
-  var $ = layui.jquery
-  ,layer = layui.layer
-  ,element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+    <script type="text/javascript">
+        layui.use(['element', 'layer'], function(){
+            let $ = layui.jquery
+            ,layer = layui.layer
+            ,element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
 
-    var chart = null;
+            let chart = null;
 
+            element.on('tab(chart_type)', function () {
+                let chart_tag = $('.tab_virtual_server li.layui-this').attr('tag')
+                let chart_type = $(this).attr('tag');
 
-    $('.tab_virtual_server li').first().addClass('layui-this')
-    $('.tab_other li').first().addClass('layui-this')
+                let url = '';
+                let chart_style = '';
+                let chart_ele = 'chart_left'
 
-    let first_item = $('.tab_virtual_server li').first().attr('tag');
-    ajax_rend_chart('bar', '/admin/get-cluster-count-info/'+first_item, 'chart_left');
-    ajax_rend_chart('pie', '/admin/get-guarantee-info/__OTHER__','chart_right');
-
-
-    element.on('tab(chart_type)', function (data) {
-        let chart_tag = $('.tab_virtual_server li.layui-this').attr('tag')
-        let chart_type = $(this).attr('tag');
-        if (chart_type == 'vhost'){
-            ajax_rend_chart('bar', '/admin/get-cluster-count-info/'+chart_tag, 'chart_left');
-        }else{
-            ajax_rend_chart('pie', '/admin/get-guarantee-info/'+chart_tag, 'chart_left');
-        }
-    })
-
-    element.on('tab(tab_other)', function (data) {
-        let chart_tag = $(this).attr('tag');
-        if (chart_tag == 'NONE_VIRT_SERVER_COUNT'){
-            ajax_rend_chart('bar', '/admin/get-none-virt-server-count-info','chart_right');
-        }
-
-        if (chart_tag == '__OTHER__'){
-            ajax_rend_chart('pie', '/admin/get-guarantee-info/__OTHER__','chart_right');
-        }
-
-        if (chart_tag == "camera"){
-            ajax_rend_chart('pie', '/admin/get-camera-info/camera', 'chart_right');
-        }
-
-        if (chart_tag == "recorder"){
-            ajax_rend_chart('pie', '/admin/get-camera-info/recorder', 'chart_right');
-        }
-
-    })
-
-    element.on('tab(tab_virtual_server)', function (data) {
-        let char_tag = $(this).attr('tag');
-        $('.tab_virtual_server_chart_type li').first().click()
-        //ajax_rend_chart('bar', '/admin/get-cluster-count-info/'+char_tag, 'chart_left');
-
-    })
-
-    char=[$('#chart_pie'),$('#chart_bar')]
-    $.each(char,function(i,d){
-        d.mouseover(function(){
-            $(this).css('background','#f9f9f9');
-        });
-        d.mouseout(function(){
-            $(this).css('background','#fff');
-        })
-    })
-
-    function ajax_rend_chart(t, url, ele) {
-        $.getJSON(
-           url,
-           function(d){
-               if (d.code==0){
-                   if (d.data.length == 0){
-                       layer.msg('no data')
-                   }else{
-                       if (t == 'bar'){
-                           render_bar_chart(d, ele)
+                if (chart_type === 'vhost'){
+                    chart_style = 'bar';
+                    url = '/admin/get-cluster-count-info/'+chart_tag;
+                }else{
+                    chart_style = 'pie';
+                    url = '/admin/get-guarantee-info/'+chart_tag;
+                }
+                let data = $.getJSON(
+                   url,
+                   function(d){
+                       if (d.code === 0){
+                           if (d.data.length === 0){
+                               layer.msg('no data')
+                               return null
+                           }else{
+                               return d
+                           }
                        }else{
-                           render_pie_chart(d, ele)
-                       }                       
+                           alert(d.msg)
+                       }
+                   }
+                );
+                console.log(chart_tag, chart_style, chart_type, chart_ele)
+                $.when(data).done(function (data){
+                    if (data == null){
+                        return
                     }
-               }else{
-                   alert(d.msg)
-               }
-           } 
-        )
-    }
+                    console.log(chart_ele)
+                    if (chart_style === 'pie'){
+                        render_pie_chart(data, chart_ele)
+                    }else{
+                        render_bar_chart(data, chart_ele)
+                    }
+                })
+            })
 
-    function render_pie_chart(data, ele){
-        Highcharts.chart(ele, {
-                chart: {
-                    plotBackgroundColor: null,
-                    plotBorderWidth: null,
-                    plotShadow: false,
-                    type: 'pie',
-                    margin: 70,
-                    backgroundColor: 'rgba(0,0,0,0)'
-                },
-                title: {
-                    text: data.name
-                },
-                tooltip: {
-                    //pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-                    pointFormat: '{series.name}: <b>{point.y}</b>'
-                },
-                credits: {
-                    enabled: false//不显示LOGO
-                },
-                plotOptions: {
-                        pie: {
-                            allowPointSelect: true,
-                            cursor: 'pointer',
-                            showInLegend: false, // 显示图例
-                            dataLabels: {
-                                enabled: true, // 图表标签
-                                format: '<b>{point.name}</b>: {point.y}',
-                                style: {
-                                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+            element.on('tab(tab_other)', function () {
+                let chart_tag = $(this).attr('tag');
+
+                let chart_style = 'bar';
+                let url = '';
+                let chart_ele = "chart_right";
+
+                if (chart_tag === 'NONE_VIRT_SERVER_COUNT'){
+                    chart_style = 'bar';
+                    url = '/admin/get-none-virt-server-count-info';
+                }
+
+                if (chart_tag === '__OTHER__'){
+                    chart_style = 'pie';
+                    url = '/admin/get-guarantee-info/__OTHER__';
+                }
+
+                if (chart_tag === "camera"){
+                    chart_style = 'pie';
+                    url = '/admin/get-camera-info/camera';
+                }
+
+                if (chart_tag === "recorder"){
+                    chart_style = 'pie';
+                    url = '/admin/get-camera-info/recorder';
+                }
+
+                let data = $.getJSON(
+                   url,
+                   function(d){
+                       if (d.code === 0){
+                           if (d.data.length === 0){
+                               layer.msg('no data')
+                               return null
+                           }else{
+                               return d
+                           }
+                       }else{
+                           alert(d.msg)
+                       }
+                   }
+                );
+                console.log(chart_tag, chart_style, chart_ele)
+                $.when(data).done(function (data){
+                    if (data == null){
+                        return
+                    }
+                    //console.log(chart_ele)
+                    if (chart_style === 'pie'){
+                        render_pie_chart(data, chart_ele)
+                    }else{
+                        render_bar_chart(data, chart_ele)
+                    }
+                })
+            })
+
+            element.on('tab(tab_virtual_server)', function () {
+                $('.tab_virtual_server_chart_type li').first().click()
+            })
+
+            function render_pie_chart(data, ele){
+                Highcharts.chart(ele, {
+                        chart: {
+                            plotBackgroundColor: null,
+                            plotBorderWidth: null,
+                            plotShadow: false,
+                            type: 'pie',
+                            margin: 70,
+                            backgroundColor: 'rgba(0,0,0,0)'
+                        },
+                        title: {
+                            text: data.name
+                        },
+                        tooltip: {
+                            //pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                            pointFormat: '{series.name}: <b>{point.y}</b>'
+                        },
+                        credits: {
+                            enabled: false//不显示LOGO
+                        },
+                        plotOptions: {
+                                pie: {
+                                    allowPointSelect: true,
+                                    cursor: 'pointer',
+                                    showInLegend: false, // 显示图例
+                                    dataLabels: {
+                                        enabled: true, // 图表标签
+                                        format: '<b>{point.name}</b>: {point.y}',
+                                        style: {
+                                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                                        }
+                                    }
                                 }
+                        },
+                        series: [{
+                            name: 'Brands',
+                            colorByPoint: true,
+                            data: data.data,
+                        }]
+                });
+            }
+
+            function render_bar_chart(data, ele){
+                chart = Highcharts.chart(ele, {
+                    chart: {
+                        type: 'column',
+                        marginLeft: 150,
+                        marginRight: 100,
+                        backgroundColor: 'rgba(0,0,0,0)',
+                    },
+                    title: {
+                        text: data.name
+                    },
+                    credits: {
+                        enabled: false//不显示LOGO
+                    },
+                    xAxis: {
+                        type: 'category',
+                        labels: {
+                            rotation: -45  // 设置轴标签旋转角度
+                        }
+                    },
+                    yAxis: {
+                        min: 0,
+                        title: {
+                            text: '数量（台）'
+                        }
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    series: [
+                        {
+                            name: '总数量（台）',
+                            data: data.data,
+                            dataLabels: {
+                                enabled: true,
+                                rotation: -360, //数字旋转
+                                color: '#FFFFFF',
+                                align: 'center',
+                                format: '{point.y:.f}', // :.1f 为保留 1 位小数
+                                y: 20 // 柱状数字距离
                             }
                         }
-                },
-                series: [{
-                    name: 'Brands',
-                    colorByPoint: true,
-                    data: data.data,
-                }]
+                    ]
+                });
+            }
+
+            function init(){
+                let ele_l = $('.tab_virtual_server li').first()
+                let ele_r = $('.tab_other li').first()
+                ele_l.addClass('layui-this')
+                ele_r.addClass('layui-this')
+                ele_l.click()
+                ele_r.click()
+            }
+
+            init()
+
         });
-    }
-
-    function render_bar_chart(data, ele){
-        chart = Highcharts.chart(ele, {
-            chart: {
-                type: 'column',
-                marginLeft: 150,
-                marginRight: 100,
-                backgroundColor: 'rgba(0,0,0,0)',
-            },
-            title: {
-                text: data.name
-            },
-            credits: {
-                enabled: false//不显示LOGO
-            },
-            xAxis: {
-                type: 'category',
-                labels: {
-                    rotation: -45  // 设置轴标签旋转角度
-                }
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: '数量（台）'
-                }
-            },
-            legend: {
-                enabled: false
-            },
-            series: [
-                {
-                    name: '总数量（台）',
-                    data: data.data,
-                    dataLabels: {
-                        enabled: true,
-                        rotation: -360, //数字旋转
-                        color: '#FFFFFF',
-                        align: 'center',
-                        format: '{point.y:.f}', // :.1f 为保留 1 位小数
-                        y: 20 // 柱状数字距离
-                    }
-                }
-            ]
-        });
-    }
-
-});
-</script>
-
+    </script>
 {% endblock %}
