@@ -64,6 +64,7 @@ def upload_file(request):
             'real_path': real_path
         })
         if res:
+            print(time.time())
             return JsonResponse({
                 'code': 0,
                 'msg': 'upload success',
