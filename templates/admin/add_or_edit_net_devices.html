@@ -169,6 +169,7 @@
 <script type="text/javascript">
     layui.use(['form', 'layer'], function () {
         var form = layui.form
+            //, $ = layui.jquery
             , layer = layui.layer;
 
         if($('#view').val() != 0){
@@ -213,13 +214,13 @@
             return false;
         });
 
-        port_click_event = function(){
+        let port_click_event = function(){
             $('.port').click(function(){
                 if ($('#view').val() != 0){
                     layer.alert('查看模式不允许修改');
                     return;
                 }
-                ele_obj=$(this)
+                let ele_obj=$(this)
                 layer.prompt(
                     {
                         'title':'端口描述',
@@ -246,13 +247,13 @@
             })
         }
 
-        build_port_desc_talbe = function(data){
+        let build_port_desc_table = function(data){
             $('#port_desc').empty()
             $('#port_single').empty()
             $('#port_double').empty()
 
             let portTotal=data
-            n=1;
+            let n=1;
             while(n<=portTotal){
                 let cell_html=`<td><input type="text" id="port_index_${n}" name="port_index_${n}" class="port" value="${n}" readonly/></td>`
                 if (n%2==1){
@@ -271,7 +272,7 @@
             port_click_event()
         }
 
-        update_port_desc_table = function(){
+        let update_port_desc_table = function(){
             $.getJSON(
                 '/admin/get-port-desc-list/'+$('#network_devices_id').val(),
                 function(res){
@@ -287,7 +288,7 @@
         }
 
         form.on('select(portNum)',function(data){
-            build_port_desc_talbe(data.value)
+            build_port_desc_table(data.value)
             update_port_desc_table()
         })
 
@@ -303,11 +304,11 @@
             }
         });
 
-        url = '/admin/create-or-update/net_devices/?log=no'
+        let url = '/admin/create-or-update/net_devices/?log=no'
         
-        id = $('#network_devices_id').val()
-        portNum=$('#portNum').val()
-        build_port_desc_talbe(portNum)
+        let id = $('#network_devices_id').val()
+        let portNum=$('#portNum').val()
+        build_port_desc_table(portNum)
         if (id > 0){
             update_port_desc_table()
         }

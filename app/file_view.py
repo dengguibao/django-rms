@@ -75,7 +75,8 @@ def upload_file(request):
                     'real_name': real_name,
                     'real_path': real_path,
                     'pub_date': res.pub_date,
-                    'owner': user_obj.first_name,
+                    'username': user_obj.first_name,
+                    'owner_id': request.user.id,
                     'file_type': file_ext,
                 }
             })
@@ -221,11 +222,12 @@ def create_folder(request):
         })
     return JsonResponse({
         'code': 0,
-        'msg': 'success',
+        'msg': 'create folder success',
         'data': {
             'id': res.id,
             'path': res.path,
             'name': res.name,
+            'owner_id': request.user.id,
             'username': user.first_name,
             'pub_date': res.pub_date,
         }

@@ -36,11 +36,10 @@
 
 <div class="layui-upload">
     <input type="hidden" id="path" value="/">
-    <input type="hidden" id="owner" value="{{ user.id }}">
+    <input type="hidden" id="cur_user" tag="{{ request.user.is_superuser }}" value="{{ request.user.id }}">
     {% csrf_token %}
     <button type="button" class="layui-btn" id="btn_upload"><i class="layui-icon layui-icon-upload"></i>上传文件</button>
     <button type="button" class="layui-btn" style="margin-left:1px" id="btn_create_folder">新建文件夹</button>
-    <!--    <button type="button" class="layui-btn" id="btn_view_upload_progress">上传进度</button>-->
     <div class="layui-upload-list">
         <table class="layui-table" lay-skin="line">
             <thead>
@@ -74,20 +73,95 @@
 {% block extrajs %}
 <script type="text/javascript">
     layui.config({base: '/static/public/layui-extends/'})
-    layui.use(['upload', 'element', 'layer', 'mouseRightMenu'], function () {
-        var $ = layui.jquery
-            , element = layui.element
+    layui.use(['upload', 'element', 'layer', 'mouseRightMenu', 'laytpl'], function () {
+        let element = layui.element
+            , $ = layui.jquery
             , layer = layui.layer
+            , laytpl = layui.laytpl
             , mouseRightMenu = layui.mouseRightMenu
             , upload = layui.upload;
 
-        let build_href_link = function(obj){
+        laytpl.config({
+          open: '<%',
+          close: '%>'
+        });
+
+        let cur_user_id = $('#cur_user').val(),
+            is_superuser = $('#cur_user').attr('tag').toLowerCase()
+
+        let layer_progress_index = 0;
+
+        upload.render({ //允许上传的文件后缀
+            elem: '#btn_upload'
+            //,url: 'https://httpbin.org/post' //改成您自己的上传接口
+            , url: '/admin/upload-file'
+            , accept: 'file' //普通文件
+            , size: 102400
+            , data: {
+                'csrfmiddlewaretoken': function () {
+                    return $('[name="csrfmiddlewaretoken"]').val()
+                },
+                'path': function () {
+                    return $('#path').val()
+                }
+            }
+            , progress: function (n, elem) {
+                if (layer_progress_index === 0){
+                    show_upload_progress()
+                    //console.log(1)
+                }
+                let percent = n + '%' //获取进度百分比
+                element.progress('upload_percent', percent); //配合 layui 进度条元素使用
+            }
+            //,exts: 'zip|rar|7z' //只允许上传压缩文件
+            , done: function (res) {
+                if (res.code === 0) {
+                    //element.progress('upload_percent', '0%');
+                    //layer.close(layer_progress_index)
+                    //layer_progress_index = 0
+
+                    let tpl = $('#file-item')[0].innerHTML,
+                        url = build_href_link(res.data)
+                    res.data.url = url
+                    laytpl(tpl).render(res.data, function (html) {
+                        $('#file_list').append(html)
+                    })
+                    right_click_menu()
+                    layer.msg('上传成功');
+                }
+            }
+            , error: function () {
+            }
+        });
+
+        function show_upload_progress() {
+            if (layer_progress_index === 0){
+                layer_progress_index = layer.open({
+                    type: 1
+                    , minleft: 1000
+                    , id: 'upload_percent'
+                    , area: ['400px', '102px']
+                    , shade: 0
+                    , offset: 'rb'
+                    , title: '上传进度'
+                    , content: $('#upload_percent_box').html()
+                    , cancel: function (index) {
+                        console.log(index)
+                        layer.close(index)
+                        layer_progress_index = 0
+                    }
+                });
+            }
+            return null
+        }
+
+        function build_href_link(obj){
             let office_ext = ['xls', 'xlsx', 'doc', 'docx', 'pdf', 'ppt', 'pptx']
-            var url = ''
+            let url = ''
             if (office_ext.indexOf(obj.file_type) >=0){
-                oos_server = 'http://172.30.16.8'
-                
-                doc_url = encodeURIComponent('http://ops.cs.hnyongxiong.com/admin/wopi/files/'+obj.id)
+                let oos_server = 'http://172.30.16.8'
+
+                let doc_url = encodeURIComponent('http://ops.cs.hnyongxiong.com/admin/wopi/files/'+obj.id)
                 if (['doc', 'docx'].indexOf(obj.file_type) >=0 ){
                     url = oos_server+'/we/wordeditorframe.aspx?WOPISrc='+doc_url
                 }
@@ -110,116 +184,20 @@
             return url
         }
 
-        upload.render({ //允许上传的文件后缀
-            elem: '#btn_upload'
-            //,url: 'https://httpbin.org/post' //改成您自己的上传接口
-            , url: '/admin/upload-file'
-            , accept: 'file' //普通文件
-            , size: 102400
-            , data: {
-                'csrfmiddlewaretoken': function () {
-                    return $('[name="csrfmiddlewaretoken"]').val()
-                },
-                'path': function () {
-                    return $('#path').val()
-                }
-            }
-            , progress: function (n, elem) {
-                var percent = n + '%' //获取进度百分比
-                element.progress('upload_percent', percent); //配合 layui 进度条元素使用
-            }
-            //,exts: 'zip|rar|7z' //只允许上传压缩文件
-            , done: function (res) {
-                if (res.code == 0) {
-                    element.progress('upload_percent', '0%');
-                    layer.msg('上传成功');
-                    container = $('#file_list')
-                    url = build_href_link(res.data)
-                    append_str = '<tr id="tr' + res.data.id + '">' +
-                        '<td>' +
-                        '<a class="mr" tag="' + res.data.id + '" target="_blank" href="' + url + '">' +
-                        '<i class="layui-icon layui-icon-file"></i>' + res.data.name + '</a>' +
-                        '</td>' +
-                        '<td>' + res.data.owner + '</td>' +
-                        '<td>' + res.data.file_size + '</td>' +
-                        '<td>' + res.data.pub_date + '</td></tr>'
-                    container.append(append_str)
-                    refresh_right_click_menu()
-                }
-            }
-            , error: function () {
-            }
-        });
-
-        refresh_file_list()
-
-        $('#btn_create_folder').on('click', function () {
-            layer.prompt({title: '新建文件夹'}, function (val, index) {
-                if (val.length <= 0) {
-                    alert('目录名不能为空');
-                    return false;
-                } else if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(val)) {
-                    alert('目录名不能有特殊字符')
-                    return false;
-                }
-
-                $.ajax({
-                    url: '/admin/create-folder',
-                    type: 'post',
-                    data: {
-                        'name': val,
-                        'path': $('#path').val(),
-                        'csrfmiddlewaretoken': $('[name="csrfmiddlewaretoken"]').val()
-                    },
-                    success: function (d) {
-                        if (d.code == 0) {
-                            $('#folder_list').append('<tr id="tr' + d.data.id + '">' +
-                                '<td>' +
-                                '<a tag="' + d.data.id + '" class="folder mr">' + d.data.name + '</a>' +
-                                '</td>' +
-                                '<td>'+d.data.username+'</td>' +
-                                '<td>0B</td>' +
-                                '<td>'+d.data.pub_date+'</td>' +
-                                '</tr>')
-                            refresh_folder_click_event();
-                            refresh_right_click_menu();
-                        } else {
-                            layer.msg(d.msg);
-                        }
-                    }
-                });
-                layer.close(index);
-            });
-        })
-
-        // view upload progress
-        $('#btn_view_upload_progress').on('click', function () {
-            layer.open({
-                type: 1
-                , minleft: 1000
-                , id: 'upload_percent'
-                , area: ['400px', '102px']
-                , shade: 0
-                , offset: 'rb'
-                , title: '上传进度'
-                , content: $('#upload_percent_box').html()
-            });
-        })
-
-        function refresh_folder_click_event() {
+        function folder_click_event() {
             $('.folder').off('click').on('click', function () {
                 //alert($(this).text())
-                folder_name = $(this).text()
-                path = $('#path').val()
+                let folder_name = $(this).text()
+                let path = $('#path').val()
                 // 上级目录
                 // 最顶层目录直接点击无效
-                if (folder_name == '..' && path == '/') {
+                if (folder_name === '..' && path === '/') {
                     return false
                 }
-                if (folder_name == '..' && path != '/') {
-                    a = path.split('/')
-                    b = a.slice(0, a.length - 2)
-                    c = b.join('/')
+                if (folder_name === '..' && path !== '/') {
+                    let a = path.split('/')
+                    let b = a.slice(0, a.length - 2)
+                    let c = b.join('/')
                     if (c == '') {
                         $('#path').val('/')
                     } else {
@@ -228,35 +206,45 @@
                 } else {
                     $('#path').val(path + folder_name + '/')
                 }
-                refresh_file_list()
+                init()
             });
         }
 
-        function refresh_right_click_menu() {
+        function right_click_menu() {
             //右键监听
             $('.mr').unbind('contextmenu').bind("contextmenu", function (e) {
-                let data = {id: $(this).attr('tag'), class: $(this).attr('class'), text: $(this).text()}
+                let data = {id: $(this).attr('tag'), owner_id:$(this).attr('owner'), class: $(this).attr('class'), text: $(this).text().trim()}
                 //console.log(data)
                 let menu_data = [
-                    
-                    {'data': data, 'type': 2, 'title': '删除'},
                     //{'data': data, 'type': 5, 'title': '共享'},
                 ]
 
-                txt_file_type = [
+                if (data.owner_id === cur_user_id || is_superuser === 'true'){
+                    menu_data.unshift({'data': data, 'type': 2, 'title': '删除'},)
+                }
+
+                let txt_file_type = [
                     'md', 'yaml', 'yam', 'conf', 'log', 'txt', 'desktop', 'sh', 'py',
                     'php', 'js', 'css', 'html', 'htm', 'go', 'json', 'xml'
                 ]
 
-                if (data.class.indexOf('folder') == -1) {
-                    a = data.text.split('.')
-                    file_ext = a[a.length-1]
+                if (data.class.indexOf('folder') === -1) {
+                    let a = data.text.split('.')
+                    let file_ext = a[a.length-1]
+                    //console.log(a,file_ext)
                     if (txt_file_type.indexOf(file_ext) >= 0){
                         menu_data.unshift({'data': data, 'type': 3, 'title': '编辑'})
                     }
-                    menu_data.unshift({'data': data, 'type': 4, 'title': '重命名'})
-                    
+                    if (data.owner_id === cur_user_id || is_superuser === 'true'){
+                        menu_data.unshift({'data': data, 'type': 4, 'title': '重命名'})
+
+                    }
                     menu_data.unshift({'data': data, 'type': 1, 'title': '下载'})
+
+                }
+
+                if (menu_data.length < 1){
+                    return
                 }
 
                 mouseRightMenu.open(menu_data, false, function (d) {
@@ -300,7 +288,7 @@
                         layer.prompt({
                                 title: '重命名',
                                 success: function () {
-                                    f_name_array = old_filename.split('.')
+                                    let f_name_array = old_filename.split('.')
                                     if (f_name_array.length>1){
                                         f_name_array.pop()
                                     }
@@ -327,15 +315,15 @@
                                     },
                                     success: function (response) {
                                         if (response.code == 0) {
-                                            html_element = $('#tr' + d.data.id + ' td a')
+                                            let html_element = $('#tr' + d.data.id + ' td a')
                                             if (response.type == 0) {
                                                 $('#path').val(response.path)
                                                 html_element.text(response.name)
                                             } else {
                                                 html_element.html('<i class="layui-icon layui-icon-file"></i>'+response.name +'</a>');
                                             }
-                                            refresh_folder_click_event();
-                                            refresh_right_click_menu();
+                                            folder_click_event();
+                                            right_click_menu();
                                         } else {
                                             layer.msg(response.msg);
                                         }
@@ -359,7 +347,7 @@
             });
         }
 
-        function refresh_file_list() {
+        function init() {
             $('#file_list').empty();
             $('#folder_list').empty();
 
@@ -382,19 +370,15 @@
                     }
                 },
                 success: function (d) {
-                    if (d.code == 0) {
-                        $.each(d.data, function (i, field) {
+                    if (d.code === 0) {
+                        let tpl = $("#file-item")[0].innerHTML,
+                        div = $('#file_list');
+
+                        $.each(d.data,function (i,field) {
                             let url = build_href_link(field)
-                            let append_str = '<tr id="tr' + field.id + '">' +
-                                '<td>' +
-                                '<a tag="' + field.id + '" class="mr" target="_blank" href="' + url + '">' +
-                                '<i class="layui-icon layui-icon-file"></i>' + field.name +
-                                '</a>' +
-                                '</td>' +
-                                '<td>' + field.username + '</td>' +
-                                '<td>' + field.file_size + '</td>' +
-                                '<td>' + field.pub_date + '</td></tr>'
-                            $('#file_list').append(append_str)
+                            field.url = url
+                            let s = laytpl(tpl).render(field)
+                            div.append(s)
                         })
                     }
                 }
@@ -412,28 +396,50 @@
                     }
                 },
                 success: function (d) {
-                    if (d.code == 0) {
-                        $.each(d.data, function (i, field) {
-                            let append_str = '<tr id="tr' + field.id + '">' +
-                                '<td>' +
-                                '<a tag="' + field.id + '" class="mr folder">' + field.name + '</a>' +
-                                '</td>' +
-                                '<td>'+field.username+'</td>' +
-                                '<td>0B</td>' +
-                                '<td>'+field.pub_date+'</td>' +
-                                '</tr>'
-                            $('#folder_list').append(append_str);
+                    if (d.code === 0) {
+                        let tpl = $("#folder-item")[0].innerHTML,
+                            div = $('#folder_list');
+
+                        $.each(d.data,function (i,field) {
+                            let s = laytpl(tpl).render(field)
+                            div.append(s)
                         })
                     }
                 }
             })
 
             $.when(file, folder).done(function () {
-                refresh_folder_click_event();
-                refresh_right_click_menu();
+                folder_click_event();
+                right_click_menu();
             })
 
         }
+
+        init()
     });
+</script>
+
+ <script id="folder-item" type="text/html">
+    <tr id="tr<% d.id %>">
+        <td>
+            <a owner="<% d.owner_id %>" tag="<% d.id %>" class="mr folder"><% d.name %></a>
+        </td>
+        <td><% d.username %></td>
+        <td>0B</td>
+        <td><% d.pub_date %></td>
+    </tr>
+</script>
+
+<script id="file-item" type="text/html">
+    <tr id="tr<% d.id %>">
+        <td>
+            <a owner="<% d.owner_id %>" tag="<% d.id %>" class="mr" target="_blank" href="<% d.url %>">
+                <i class="layui-icon layui-icon-file"></i><% d.name %>
+            </a>
+        </td>
+        <td><% d.username %></td>
+        <td><% d.file_size %></td>
+        <td><% d.pub_date %></td>
+    </tr>
 </script>
 {% endblock %}
