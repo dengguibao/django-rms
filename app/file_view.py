@@ -31,7 +31,7 @@ def upload_file(request):
             os.makedirs(local_path)
 
         origin_file_obj = request.FILES.get('file')
-
+        print('---- receive start ----')
         path = request.POST.get('path', '/')
         file_type = 1
         real_path = os.path.join(UPLOAD_PATH, TODAY)
@@ -53,6 +53,7 @@ def upload_file(request):
         with open(new_file_path, 'wb') as f:
             for chunk in origin_file_obj.chunks():
                 f.write(chunk)
+        print('--- write end ----')
         user_obj = User.objects.get(id=request.user.id)
         res = FileInfo.objects.create(**{
             'name': name,
