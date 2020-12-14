@@ -111,6 +111,7 @@
                     show_upload_progress()
                     //console.log(1)
                 }
+                console.log(elem)
                 let percent = n + '%' //获取进度百分比
                 element.progress('upload_percent', percent); //配合 layui 进度条元素使用
             }
@@ -129,6 +130,7 @@
                     })
                     right_click_menu()
                     layer.msg('上传成功');
+                    layer.close(layer_progress_index)
                 }
             }
             , error: function () {
