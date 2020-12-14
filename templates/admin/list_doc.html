@@ -40,6 +40,7 @@
     {% csrf_token %}
     <button type="button" class="layui-btn" id="btn_upload"><i class="layui-icon layui-icon-upload"></i>上传文件</button>
     <button type="button" class="layui-btn" style="margin-left:1px" id="btn_create_folder">新建文件夹</button>
+{#    <button type="button" class="layui-btn" id="btn_view_upload_progress">上传进度</button>#}
     <div class="layui-upload-list">
         <table class="layui-table" lay-skin="line">
             <thead>
@@ -133,6 +134,61 @@
             , error: function () {
             }
         });
+
+        $('#btn_create_folder').on('click', function () {
+            layer.prompt({title: '新建文件夹'}, function (val, index) {
+                if (val.length <= 0) {
+                    alert('目录名不能为空');
+                    return false;
+                } else if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(val)) {
+                    alert('目录名不能有特殊字符')
+                    return false;
+                }
+
+                $.ajax({
+                    url: '/admin/create-folder',
+                    type: 'post',
+                    data: {
+                        'name': val,
+                        'path': $('#path').val(),
+                        'csrfmiddlewaretoken': $('[name="csrfmiddlewaretoken"]').val()
+                    },
+                    success: function (d) {
+                        if (d.code === 0) {
+                            let tpl = $('#folder-item')[0].innerHTML
+                            laytpl(tpl).render(d.data,function (html) {
+                                $('#folder_list').append(html)
+                            })
+                            folder_click_event();
+                            right_click_menu();
+                        } else {
+                            layer.msg(d.msg);
+                        }
+                    }
+                });
+                layer.close(index);
+            });
+        })
+
+        // view upload progress
+        {#$('#btn_view_upload_progress').on('click', function () {#}
+        {#    layer_progress_index = layer.open({#}
+        {#        type: 1#}
+        {#        , minleft: 1000#}
+        {#        , id: 'upload_percent'#}
+        {#        , area: ['400px', '102px']#}
+        {#        , shade: 0#}
+        {#        , offset: 'rb'#}
+        {#        , title: '上传进度'#}
+        {#        , content: $('#upload_percent_box').html()#}
+        {#        , cancel: function (index) {#}
+        {#            //console.log(index)#}
+        {#            layer.close(index)#}
+        {#            layer_progress_index = 0#}
+        {#        }#}
+        {#    });#}
+        {#    //console.log(layer_progress_index)#}
+        {# })#}
 
         function show_upload_progress() {
             if (layer_progress_index === 0){
