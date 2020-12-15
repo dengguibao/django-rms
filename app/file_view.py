@@ -24,7 +24,7 @@ def upload_file(request):
     Returns:
         json -- file upload result object
     """
-    print(time.time())
+    print('-- in--- %s' % time.time())
     if request.method == 'POST':
         local_path = os.path.join(settings.BASE_DIR, UPLOAD_PATH, TODAY)
         if os.path.exists(local_path) is False:
@@ -47,16 +47,18 @@ def upload_file(request):
         # new file path
         new_file_path = os.path.join(
             settings.BASE_DIR, UPLOAD_PATH, TODAY, real_name)
-
+        print('-- ready write --- %s' % time.time())
         with open(new_file_path, 'wb') as f:
             for chunk in origin_file_obj.chunks():
                 f.write(chunk)
+        print('-- write end --- %s' % time.time())
         # print('--- write end ----')
-        user_obj = User.objects.get(id=request.user.id)
+        # user_obj = User.objects.get(id=request.user.id)
+        # print(request.user)
         res = FileInfo.objects.create(**{
             'name': name,
             'path': path,
-            'owner': user_obj,
+            'owner': request.user,
             'type': file_type,
             'file_size': format_file_size(file_size),
             'file_type': file_ext,
@@ -64,7 +66,7 @@ def upload_file(request):
             'real_path': real_path
         })
         if res:
-            print(time.time())
+            print('-- write to db --- %s' % time.time())
             return JsonResponse({
                 'code': 0,
                 'msg': 'upload success',
@@ -75,7 +77,7 @@ def upload_file(request):
                     'real_name': real_name,
                     'real_path': real_path,
                     'pub_date': res.pub_date,
-                    'username': user_obj.first_name,
+                    'username': request.user.first_name,
                     'owner_id': request.user.id,
                     'file_type': file_ext,
                 }
