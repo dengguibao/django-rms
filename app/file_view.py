@@ -24,7 +24,6 @@ def upload_file(request):
     Returns:
         json -- file upload result object
     """
-    print('-- in--- %s' % time.time())
     if request.method == 'POST':
         local_path = os.path.join(settings.BASE_DIR, UPLOAD_PATH, TODAY)
         if os.path.exists(local_path) is False:
@@ -47,11 +46,11 @@ def upload_file(request):
         # new file path
         new_file_path = os.path.join(
             settings.BASE_DIR, UPLOAD_PATH, TODAY, real_name)
-        print('-- ready write --- %s' % time.time())
+
         with open(new_file_path, 'wb') as f:
             for chunk in origin_file_obj.chunks():
                 f.write(chunk)
-        print('-- write end --- %s' % time.time())
+
         # print('--- write end ----')
         # user_obj = User.objects.get(id=request.user.id)
         # print(request.user)
@@ -87,7 +86,6 @@ def upload_file(request):
             'code': 1,
             'msg': 'upload fail'
         })
-    print(time.time())
 
 
 @login_required()

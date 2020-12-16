@@ -98,6 +98,7 @@
             , url: '/admin/upload-file'
             , accept: 'file' //普通文件
             , size: 102400
+            , async: false
             , data: {
                 'csrfmiddlewaretoken': function () {
                     return $('[name="csrfmiddlewaretoken"]').val()
