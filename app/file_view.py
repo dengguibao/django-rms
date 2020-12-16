@@ -468,7 +468,7 @@ def file_download(request, fid):
     down = request.GET.get('d', 0)
     # if res and res.owner != request.user:
     if not res or res.type == 0:
-        return render(request, 'admin/error.html',{'error_msg':'illegal request'})
+        return render(request, 'admin/error.html', {'error_msg': 'illegal request'})
 
     if res.file_type == 'md':
         temp_name = 'file_view_md.html'
@@ -502,7 +502,7 @@ def file_download(request, fid):
     if not os.path.exists(file_path):
         raise Http404()
 
-    if request.method == 'GET':   
+    if request.method in ['GET', 'HEAD']:
         # text file
         if res.file_type in txt_file_type and down == 0:
             with open(file_path, 'r', encoding='utf-8', errors="ignore") as f:
