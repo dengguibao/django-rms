@@ -40,7 +40,7 @@ metadata:
   namespace: default
 spec:
   # serviceName: ops-svc
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: yx-ops
