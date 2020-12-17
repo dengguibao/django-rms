@@ -13,6 +13,11 @@ from .common import *
 TODAY = time.strftime('%Y%m%d', time.localtime())
 UPLOAD_PATH = 'uploads'
 
+txt_file_type = [
+    'yaml', 'yam', 'conf', 'log', 'txt', 'desktop', 'sh', 'py', 'php', 'js', 'css', 'html', 'htm', 'go',
+    'json', 'xml', 'bat', 'ps'
+]
+
 
 @login_required()
 def upload_file(request):
@@ -51,9 +56,6 @@ def upload_file(request):
             for chunk in origin_file_obj.chunks():
                 f.write(chunk)
 
-        # print('--- write end ----')
-        # user_obj = User.objects.get(id=request.user.id)
-        # print(request.user)
         res = FileInfo.objects.create(**{
             'name': name,
             'path': path,
@@ -65,7 +67,6 @@ def upload_file(request):
             'real_path': real_path
         })
         if res:
-            print('-- write to db --- %s' % time.time())
             return JsonResponse({
                 'code': 0,
                 'msg': 'upload success',
@@ -106,7 +107,7 @@ def get_user_file_list(request, t):
         })
 
     file_path = request.POST.get('path', '/')
-    user_id = request.user.id
+    # user_id = request.user.id
 
     file_type = {
         'folder': 0,
@@ -148,7 +149,7 @@ def file_rename(request):
     """
     file_id = request.POST.get('file_id', 0)
     new_name = request.POST.get('name', None)
-    
+
     if file_id == 0 or new_name is None:
         return JsonResponse({
             'code': 1,
@@ -156,7 +157,7 @@ def file_rename(request):
         })
     res = FileInfo.objects.get(id=file_id)
 
-    update_rs_count = 0
+    # update_rs_count = 0
     if res.file_type:
         new_filename = '.'.join([new_name, res.file_type])
     else:
@@ -165,14 +166,14 @@ def file_rename(request):
 
     if res.type == 0:
         sub_res = FileInfo.objects.filter(
-            path__startswith=res.path+res.name,
+            path__startswith=res.path + res.name,
             owner=request.user.id
         )
         if sub_res:
             for i in sub_res:
-                new_path = res.path+new_name+i.path[len(res.path+res.name):]
+                new_path = res.path + new_name + i.path[len(res.path + res.name):]
                 update_rs_count += FileInfo.objects.filter(id=i.id).update(path=new_path)
-    
+
     if update_rs_count > 0:
         return JsonResponse({
             'code': 0,
@@ -249,25 +250,8 @@ def file_edit(request, fid):
     res = FileInfo.objects.get(id=fid)
     if (res and res.owner != request.user) and not request.user.is_superuser:
         return render(request, 'admin/error.html')
+
     file_path = '/'.join([settings.BASE_DIR, res.real_path, res.real_name])
-    txt_file_type = [
-        'yaml',
-        'yam',
-        'conf',
-        'log',
-        'txt',
-        'desktop',
-        'sh',
-        'py',
-        'php',
-        'js',
-        'css',
-        'html',
-        'htm',
-        'go',
-        'json',
-        'xml'
-    ]
     file_ext = res.real_name.split('.')[-1]
     if file_ext == 'md':
         temp_name = 'file_edit_md.html'
@@ -306,25 +290,6 @@ def file_save(request):
         return render(request, 'admin/error.html')
 
     file_path = '/'.join([settings.BASE_DIR, res.real_path, res.real_name])
-    txt_file_type = [
-        'md',
-        'yaml',
-        'yam',
-        'conf',
-        'log',
-        'txt',
-        'desktop',
-        'sh',
-        'py',
-        'php',
-        'js',
-        'css',
-        'html',
-        'htm',
-        'go',
-        'json',
-        'xml'
-    ]
     file_ext = res.real_name.split('.')[-1]
     if file_ext in txt_file_type and os.path.exists(file_path):
         with open(file_path, 'w+', encoding='utf-8', errors="ignore") as f:
@@ -354,9 +319,9 @@ def file_delete(request, fid):
     res = FileInfo.objects.get(id=fid)
     if res.owner_id != request.user.id and not request.user.is_superuser:
         return JsonResponse({
-        'code': 1,
-        'msg': 'permission denied'
-    })
+            'code': 1,
+            'msg': 'permission denied'
+        })
     # delete file
     if res and res.type == 1:
         file = '/'.join([settings.BASE_DIR, res.real_path, res.real_name])
@@ -390,7 +355,8 @@ def file_delete(request, fid):
         'msg': 'fail'
     })
 
-# def file_iterator(filename,chunk_size=512):  
+
+# def file_iterator(filename,chunk_size=512):
 #     '''read file'''
 #     with open(filename,'rb') as f:  
 #         while True:  
@@ -426,7 +392,7 @@ def wopi_file_info(request, fid):
 
         dig = hashlib.sha256(f).digest()
 
-        return  JsonResponse({
+        return JsonResponse({
             'BaseFileName': res.name,
             'OwnerId': res.owner.username,
             'Size': len(f),
@@ -448,7 +414,7 @@ def wopi_file_info(request, fid):
             'msg': 'ok'
         })
 
-    
+
 # @login_required
 @method_decorator(csrf_exempt, name='dispatch')
 def file_download(request, fid):
@@ -475,25 +441,6 @@ def file_download(request, fid):
     else:
         temp_name = 'file_view_text.html'
 
-    txt_file_type = [
-        'md',
-        'yaml',
-        'yam',
-        'conf',
-        'log',
-        'txt',
-        'desktop',
-        'sh',
-        'py',
-        'php',
-        'js',
-        'css',
-        'html',
-        'htm',
-        'go',
-        'json',
-        'xml'
-    ]
     img_file_type = (
         'png', 'gif', 'jpg', 'jpeg', 'bmp'
     )
@@ -502,7 +449,7 @@ def file_download(request, fid):
     if not os.path.exists(file_path):
         raise Http404()
 
-    if request.method in ['GET', 'HEAD']:
+    if request.method in 'GET':
         # text file
         if res.file_type in txt_file_type and down == 0:
             with open(file_path, 'r', encoding='utf-8', errors="ignore") as f:
@@ -521,7 +468,7 @@ def file_download(request, fid):
             response['Content-Disposition'] = 'attachment;filename="{}"'.format(
                 res.name.encode('utf-8').decode('ISO-8859-1'))
         return response
-    
+
     # office online server post content
     elif request.method == 'POST':
         with open(file_path, 'wb+') as fo:
