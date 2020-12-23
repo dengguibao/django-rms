@@ -179,7 +179,7 @@ if __name__ == '__main__':
             'username': USERNAME,
             'password': PASSWORD
         }
-        AutoBackup(True, kwargs)
+        AutoBackup(True, **kwargs)
         exit()
 
     devices = read_config_from_file(CONFIG_FILE)
