@@ -169,7 +169,7 @@ def data_struct():
             'int_behave_audit_policy': '上网行业审计策略',
             'global_ip': '公网IP',
             'service_leader': '对接人',
-            'user_ip_add': '授权用户IP',
+            'user_ip_addr': '授权用户IP',
             'user_permission': '授权用户及权限',
             'is_active': '状态',
             'desc': '备注',
