@@ -9,9 +9,6 @@ import os
 import yaml
 import argparse
 
-all_hosts = []
-success_hosts = []
-
 
 class ConfigBackup:
     def __init__(self, ip_addr, debug=False, **kwargs):
@@ -23,11 +20,17 @@ class ConfigBackup:
         try:
             tn = telnetlib.Telnet(ip_addr, port, 10)
         except:
-            sys.stdout.write('[%s], ip:%s, msg:connect to host timeout!\r\n' % (
+            sys.stdout.write('[%s], ip:%s, error:connect to host timeout!\r\n' % (
                 time.strftime('%F %T', time.localtime()),
                 ip_addr
             ))
             exit()
+        else:
+            sys.stdout.write('[%s], ip:%s, info:success connected to host\r\n' % (
+                time.strftime('%F %T', time.localtime()),
+                ip_addr
+            ))
+
         if debug:
             tn.set_debuglevel(2)
 
@@ -35,16 +38,27 @@ class ConfigBackup:
         self._ip = ip_addr
 
     def login(self, **kwargs):
-        if 'username' in kwargs:
-            self.exec_cmd(kwargs['username'], b'Username')
-        # h3c device don't need username
-        self.exec_cmd(kwargs['password'], b'Password')
+        try:
+            if 'username' in kwargs:
+                self.exec_cmd(kwargs['username'], b'Username')
+            # h3c device don't need username
+            self.exec_cmd(kwargs['password'], b'Password')
+        except:
+            sys.stdout.write('[%s], ip:%s, error:connect to host timeout!\r\n' % (
+                time.strftime('%F %T', time.localtime()),
+                self._ip
+            ))
+        else:
+            sys.stdout.write('[%s], ip:%s, msg:login to device\r\n' % (
+                time.strftime('%F %T', time.localtime()),
+                self._ip
+            ))
 
     def get_config(self):
         try:
             self.exec_cmd(b'display current-configuration')
         except:
-            sys.stdout.write('[%s], ip:%s, msg:exec display current-configuration error\r\n' % (
+            sys.stdout.write('[%s], ip:%s, error:exec display current-configuration error\r\n' % (
                 time.strftime('%F %T', time.localtime()),
                 self._ip
             ))
@@ -57,13 +71,18 @@ class ConfigBackup:
 
         cache = format_data(self._tn.read_very_eager())
         while 'return' not in cache:
-            self._tn.write(b' ')
-            data.append(cache)
-            time.sleep(1)
             try:
+                self._tn.write(b' ')
+                data.append(cache)
+                time.sleep(1)
                 cache = format_data(self._tn.read_very_eager())
             except:
-                sys.stdout.write('[%s], ip:%s, msg:read command execute result failed!\r\n' % (
+                sys.stdout.write('[%s], ip:%s, error:read command execute result failed!\r\n' % (
+                    time.strftime('%F %T', time.localtime()),
+                    self._ip
+                ))
+            else:
+                sys.stdout.write('[%s], ip:%s, msg:read command execute result\r\n' % (
                     time.strftime('%F %T', time.localtime()),
                     self._ip
                 ))
@@ -74,7 +93,7 @@ class ConfigBackup:
         return ''.join(data)
 
     def write_config_to_file(self, data):
-        if data is None:
+        if not data:
             return False
 
         ignore_str = [
@@ -120,16 +139,15 @@ def AutoBackup(debug=False, **kwargs):
     cb = ConfigBackup(kwargs['ip'], debug)
     cb.login(**kwargs)
     d = cb.get_config()
-    if type(d) is str and d:
+    if isinstance(d, str):
         cb.write_config_to_file(d)
         sys.stdout.write('[%s], ip:%s, msg:backup success\r\n' % (
                 time.strftime('%F %T', time.localtime()),
                 kwargs['ip']
             )
         )
-        success_hosts.append(kwargs['ip'])
         return
-    sys.stdout.write('[%s], ip:%s, msg:backup failed\r\n' % (
+    sys.stdout.write('[%s], ip:%s, error:backup failed\r\n' % (
         time.strftime('%F %T', time.localtime()),
         kwargs['ip']
     ))
@@ -190,7 +208,7 @@ if __name__ == '__main__':
         user = i['username']
         pwd = i['password']
         hosts = i['hosts']
-        all_hosts += hosts
+
         kwargs = {
             'password': pwd
         }
@@ -200,6 +218,7 @@ if __name__ == '__main__':
             kwargs['ip'] = ip
             threading.Thread(target=AutoBackup, args=(False,), kwargs=kwargs).start()
         del kwargs
+        del hosts
 
     times = 0
     while True:
@@ -217,7 +236,3 @@ if __name__ == '__main__':
         else:
             break
 
-    for i in all_hosts:
-        if i not in success_hosts:
-            sys.stdout.write('%s backup failed\r\n' % i)
-    sys.stdout.write('done')
