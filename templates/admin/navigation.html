@@ -1,5 +1,9 @@
 {% extends "admin/basic.html" %}
 
+{% block extrahead %}
+    <link rel="stylesheet" href="/static/public/css/mouseRightMenu.css"/>
+{% endblock %}
+
 {% block extrastyle %}
     <style>
         .test {
@@ -72,7 +76,7 @@
                 </a>
             </li>
             <li>
-                <a href="http://email.yubang168.cn:8080/yxemail/security/login.do" target="_blank">
+                <a href="http://email.yubang168.cn:8080/yxemail/security/login.do?exitmethod=user" class="mr" target="_blank">
                     <img src="/static/admin/img/email.png">
                     <p style="height:16px;line-height:16px;">永雄邮箱</p>
                 </a>
@@ -146,6 +150,7 @@
         </ul>
     </fieldset>
 
+
     <fieldset class="layui-elem-field">
         <legend>防火墙网关</legend>
         <div class="layui-field-box">
@@ -210,4 +215,35 @@
         </div>
     </fieldset>
 </div>
+{% endblock %}
+
+{% block extrajs %}
+    <script type="text/javascript">
+     layui.config({base: '/static/public/layui-extends/'})
+     layui.use(['layer', 'mouseRightMenu'], function () {
+         let $ = layui.jquery
+             , layer = layui.layer
+             , mouseRightMenu = layui.mouseRightMenu;
+
+         $('.mr').bind("contextmenu", function (e){
+             let menu_data = [
+                 {type: 1, title:'提示'}
+             ]
+             mouseRightMenu.open(menu_data, false, function (d) {
+                if (d.type == 1){
+                    layer.alert('function verifyFc(a){return true}', {
+                      skin: 'layui-layer-molv' //样式类名
+                      ,closeBtn: 0
+                    })
+                }
+             })
+             return false;
+         })
+
+
+     })
+
+
+
+    </script>
 {% endblock %}
