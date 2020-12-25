@@ -108,12 +108,13 @@ class ConfigBackup:
 
         lines = data.replace('\r\n', '\n').split('\n')
 
+        sys_name = 'null'
         for line in lines:
             if 'sysname' in line:
-                sysname = line.strip().split(' ')[1]
+                sys_name = line.strip().split(' ')[1]
                 break
 
-        filename = '{ip}-{sysname}.txt'.format(ip=self._ip, sysname=sysname)
+        filename = '{ip}-{sysname}.txt'.format(ip=self._ip, sysname=sys_name)
 
         with open(filename, 'w') as fp:
             fp.write(
