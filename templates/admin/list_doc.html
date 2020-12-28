@@ -215,32 +215,30 @@
         }
 
         function build_href_link(obj){
-            let office_ext = ['xls', 'xlsx', 'doc', 'docx', 'pdf', 'ppt', 'pptx']
-            let url = ''
+            let office_ext = ['xls', 'xlsx', 'doc', 'docx', 'ppt', 'pptx']
             if (office_ext.indexOf(obj.file_type) >=0){
                 let oos_server = 'http://172.30.16.8'
 
                 let doc_url = encodeURIComponent('http://ops.cs.hnyongxiong.com/admin/wopi/files/'+obj.id)
                 if (['doc', 'docx'].indexOf(obj.file_type) >=0 ){
-                    url = oos_server+'/we/wordeditorframe.aspx?WOPISrc='+doc_url
+                    return oos_server+'/we/wordeditorframe.aspx?WOPISrc='+doc_url
                 }
 
                 if (['pdf'].indexOf(obj.file_type) >=0 ){
-                    url = oos_server+'/wv/WordViewer/request.pdf?type=accesspdf&WOPISrc='+doc_url
+                    return oos_server+'/wv/WordViewer/request.pdf?type=accesspdf&WOPISrc='+doc_url
                 }
 
                 if (['xls', 'xlsx'].indexOf(obj.file_type) >=0 ){
-                    url = oos_server+'/x/_layouts/xlviewerinternal.aspx?edit=1&WOPISrc='+doc_url
+                    return oos_server+'/x/_layouts/xlviewerinternal.aspx?edit=1&WOPISrc='+doc_url
                 }
 
-                if (['ppt', 'pptx'].indexOf(obj.file_type) >=0 ){
-                    url = oos_server+'/p/PowerPointFrame.aspx?PowerPointView=EditView&WOPISrc='+doc_url
-                }
+                {#if (['ppt', 'pptx'].indexOf(obj.file_type) >=0 ){#}
+                {#    return oos_server+'/p/PowerPointFrame.aspx?PowerPointView=EditView&WOPISrc='+doc_url#}
+                {#}#}
 
             }else{
-                url = '/admin/media/'+obj.id
+                return  '/admin/media/'+obj.id
             }
-            return url
         }
 
         function folder_click_event() {
