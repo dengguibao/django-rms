@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# !coding=utf-8
+#!coding=utf-8
 
 import telnetlib
 import time
@@ -70,7 +70,7 @@ class ConfigBackup:
             return s if sys.version[0] == '2' else s.decode('ascii')
 
         cache = format_data(self._tn.read_very_eager())
-        while 'return' not in cache:
+        while 'return' not in cache and cache:
             try:
                 self._tn.write(b' ')
                 data.append(cache)
@@ -81,6 +81,7 @@ class ConfigBackup:
                     time.strftime('%F %T', time.localtime()),
                     self._ip
                 ))
+                break
             else:
                 sys.stdout.write('[%s], ip:%s, msg:read command execute result\r\n' % (
                     time.strftime('%F %T', time.localtime()),
