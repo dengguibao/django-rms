@@ -232,9 +232,9 @@
                     return oos_server+'/x/_layouts/xlviewerinternal.aspx?edit=1&WOPISrc='+doc_url
                 }
 
-                {#if (['ppt', 'pptx'].indexOf(obj.file_type) >=0 ){#}
-                {#    return oos_server+'/p/PowerPointFrame.aspx?PowerPointView=EditView&WOPISrc='+doc_url#}
-                {#}#}
+                if (['ppt', 'pptx'].indexOf(obj.file_type) >=0 ){
+                    return oos_server+'/p/PowerPointFrame.aspx?PowerPointView=EditView&WOPISrc='+doc_url
+                }
 
             }else{
                 return  '/admin/media/'+obj.id
