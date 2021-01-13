@@ -387,7 +387,7 @@
     </fieldset>
 
 
-    <fieldset class="layui-elem-field">
+    <fieldset class="layui-elem-field" style="display: {% if obj.id %}block{% else %}none{% endif %}">
         <legend>网络接口</legend>
         <div class="layui-field-box">
             <div class="layui-form-item">
@@ -408,6 +408,7 @@
             </div>
         </div>
     </fieldset>
+
     <div class="layui-form-item" {% ifnotequal view 0 %}style="display: none"{% endifnotequal %}>
         <div class="layui-input-block">
             <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
@@ -700,10 +701,11 @@
             is_virt = $('#is_virt').val()
             jump_url = `${back_btn_url}?is_virt=${is_virt}&args=${cluster_tag}`
         }else{
-            $('.btn-add').click()
+            //新建页面默认点事添加网络接口
+            //$('.btn-add').click()
         }
         $('.back-btn a').attr('href', jump_url);
-        console.log(jump_url)
+        //console.log(jump_url)
     });
 </script>
 {% endblock %}

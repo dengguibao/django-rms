@@ -216,8 +216,12 @@
 
         let port_click_event = function(){
             $('.port').click(function(){
-                if ($('#view').val() != 0){
+                if ($('#view').val() == 1){
                     layer.alert('查看模式不允许修改');
+                    return;
+                }
+                if (id == 0){
+                    layer.alert('新建设备后再编辑端口');
                     return;
                 }
                 let ele_obj=$(this)

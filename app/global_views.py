@@ -183,71 +183,79 @@ def create_or_update(request, form_name):
             'msg': '管理员不允许创建业务数据'
         })
 
-    post_data = request.POST.dict()
-    del post_data['csrfmiddlewaretoken']
-    del post_data['id']
+    origin_post_data = request.POST.dict()
+    # del post_data['csrfmiddlewaretoken']
+    # del post_data['id']
 
     log = request.GET.get('log', True)
     nid = int(request.POST.get('id', 0))
     # according id defined action
     if nid == 0:
         act = 'create'
-        # perm_action_flag = 'add'
         log_action_flag = ADDITION
     else:
         act = 'update'
-        # perm_action_flag = 'change'
         log_action_flag = CHANGE
-        log_object_id = nid
+
+    model_fields = []
+    for f in models[form_name]._meta.get_fields():
+        if f.is_relation:
+            model_fields.append('%s_id' % f.name.split('.')[-1])
+        else:
+            model_fields.append(f.name.split('.')[-1])
+
+    post_data = {}
+    for item in origin_post_data.keys():
+        if item != 'id' and item in model_fields:
+            post_data[item] = origin_post_data[item]
+
+    # extra_port_data = build_extra_data(form_name, origin_post_data)
+    #
+    # print(extra_port_data)
 
     # -------extra logic action-------
-    extra_data = []
-    if form_name == 'net_devices':
-        for k in list(post_data.keys()):
-            if 'port_index' in k:
-                extra_data.append(
-                    (k, post_data[k])
-                )
-                del post_data[k]
-    elif form_name == 'monitor':
-        tmp_data = {}
-        for k in list(post_data.keys()):
-            if 'username_' in k or 'password_' in k or 'desc_' in k or 'channel_' in k:
-                tmp_data[k.split('_')[0]] = post_data[k]
-                del post_data[k]
-                if len(tmp_data) == 4:
-                    extra_data.append(tmp_data)
-                    del tmp_data
-                    tmp_data = {}
-    elif form_name == 'host':
-        tmp_data = {}
-        for k in list(post_data.keys()):
-            if 'ifname_' in k or 'access_' in k:
-                tmp_data[k.split('_')[0]] = post_data[k]
-                del post_data[k]
-                if len(tmp_data) == 2:
-                    extra_data.append(tmp_data)
-                    del tmp_data
-                    tmp_data = {}
+    # extra_data = []
+    # if form_name == 'net_devices':
+    #     for k in list(origin_post_data.keys()):
+    #         if 'port_index' in k:
+    #             extra_data.append(
+    #                 (k, origin_post_data[k])
+    #             )
+    # elif form_name == 'monitor':
+    #     tmp_data = {}
+    #     for k in list(post_data.keys()):
+    #         if 'username_' in k or 'password_' in k or 'desc_' in k or 'channel_' in k:
+    #             tmp_data[k.split('_')[0]] = origin_post_data[k]
+    #             if len(tmp_data) == 4:
+    #                 extra_data.append(tmp_data)
+    #                 del tmp_data
+    #                 tmp_data = {}
+    # elif form_name == 'host':
+    #     tmp_data = {}
+    #     for k in list(post_data.keys()):
+    #         if 'ifname_' in k or 'access_' in k:
+    #             tmp_data[k.split('_')[0]] = origin_post_data[k]
+    #             if len(tmp_data) == 2:
+    #                 extra_data.append(tmp_data)
+    #                 del tmp_data
+    #                 tmp_data = {}
     # -------end extra logic-------
 
     # write to db
     if act == 'create':
         res = models[form_name].objects.create(**post_data)
-        log_object_id = res.id
         # -------extra action-------
-        if form_name == "net_devices" and extra_data:
-            write_port_desc(res.branch_id, res.id, extra_data)
-        if form_name == 'monitor' and extra_data:
-            write_monitor_account(res.id, extra_data)
-        if form_name == 'host' and extra_data:
-            write_host_interface(res.id, extra_data)
+        # if form_name == "net_devices" and extra_data:
+        #     write_port_desc(res.branch_id, res.id, extra_data)
+        # if form_name == 'monitor' and extra_data:
+        #     write_monitor_account(res.id, extra_data)
+        # if form_name == 'host' and extra_data:
+        #     write_host_interface(res.id, extra_data)
         # -------end extra action-------
             
     elif act == 'update':
         models[form_name].objects.filter(id=nid).update(**post_data)
         res = models[form_name].objects.get(id=nid)
-        log_object_id = res.id
         if form_name == 'user':
             update_session_auth_hash(request, request.user)
     else:
@@ -266,18 +274,12 @@ def create_or_update(request, form_name):
             for f in change_field.split(','):
                 if form_name == 'vm' and f == 'host_id':
                     v = res.host.hostname
-                elif form_name in ['vm', 'host'] and f in ['vm_status', 'dev_status']:
-                    v = '开机' if post_data[f] == '0' else '关机'
-                elif form_name == 'user' and f == 'is_active':
-                    v = '启用' if post_data[f] == '1' else '禁用'
-                elif form_name == 'host' and f == 'cluster_tag_id':
+                elif f in ['is_active', 'vm_status', 'dev_status', 'is_virt']:
+                    v = eval('res.get_%s_display()' % f)
+                elif f == 'cluster_tag_id':
                     v = res.cluster_tag.name
-                elif form_name == 'user' and f == 'password':
+                elif f == 'password':
                     v = '******'
-                elif form_name == 'cluster' and f == 'is_active':
-                    v = '启用' if post_data[f] == '0' else '禁用'
-                elif form_name == 'cluster' and f == 'is_virt':
-                    v = '虚拟化服务器' if post_data[f] == '1' else '普通服务器'
                 elif f == 'branch_id':
                     v = res.branch.name
                 else:
@@ -292,13 +294,13 @@ def create_or_update(request, form_name):
         LogEntry.objects.log_action(
             user_id=request.user.pk,
             content_type_id=log_content_type_model_id,
-            object_id=log_object_id,
+            object_id=res.id,
             object_repr=log_object_repr,
             action_flag=log_action_flag,
             change_message=json.dumps(post_data, ensure_ascii=True)
         )
     # according return object judge create or update
-    if (act == 'update' and res) or (act == 'create' and res.id):
+    if act in ['update', 'create'] and res:
         return_data['code'] = 0
         return_data['msg'] = '%s success' % act
 
@@ -389,47 +391,67 @@ def navigation(request):
     return render(request, 'admin/navigation.html')
 
 
-def write_port_desc(branch_id, device_id, data):
-    branch_obj = Branch.objects.get(id=branch_id)
-    device_obj = NetworkDevices.objects.get(id=device_id)
-    d = []
-    for k, v in data:
-        d.append(
-            PortDesc(
-                branch=branch_obj,
-                device=device_obj,
-                index=k,
-                desc=v
-            )
-        )
-    PortDesc.objects.bulk_create(d)
+# def build_extra_data(form_name, data):
+#     data_field = {
+#         'host': ['ifname_', 'access_'],
+#         'monitor': ['username_', 'password_', 'desc_', 'channel_'],
+#         'net_devices': ['port_index_']
+#     }
+#     if form_name not in data_field or isinstance(data, dict):
+#         return
+#     extra_post_data = []
+#     temp_data = {}
+#     for k in data.keys():
+#         for i in data_field[form_name]:
+#             if i in k:
+#                 temp_data[k.split('_')[:-1]] = data[k]
+#         if len(temp_data) == len(data_field[form_name]):
+#             extra_post_data.append(temp_data)
+#             del temp_data
+#     return extra_post_data
 
 
-def write_monitor_account(monitor_id, data):
-    monitor_obj = Monitor.objects.get(id=monitor_id)
-    d = []
-    for i in data:
-        d.append(
-            MonitorAccount(
-                monitor=monitor_obj,
-                username=i['username'],
-                password=i['password'],
-                desc=i['desc'],
-                channel=i['channel']
-            )
-        )
-    MonitorAccount.objects.bulk_create(d)
-
-
-def write_host_interface(host_id, data):
-    host_obj = HostInfo.objects.get(id=host_id)
-    d = []
-    for i in data:
-        d.append(
-            HostInterface(
-                host=host_obj,
-                ifname=i['ifname'],
-                access=i['access'],
-            )
-        )
-    HostInterface.objects.bulk_create(d)
+# def write_port_desc(branch_id, device_id, data):
+#     branch_obj = Branch.objects.get(id=branch_id)
+#     device_obj = NetworkDevices.objects.get(id=device_id)
+#     d = []
+#     for i in data:
+#         d.append(
+#             PortDesc(
+#                 branch=branch_obj,
+#                 device=device_obj,
+#                 index=i['index'],
+#                 desc=i['desc']
+#             )
+#         )
+#     PortDesc.objects.bulk_create(d)
+#
+#
+# def write_monitor_account(monitor_id, data):
+#     monitor_obj = Monitor.objects.get(id=monitor_id)
+#     d = []
+#     for i in data:
+#         d.append(
+#             MonitorAccount(
+#                 monitor=monitor_obj,
+#                 username=i['username'],
+#                 password=i['password'],
+#                 desc=i['desc'],
+#                 channel=i['channel']
+#             )
+#         )
+#     MonitorAccount.objects.bulk_create(d)
+#
+#
+# def write_host_interface(host_id, data):
+#     host_obj = HostInfo.objects.get(id=host_id)
+#     d = []
+#     for i in data:
+#         d.append(
+#             HostInterface(
+#                 host=host_obj,
+#                 ifname=i['ifname'],
+#                 access=i['access'],
+#             )
+#         )
+#     HostInterface.objects.bulk_create(d)

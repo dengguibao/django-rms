@@ -119,7 +119,7 @@
         </div>
     </fieldset>
 
-    <fieldset class="layui-elem-field">
+    <fieldset class="layui-elem-field" style="display: {% if obj.id %}block{% else %}none{% endif %}">
         <legend>账号授权</legend>
         <div class="layui-field-box">
             <div class="layui-form-item">
@@ -231,10 +231,6 @@
         }
 
         get_account_list = function(){
-            if (id==0){
-                $('.btn-add').click()
-                return
-            }
             url = `/admin/get-monitor-account-list/${id}`
             $.getJSON(
                 url,

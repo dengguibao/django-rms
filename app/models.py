@@ -80,9 +80,13 @@ class ClusterInfo(models.Model):
         (0, '普通服务器'),
         (1, '虚拟化集群')
     )
+    IS_ACTIVE = (
+        (0, '启用'),
+        (1, '禁用')
+    )
     name = models.CharField('集群名称', unique=True, max_length=50)
     tag = models.CharField('集群标记', unique=True, max_length=50)
-    is_active = models.IntegerField('是否激活', default=0)
+    is_active = models.IntegerField('是否激活', choices=IS_ACTIVE, default=0)
     is_virt = models.IntegerField(choices=IS_VIRT, default=0, null=False)
     pub_date = models.DateTimeField(auto_now_add=True)  # 添加时间
 
