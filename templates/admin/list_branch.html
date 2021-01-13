@@ -50,7 +50,7 @@
             <td>{{ forloop.counter }}</td>
             <td>{{i.name}}</td>
             <td>{{i.address}}</td>
-            <td>{%ifequal i.isenable 1%}启用{%else%}<span style="color:#f00">停用</span>{%endifequal%}</td>
+            <td>{{ i.get_isenable_display }}</td>
             <td>
                 {% if perms.app.view_branch %}
                 <a href="/admin/edit/branch/{{i.id}}/?view=1" title="view" class="layui-btn layui-btn-primary layui-btn-xs">

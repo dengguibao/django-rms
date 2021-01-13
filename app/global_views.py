@@ -114,8 +114,8 @@ def delete(request, form_name, nid):
 
     Arguments:
         request {object} -- wsgi http request object
-        form_name {str} -- according this judge resource type,just contains vm host user
-        nid {int} -- resource model id
+        form_name {str} -- resource form name
+        nid {int} -- resource model primary key
 
     Returns:
         json -- json object
@@ -154,7 +154,7 @@ def create_or_update(request, form_name):
 
     Arguments:
         request {object} -- wsgi http request object
-        form_type {str} -- form type,just contains vm host user
+        form_name {str} -- form name
 
     Returns:
         json -- json object
@@ -184,119 +184,96 @@ def create_or_update(request, form_name):
         })
 
     origin_post_data = request.POST.dict()
-    # del post_data['csrfmiddlewaretoken']
-    # del post_data['id']
 
     log = request.GET.get('log', True)
     nid = int(request.POST.get('id', 0))
     # according id defined action
-    if nid == 0:
-        act = 'create'
-        log_action_flag = ADDITION
-    else:
-        act = 'update'
-        log_action_flag = CHANGE
+    act = 'create' if nid == 0 else 'update'
 
-    model_fields = []
+    # get all fields and fields attr by model _meta
+    model_fields = {}
     for f in models[form_name]._meta.get_fields():
-        if f.is_relation:
-            model_fields.append('%s_id' % f.name.split('.')[-1])
-        else:
-            model_fields.append(f.name.split('.')[-1])
 
+        if f.is_relation:
+            field_name = '%s_id' % f.name.split('.')[-1]
+        else:
+            field_name = f.name.split('.')[-1]
+        field_type = f.get_internal_type()
+        try:
+            field_verbose_name = f.verbose_name
+            choice = f.choices
+        except:
+            field_verbose_name = field_name
+            choice = None
+
+        model_fields[field_name] = {}
+        model_fields[field_name]['verbose_name'] = field_verbose_name
+        model_fields[field_name]['field_type'] = field_type
+        model_fields[field_name]['choice'] = choice
+
+    # according chang_field build change log
+    change_fields = request.GET.get('change_field', None)
+    if change_fields:
+        change_fields = change_fields.split(',')
+
+    log_msg = []
     post_data = {}
     for item in origin_post_data.keys():
-        if item != 'id' and item in model_fields:
-            post_data[item] = origin_post_data[item]
+        v = origin_post_data[item]
 
-    # extra_port_data = build_extra_data(form_name, origin_post_data)
-    #
-    # print(extra_port_data)
+        if item not in ['id', 'ID'] and item in model_fields:
+            post_data[item] = v
 
-    # -------extra logic action-------
-    # extra_data = []
-    # if form_name == 'net_devices':
-    #     for k in list(origin_post_data.keys()):
-    #         if 'port_index' in k:
-    #             extra_data.append(
-    #                 (k, origin_post_data[k])
-    #             )
-    # elif form_name == 'monitor':
-    #     tmp_data = {}
-    #     for k in list(post_data.keys()):
-    #         if 'username_' in k or 'password_' in k or 'desc_' in k or 'channel_' in k:
-    #             tmp_data[k.split('_')[0]] = origin_post_data[k]
-    #             if len(tmp_data) == 4:
-    #                 extra_data.append(tmp_data)
-    #                 del tmp_data
-    #                 tmp_data = {}
-    # elif form_name == 'host':
-    #     tmp_data = {}
-    #     for k in list(post_data.keys()):
-    #         if 'ifname_' in k or 'access_' in k:
-    #             tmp_data[k.split('_')[0]] = origin_post_data[k]
-    #             if len(tmp_data) == 2:
-    #                 extra_data.append(tmp_data)
-    #                 del tmp_data
-    #                 tmp_data = {}
-    # -------end extra logic-------
+        if change_fields and item in change_fields:
 
-    # write to db
-    if act == 'create':
-        res = models[form_name].objects.create(**post_data)
-        # -------extra action-------
-        # if form_name == "net_devices" and extra_data:
-        #     write_port_desc(res.branch_id, res.id, extra_data)
-        # if form_name == 'monitor' and extra_data:
-        #     write_monitor_account(res.id, extra_data)
-        # if form_name == 'host' and extra_data:
-        #     write_host_interface(res.id, extra_data)
-        # -------end extra action-------
-            
-    elif act == 'update':
-        models[form_name].objects.filter(id=nid).update(**post_data)
-        res = models[form_name].objects.get(id=nid)
-        if form_name == 'user':
-            update_session_auth_hash(request, request.user)
-    else:
-        return_data['msg'] = '%s fail' % act
+            if model_fields[item]['field_type'] == 'ForeignKey':
+                rel_model = models[form_name]._meta.get_field(item).related_model
+                try:
+                    rel_obj = list(rel_model.objects.filter(id=v))[0]
+                except:
+                    # 为了适应hostinfo表前期设计时的不足，暂时硬编码
+                    rel_obj = list(rel_model.objects.filter(tag=v))[0]
+
+                if hasattr(rel_obj, 'hostname'):
+                    v = rel_obj.hostname
+                if hasattr(rel_obj, 'name'):
+                    v = rel_obj.name
+
+            if model_fields[item]['choice']:
+                for s, l in model_fields[item]['choice']:
+                    if str(s) == v:
+                        v = l
+                        break
+
+            log_msg.append('%s: %s' % (
+                model_fields[item]['verbose_name'],
+                v
+            ))
+
+    # write post data to database
+    res = None
+    try:
+        if act == 'create':
+            res = models[form_name].objects.create(**post_data)
+
+        if act == 'update':
+            models[form_name].objects.filter(id=nid).update(**post_data)
+            res = models[form_name].objects.get(id=nid)
+            if form_name == 'user':
+                update_session_auth_hash(request, request.user)
+
+    except Exception as e:
+        return_data['msg'] = '%s' % e
         return_data['code'] = 1
 
     # write log
-    if log == 'no':
-        pass
-    else:
-        log_content_type_model_id = get_content_type_for_model(models[form_name]).pk
-        change_field = request.GET.get('change_field', None)
-        log_change_data = []
-        field_explain = data_struct()
-        if change_field:
-            for f in change_field.split(','):
-                if form_name == 'vm' and f == 'host_id':
-                    v = res.host.hostname
-                elif f in ['is_active', 'vm_status', 'dev_status', 'is_virt']:
-                    v = eval('res.get_%s_display()' % f)
-                elif f == 'cluster_tag_id':
-                    v = res.cluster_tag.name
-                elif f == 'password':
-                    v = '******'
-                elif f == 'branch_id':
-                    v = res.branch.name
-                else:
-                    v = post_data[f]
-                log_change_data.append('%s: %s' % (field_explain[form_name][f], v))
-
-        if log_action_flag == ADDITION:
-            log_object_repr = str(res)
-        else:
-            log_object_repr = ' '.join(log_change_data)
-
+    if log != 'no' and res and log_msg:
         LogEntry.objects.log_action(
             user_id=request.user.pk,
-            content_type_id=log_content_type_model_id,
+            content_type_id=get_content_type_for_model(models[form_name]).pk,
             object_id=res.id,
-            object_repr=log_object_repr,
-            action_flag=log_action_flag,
+            object_repr=str(res) if act == 'create' else ' '.join(log_msg),
+            action_flag=ADDITION if act == 'create' else CHANGE,
             change_message=json.dumps(post_data, ensure_ascii=True)
         )
     # according return object judge create or update
@@ -308,7 +285,7 @@ def create_or_update(request, form_name):
 
 
 @login_required()
-def view_log_view(request, content_type, object_id):
+def view_log_view(request, model_name, object_id):
     """view log view
 
     Arguments:
@@ -320,13 +297,13 @@ def view_log_view(request, content_type, object_id):
         retun  -- html view
     """
 
-    if content_type not in models:
+    if model_name not in models:
         return render(request, 'admin/error.html', {'error_msg': 'illegal request!'})
 
-    res = get_object_or_404(models[content_type], pk=object_id)
+    res = get_object_or_404(models[model_name], pk=object_id)
     
     log_entries = LogEntry.objects.filter(
-        content_type_id=get_content_type_for_model(models[content_type]).pk,
+        content_type_id=get_content_type_for_model(models[model_name]).pk,
         object_id=res.id
     )
     return render(request, 'admin/view_log.html', {
@@ -336,7 +313,7 @@ def view_log_view(request, content_type, object_id):
 
 @login_required()
 def log_rollback_view(request, log_id):
-    """rollback according to the content of chang_message(**post_data) field in admin_log table
+    """rollback log, according the content of chang_message(**post_data) field in the admin_log table
 
     Arguments:
         request {object} -- wsgi request object
@@ -389,69 +366,3 @@ def log_rollback_view(request, log_id):
 @login_required()
 def navigation(request):
     return render(request, 'admin/navigation.html')
-
-
-# def build_extra_data(form_name, data):
-#     data_field = {
-#         'host': ['ifname_', 'access_'],
-#         'monitor': ['username_', 'password_', 'desc_', 'channel_'],
-#         'net_devices': ['port_index_']
-#     }
-#     if form_name not in data_field or isinstance(data, dict):
-#         return
-#     extra_post_data = []
-#     temp_data = {}
-#     for k in data.keys():
-#         for i in data_field[form_name]:
-#             if i in k:
-#                 temp_data[k.split('_')[:-1]] = data[k]
-#         if len(temp_data) == len(data_field[form_name]):
-#             extra_post_data.append(temp_data)
-#             del temp_data
-#     return extra_post_data
-
-
-# def write_port_desc(branch_id, device_id, data):
-#     branch_obj = Branch.objects.get(id=branch_id)
-#     device_obj = NetworkDevices.objects.get(id=device_id)
-#     d = []
-#     for i in data:
-#         d.append(
-#             PortDesc(
-#                 branch=branch_obj,
-#                 device=device_obj,
-#                 index=i['index'],
-#                 desc=i['desc']
-#             )
-#         )
-#     PortDesc.objects.bulk_create(d)
-#
-#
-# def write_monitor_account(monitor_id, data):
-#     monitor_obj = Monitor.objects.get(id=monitor_id)
-#     d = []
-#     for i in data:
-#         d.append(
-#             MonitorAccount(
-#                 monitor=monitor_obj,
-#                 username=i['username'],
-#                 password=i['password'],
-#                 desc=i['desc'],
-#                 channel=i['channel']
-#             )
-#         )
-#     MonitorAccount.objects.bulk_create(d)
-#
-#
-# def write_host_interface(host_id, data):
-#     host_obj = HostInfo.objects.get(id=host_id)
-#     d = []
-#     for i in data:
-#         d.append(
-#             HostInterface(
-#                 host=host_obj,
-#                 ifname=i['ifname'],
-#                 access=i['access'],
-#             )
-#         )
-#     HostInterface.objects.bulk_create(d)

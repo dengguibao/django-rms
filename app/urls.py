@@ -17,7 +17,7 @@ urlpatterns = [
     path('edit/<str:form_name>/<int:nid>/', global_views.render_edit_view),
     path('delete/<str:form_name>/<int:nid>/', global_views.delete),
     path('create-or-update/<str:form_name>/', global_views.create_or_update),
-    path('view-logs/<str:content_type>/<int:object_id>', global_views.view_log_view),
+    path('view-logs/<str:model_name>/<int:object_id>', global_views.view_log_view),
 
     path('get-hosts-list/<str:host_type>/<str:flag>/', server_views.list_hosts_list),
     path('export-server/<str:host_type>', server_views.export),

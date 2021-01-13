@@ -78,7 +78,7 @@
             <td>{{ i.idle_channel }}个</td>
             <td>{{i.idle_slot}}个</td>
             <td>{{i.hdd}}T</td>
-            <td>{%ifequal i.storage 1%}满足{% else %}不满足{%endifequal%}</td>
+            <td>{{ i.get_storage_display }}</td>
             <td>
                 {% if perms.app.view_monitor %}
                 <a href="/admin/edit/monitor/{{i.id}}/?view=1" title="view" class="layui-btn layui-btn-primary layui-btn-xs">
