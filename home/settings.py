@@ -99,18 +99,18 @@ WSGI_APPLICATION = 'home.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    # }
     'default': {
-        'ENGINE': 'django.db.backends.mysql', # 数据库引擎
-        'NAME': 'dms', # 数据库名
-        'USER': 'dms', # 账号
-        'PASSWORD': '123456', # 密码
-        'HOST': '172.31.19.254', # HOST
-        'POST': 3306, # 端口
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql', # 数据库引擎
+    #     'NAME': 'dms', # 数据库名
+    #     'USER': 'dms', # 账号
+    #     'PASSWORD': '123456', # 密码
+    #     'HOST': '172.31.19.254', # HOST
+    #     'POST': 3306, # 端口
+    # }
 }
 
 
