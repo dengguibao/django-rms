@@ -22,18 +22,20 @@ def list_hosts_list(request, host_type, flag):
         json -- specific type json object
     """
 
-    perm_action_flag = 'view'
-    # permission verify
-    if not request.is_ajax() or not request.user.has_perm(perms[host_type] % perm_action_flag):
-        return JsonResponse({
-            'msg': 'permission denied',
-            'code': 1
-        })
-
     if host_type not in ['host', 'vm'] or len(flag) <= 0:
         return JsonResponse({
             'code': 1,
             'msg': 'illegal request'
+        })
+
+    perm_action_flag = 'view'
+    perm = register_form[host_type]['perm'] % perm_action_flag
+    model = register_form[host_type]['model']
+
+    if not request.is_ajax() or not request.user.has_perm(perm):
+        return JsonResponse({
+            'msg': 'permission denied',
+            'code': 1
         })
 
     page_size = request.GET.get('page_size', settings.PAGE_SIZE)
@@ -43,17 +45,17 @@ def list_hosts_list(request, host_type, flag):
 
     if host_type == 'host':
         if flag == 'all':
-            rs = HostInfo.objects.all()
+            rs = model.objects.all()
         else:
-            rs = HostInfo.objects.filter(cluster_tag=flag)
+            rs = model.objects.filter(cluster_tag=flag)
         
     if host_type == 'vm':
         if '_all' in flag:
-            rs = VmInfo.objects.filter(host__cluster_tag=flag.split('_')[0]).select_related().order_by('-pub_date')
+            rs = model.objects.filter(host__cluster_tag=flag.split('_')[0]).select_related().order_by('-pub_date')
         elif flag == 'all':
-            rs = VmInfo.objects.exclude(host__cluster_tag='none').select_related().order_by('-pub_date')
+            rs = model.objects.exclude(host__cluster_tag='none').select_related().order_by('-pub_date')
         else:
-            rs = VmInfo.objects.filter(host__hostname=flag).select_related().order_by('-pub_date')
+            rs = model.objects.filter(host__hostname=flag).select_related().order_by('-pub_date')
 
     if keyword:
         if host_type == 'host':
@@ -111,6 +113,7 @@ def export(request, host_type):
     wb = xlwt.Workbook(encoding='utf8')
     sheet = wb.add_sheet('sheet1', cell_overwrite_ok=True)
 
+    res = None
     if host_type == 'host':
         res = HostInfo.objects.all()
         export_file_name = 'host_info.xls'

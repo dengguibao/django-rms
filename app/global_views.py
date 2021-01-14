@@ -46,21 +46,22 @@ def render_edit_view(request, form_name, nid):
         html -- html template
     """
         
-    if form_name not in form_name_list:
+    if form_name not in register_form:
         return render(request, 'admin/error.html', {'error_msg': 'illegal request!'})
-    view_subject = request.GET.get('view', 0)
     perm_action_flag = 'change'
-
+    view_subject = request.GET.get('view', 0)
     if view_subject == "1":
         perm_action_flag = 'view'
 
+    perm = register_form[form_name]['perm'] % perm_action_flag
+    model = register_form[form_name]['model']
     # permission verify
-    if not request.user.has_perm(perms[form_name] % perm_action_flag):
+    if not request.user.has_perm(perm):
         return render(request, 'admin/error.html')
 
     temp_name = 'admin/add_or_edit_%s.html' % form_name
 
-    edit_obj = get_object_or_404(models[form_name], id=nid)
+    edit_obj = get_object_or_404(model, id=nid)
 
     # get all foreigenkey data
     cluster_data = ClusterInfo.objects.filter(is_active=0)
@@ -127,19 +128,20 @@ def delete(request, form_name, nid):
     if not request.is_ajax():
         return JsonResponse(return_data)
 
-    if form_name not in form_name_list:
+    if form_name not in register_form:
         return JsonResponse(return_data)
 
     perm_action_flag = 'delete'
+    perm = register_form[form_name]['perm'] % perm_action_flag
+    model = register_form[form_name]['model']
     # permission verify
-    if not request.user.has_perm(perms[form_name] % perm_action_flag):
+    if not request.user.has_perm(perm):
         return JsonResponse({
             'msg': 'permission denied',
             'code': 1
         })
     # delete record
-    res = None
-    res = models[form_name].objects.get(id=nid).delete()
+    res = model.objects.get(id=nid).delete()
 
     if res:
         return_data['msg'] = 'ok'
@@ -163,7 +165,7 @@ def create_or_update(request, form_name):
         'code': 1,
         'msg': 'fail'
     }
-    if not request.is_ajax() and form_name not in form_name_list:
+    if not request.is_ajax() and form_name not in register_form:
         return JsonResponse({
             'code': 1,
             'msg': 'illegal request!'
@@ -171,7 +173,10 @@ def create_or_update(request, form_name):
     
     # permission verify
     perm_action_flag = 'add'
-    if not request.user.has_perm(perms[form_name] % perm_action_flag):
+    perm = register_form[form_name]['perm'] % perm_action_flag
+    model = register_form[form_name]['model']
+
+    if not request.user.has_perm(perm):
         return JsonResponse({
             'code': 1,
             'msg': 'permission denied'
@@ -192,7 +197,7 @@ def create_or_update(request, form_name):
 
     # get all fields and fields attr by model _meta
     model_fields = {}
-    for f in models[form_name]._meta.get_fields():
+    for f in model._meta.get_fields():
 
         if f.is_relation:
             field_name = '%s_id' % f.name.split('.')[-1]
@@ -227,17 +232,20 @@ def create_or_update(request, form_name):
         if change_fields and item in change_fields:
 
             if model_fields[item]['field_type'] == 'ForeignKey':
-                rel_model = models[form_name]._meta.get_field(item).related_model
+                rel_model = model._meta.get_field(item).related_model
                 try:
                     rel_obj = list(rel_model.objects.filter(id=v))[0]
-                except:
+                except ValueError as e:
                     # 为了适应hostinfo表前期设计时的不足，暂时硬编码
                     rel_obj = list(rel_model.objects.filter(tag=v))[0]
+                except:
+                    rel_obj = None
 
-                if hasattr(rel_obj, 'hostname'):
-                    v = rel_obj.hostname
-                if hasattr(rel_obj, 'name'):
-                    v = rel_obj.name
+                if rel_obj:
+                    if hasattr(rel_obj, 'hostname'):
+                        v = rel_obj.hostname
+                    if hasattr(rel_obj, 'name'):
+                        v = rel_obj.name
 
             if model_fields[item]['choice']:
                 for s, l in model_fields[item]['choice']:
@@ -254,11 +262,11 @@ def create_or_update(request, form_name):
     res = None
     try:
         if act == 'create':
-            res = models[form_name].objects.create(**post_data)
+            res = model.objects.create(**post_data)
 
         if act == 'update':
-            models[form_name].objects.filter(id=nid).update(**post_data)
-            res = models[form_name].objects.get(id=nid)
+            model.objects.filter(id=nid).update(**post_data)
+            res = model.objects.get(id=nid)
             if form_name == 'user':
                 update_session_auth_hash(request, request.user)
 
@@ -270,7 +278,7 @@ def create_or_update(request, form_name):
     if log != 'no' and res and log_msg:
         LogEntry.objects.log_action(
             user_id=request.user.pk,
-            content_type_id=get_content_type_for_model(models[form_name]).pk,
+            content_type_id=get_content_type_for_model(model).pk,
             object_id=res.id,
             object_repr=str(res) if act == 'create' else ' '.join(log_msg),
             action_flag=ADDITION if act == 'create' else CHANGE,
@@ -297,13 +305,14 @@ def view_log_view(request, model_name, object_id):
         retun  -- html view
     """
 
-    if model_name not in models:
+    if model_name not in register_form:
         return render(request, 'admin/error.html', {'error_msg': 'illegal request!'})
+    model = register_form[model_name]['model']
 
-    res = get_object_or_404(models[model_name], pk=object_id)
+    res = get_object_or_404(model, pk=object_id)
     
     log_entries = LogEntry.objects.filter(
-        content_type_id=get_content_type_for_model(models[model_name]).pk,
+        content_type_id=get_content_type_for_model(model).pk,
         object_id=res.id
     )
     return render(request, 'admin/view_log.html', {

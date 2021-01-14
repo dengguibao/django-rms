@@ -1,56 +1,116 @@
 from .models import *
 from django.contrib.auth.models import User
 
-models = {
-    'host': HostInfo,
-    'hostif': HostInterface,
-    'vm': VmInfo,
-    'cluster': ClusterInfo,
-    'user': User,
-    'trouble_report': TroubleReport,
-    'daily_report': DailyReport,
-    'branch': Branch,
-    'lan_net': LanNetworks,
-    'wan_net': WanNetworks,
-    'net_devices': NetworkDevices,
-    'monitor': Monitor,
-    'monitor_account': MonitorAccount,
-    'bank_private': BankPrivate,
+
+register_form = {
+    'host': {
+        'model': HostInfo,
+        'perm': 'app.%s_hostinfo',
+    },
+    'hostif': {
+        'model': HostInterface,
+        'perm': 'app.%s_hostinfo',
+    },
+    'vm': {
+        'model': VmInfo,
+        'perm': 'app.%s_vminfo',
+    },
+    'cluster': {
+        'model': ClusterInfo,
+        'perm': 'app.%s_clusterinfo',
+    },
+    'user': {
+        'model': User,
+        'perm': 'auth.%s_user',
+    },
+    'trouble_report': {
+        'model': TroubleReport,
+        'perm': 'app.%s_troublereport',
+    },
+    'daily_report': {
+        'model': DailyReport,
+        'perm': 'app.%s_dailyreport',
+    },
+    'branch': {
+        'model': Branch,
+        'perm': 'app.%s_branch',
+    },
+    'lan_net': {
+        'model': LanNetworks,
+        'perm': 'app.%s_lannetworks',
+    },
+    'wan_net': {
+        'model': WanNetworks,
+        'perm': 'app.%s_wannetworks',
+    },
+    'net_devices': {
+        'model': NetworkDevices,
+        'perm': 'app.%s_networkdevices',
+    },
+    'monitor': {
+        'model': Monitor,
+        'perm': 'app.%s_monitor',
+    },
+    'monitor_account': {
+        'model': MonitorAccount,
+        'perm': 'app.%s_monitor',
+    },
+    'bank_private': {
+        'model': BankPrivate,
+        'perm': 'app.%s_bankprivate',
+    },
 }
 
-perms = {
-    'vm': 'app.%s_vminfo',
-    'host': 'app.%s_hostinfo',
-    'hostif': 'app.%s_hostinfo',
-    'cluster': 'app.%s_clusterinfo',
-    'user': 'auth.%s_user',
-    'trouble_report': 'app.%s_troublereport',
-    'daily_report': 'app.%s_dailyreport',
-    'branch': 'app.%s_branch',
-    'lan_net': 'app.%s_lannetworks',
-    'wan_net': 'app.%s_wannetworks',
-    'net_devices': 'app.%s_networkdevices',
-    'monitor': 'app.%s_monitor',
-    'monitor_account': 'app.%s_monitor',
-    'bank_private': 'app.%s_bankprivate'
-}
-
-form_name_list = [
-    'vm',
-    'host',
-    'hostif',
-    'user',
-    'cluster',
-    'trouble_report',
-    'daily_report',
-    'branch',
-    'lan_net',
-    'wan_net',
-    'net_devices',
-    'monitor',
-    'monitor_account',
-    'bank_private'
-]
+# models = {
+#     'host': HostInfo,
+#     'hostif': HostInterface,
+#     'vm': VmInfo,
+#     'cluster': ClusterInfo,
+#     'user': User,
+#     'trouble_report': TroubleReport,
+#     'daily_report': DailyReport,
+#     'branch': Branch,
+#     'lan_net': LanNetworks,
+#     'wan_net': WanNetworks,
+#     'net_devices': NetworkDevices,
+#     'monitor': Monitor,
+#     'monitor_account': MonitorAccount,
+#     'bank_private': BankPrivate,
+# }
+#
+# perms = {
+#     'vm': 'app.%s_vminfo',
+#     'host': 'app.%s_hostinfo',
+#     'hostif': 'app.%s_hostinfo',
+#     'cluster': 'app.%s_clusterinfo',
+#     'user': 'auth.%s_user',
+#     'trouble_report': 'app.%s_troublereport',
+#     'daily_report': 'app.%s_dailyreport',
+#     'branch': 'app.%s_branch',
+#     'lan_net': 'app.%s_lannetworks',
+#     'wan_net': 'app.%s_wannetworks',
+#     'net_devices': 'app.%s_networkdevices',
+#     'monitor': 'app.%s_monitor',
+#     'monitor_account': 'app.%s_monitor',
+#     'bank_private': 'app.%s_bankprivate'
+# }
+#
+# form_name_list = [
+#     'vm',
+#     'host',
+#     'hostif',
+#     'user',
+#     'cluster',
+#     'trouble_report',
+#     'daily_report',
+#     'branch',
+#     'lan_net',
+#     'wan_net',
+#     'net_devices',
+#     'monitor',
+#     'monitor_account',
+#     'bank_private'
+# ]
 
 
 def data_struct():

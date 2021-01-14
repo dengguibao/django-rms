@@ -25,14 +25,16 @@ def list_device_info(request, form_name):
     page = int(request.GET.get('page', 1))
     export = request.GET.get('export', None)
 
-    if form_name not in perms:
+    if form_name not in register_form:
         return render(
             request, 'admin/error.html',
             {'error_msg': 'Illegal request'}
         )
 
     perm_action_flag = 'view'
-    if not request.user.has_perm(perms[form_name] % perm_action_flag):
+    model = register_form[form_name]['model']
+    perm = register_form[form_name]['perm'] % perm_action_flag
+    if not request.user.has_perm(perm):
         return render(
             request, 'admin/error.html',
             {
@@ -40,9 +42,9 @@ def list_device_info(request, form_name):
             }
         )
     if form_name in ['branch', 'bank_private']:
-        res_list = models[form_name].objects.all().order_by('-id')
+        res_list = model.objects.all().order_by('-id')
     else:
-        res_list = models[form_name].objects.all().select_related('branch').order_by('-id')
+        res_list = model.objects.all().select_related('branch').order_by('-id')
 
     if form_name == 'branch' and keyword:
         res_list = res_list.filter(

@@ -18,15 +18,10 @@ def list_monitor_info(request):
     page = int(request.GET.get('page', 1))
     export = request.GET.get('export', None)
 
-    form_name = 'monitor'
-    if form_name not in perms:
-        return render(
-            request, 'admin/error.html',
-            {'error_msg': 'Illegal request'}
-        )
-
     perm_action_flag = 'view'
-    if not request.user.has_perm(perms[form_name] % perm_action_flag):
+    model = register_form['monitor']['model']
+    perm = register_form['monitor']['perm'] % perm_action_flag
+    if not request.user.has_perm(perm):
         return render(
             request, 'admin/error.html',
             {
@@ -34,7 +29,7 @@ def list_monitor_info(request):
             }
         )
 
-    res_list = models[form_name].objects.all().select_related('branch').order_by('-id')
+    res_list = model.objects.all().select_related('branch').order_by('-id')
 
     if keyword:
         res_list = res_list.filter(
@@ -85,7 +80,7 @@ def list_monitor_info(request):
             data_row_num += 1
 
         response = HttpResponse(content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment;filename=%s.xls' % form_name
+        response['Content-Disposition'] = 'attachment;filename=monitor.xls'
         output = BytesIO()
         wb.save(output)
 
@@ -98,7 +93,7 @@ def list_monitor_info(request):
 
     return render(
         request,
-        'admin/list_%s.html' % form_name,
+        'admin/list_monitor.html',
         {
             'obj': p.page(page),
             'branch_data': models['branch'].objects.filter(isenable=1),

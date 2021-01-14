@@ -36,14 +36,9 @@ class BankPrivate(models.Model):
 
 
 class DailyReport(models.Model):
-    """daily report
-
-    Arguments:
-        models {object} -- django Model
-    """
     content = models.TextField(null=False, verbose_name='工作内容')
     type = models.CharField(null=False, max_length=10, verbose_name='工作类别')
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, verbose_name="用户", on_delete=models.CASCADE)
     pub_date = models.DateField(verbose_name="发布时间", null=False, auto_now=True)
 
     def __str__(self):
@@ -51,31 +46,21 @@ class DailyReport(models.Model):
 
 
 class TroubleReport(models.Model):
-    """trouble report
-
-    Arguments:
-        models {object} -- django Model
-    """
     desc = models.CharField(verbose_name="故障说明", null=False, max_length=80)
     type = models.CharField(verbose_name="故障类别", null=False, max_length=20)
-    start_date = models.DateTimeField(null=False, verbose_name="开始时间")
-    end_date = models.DateTimeField(null=True, verbose_name="结束时间")
+    start_date = models.DateTimeField(verbose_name="开始时间", null=False)
+    end_date = models.DateTimeField(verbose_name="结束时间", null=True)
     device = models.CharField(verbose_name="故障设备", null=True, max_length=100)
-    info = models.TextField(verbose_name="故障现象", null=True)  # 故障现象
-    reason = models.TextField(verbose_name="故障原因", null=True)  # 故障原因
-    resolv_method = models.TextField(verbose_name="解决办法", null=True)  # 解决方法
-    repairer = models.CharField(verbose_name="处理人", null=True, max_length=100)  # 处理人
-    prevent = models.TextField(verbose_name="预防措施", null=True)  # 预防措施
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)  # 报告人
-    pub_date = models.DateTimeField(verbose_name="发布时间", auto_now=True)  # 报告时间
+    info = models.TextField(verbose_name="故障现象", null=True)
+    reason = models.TextField(verbose_name="故障原因", null=True)
+    resolv_method = models.TextField(verbose_name="解决办法", null=True)
+    repairer = models.CharField(verbose_name="处理人", null=True, max_length=100)
+    prevent = models.TextField(verbose_name="预防措施", null=True)
+    owner = models.ForeignKey(User, verbose_name="用户", on_delete=models.CASCADE)
+    pub_date = models.DateTimeField(verbose_name="发布时间", auto_now=True)
 
 
 class ClusterInfo(models.Model):
-    """esxi cluster info
-
-    Arguments:
-        models {object} -- django Model
-    """
     IS_VIRT = (
         (0, '普通服务器'),
         (1, '虚拟化集群')
@@ -88,70 +73,59 @@ class ClusterInfo(models.Model):
     tag = models.CharField(verbose_name="集群标记", unique=True, max_length=50)
     is_active = models.IntegerField(verbose_name="状态", choices=IS_ACTIVE, default=0)
     is_virt = models.IntegerField(verbose_name="类别", choices=IS_VIRT, default=0, null=False)
-    pub_date = models.DateTimeField(verbose_name="发布时间", auto_now_add=True)  # 添加时间
+    pub_date = models.DateTimeField(verbose_name="发布时间", auto_now_add=True)
 
     def __str__(self):
         return "集群名称:{} 集群标记:{}".format(self.name, self.tag)
 
 
 class FileInfo(models.Model):
-    """user upload file info
-
-    Arguments:
-        models {object} -- django Model
-    """
-
     UPLOAD_DOC_TYPE = (
         (0, '文件夹'),
         (1, '文件')
     )
 
-    path = models.CharField(verbose_name="文件路径", max_length=200, null=False)  # 路径
-    type = models.IntegerField(verbose_name="文件类型", null=False, default=0, choices=UPLOAD_DOC_TYPE)  # 类型 0文件夹 1文件
-    name = models.CharField(verbose_name="文件名称", max_length=100, null=False)  # 名称
-    file_size = models.CharField(verbose_name="文件大小", max_length=10, null=True, default=0)  # 文件大小
-    real_path = models.CharField(verbose_name="存储路径", max_length=200, null=True)  # 真实路径
-    real_name = models.CharField(verbose_name="存储名称", max_length=100, null=True)  # 真实文件名
-    file_type = models.CharField(verbose_name="文件类型", max_length=5, null=True)  # 文件类型
-    pub_date = models.DateTimeField(verbose_name="发布时间", auto_now_add=True)  # 添加时间
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)  # 文件属主
+    path = models.CharField(verbose_name="文件路径", max_length=200, null=False)
+    type = models.IntegerField(verbose_name="文件类型", null=False, default=0, choices=UPLOAD_DOC_TYPE)
+    name = models.CharField(verbose_name="文件名称", max_length=100, null=False)
+    file_size = models.CharField(verbose_name="文件大小", max_length=10, null=True, default=0)
+    real_path = models.CharField(verbose_name="存储路径", max_length=200, null=True)
+    real_name = models.CharField(verbose_name="存储名称", max_length=100, null=True)
+    file_type = models.CharField(verbose_name="文件类型", max_length=5, null=True)
+    pub_date = models.DateTimeField(verbose_name="发布时间", auto_now_add=True)
+    owner = models.ForeignKey(User, verbose_name="用户", on_delete=models.CASCADE)
 
     def __str__(self):
         return "name:{} type:{},".format(self.name, self.type)
 
 
 class HostInfo(models.Model):
-    """host info
-
-    Arguments:
-        models {object} -- django Model
-    """
     HOST_STATUS = (
         (0, '开机'),
         (1, '关机')
     )
 
-    hostname = models.CharField(verbose_name="主机名", max_length=100, unique=True)  # 主机名
-    sn = models.CharField(verbose_name="序列号", max_length=80)  # SN序列号
-    idrac_ip = models.GenericIPAddressField(verbose_name="iDRAC IP")  # 远程管理卡IP
-    host_ip = models.GenericIPAddressField(verbose_name="主机IP")  # 主机IP
-    cluster_tag = models.ForeignKey(ClusterInfo, on_delete=models.CASCADE, to_field="tag", null=True, blank=True)  # 所属集群标签
-    cpu_nums = models.IntegerField(verbose_name="CPU数量", default=0)  # cpu总数
-    cpu_core = models.IntegerField(verbose_name="CPU总数", default=0)  # cpu总数
-    cpu_rate = models.FloatField(verbose_name="CPU频率", default=0)  # 单颗频率
-    cpu_total_rate = models.FloatField(verbose_name="CPU总数量", default=0)  # 主机CPU
-    sd_nums = models.IntegerField(verbose_name="机槿硬盘数量", default=0)  # 机槿硬盘数量
-    sd_size = models.FloatField(verbose_name="机械硬盘大小", default=0)  # 机槿硬盘大小
-    sd_total_size = models.FloatField(verbose_name="机槿硬盘总量", default=0)  # 机槿硬盘总量
-    ssd_nums = models.IntegerField(verbose_name="SSD数量", default=0)  # 固态硬盘数量
-    ssd_size = models.FloatField(verbose_name="SSD大小", default=0)  # 固态硬盘大小
-    ssd_total_size = models.FloatField(verbose_name="SSD总量", default=0)  # 固态硬盘总量
-    dev_model = models.CharField(verbose_name="设备型号", max_length=50, null=True)  # 设备型号
+    hostname = models.CharField(verbose_name="主机名", max_length=100, unique=True)
+    sn = models.CharField(verbose_name="序列号", max_length=80)
+    idrac_ip = models.GenericIPAddressField(verbose_name="iDRAC IP")
+    host_ip = models.GenericIPAddressField(verbose_name="主机IP")
+    cluster_tag = models.ForeignKey(ClusterInfo, verbose_name="集群", on_delete=models.CASCADE, to_field="tag", null=True)
+    cpu_nums = models.IntegerField(verbose_name="CPU数量", default=0)
+    cpu_core = models.IntegerField(verbose_name="CPU总数", default=0)
+    cpu_rate = models.FloatField(verbose_name="CPU频率", default=0)
+    cpu_total_rate = models.FloatField(verbose_name="CPU总数量", default=0)
+    sd_nums = models.IntegerField(verbose_name="机槿硬盘数量", default=0)
+    sd_size = models.FloatField(verbose_name="机械硬盘大小", default=0)
+    sd_total_size = models.FloatField(verbose_name="机槿硬盘总量", default=0)
+    ssd_nums = models.IntegerField(verbose_name="SSD数量", default=0)
+    ssd_size = models.FloatField(verbose_name="SSD大小", default=0)
+    ssd_total_size = models.FloatField(verbose_name="SSD总量", default=0)
+    dev_model = models.CharField(verbose_name="设备型号", max_length=50, null=True)
     memory_nums = models.IntegerField(verbose_name="内存数量", default=0)
     memory_size = models.IntegerField(verbose_name="内存容量", default=0)
-    memory_total_size = models.IntegerField(verbose_name="内存总容量", default=0)  # 主机内存
-    os = models.CharField(verbose_name="操作系统", max_length=20)  # 操作系统
-    desc = models.TextField(verbose_name="备注", null=True)  # 备注
+    memory_total_size = models.IntegerField(verbose_name="内存总容量", default=0)
+    os = models.CharField(verbose_name="操作系统", max_length=20)
+    desc = models.TextField(verbose_name="备注", null=True)
     buy_date = models.CharField(verbose_name="购买日期", max_length=50, null=True)
     end_svc_date = models.CharField(verbose_name="过保日期", max_length=50, null=True)
     svc_net_in = models.CharField(verbose_name="业务接入", max_length=100, null=True)
@@ -164,8 +138,8 @@ class HostInfo(models.Model):
     dc_name = models.CharField(verbose_name="机房名称", max_length=50, null=True)
     intention = models.CharField(verbose_name="用途", max_length=100, null=True)
     raid = models.CharField(verbose_name="RAID级别", max_length=50, null=True)
-    dev_status = models.IntegerField(verbose_name="状态", default=0, choices=HOST_STATUS)  # 0开机 1关机
-    pub_date = models.DateTimeField(verbose_name="发布时间", auto_now_add=True)  # 添加时间
+    dev_status = models.IntegerField(verbose_name="状态", default=0, choices=HOST_STATUS)
+    pub_date = models.DateTimeField(verbose_name="发布时间", auto_now_add=True)
 
     def __str__(self):
         return "主机名:{} ip:{} 集群:{} idrac ip:{}".format(
@@ -180,40 +154,31 @@ class HostInterface(models.Model):
 
 
 class VmInfo(models.Model):
-    """virtual machine info
-
-    Arguments:
-        models {object} -- django Model
-    """
-
     HOST_STATUS = (
         (0, '开机'),
         (1, '关机')
     )
 
-    vm_hostname = models.CharField(verbose_name="主机名", max_length=100, )  # 主机名
-    vm_intention = models.CharField(verbose_name="用途", max_length=100, null=True)  # 用途
-    vm_register = models.CharField(verbose_name="申请人", max_length=10, null=True)  # 申请人
-    vm_monitor = models.CharField(verbose_name="zabbix监控", max_length=5, null=True)  # zabbix监控
-    vm_ip = models.GenericIPAddressField(verbose_name="IP地址",)  # 系统IP
-    vlan_tag = models.CharField(verbose_name="vlan标签", max_length=30)  # vlan标签
-    vlan_id = models.IntegerField(verbose_name="vlan号",)  # vlan id
-    host = models.ForeignKey(HostInfo, verbose_name="宿主机", on_delete=models.CASCADE)  # 宿主机外键
-    vm_cpu = models.IntegerField(verbose_name="CPU", default=0)  # cpu
-    vm_disk = models.IntegerField(verbose_name="硬盘", default=0)  # 硬盘
-    vm_memory = models.IntegerField(verbose_name="内存", default=0)  # 内存
-    vm_os = models.CharField(verbose_name="操作系统", max_length=20)  # 操作系统
-    vm_desc = models.TextField(verbose_name="备注", null=True)  # 备注
-    vm_status = models.IntegerField(verbose_name="状态", default=0, choices=HOST_STATUS)  # 虚拟机状态 0开机 1关机
-    pub_date = models.DateTimeField(verbose_name="发布时间", auto_now_add=True)  # 添加时间
+    vm_hostname = models.CharField(verbose_name="主机名", max_length=100, )
+    vm_intention = models.CharField(verbose_name="用途", max_length=100, null=True)
+    vm_register = models.CharField(verbose_name="申请人", max_length=10, null=True)
+    vm_monitor = models.CharField(verbose_name="zabbix监控", max_length=5, null=True)
+    vm_ip = models.GenericIPAddressField(verbose_name="IP地址",)
+    vlan_tag = models.CharField(verbose_name="vlan标签", max_length=30)
+    vlan_id = models.IntegerField(verbose_name="vlan号",)
+    host = models.ForeignKey(HostInfo, verbose_name="宿主机", on_delete=models.CASCADE)
+    vm_cpu = models.IntegerField(verbose_name="CPU", default=0)
+    vm_disk = models.IntegerField(verbose_name="硬盘", default=0)
+    vm_memory = models.IntegerField(verbose_name="内存", default=0)
+    vm_os = models.CharField(verbose_name="操作系统", max_length=20)
+    vm_desc = models.TextField(verbose_name="备注", null=True)
+    vm_status = models.IntegerField(verbose_name="状态", default=0, choices=HOST_STATUS)
+    pub_date = models.DateTimeField(verbose_name="发布时间", auto_now_add=True)
 
     def __str__(self):
         return "主机名:{} 申请人:{} IP:{} VLAN ID:{} VLAN标签:{} ".format(
-            self.vm_hostname,
-            self.vm_register,
-            self.vm_ip,
-            self.vlan_id,
-            self.vlan_tag
+            self.vm_hostname, self.vm_register, self.vm_ip,
+            self.vlan_id, self.vlan_tag
         )
 
 
@@ -240,30 +205,30 @@ class NetworkDevices(models.Model):
 
 
 class WanNetworks(models.Model):
-    branch = models.ForeignKey(Branch, verbose_name="分公司", on_delete=models.CASCADE)  # 地区
-    isp = models.CharField(verbose_name="运营商", max_length=20)  # 运营商
-    ip = models.CharField(verbose_name="IP地址", max_length=50)  # IP/掩码
-    gateway = models.CharField(verbose_name="网关", max_length=20)  # 网关
-    bandwidth = models.CharField(verbose_name="带宽", max_length=10)  # 带宽
-    rent = models.CharField(verbose_name="付费方式", max_length=20)  # 付费方式/金额
-    dns1 = models.CharField(verbose_name="DNS1", max_length=20, null=True)  # dns1
-    dns2 = models.CharField(verbose_name="DNS2", max_length=20, null=True)  # dns2
-    contact = models.CharField(verbose_name="联系人", max_length=50)  # 运营商联系人
+    branch = models.ForeignKey(Branch, verbose_name="分公司", on_delete=models.CASCADE)
+    isp = models.CharField(verbose_name="运营商", max_length=20)
+    ip = models.CharField(verbose_name="IP地址", max_length=50)
+    gateway = models.CharField(verbose_name="网关", max_length=20)
+    bandwidth = models.CharField(verbose_name="带宽", max_length=10)
+    rent = models.CharField(verbose_name="付费方式", max_length=20)
+    dns1 = models.CharField(verbose_name="DNS1", max_length=20, null=True)
+    dns2 = models.CharField(verbose_name="DNS2", max_length=20, null=True)
+    contact = models.CharField(verbose_name="联系人", max_length=50)
 
 
 class LanNetworks(models.Model):
-    branch = models.ForeignKey(Branch, verbose_name="分公司", on_delete=models.CASCADE)  # 地区
-    ip = models.CharField(verbose_name="IP网段", max_length=50)  # IP/掩码
-    gateway = models.CharField(verbose_name="网关", max_length=20)  # 网关
-    vlanid = models.IntegerField(verbose_name="VLAN号",)  # vlan id
-    function = models.CharField(verbose_name="用途", max_length=20)  # 用途
+    branch = models.ForeignKey(Branch, verbose_name="分公司", on_delete=models.CASCADE)
+    ip = models.CharField(verbose_name="IP网段", max_length=50)
+    gateway = models.CharField(verbose_name="网关", max_length=20)
+    vlanid = models.IntegerField(verbose_name="VLAN号",)
+    function = models.CharField(verbose_name="用途", max_length=20)
 
 
 class PortDesc(models.Model):
-    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)  # 地区
-    device = models.ForeignKey(NetworkDevices, on_delete=models.CASCADE)  # 设备ID
-    index = models.CharField(max_length=50, null=False)  # 端口索引
-    desc = models.CharField(max_length=200, null=True)  # 端口描述
+    branch = models.ForeignKey(Branch, verbose_name="分公司", on_delete=models.CASCADE)
+    device = models.ForeignKey(NetworkDevices, verbose_name="设备", on_delete=models.CASCADE)
+    index = models.CharField(verbose_name="端口号", max_length=50, null=False)
+    desc = models.CharField(verbose_name="端口描述", max_length=200, null=True)
 
 
 class Monitor(models.Model):
@@ -271,20 +236,20 @@ class Monitor(models.Model):
         (0, '不满足'),
         (1, '满足')
     )
-    branch = models.ForeignKey(Branch, verbose_name="分公司", on_delete=models.CASCADE)  # 地区
-    dev_model = models.CharField(verbose_name="设备型号", max_length=20)  # 型号
-    ip = models.CharField(verbose_name="IP", max_length=20)  # IP
-    camera_nums = models.IntegerField(verbose_name="摄像头数量", )  # 摄像头数量
-    idle_channel = models.IntegerField(verbose_name="空闲通道", )  # 剩余通道数
-    hdd = models.IntegerField(verbose_name="硬盘容量",)  # 硬盘容量
-    idle_slot = models.IntegerField(verbose_name="剩余槽位",)  # 剩余硬盘槽位
-    storage = models.IntegerField(verbose_name="满足存储三个月", choices=STORAGE_THREE_MONTH)  # 存储时间是否满足3个月
-    desc = models.TextField(verbose_name="备注", null=True)  # 备注
+    branch = models.ForeignKey(Branch, verbose_name="分公司", on_delete=models.CASCADE)
+    dev_model = models.CharField(verbose_name="设备型号", max_length=20)
+    ip = models.CharField(verbose_name="IP", max_length=20)
+    camera_nums = models.IntegerField(verbose_name="摄像头数量", )
+    idle_channel = models.IntegerField(verbose_name="空闲通道", )
+    hdd = models.IntegerField(verbose_name="硬盘容量",)
+    idle_slot = models.IntegerField(verbose_name="剩余槽位",)
+    storage = models.IntegerField(verbose_name="满足存储三个月", choices=STORAGE_THREE_MONTH)
+    desc = models.TextField(verbose_name="备注", null=True)
 
 
 class MonitorAccount(models.Model):
-    monitor = models.ForeignKey(Monitor, on_delete=models.CASCADE)  # 授权监控主机IP
-    username = models.CharField(max_length=20)  # 授权账号
-    password = models.CharField(max_length=20)  # 密码
-    channel = models.CharField(max_length=50)  # 授权通道号
-    desc = models.TextField(null=True)  # 授权描述
+    monitor = models.ForeignKey(Monitor, verbose_name="监控主机", on_delete=models.CASCADE)
+    username = models.CharField(verbose_name="帐号", max_length=20)
+    password = models.CharField(verbose_name="密码", max_length=20)
+    channel = models.CharField(verbose_name="授权通道", max_length=50)
+    desc = models.TextField(verbose_name="授权描述", null=True)
