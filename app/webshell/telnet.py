@@ -55,7 +55,3 @@ class Telnet:
 
     def shell(self, data):
         Thread(target=self.django_to_telnet, args=(data,)).start()
-
-
-
-        

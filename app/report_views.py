@@ -44,7 +44,7 @@ def report_manage(request):
         user_id = request.user.id
     
     if user_id == 0 and not super_user_flag:
-        return render(request, '/admin/error.html')
+        return render(request, 'admin/error.html')
 
     # convert user to int
     user_id = int(user_id)
@@ -103,8 +103,8 @@ def report_manage(request):
     if keyword:
         if t == 'trouble':
             res = res.filter(
-                Q(info__contains=keyword)|
-                Q(reason__contains=keyword)|
+                Q(info__contains=keyword) |
+                Q(reason__contains=keyword) |
                 Q(resolv_method__contains=keyword)
             )
         if t == 'daily':
@@ -197,12 +197,12 @@ def create_inspect(request):
     # print(content)
 
     file_name = "inspect_order_%s.txt" % time.strftime('%Y-%m', time.localtime())
-    file_path = os.path.join(settings.BASE_DIR,'uploads',file_name)
+    file_path = os.path.join(settings.BASE_DIR, 'uploads', file_name)
     with open(file_path, 'w+', encoding='utf-8', errors="ignore") as f:
         f.write(content)
 
     return JsonResponse({
-        'code':0,
+        'code': 0,
         'msg': 'success'
     })
 
@@ -210,12 +210,12 @@ def create_inspect(request):
 @login_required
 def list_inspect(request):
     file_name = "inspect_order_%s.txt" % time.strftime('%Y-%m', time.localtime())
-    file_path = os.path.join(settings.BASE_DIR,'uploads',file_name)
+    file_path = os.path.join(settings.BASE_DIR, 'uploads', file_name)
     data=[]
     lines = None
     if os.path.exists(file_path):
         with open(file_path, 'r', encoding='utf-8', errors="ignore") as f:
-            lines=f.read().replace('	',' ')
+            lines=f.read().replace('	', ' ')
         
         lines = re.sub(' +', ' ', lines)        
         for line in lines.split('\n'):
@@ -231,4 +231,4 @@ def list_inspect(request):
         # print(lines)
         return render(request, 'admin/add_or_edit_inspection_order.html', {'content': lines})
 
-    return render(request, 'admin/list_inspect.html',{'obj': data})
+    return render(request, 'admin/list_inspect.html', {'obj': data})

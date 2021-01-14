@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Permission
+from .common import register_form
 # from django.db.models import Q
 
 
@@ -45,27 +46,19 @@ def get_user_perms_list(request, nid):
         'delete': '删除'
     }
 
-    all_perms_object = {
-        'vminfo': '虚拟机',
-        'hostinfo': '服务器',
-        'user': '用户',
-        #'fileinfo': '文件',
-        'clusterinfo': '集群',
-        'dailyreport': '日报',
-        'troublereport': '故障报告',
-        'branch': '分公司',
-        'networkdevices': '网络设备',
-        'lannetworks': '网络信息',
-        'wannetworks': '互联网信息',
-        'monitor': '监控主机',
-        'bankprivate': '银行专线',
-    }
+    all_perms_object = {}
+    for i in register_form:
+        if i in ['hostif', 'monitor_account']:
+            continue
+        else:
+            m = register_form[i]['model']
+            m_name = m._meta.model_name.lower()
+            m_verbose_name = m._meta.verbose_name
+            all_perms_object[m_name] = m_verbose_name
+
     if not user.is_superuser:
         del all_perms_object['user']
-        
-    perm_app = 'app'
     user_all_perms = user.get_all_permissions()
-
     n = 1
     data = []
     for i in all_perms_object:
@@ -77,13 +70,15 @@ def get_user_perms_list(request, nid):
         children_perms = []
         for a in action_flag:
             perm_code = '%s.%s_%s' % (perm_app, a, i)
-            checked = False
+
             if perm_code in user_all_perms:
                 checked = True
+            else:
+                checked = False
             children_perms.append({
                 'title': action_flag[a],
                 'id': n,
-                'checked': user.has_perm(perm_code),
+                'checked': checked,
                 'field': perm_code
             })
             n += 1

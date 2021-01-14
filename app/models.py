@@ -34,6 +34,9 @@ class BankPrivate(models.Model):
     def __str__(self):
         return '%s' % self.name
 
+    class Meta:
+        verbose_name = '银行专线'
+
 
 class DailyReport(models.Model):
     content = models.TextField(null=False, verbose_name='工作内容')
@@ -43,6 +46,9 @@ class DailyReport(models.Model):
 
     def __str__(self):
         return '%s %s' % (self.owner.first_name, self.type)
+
+    class Meta:
+        verbose_name = '日报'
 
 
 class TroubleReport(models.Model):
@@ -58,6 +64,9 @@ class TroubleReport(models.Model):
     prevent = models.TextField(verbose_name="预防措施", null=True)
     owner = models.ForeignKey(User, verbose_name="用户", on_delete=models.CASCADE)
     pub_date = models.DateTimeField(verbose_name="发布时间", auto_now=True)
+
+    class Meta:
+        verbose_name = '故障报告'
 
 
 class ClusterInfo(models.Model):
@@ -78,6 +87,9 @@ class ClusterInfo(models.Model):
     def __str__(self):
         return "集群名称:{} 集群标记:{}".format(self.name, self.tag)
 
+    class Meta:
+        verbose_name = '集群'
+
 
 class FileInfo(models.Model):
     UPLOAD_DOC_TYPE = (
@@ -97,6 +109,9 @@ class FileInfo(models.Model):
 
     def __str__(self):
         return "name:{} type:{},".format(self.name, self.type)
+
+    class Meta:
+        verbose_name = '文档'
 
 
 class HostInfo(models.Model):
@@ -146,11 +161,17 @@ class HostInfo(models.Model):
             self.hostname, self.host_ip, self.cluster_tag, self.idrac_ip
         )
 
+    class Meta:
+        verbose_name = '服务器'
+
 
 class HostInterface(models.Model):
     host = models.ForeignKey(HostInfo, on_delete=models.CASCADE)
     ifname = models.CharField(verbose_name="接口序号", max_length=100, null=False)
     access = models.CharField(verbose_name="接口描述", max_length=100, null=False)
+
+    class Meta:
+        verbose_name = '设备接口'
 
 
 class VmInfo(models.Model):
@@ -181,27 +202,36 @@ class VmInfo(models.Model):
             self.vlan_id, self.vlan_tag
         )
 
+    class Meta:
+        verbose_name = '虚拟服务器'
+
 
 class Branch(models.Model):
     IS_ENABLE = (
         (0, '停用'),
         (1, '启用')
     )
-    name = models.CharField(verbose_name="名称", max_length=20)  # 分公司名称
-    address = models.CharField(verbose_name="公司地址", max_length=100)  # 分公司地址
-    isenable = models.IntegerField(verbose_name="状态", default=1, choices=IS_ENABLE, null=False)  # 是否启用
+    name = models.CharField(verbose_name="名称", max_length=20)
+    address = models.CharField(verbose_name="公司地址", max_length=100)
+    isenable = models.IntegerField(verbose_name="状态", default=1, choices=IS_ENABLE, null=False)
+
+    class Meta:
+        verbose_name = '分子公司'
 
 
 class NetworkDevices(models.Model):
-    hostname = models.CharField(verbose_name="主机名", max_length=50)  # 设备名称
-    device_type = models.CharField(verbose_name="设备类型", max_length=20)  # 设备类型
-    brand = models.CharField(verbose_name="设备品牌", max_length=20)  # 设备品牌
-    sn = models.CharField(verbose_name="设备序号", max_length=50)  # 设备序列号
-    device_model = models.CharField(verbose_name="设备型号", max_length=50)  # 设备型号
-    version = models.CharField(verbose_name="系统版本", max_length=50)  # 软件版本号
-    ip = models.CharField(verbose_name="管理IP", max_length=20)  # 管理IP
-    port_num = models.IntegerField(verbose_name="端口数量", default=8, null=False)  # 端口数量
-    branch = models.ForeignKey(Branch, verbose_name="分公司", on_delete=models.CASCADE)  # 地区
+    hostname = models.CharField(verbose_name="主机名", max_length=50)
+    device_type = models.CharField(verbose_name="设备类型", max_length=20)
+    brand = models.CharField(verbose_name="设备品牌", max_length=20)
+    sn = models.CharField(verbose_name="设备序号", max_length=50)
+    device_model = models.CharField(verbose_name="设备型号", max_length=50)
+    version = models.CharField(verbose_name="系统版本", max_length=50)
+    ip = models.CharField(verbose_name="管理IP", max_length=20)
+    port_num = models.IntegerField(verbose_name="端口数量", default=8, null=False)
+    branch = models.ForeignKey(Branch, verbose_name="分公司", on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = '网络设备'
 
 
 class WanNetworks(models.Model):
@@ -215,6 +245,9 @@ class WanNetworks(models.Model):
     dns2 = models.CharField(verbose_name="DNS2", max_length=20, null=True)
     contact = models.CharField(verbose_name="联系人", max_length=50)
 
+    class Meta:
+        verbose_name = '互联网信息'
+
 
 class LanNetworks(models.Model):
     branch = models.ForeignKey(Branch, verbose_name="分公司", on_delete=models.CASCADE)
@@ -223,12 +256,18 @@ class LanNetworks(models.Model):
     vlanid = models.IntegerField(verbose_name="VLAN号",)
     function = models.CharField(verbose_name="用途", max_length=20)
 
+    class Meta:
+        verbose_name = '内网信息'
+
 
 class PortDesc(models.Model):
     branch = models.ForeignKey(Branch, verbose_name="分公司", on_delete=models.CASCADE)
     device = models.ForeignKey(NetworkDevices, verbose_name="设备", on_delete=models.CASCADE)
     index = models.CharField(verbose_name="端口号", max_length=50, null=False)
     desc = models.CharField(verbose_name="端口描述", max_length=200, null=True)
+
+    class Meta:
+        verbose_name = '端口描述'
 
 
 class Monitor(models.Model):
@@ -246,6 +285,9 @@ class Monitor(models.Model):
     storage = models.IntegerField(verbose_name="满足存储三个月", choices=STORAGE_THREE_MONTH)
     desc = models.TextField(verbose_name="备注", null=True)
 
+    class Meta:
+        verbose_name = '监控主机'
+
 
 class MonitorAccount(models.Model):
     monitor = models.ForeignKey(Monitor, verbose_name="监控主机", on_delete=models.CASCADE)
@@ -253,3 +295,6 @@ class MonitorAccount(models.Model):
     password = models.CharField(verbose_name="密码", max_length=20)
     channel = models.CharField(verbose_name="授权通道", max_length=50)
     desc = models.TextField(verbose_name="授权描述", null=True)
+
+    class Meta:
+        verbose_name = '监控主机授权'

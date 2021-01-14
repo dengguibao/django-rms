@@ -96,7 +96,7 @@ def list_monitor_info(request):
         'admin/list_monitor.html',
         {
             'obj': p.page(page),
-            'branch_data': models['branch'].objects.filter(isenable=1),
+            'branch_data': register_form['branch']['model'].objects.filter(isenable=1),
             'keyword': keyword,
             'current_branch_id': int(branch_id),
             'rs_count': p.count,
