@@ -17,10 +17,10 @@
             </li>
             {% comment %} <li><a href="/admin/list-inspect/" title="巡检计划">巡检计划</a></li> {% endcomment %}
             {% if perms.app.view_dailyreport %}
-                <li><a href="/admin/list-report/?t=daily" title="list daily report">工作日报</a></li>
+                <li><a href="/admin/list-report/?t=daily_report" title="list daily report">工作日报</a></li>
             {% endif %}
             {% if perms.app.view_troublereport %}
-                <li><a href="/admin/list-report/?t=trouble" title="list trouble report">故障报告</a></li>
+                <li><a href="/admin/list-report/?t=trouble_report" title="list trouble report">故障报告</a></li>
             {% endif %}
         </ul>
     </li>

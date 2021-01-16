@@ -1,5 +1,4 @@
 from io import BytesIO
-import xlwt
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -105,55 +104,33 @@ def list_hosts_list(request, host_type, flag):
 
 @login_required()
 def export(request, host_type):
-    backup_data_struct = data_struct()
     export_file_name = None
     if host_type not in ['vm', 'host']:
         return render(request, 'admin/error.html')
 
-    wb = xlwt.Workbook(encoding='utf8')
-    sheet = wb.add_sheet('sheet1', cell_overwrite_ok=True)
+    model = register_form[host_type]['model']
 
     res = None
     if host_type == 'host':
-        res = HostInfo.objects.all()
+        res = model.objects.all()
         export_file_name = 'host_info.xls'
     if host_type == 'vm':
         export_file_name = 'vms_info.xls'
-        res = VmInfo.objects.all().select_related('host')
+        res = model.objects.all().select_related('host')
 
     if res:
-        column = 0
-        for title in backup_data_struct[host_type]:
-            sheet.write(0, column, backup_data_struct[host_type][title])
-            column += 1
+        wb = export_to_file(host_type, res)
+        response = HttpResponse(content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment;filename=%s' % export_file_name
+        output = BytesIO()
+        wb.save(output)
 
-        column = 0
-        data_row_num = 1
-        for res_row in res:
-            for key in backup_data_struct[host_type]:
-                field_value = eval('res_row.%s' % key)
-                if key == 'cluster_tag_id':
-                    sheet.write(data_row_num, column, res_row.cluster_tag.name)
-                elif key == 'host_id':
-                    sheet.write(data_row_num, column, res_row.host.hostname)
-                elif key == 'vm_status':
-                    sheet.write(data_row_num, column, res_row.get_vm_status_display())
-                elif key == 'dev_status':
-                    sheet.write(data_row_num, column, res_row.get_dev_status_display())
-                else:
-                    sheet.write(data_row_num, column, field_value)
-                column += 1
-            column = 0
-            data_row_num += 1
-    response = HttpResponse(content_type='application/vnd.ms-excel')
-    response['Content-Disposition'] = 'attachment;filename=%s' % export_file_name
-    output = BytesIO()
-    wb.save(output)
+        # 重新定位到开始
+        output.seek(0)
+        response.write(output.getvalue())
+        return response
 
-    # 重新定位到开始
-    output.seek(0)
-    response.write(output.getvalue())
-    return response
+    return render(request, 'admin/error.html', {'error_msg': '非法操作'})
 
 
 @login_required()

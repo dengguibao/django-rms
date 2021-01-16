@@ -17,7 +17,7 @@
 <fieldset class="layui-elem-field layui-field-title">
     <legend>日报管理</legend>
 </fieldset>
-    <form class="layui-form" method="POST" action="/admin/list-report/?t=daily">
+    <form class="layui-form" method="POST" action="/admin/list-report/?t=daily_report">
     {% csrf_token %}
     <div class="layui-form-item">
         <div class="layui-inline">
@@ -146,7 +146,7 @@
 
     })
     function export_search_result() {
-        $('form').attr('action','/admin/list-report/?t=daily&export=t')
+        $('form').attr('action','/admin/list-report/?t=daily_report&export=t')
         $('form').submit()
     }
 </script>

@@ -1,4 +1,3 @@
-import xlwt
 from io import BytesIO
 from django.core.paginator import Paginator
 from django.shortcuts import render
@@ -44,40 +43,7 @@ def list_monitor_info(request):
         res_list = res_list.filter(branch_id=branch_id)
 
     if export:
-        wb = xlwt.Workbook(encoding='utf8')
-        sheet = wb.add_sheet('sheet1', cell_overwrite_ok=True)
-        # column = 0
-        # backup_data_struct = data_struct()
-        # for title in backup_data_struct[t]:
-        #     sheet.write(0, column, backup_data_struct[t][title])
-        #     column += 1
-
-        column = 0
-        data_row_num = 0
-        for i in res_list.values():
-            for key, value in i.items():
-                if key == 'branch_id':
-                    sheet.write(
-                        data_row_num,
-                        column,
-                        res_list[data_row_num].branch.name
-                    )
-                elif key == 'id':
-                    sheet.write(
-                        data_row_num,
-                        column,
-                        data_row_num + 1
-                    )
-                elif key == 'storage':
-                    if value == 1:
-                        sheet.write(data_row_num, column, '满足')
-                    else:
-                        sheet.write(data_row_num, column, '不满足')
-                else:
-                    sheet.write(data_row_num, column, value)
-                column += 1
-            column = 0
-            data_row_num += 1
+        wb = export_to_file('monitor', res_list)
 
         response = HttpResponse(content_type='application/vnd.ms-excel')
         response['Content-Disposition'] = 'attachment;filename=monitor.xls'

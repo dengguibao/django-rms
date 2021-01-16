@@ -1,4 +1,5 @@
 import json
+
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
@@ -196,25 +197,7 @@ def create_or_update(request, form_name):
     act = 'create' if nid == 0 else 'update'
 
     # get all fields and fields attr by model _meta
-    model_fields = {}
-    for f in model._meta.get_fields():
-
-        if f.is_relation:
-            field_name = '%s_id' % f.name.split('.')[-1]
-        else:
-            field_name = f.name.split('.')[-1]
-        field_type = f.get_internal_type()
-        try:
-            field_verbose_name = f.verbose_name
-            choice = f.choices
-        except:
-            field_verbose_name = field_name
-            choice = None
-
-        model_fields[field_name] = {}
-        model_fields[field_name]['verbose_name'] = field_verbose_name
-        model_fields[field_name]['field_type'] = field_type
-        model_fields[field_name]['choice'] = choice
+    model_fields = get_model_fields(form_name)
 
     # according chang_field build change log
     change_fields = request.GET.get('change_field', None)

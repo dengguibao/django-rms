@@ -17,7 +17,7 @@
 <fieldset class="layui-elem-field layui-field-title">
     <legend>故障报告</legend>
 </fieldset>
-    <form class="layui-form" method="POST" action="/admin/list-report/?t=trouble">
+    <form class="layui-form" method="POST" action="/admin/list-report/?t=trouble_report">
     {% csrf_token %}
     <div class="layui-form-item">
         <div class="layui-inline">
@@ -140,7 +140,7 @@
         })
     })
     function export_search_result() {
-        $('form').attr('action','/admin/list-report/?t=trouble&export=t');
+        $('form').attr('action','/admin/list-report/?t=trouble_report&export=t');
         $('form').submit();
     }
 </script>
