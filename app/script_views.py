@@ -25,25 +25,18 @@ def get_file_list(request, path):
     for i in file_list:
         file = os.path.join(path, i)
         if os.path.isdir(file):
-            data['data'].append({
-                'type': 'dir',
-                'name': i,
-                'size': format_file_size(os.path.getsize(file)),
-                'create_date': time.strftime(
-                    '%Y-%m-%d %H:%M:%S',
-                    time.localtime(os.path.getctime(file))
-                )
-            })
-        if os.path.isfile(file):
-            data['data'].append({
-                'type': 'file',
-                'name': i,
-                'size': format_file_size(os.path.getsize(file)),
-                'create_date': time.strftime(
-                    '%Y-%m-%d %H:%M:%S',
-                    time.localtime(os.path.getctime(file))
-                )
-            })
+            file_type = 'dir'
+        else:
+            file_type = 'file'
+        data['data'].append({
+            'type': file_type,
+            'name': i,
+            'size': format_file_size(os.path.getsize(file)),
+            'create_date': time.strftime(
+                '%Y-%m-%d %H:%M:%S',
+                time.localtime(os.path.getctime(file))
+            )
+        })
     return JsonResponse(data)
 
 
