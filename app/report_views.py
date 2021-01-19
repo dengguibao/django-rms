@@ -201,7 +201,7 @@ def list_inspect(request):
                 'date': x[0],
                 'person': x[1]
             })
-    edit = request.GET.get('edit',None)
+    edit = request.GET.get('edit', None)
     if edit:
         # print(lines)
         return render(request, 'admin/add_or_edit_inspection_order.html', {'content': lines})
