@@ -75,17 +75,15 @@ def list_hosts_list(request, host_type, flag):
 
     if host_type == 'vm':
         data = rs.values()
-        # bug: no this follow code,will be large query database
-        for i in data:
-            pass
-
-        nn = 0
-        for i in rs:
-            data[nn]['esxi_host_name'] = i.host.hostname
-            nn += 1
 
     p = Paginator(data, page_size)
     query_set = p.page(page)
+
+    if host_type == 'vm':
+        n = 0
+        for i in query_set:
+            i['esxi_host_name'] = rs[n].host.hostname
+            n += 1
 
     context = {
         'data': list(query_set),
