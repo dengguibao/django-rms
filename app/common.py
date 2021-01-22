@@ -91,7 +91,7 @@ def get_model_fields(form_name):
         data[field_name]['verbose_name'] = verbose_name
         data[field_name]['field_type'] = field_type
         data[field_name]['choice'] = choice
-        data[field_name]['relate_name'] = i.name
+        data[field_name]['relate_name'] = i.name if i.is_relation else None
 
     return data
 

@@ -289,13 +289,7 @@
                         }
                     }}
                     ,{field: 'vm_ip', fixed: 'left', title: 'IP', width:120}
-                    ,{field: 'vm_status', title: '状态', templet:function(d){
-                        if (d.vm_status == 0){
-                            return '开机'
-                        }else{
-                            return '<span style="color:#ff0000">关机</span>'
-                        }
-                    }}
+                    ,{field: 'vm_status', title: '状态'}
                     ,{field: 'vlan_tag', title: 'VLAN标签', width:100}
                     ,{field: 'vlan_id', title: 'VLAN ID', width:100}
                     ,{field: 'vm_cpu', title: 'CPU', width: 80, sort: true}
@@ -310,7 +304,7 @@
                             return '<i class="layui-icon">&#xe665;</i>'
                         }
                     }}
-                    ,{field: 'esxi_host_name', title: '宿主机', width: 200}
+                    ,{field: 'host_id', title: '宿主机', width: 200}
                     ,{field: 'vm_os', title: '操作系统', width: 80}
                     ,{field: 'pub_date', title: '添加时间', width: 100, templet: function(item){return item.pub_date.substring(0, 10)}}
                     ,{title: '操作', width: 170, align:'center', fixed: 'right', toolbar: '#toolbar'}

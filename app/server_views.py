@@ -47,6 +47,7 @@ def list_hosts_list(request, host_type, flag):
             rs = model.objects.all()
         else:
             rs = model.objects.filter(cluster_tag=flag)
+        rs.order_by('hostname')
         
     if host_type == 'vm':
         if '_all' in flag:
@@ -69,24 +70,34 @@ def list_hosts_list(request, host_type, flag):
                 Q(vm_ip__contains=keyword) |
                 Q(vm_hostname__contains=keyword)
             )
-    
-    if host_type == 'host':
-        data = rs.order_by('hostname').values()
 
-    if host_type == 'vm':
-        data = rs.values()
-
-    p = Paginator(data, page_size)
+    p = Paginator(rs, page_size)
     query_set = p.page(page)
 
-    if host_type == 'vm':
-        n = 0
-        for i in query_set:
-            i['esxi_host_name'] = rs[n].host.hostname
-            n += 1
+    model_fields = get_model_fields(host_type)
+    data = []
+    for i in query_set:
+        tmp = {}
+        for field in model_fields:
+            if not hasattr(i, field):
+                continue
+
+            if model_fields[field]['choice']:
+                v = eval('i.get_%s_display()' % field)
+            elif model_fields[field]['relate_name']:
+                try:
+                    v = eval('i.%s.hostname' % model_fields[field]['relate_name'])
+                except:
+                    v = eval('i.%s.name' % model_fields[field]['relate_name'])
+            else:
+                v = eval('i.%s' % field)
+
+            tmp[field] = v
+        data.append(tmp)
+        del tmp
 
     context = {
-        'data': list(query_set),
+        'data': data,
         'code': 0,
         'msg': 'ok',
         'page_data': {

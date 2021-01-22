@@ -153,14 +153,7 @@
                         , {rowspan: 2, field: 'hostname', fixed: 'left', title: '主机名', width: 220}
                         , {rowspan: 2, field: 'host_ip', fixed: 'left', title: 'IP', width: 120}
                         , {rowspan: 2, field: 'idrac_ip', title: 'iDRAC', width: 100}
-                        , {rowspan: 2, field: 'dev_status', title: '设备状态', width: 80, templet: function (d) {
-                                if (d.dev_status == '1') {
-                                    return '<span style="color:#ff0000">关机</span>'
-                                } else {
-                                    return '开机'
-                                }
-                            }
-                        }
+                        , {rowspan: 2, field: 'dev_status', title: '设备状态', width: 80}
                         , {rowspan: 2, field: 'sn', title: '序列号', width: 100}
                         , {colspan: 4, title: 'CPU'}
                         , {colspan: 3, title: '内存'}
