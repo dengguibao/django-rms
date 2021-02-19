@@ -1,8 +1,9 @@
-#! /usr/bin/python
-#_*_coding:utf-8 _*_
+#!/usr/bin/python
+# _*_coding:utf-8 _*_
 import argparse
 import json
 import sys
+
 if sys.version_info[0] == 2:
     import urllib as request
 else:
@@ -11,7 +12,7 @@ else:
 
 class WeCom:
 
-    def __init__(self, secret, corp_id, agent_id):
+    def __init__(self, secret: str, corp_id: str, agent_id: str):
         self.secret = secret
         self.corp_id = corp_id
         self.agent_id = agent_id
@@ -29,26 +30,26 @@ class WeCom:
         else:
             return None
 
-    def send_msg(self, access_token, content, to_user='@all', to_part='', to_tag=''):
+    def send_msg(self, access_token: str, content: str, to_user='@all', to_part='', to_tag='') -> bool:
         if to_user != '@all' and to_part == '' and to_tag == '':
             return
 
         d = {
-           "touser": to_user,
-           "toparty": to_part,
-           "totag": to_tag,
-           "msgtype": "text",
-           "agentid": self.agent_id,
-           "text": {
-               "content": content
-           },
-           "safe": 0
+            "touser": to_user,
+            "toparty": to_part,
+            "totag": to_tag,
+            "msgtype": "text",
+            "agentid": self.agent_id,
+            "text": {
+                "content": content
+            },
+            "safe": 0
         }
         url = '{domain}/cgi-bin/message/send?access_token={token}'.format(
             domain=self.domain,
             token=access_token
         )
-        json_data = json.dumps(d, ensure_ascii=False, encoding='utf-8').replace('\\n','n').replace('\\r','r')
+        json_data = json.dumps(d, ensure_ascii=False, encoding='utf-8').replace('\\n', 'n').replace('\\r', 'r')
         # print(json_data)
         res = request.urlopen(url, data=json_data)
         if res.getcode in (200, 201):
@@ -65,12 +66,17 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='WeCom(Wechat Business version) send message program')
     # parser.add_argument('--app-id', type=str, required=True, help='app id')
     parser.add_argument('--secret', type=str, required=True, help='secret')
-    parser.add_argument('--company-id', type=str, required=True, help='login wecom control panel, click "my company" menu, found this arg')
-    parser.add_argument('--agent-id', type=int, required=True, help='login wecom control panel, click app manage,found this arg')
+    parser.add_argument('--company-id', type=str, required=True,
+                        help='login wecom control panel, click "my company" menu, found this arg')
+    parser.add_argument('--agent-id', type=int, required=True,
+                        help='login wecom control panel, click app manage,found this arg')
     parser.add_argument('--content', type=str, required=True, help='message content')
-    parser.add_argument('--to-user', type=str, default='@all', help='message send to user, default is all of user, multi part use "|" split.')
-    parser.add_argument('--to-part', type=str, help='message to part name, if receive user is all, ignore this, multi part use "|" split.')
-    parser.add_argument('--to-tag', type=str, help='message tag name, if receive user is all, ignore this, multi part use "|" split.')
+    parser.add_argument('--to-user', type=str, default='@all',
+                        help='message send to user, default is all of user, multi part use "|" split.')
+    parser.add_argument('--to-part', type=str,
+                        help='message to part name, if receive user is all, ignore this, multi part use "|" split.')
+    parser.add_argument('--to-tag', type=str,
+                        help='message tag name, if receive user is all, ignore this, multi part use "|" split.')
     args = parser.parse_args(av)
 
     # APP_ID = args.app_id
