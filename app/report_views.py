@@ -190,7 +190,7 @@ def list_inspect(request):
     lines = None
     if os.path.exists(file_path):
         with open(file_path, 'r', encoding='utf-8', errors="ignore") as f:
-            lines = f.read().replace('	', ' ')
+            lines = f.read().replace('\t', ' ')
         
         lines = re.sub(' +', ' ', lines)        
         for line in lines.split('\n'):

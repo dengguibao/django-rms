@@ -54,7 +54,7 @@ class ConfigBackup:
                 self._ip
             ))
 
-    def get_config(self):
+    def get_config(self) -> str:
         try:
             self.exec_cmd(b'display current-configuration')
         except:
@@ -93,7 +93,7 @@ class ConfigBackup:
         self._tn.write(b'quit\r\n')
         return ''.join(data)
 
-    def write_config_to_file(self, data):
+    def write_config_to_file(self, data: str):
         if not data:
             return False
 
@@ -123,7 +123,7 @@ class ConfigBackup:
             )
         return True
 
-    def exec_cmd(self, cmd, prompt=b'>'):
+    def exec_cmd(self, cmd: bytes, prompt=b'>'):
 
         if self._tn is None:
             return
@@ -155,7 +155,7 @@ def AutoBackup(debug=False, **kwargs):
     ))
 
 
-def read_config_from_file(file_name):
+def read_config_from_file(file_name: str):
     if not os.path.exists(file_name):
         exit()
 

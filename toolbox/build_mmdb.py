@@ -13,7 +13,7 @@ enc = mmdbencoder.Encoder(
     compat=True)  # Map IPv4 in IPv6 (::abcd instead of ::ffff:abcd) to be read by official libraries
 
 
-def build_geoip_data(prov, city, lat, lon):
+def build_geoip_data(prov: str, city: str, lat: float, lon: float):
     return {
         "city":
             {
