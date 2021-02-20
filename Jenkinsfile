@@ -38,6 +38,9 @@ pipeline {
         stage ('deploy'){
             steps{
                 sh '''
+                ls -l
+                export KUBECONFIG=/etc/kubernetes/admin.conf
+                kubectl get pods
                 kubectl apply -f k8s-deploy.yaml
                 '''
             }
