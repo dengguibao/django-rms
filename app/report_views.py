@@ -197,6 +197,8 @@ def list_inspect(request):
             if line.strip() == '':
                 continue
             x = line.split(' ')
+            if len(x) < 2:
+                continue
             data.append({
                 'date': x[0],
                 'person': x[1]
@@ -204,6 +206,20 @@ def list_inspect(request):
     edit = request.GET.get('edit', None)
     if edit:
         # print(lines)
-        return render(request, 'admin/add_or_edit_inspection_order.html', {'content': lines})
+        return render(
+            request,
+            'admin/add_or_edit_inspection_order.html',
+            {
+                'content': lines,
+                'date': time.strftime('%Y年%m月', time.localtime())
+            }
+        )
 
-    return render(request, 'admin/list_inspect.html', {'obj': data})
+    return render(
+        request,
+        'admin/list_inspect.html',
+        {
+            'obj': data,
+            'date': time.strftime('%Y年%m月', time.localtime())
+        }
+    )
